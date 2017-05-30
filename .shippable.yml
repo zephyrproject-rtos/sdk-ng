@@ -23,6 +23,7 @@ build:
       - wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.bz2
       - tar xvf crosstool-ng-1.23.0.tar.bz2
       - cd crosstool-ng-1.23.0/
+      - patch -p1 < ../patches/0001-iamcu-support-x86-iamcu-ABIs.patch
       - ./configure
       - make && sudo make install
       - cd ..

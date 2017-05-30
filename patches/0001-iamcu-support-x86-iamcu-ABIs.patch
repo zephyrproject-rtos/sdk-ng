@@ -1,0 +1,44 @@
+From d78c55de9323295e539ebedad8e470783af08783 Mon Sep 17 00:00:00 2001
+From: Anas Nashif <anas.nashif@intel.com>
+Date: Mon, 29 May 2017 16:40:13 -0400
+Subject: [PATCH] iamcu: support x86 iamcu ABIs
+
+---
+ config/arch/x86.in.2      | 8 ++++++++
+ scripts/build/arch/x86.sh | 5 +++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 config/arch/x86.in.2
+
+diff --git a/config/arch/x86.in.2 b/config/arch/x86.in.2
+new file mode 100644
+index 0000000..761809d
+--- /dev/null
++++ b/config/arch/x86.in.2
+@@ -0,0 +1,8 @@
++config ARCH_X86_IAMCU
++    bool
++    prompt "Use IAMCU"
++    default y
++    help
++      Set up the toolchain so that it generates IAMCU-compliant binaries.
++
++      If you say 'n' here, then the toolchain will generate IAMCU binaries.
+diff --git a/scripts/build/arch/x86.sh b/scripts/build/arch/x86.sh
+index 3a7a2ce..a278514 100644
+--- a/scripts/build/arch/x86.sh
++++ b/scripts/build/arch/x86.sh
+@@ -23,6 +23,11 @@ CT_DoArchTupleValues() {
+     fi
+     CT_TARGET_ARCH="${CT_TARGET_ARCH}${CT_ARCH_SUFFIX}"
+ 
++    # The system part of the tuple:
++    case "${CT_LIBC},${CT_ARCH_X86_IAMCU}" in
++        *,y)        CT_TARGET_SYS=elfiamcu;;
++    esac
++
+     # Shouldn't be possible to specify this (CT_TARGET_SYS is not specified by the user,
+     # it is computed by scripts/functions from libc choices). But trap if such invalid
+     # values ever come from the caller:
+-- 
+2.9.3
+
