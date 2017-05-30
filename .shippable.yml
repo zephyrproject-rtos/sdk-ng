@@ -1,0 +1,34 @@
+language: c
+
+compiler: gcc
+
+env:
+    global:
+        - USE_CCACHE=1
+
+build:
+    cache: true
+    cache_dir_list:
+        - ${SHIPPABLE_BUILD_DIR}/ccache
+    pre_ci_boot:
+        image_name: zephyrprojectrtos/ci
+        image_tag: master.16
+        pull: true
+        options: "-e HOME=/home/buildslave --privileged=true --tty --net=bridge --user buildslave"
+
+    ci:
+      - ccache -s
+      - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential
+      - sudo apt-get install -y libreadline-dev
+      - sudo apt-get install -y makeself p7zip-full cpio
+      - wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.bz2
+      - tar xvf crosstool-ng-1.23.0.tar.bz2
+      - cd crosstool-ng/
+      - ./configure
+      - make && make install
+      - mkdir -p build && cp configs/i586.config build/.config
+      - cd build
+      - export CT_PREFIX=`pwd`/output
+      - ct-ng oldconfig
+      - ct-ng build
+      - ccache -s
