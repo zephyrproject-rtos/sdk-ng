@@ -19,16 +19,16 @@ build:
     ci:
       - ccache -s
       - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential
-      - sudo apt-get install -y libreadline-dev
-      - sudo apt-get install -y makeself p7zip-full cpio
+      - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man
       - wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.bz2
       - tar xvf crosstool-ng-1.23.0.tar.bz2
       - cd crosstool-ng-1.23.0/
       - ./configure
-      - make && make install
+      - make && sudo make install
+      - cd ..
       - mkdir -p build && cp configs/i586.config build/.config
       - cd build
       - export CT_PREFIX=`pwd`/output
-      - ct-ng oldconfig
+      - yes | ct-ng oldconfig
       - ct-ng build
       - ccache -s
