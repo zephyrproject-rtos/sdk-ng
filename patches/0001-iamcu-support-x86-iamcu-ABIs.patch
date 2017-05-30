@@ -18,7 +18,7 @@ index 0000000..761809d
 +config ARCH_X86_IAMCU
 +    bool
 +    prompt "Use IAMCU"
-+    default y
++    default n
 +    help
 +      Set up the toolchain so that it generates IAMCU-compliant binaries.
 +
