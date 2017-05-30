@@ -23,7 +23,7 @@ build:
       - sudo apt-get install -y makeself p7zip-full cpio
       - wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.bz2
       - tar xvf crosstool-ng-1.23.0.tar.bz2
-      - cd crosstool-ng/
+      - cd crosstool-ng-1.23.0/
       - ./configure
       - make && make install
       - mkdir -p build && cp configs/i586.config build/.config
