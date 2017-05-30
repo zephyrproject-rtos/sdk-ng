@@ -22,7 +22,7 @@ index 0000000..761809d
 +    help
 +      Set up the toolchain so that it generates IAMCU-compliant binaries.
 +
-+      If you say 'n' here, then the toolchain will generate IAMCU binaries.
++      If you say 'y' here, then the toolchain will generate IAMCU binaries.
 diff --git a/scripts/build/arch/x86.sh b/scripts/build/arch/x86.sh
 index 3a7a2ce..a278514 100644
 --- a/scripts/build/arch/x86.sh

@@ -35,7 +35,6 @@ build:
         for toolchain in i586 nios2 iamcu; do
           ct-ng clean;
           cp ../configs/${toolchain}.config .config;
-          yes | ct-ng oldconfig;
           ct-ng build;
         done;
       - ccache -s
