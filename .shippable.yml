@@ -19,16 +19,22 @@ build:
     ci:
       - ccache -s
       - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential
-      - sudo apt-get install -y libreadline-dev
-      - sudo apt-get install -y makeself p7zip-full cpio
+      - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man
       - wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.bz2
       - tar xvf crosstool-ng-1.23.0.tar.bz2
       - cd crosstool-ng-1.23.0/
+      - patch -p1 < ../patches/0001-iamcu-support-x86-iamcu-ABIs.patch
       - ./configure
-      - make && make install
-      - mkdir -p build && cp configs/i586.config build/.config
+      - make && sudo make install
+      - cd ..
+      - mkdir -p build
       - cd build
       - export CT_PREFIX=`pwd`/output
-      - ct-ng oldconfig
-      - ct-ng build
+      - mkdir -p ${CT_PREFIX}/sources
+      - >
+        for toolchain in i586 nios2 iamcu; do
+          ct-ng clean;
+          cp ../configs/${toolchain}.config .config;
+          ct-ng build;
+        done;
       - ccache -s
