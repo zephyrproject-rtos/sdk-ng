@@ -9,6 +9,9 @@ env:
         - TARGET=i586
         - TARGET=iamcu
         - TARGET=nios2
+        - TARGET=arm
+        - TARGET=riscv32
+        - TARGET=mips
 
 build:
     cache: true
@@ -17,7 +20,7 @@ build:
         - ${SHIPPABLE_BUILD_DIR}/sources
     pre_ci_boot:
         image_name: zephyrprojectrtos/ci
-        image_tag: v0.1
+        image_tag: v0.3
         pull: true
         options: "-e HOME=/home/buildslave --privileged=true --tty --net=bridge --user buildslave"
 
@@ -25,5 +28,6 @@ build:
       - ccache -s
       - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential
       - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man
-      - ./build.sh ${TARGET}
+      - unset CC
+      - ./go.sh ${TARGET}
       - ccache -s
