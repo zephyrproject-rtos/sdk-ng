@@ -12,11 +12,6 @@ REQUIRED_VERSION=1.23.0
 COMMIT="aca85cbb"
 GITDIR=${PWD}
 
-ct-ng 2>&1 | grep crosstool-ng-${REQUIRED_VERSION} | grep ${COMMIT}
-if [ "$?" == "0" ]; then
-	CTNG_INSTALLED=1
-fi
-
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     machine=Linux;;
@@ -27,12 +22,12 @@ case "${unameOut}" in
 esac
 
 if [ "$machine" == "Mac" ]; then
-	ImageName=CrossToolNG
+	ImageName=CrossToolNGNew
 	ImageNameExt=${ImageName}.sparseimage
 	if [ ! -e "$ImageNameExt" ]; then
 	diskutil umount force /Volumes/${ImageName} && true
 	rm -f ${ImageNameExt} && true
-	hdiutil create ${ImageName} -volname ${ImageName} -type SPARSE -size 8g -fs HFSX
+	hdiutil create ${ImageName} -volname ${ImageName} -type SPARSE -size 24g -fs HFSX
 	fi
 	if [ ! -d "/Volumes/$ImageName" ]; then
 		hdiutil mount ${ImageNameExt}
@@ -40,22 +35,26 @@ if [ "$machine" == "Mac" ]; then
 	cd /Volumes/$ImageName
 fi
 
-if [ -z "$CTNG_INSTALLED" ]; then
-	if [ ! -d "crosstool-ng" ]; then
-		git clone https://github.com/crosstool-ng/crosstool-ng.git
-	fi
+export SDK_NG_HOME=${PWD}
+
+if [ ! -d "crosstool-ng" ]; then
+	git clone https://github.com/crosstool-ng/crosstool-ng.git
+fi
+
+if [ ! -e "${SDK_NG_HOME}/bin/ct-ng" ]; then
 	pushd crosstool-ng
 	git checkout aca85cbb3d9cf0247674464a55246029d5820114
-	if [[ -n $(git status --porcelain) ]]; then
-		patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
-	fi
+	echo "Patching tree"
+	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
 	./bootstrap
-	./configure
-	make && sudo make install
+	./configure --prefix=${SDK_NG_HOME}
+	make && make install
 	popd
-else
-	echo "ctng already installed with correct version"
 fi
+
+CT_NG=${SDK_NG_HOME}/bin/ct-ng
+
+
 mkdir -p build
 cd build
 export CT_PREFIX=`pwd`/output
@@ -69,10 +68,11 @@ for t in ${TARGETS}; do
 	mkdir -p build_${t}
 	pushd build_${t}
 
-	ct-ng clean
+	${CT_NG} clean
 	cp ${GITDIR}/configs/${t}.config .config
-	yes "" | ct-ng oldconfig
-	ct-ng build
+	yes "" | ${CT_NG} oldconfig
+	${CT_NG} build
+	rm -rf  build_${t}
 
 	popd
 
