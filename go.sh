@@ -9,8 +9,9 @@ if [ -z "$TARGETS" ]; then
 fi
 
 REQUIRED_VERSION=1.23.0
-COMMIT="aca85cbb"
+COMMIT="d5900debd397b8909d9cafeb9a1093fb7a5dc6e6"
 GITDIR=${PWD}
+JOBS=$(grep -c ^processor /proc/cpuinfo)
 
 unameOut="$(uname -s)"
 case "${unameOut}" in
@@ -43,7 +44,7 @@ fi
 
 if [ ! -e "${SDK_NG_HOME}/bin/ct-ng" ]; then
 	pushd crosstool-ng
-	git checkout aca85cbb3d9cf0247674464a55246029d5820114
+	git checkout ${COMMIT}
 	echo "Patching tree"
 	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
 	./bootstrap
@@ -71,7 +72,7 @@ for t in ${TARGETS}; do
 	${CT_NG} clean
 	cp ${GITDIR}/configs/${t}.config .config
 	yes "" | ${CT_NG} oldconfig
-	${CT_NG} build
+	${CT_NG} build -j ${JOBS}
 	rm -rf  build_${t}
 
 	popd
