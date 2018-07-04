@@ -40,13 +40,13 @@ export SDK_NG_HOME=${PWD}
 
 if [ ! -d "crosstool-ng" ]; then
 	git clone https://github.com/crosstool-ng/crosstool-ng.git
+	echo "Patching tree"
+	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
 fi
 
 if [ ! -e "${SDK_NG_HOME}/bin/ct-ng" ]; then
 	pushd crosstool-ng
 	git checkout ${COMMIT}
-	echo "Patching tree"
-	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
 	./bootstrap
 	./configure --prefix=${SDK_NG_HOME}
 	make && make install
