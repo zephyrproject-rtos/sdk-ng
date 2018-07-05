@@ -11,7 +11,7 @@ fi
 REQUIRED_VERSION=1.23.0
 COMMIT="d5900debd397b8909d9cafeb9a1093fb7a5dc6e6"
 GITDIR=${PWD}
-JOBS=$(grep -c ^processor /proc/cpuinfo)
+JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
 unameOut="$(uname -s)"
 case "${unameOut}" in
