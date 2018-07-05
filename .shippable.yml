@@ -12,6 +12,7 @@ env:
         - TARGET=arm
         - TARGET=riscv32
         - TARGET=mips
+        - TARGET=arc
 
 build:
     cache: true
