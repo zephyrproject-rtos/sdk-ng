@@ -50,7 +50,7 @@ if [ ! -e "${SDK_NG_HOME}/bin/ct-ng" ]; then
 	pushd crosstool-ng
 	git checkout ${COMMIT}
 	./bootstrap
-	./configure --prefix=${SDK_NG_HOME}
+	CFLAGS="-DKBUILD_NO_NLS" ./configure --prefix=${SDK_NG_HOME}
 	make && make install
 	popd
 fi
