@@ -38,9 +38,11 @@ build:
             sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
             sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
             cat $JOB_STATE/sdk.env;
-            tar jcvf ${TARGET}.tar.bz2 build/output/*-zephyr-*
+            tar jcvf ${TARGET}.tar.bz2 build/output/*-zephyr-*;
+            echo "tar build completed";
             export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
-            aws s3 sync ${TARGET}.tar.bz2 ${S3_PATH}/;
+            echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
+            aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
           fi
       - ccache -s
 integrations:
