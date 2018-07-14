@@ -31,4 +31,19 @@ build:
       - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man
       - unset CC
       - ./go.sh ${TARGET}
+      - >
+          if [ "$IS_PULL_REQUEST" = "false" ]; then
+            sudo -E sh -c 'echo "IS_GIT_TAG=${IS_GIT_TAG}" >> $JOB_STATE/sdk.env';
+            sudo -E sh -c 'echo "IS_RELEASE=${IS_RELEASE}" >> $JOB_STATE/sdk.env';
+            sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
+            sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
+            cat $JOB_STATE/sdk.env;
+            tar jcvf ${TARGET}.tar.bz2 build/output/*-zephyr-*
+            export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
+            aws s3 sync ${TARGET}.tar.bz2 ${S3_PATH}/;
+          fi
       - ccache -s
+integrations:
+  generic:
+    - integrationName: aws_s3_simple
+
