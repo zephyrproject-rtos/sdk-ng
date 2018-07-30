@@ -43,6 +43,7 @@ if [ ! -d "crosstool-ng" ]; then
 	echo "Patching tree"
 	pushd crosstool-ng
 	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
+	patch -p1 < ${GITDIR}/patches/0001-Add-GCC-8.2.patch
 	popd
 fi
 
