@@ -1,0 +1,26 @@
+From 6d7e0b337c16421a460ab0594db67bdecb377c67 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Thu, 12 Jul 2018 13:13:53 -0500
+Subject: [PATCH] Print sign of NaN values to nano-vfprintf.
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ newlib/libc/stdio/nano-vfprintf_float.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/newlib/libc/stdio/nano-vfprintf_float.c b/newlib/libc/stdio/nano-vfprintf_float.c
+index 98893e97b..071a09edc 100644
+--- a/newlib/libc/stdio/nano-vfprintf_float.c
++++ b/newlib/libc/stdio/nano-vfprintf_float.c
+@@ -213,6 +213,8 @@ _printf_float (struct _reent *data,
+     }
+   if (isnan (_fpvalue))
+     {
++      if (_fpvalue < 0)
++	pdata->l_buf[0] = '-';
+       if (code <= 'G')		/* 'A', 'E', 'F', or 'G'.  */
+ 	cp = "NAN";
+       else
+-- 
+2.14.4
+
