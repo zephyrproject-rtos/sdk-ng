@@ -9,7 +9,7 @@ if [ -z "$TARGETS" ]; then
 fi
 
 REQUIRED_VERSION=1.23.0
-COMMIT="d5900debd397b8909d9cafeb9a1093fb7a5dc6e6"
+COMMIT="b82b8adb441001fc1c7f6d5603834861a2de0d2b"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
@@ -43,7 +43,6 @@ if [ ! -d "crosstool-ng" ]; then
 	echo "Patching tree"
 	pushd crosstool-ng
 	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
-	patch -p1 < ${GITDIR}/patches/0001-Add-GCC-8.2.patch
 	popd
 fi
 
