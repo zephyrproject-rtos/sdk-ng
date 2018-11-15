@@ -1,0 +1,31 @@
+os:
+  - osx
+
+language: c
+
+addons:
+  homebrew:
+    packages:
+      - autoconf
+      - binutils
+      - gawk
+      - gmp
+      - gnu-sed
+      - help2man
+      - mpfr
+      - openssl
+      - pcre
+      - readline
+      - wget
+      - xz
+      - bash
+
+compiler:
+  - gcc
+
+script:
+  - export PATH="/usr/local/opt/binutils/bin:$PATH"
+  - export LDFLAGS="-L/usr/local/opt/binutils/lib"
+  - export CPPFLAGS="-I/usr/local/opt/binutils/include"
+  - unset CC
+  - travis_wait 60 ./go.sh i586
