@@ -9,7 +9,7 @@ if [ -z "$TARGETS" ]; then
 fi
 
 REQUIRED_VERSION=1.23.0
-COMMIT="b82b8adb441001fc1c7f6d5603834861a2de0d2b"
+COMMIT="f8874f447e40852d33d65c1f443a90b0760901df"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
