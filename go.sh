@@ -72,8 +72,8 @@ for t in ${TARGETS}; do
 	pushd build_${t}
 
 	${CT_NG} clean
-	cp ${GITDIR}/configs/${t}.config .config
-	yes "" | ${CT_NG} oldconfig
+	${CT_NG} defconfig DEFCONFIG=${GITDIR}/configs/${t}.config
+	${CT_NG} savedefconfig DEFCONFIG=${t}.config
 	${CT_NG} build -j ${JOBS}
 	rm -rf  build_${t}
 
