@@ -7,6 +7,9 @@ if [ -z "$TARGETS" ]; then
 	echo "Please specify target"
 	exit 1
 fi
+if [ "$TARGETS" == "all" ]; then
+	TARGETS=$(ls -1 configs/ | sed 's/.config//')
+fi
 
 REQUIRED_VERSION=1.23.0
 COMMIT="f8874f447e40852d33d65c1f443a90b0760901df"
