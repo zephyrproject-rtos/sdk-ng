@@ -74,12 +74,30 @@ for t in ${TARGETS}; do
 	mkdir -p build_${t}
 	pushd build_${t}
 
-	${CT_NG} clean
-	${CT_NG} defconfig DEFCONFIG=${GITDIR}/configs/${t}.config
-	${CT_NG} savedefconfig DEFCONFIG=${t}.config
-	${CT_NG} build -j ${JOBS}
-	rm -rf  build_${t}
+	build_toolchain=1
+	if [ -n "${build_toolchain}" ]; then
+		cp -a ${SDK_NG_HOME}/overlays .
+
+		${CT_NG} clean
+		${CT_NG} defconfig DEFCONFIG=${GITDIR}/configs/${t}.config
+		${CT_NG} savedefconfig DEFCONFIG=${t}.config
+		${CT_NG} build -j ${JOBS}
+	fi
+
+	if [ "${t}" = "xtensa" ]; then
+		wget https://github.com/foss-xtensa/xtensa-hal/archive/RF-2015.2.tar.gz
+		tar xf RF-2015.2.tar.gz
+		cd xtensa-hal-RF-2015.2
+		wget https://github.com/foss-xtensa/xtensa-config/releases/download/201702/sample_controller_linux.tgz
+		./import-core.sh sample_controller_linux.tgz
+		export CC=${CT_PREFIX}/xtensa-zephyr-elf/bin/xtensa-zephyr-elf-gcc
+		./configure --host xtensa-zephyr-elf --prefix ${CT_PREFIX}/xtensa-zephyr-elf
+		make
+		make install
+		unset CC
+	fi
 
 	popd
+	rm -rf  build_${t}
 
 done
