@@ -13,6 +13,7 @@ env:
         - TARGET=riscv32
         - TARGET=mips
         - TARGET=arc
+        - TARGET=xtensa
 
 build:
     cache: true
