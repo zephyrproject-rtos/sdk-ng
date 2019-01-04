@@ -1,0 +1,29 @@
+
+Newlib for xtensa
+-----------------
+
+newlib-xtensa comes from:
+
+https://github.com/jcmvbkbc/newlib-xtensa/tree/xtensa
+
+with an additional patch: assert-fiprintf.patch
+
+$ git clone git@github.com:jcmvbkbc/newlib-xtensa.git
+$ git checkout xtensa
+$ patch -p1 <  <OVERLAY_DIR>/assert-fiprintf.patch
+$ git commit -m "fix assert" .
+$ git archive --prefix=newlib-xtensa/ --format=tar.gz xtensa > newlib-xtensa.tar.gz
+
+
+xtensa_sample_controller.tar.gz
+-------------------------------
+
+Generated using the following sequence of commands:
+
+$ git clone git://github.com/foss-xtensa/xtensa-config.git
+$ cd xtensa-config
+$ wget https://github.com/foss-xtensa/xtensa-config/releases/download/201702/sample_controller_linux.tgz
+$ tar -xf sample_controller_linux.tgz `tar -tf sample_controller_linux.tgz | grep xtensa-config-overlay.tar.gz` -O > xtensa-config-overlay.tar.gz
+$ ./make-overlay.sh sample_controller xtensa-config-overlay.tar.gz .
+
+
