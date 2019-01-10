@@ -97,6 +97,8 @@ for t in ${TARGETS}; do
 		unset CC
 	fi
 
+	tar --exclude='build.log.bz2'  -C build/output/ -jcvf ${t}.tar.bz2 ${t}-zephyr-elf
+
 	popd
 	rm -rf  build_${t}
 
