@@ -14,6 +14,7 @@ env:
         - TARGET=mips
         - TARGET=arc
         - TARGET=xtensa
+        - TARGET="tools"
 
 build:
     cache: true
@@ -31,7 +32,14 @@ build:
       - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential libtool-bin
       - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man
       - unset CC
-      - ./go.sh ${TARGET}
+      - >
+          if [ "${TARGET}" == 'tools' ]; then
+             git clone https://github.com/zephyrproject-rtos/meta-zephyr-sdk.git;
+             ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
+             ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools;
+          else
+             ./go.sh ${TARGET};
+          fi
       - >
           if [ "$IS_PULL_REQUEST" = "false" ]; then
             sudo -E sh -c 'echo "IS_GIT_TAG=${IS_GIT_TAG}" >> $JOB_STATE/sdk.env';
@@ -39,11 +47,13 @@ build:
             sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
             sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
             cat $JOB_STATE/sdk.env;
-            tar jcvf ${TARGET}.tar.bz2 build/output/*-zephyr-*;
-            echo "tar build completed";
             export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
             echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
-            aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
+            if [ "${TARGET}" == 'tools' ]; then
+              aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
+            else
+              aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
+            fi
           fi
       - ccache -s
 integrations:
