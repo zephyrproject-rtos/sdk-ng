@@ -1,0 +1,200 @@
+
+target_sdk_dir=""
+post_install_cleanup=1
+confirm=0
+
+usage () {
+  cat << EOF
+  Usage : $TOOLCHAIN_NAME < -- options >
+
+
+Options:
+  -h
+        Display this help and exit.
+
+  -d <dir>
+        Specify the absolute path of the SDK installation directory.
+
+  -y
+        Automatic yes to prompts; assume "yes" as answer to all prompts.
+
+EOF
+}
+
+verify_os () {
+case "$(uname -s)" in
+
+   Darwin)
+     echo 'OS X is not supported!'
+     exit 1
+     ;;
+
+   # Linux, the only supported OS
+
+   Linux)
+     #echo 'Linux'
+     ;;
+
+   # Other OS ...
+   # see https://en.wikipedia.org/wiki/Uname#Examples
+   # Don't allow to install on any of them, this includes cygwin, Windows,
+   # Solaris etc.
+
+   *)
+     echo 'Unsupported OS'
+     exit 1
+     ;;
+esac
+}
+
+while [ "$1" != "" ]; do
+	case $1 in
+	    -h )
+			usage
+			exit 0
+			;;
+		-d )
+			shift
+			target_sdk_dir=$1
+			;;
+		-nocleanup )
+			post_install_cleanup=0;
+			;;
+		-y )
+			confirm="y";
+			;;
+		* )
+			echo "Error: Invalid argument \"$1\""
+			usage
+			exit 1
+			;;
+	esac
+	shift
+done
+
+spinner()
+{
+	local pid=$1
+	local delay=0.175
+	local spinstr='|/-\'
+	local infotext=$2
+	while kill -0 $pid 2>/dev/null ; do
+		local temp=${spinstr#?}
+		printf " [%c] %s" "$spinstr" "$infotext"
+		local spinstr=$temp${spinstr%"$temp"}
+		sleep $delay
+		printf "\b\b\b\b\b\b"
+		for i in $(seq 1 ${#infotext}); do
+			printf "\b"
+		done
+	done
+	printf " [*] %s" "$infotext"
+	printf " \b\b\b\b"
+}
+
+do_cleanup()
+{
+	cd $target_sdk_dir
+	if [ $post_install_cleanup = "1" ]; then
+		#rm site-config*
+		rm environment-setup*
+	fi
+	install -d -m 0755 $VERSION_DIR
+	mv version-* $VERSION_DIR
+	echo "$SDK_VERSION" > sdk_version
+	chmod 0644 sdk_version
+}
+
+# Read the input "y"
+read_confirm () {
+    echo "The directory $target_sdk_dir/sysroots will be removed! "
+  if [ "$confirm" != "y" ]; then
+      echo "Do you want to continue (y/n)? "
+      while read confirm; do
+          [ "$confirm" = "Y" -o "$confirm" = "y" -o "$confirm" = "n" \
+            -o "$confirm" = "N" ] && break
+          echo "Invalid input \"$confirm\", please input 'y' or 'n': "
+      done
+  else
+      echo
+  fi
+}
+
+verify_os
+
+which python3 2>&1 > /dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: required python3 binary not in PATH" 1>&2
+	exit 1
+fi
+
+which xz 2>&1 > /dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: required xz binary not in PATH" 1>&2
+	exit 1
+fi
+
+if [ "$target_sdk_dir" = "" ]; then
+	read -e -p "Enter target directory for SDK (default: $DEFAULT_INSTALL_DIR): " target_sdk_dir
+	[ "$target_sdk_dir" = "" ] && target_sdk_dir=$DEFAULT_INSTALL_DIR
+fi
+
+eval target_sdk_dir=$target_sdk_dir
+
+if [[ $target_sdk_dir != /* ]]; then
+	echo "The target directory path ($target_sdk_dir) must be an absolute path. Abort!"
+	exit 1;
+fi
+
+eval target_sdk_dir=$(echo "$target_sdk_dir"|sed 's/ /\\ /g')
+if [ -d "$target_sdk_dir" ]; then
+	target_sdk_dir=$(cd "$target_sdk_dir"; pwd)
+else
+	target_sdk_dir=$(readlink -m "$target_sdk_dir")
+fi
+
+if [ -n "$(echo $target_sdk_dir|grep ' ')" ]; then
+	echo "The target directory path ($target_sdk_dir) contains spaces. Abort!"
+	exit 1
+fi
+
+echo "Installing SDK to $target_sdk_dir"
+
+if [ -d $target_sdk_dir ]; then
+	# If the directory exists, test for write permission
+	if [ ! -w $target_sdk_dir ] ; then
+		echo "No permission, please run as 'sudo'"
+		exit 1
+	else
+		# wipe the directory first
+		if [ -d $target_sdk_dir/sysroots ]; then
+		read_confirm
+	    if [ "$confirm" = "y" -o "$confirm" = "Y" ]; then
+		        rm -rf $target_sdk_dir/sysroots/
+			rm -rf $target_sdk_dir/info-zephyr-sdk*/
+			rm -fr $target_sdk_dir/sdk_version
+		else
+		    # Abort the installation
+		    echo "SDK installation aborted!"
+		    exit 1
+		    fi
+		fi
+	fi
+else
+	echo "Creating directory $target_sdk_dir"
+	# Try to create the directory (this will not succeed if user doesn't have rights)
+	if install -d -m 0751 $target_sdk_dir >/dev/null 2>&1  ; then
+		echo "Success"
+	else
+		echo "No permission, please run as 'sudo'"
+		exit 1
+	fi
+fi
+
+if (( EUID != 0 )); then
+	umask 0002
+#else
+#	umask 0022
+fi
+
+
