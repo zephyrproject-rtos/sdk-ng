@@ -23,7 +23,7 @@ build:
         - ${SHIPPABLE_BUILD_DIR}/sources
     pre_ci_boot:
         image_name: zephyrprojectrtos/ci
-        image_tag: v0.4-rc7
+        image_tag: v0.5-rc5
         pull: true
         options: "-e HOME=/home/buildslave --privileged=true --tty --net=bridge --user buildslave"
 
@@ -37,6 +37,7 @@ build:
              git clone https://github.com/zephyrproject-rtos/meta-zephyr-sdk.git;
              ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
              ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools;
+             mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .
           else
              ./go.sh ${TARGET};
           fi
@@ -48,10 +49,12 @@ build:
             sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
             cat $JOB_STATE/sdk.env;
             export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
-            echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
             if [ "${TARGET}" == 'tools' ]; then
+              echo "uploading zephyr-sdk-x86_64-hosttools-standalone-0.9.sh to ${S3_PATH}/";
               aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
             else
+              echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
+              tar --exclude='build.log.bz2'  -C build/output/ -jcvf ${TARGET}.tar.bz2 *-zephyr-*
               aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
             fi
           fi
