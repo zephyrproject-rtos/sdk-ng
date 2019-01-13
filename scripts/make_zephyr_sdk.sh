@@ -89,42 +89,42 @@ echo "SDK_VERSION=${sdk_version}" >> $setup
 cat template_dir >>$setup
 
 if [ -n "$file_gcc_x86" ]; then
-  echo "tar -C \$target_sdk_dir ./$file_gcc_x86 > /dev/null &" >> $setup
+  echo "tar -C \$target_sdk_dir -xf ./$file_gcc_x86 > /dev/null &" >> $setup
   echo "spinner \$! \"Installing x86 tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
 
 if [ -n "$file_gcc_arm" ]; then
-  echo "tar -C \$target_sdk_dir ./$file_gcc_arm > /dev/null &" >> $setup
+  echo "tar -C \$target_sdk_dir -xf ./$file_gcc_arm > /dev/null &" >> $setup
   echo "spinner \$! \"Installing arm tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
 
 if [ -n "$file_gcc_arc" ]; then
-  echo "tar -C \$target_sdk_dir ./$file_gcc_arc > /dev/null &" >> $setup
+  echo "tar -C \$target_sdk_dir -xf ./$file_gcc_arc > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing arc tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
 
 if [ -n "$file_gcc_iamcu" ]; then
-  echo "tar -C \$target_sdk_dir ./$file_gcc_iamcu > /dev/null &" >> $setup
+  echo "tar -C \$target_sdk_dir -xf ./$file_gcc_iamcu > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing iamcu tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
 
 if [ -n "$file_gcc_mips" ]; then
-  echo "tar -C \$target_sdk_dir ./$file_gcc_mips > /dev/null &" >> $setup
+  echo "tar -C \$target_sdk_dir -xf ./$file_gcc_mips > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing mips tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
 
 if [ -n "$file_gcc_nios2" ]; then
-  echo "tar -C \$target_sdk_dir ./$file_gcc_nios2 > /dev/null &" >> $setup
+  echo "tar -C \$target_sdk_dir -xf ./$file_gcc_nios2 > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing nios2 tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
