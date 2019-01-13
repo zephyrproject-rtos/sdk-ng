@@ -54,7 +54,9 @@ build:
               aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
             else
               echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
-              tar --exclude='build.log.bz2'  -C build/output/ -jcvf ${TARGET}.tar.bz2 *-zephyr-*
+              pushd build/output
+              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.tar.bz2 *-zephyr-*
+              popd
               aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
             fi
           fi
