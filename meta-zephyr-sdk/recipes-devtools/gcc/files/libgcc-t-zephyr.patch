@@ -1,4 +1,0 @@
---- /dev/null	2016-10-25 11:17:04.944076583 -0700
-+++ b/libgcc/config/i386/32/t-zephyr	2015-12-18 06:49:09.000000000 -0800
-@@ -0,0 +1 @@
-+HOST_LIBGCC2_CFLAGS += -mlong-double-80

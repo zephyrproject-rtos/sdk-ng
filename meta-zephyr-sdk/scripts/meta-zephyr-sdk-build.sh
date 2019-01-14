@@ -92,9 +92,8 @@ newbuild()
 	setconf_var "DISTRO" "zephyr-sdk" $localconf
 }
 
-##############################################################################
-# 32 bit build
-##############################################################################
+
+if [ "$1" = "tools" ]; then
 header "Building Zephyr host tools..."
 newbuild build-zephyr-tools  > /dev/null
 setconf_var "MACHINE" "qemux86" $localconf
@@ -105,125 +104,4 @@ bitbake hosttools-tarball
 cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
 [ $? -ne 0 ] && exit 1
 echo "Building additional host tools...done"
-
-# build Xtensa toolchain
-header "Building Xtensa toolchain..."
-newbuild build-zephyr-xtensa  > /dev/null
-setconf_var "MACHINE" "xtensa" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib xtensa-hal-staticdev" $localconf
-rm -f ./tmp/deploy/sdk/*.sh 
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain 
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building Xtensa toolchain...done"
-
-# build RISC-V toolchain
-header "Building riscv32 toolchain..."
-newbuild build-zephyr-riscv32  > /dev/null
-setconf_var "MACHINE" "riscv32" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-rm -f ./tmp/deploy/sdk/*.sh 
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain 
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building riscv32 toolchain...done"
-# build NIOS2 toolchain
-header "Building Nios2 toolchain..."
-newbuild build-zephyr-nios2  > /dev/null
-setconf_var "MACHINE" "nios2" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-rm -f ./tmp/deploy/sdk/*.sh
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building Nios2 toolchain...done"
-
-# build ARM toolchain
-header "Building ARM toolchain..."
-newbuild build-zephyr-arm  > /dev/null
-setconf_var "MACHINE" "qemuarm" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-setconf_var "TUNE_FEATURES" "armv7m cortexm3" $localconf
-rm -f ./tmp/deploy/sdk/*.sh
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building ARM toolchain...done"
-
-# build x86 toolchain
-header "Building x86 toolchain..."
-newbuild build-zephyr-x86 > /dev/null
-setconf_var "MACHINE" "qemux86" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-rm -f ./tmp/deploy/sdk/*.sh
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building x86 toolchain...done"
-
-#  build MIPS toolchain
-header "Building MIPS toolchain..."
-newbuild build-zephyr-mips  > /dev/null
-setconf_var "MACHINE" "qemumips" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-rm -f ./tmp/deploy/sdk/*.sh
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building MIPS toolchain...done"
-
-# build ARC toolchain...
-header "Building ARC toolchain..."
-newbuild build-zephyr-arc  > /dev/null
-setconf_var "MACHINE" "arc" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-rm -f ./tmp/deploy/sdk/*.sh
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building ARC toolchain...done"
-
-#  build IAMCU toolchain
-header "Building IAMCU  toolchain..."
-newbuild build-zephyr-iamcu  > /dev/null
-setconf_var "MACHINE" "iamcu" $localconf
-setconf_var "TCLIBC" "baremetal" $localconf
-setconf_var "TOOLCHAIN_TARGET_TASK_append" " newlib" $localconf
-rm -f ./tmp/deploy/sdk/*.sh
-bitbake meta-toolchain -c clean  > /dev/null
-bitbake meta-toolchain
-[ $? -ne 0 ] && echo "Error(s) encountered during bitbake." && exit 1
-cp ./tmp/deploy/sdk/*.sh $TOOLCHAINS
-[ $? -ne 0 ] && exit 1
-header "Building IAMCU toolchain...done"
-
-# Pack it together ...
-
-cd $META_ZEPHYR_SDK_SOURCE/scripts
-header "Creating SDK..."
-./make_zephyr_sdk.sh
-if [ $? -ne 0 ] ; then
-	echo "Error(s) encountered during SDK creation."
-	exit 1
 fi
