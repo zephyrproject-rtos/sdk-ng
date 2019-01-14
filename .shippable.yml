@@ -32,14 +32,7 @@ build:
       - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential libtool-bin
       - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man
       - unset CC
-      - >
-          if [ "${TARGET}" == 'tools' ]; then
-             ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
-             ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools;
-             mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .
-          else
-             ./go.sh ${TARGET};
-          fi
+      - ./go.sh ${TARGET}
       - >
           if [ "$IS_PULL_REQUEST" = "false" ]; then
             sudo -E sh -c 'echo "IS_GIT_TAG=${IS_GIT_TAG}" >> $JOB_STATE/sdk.env';
