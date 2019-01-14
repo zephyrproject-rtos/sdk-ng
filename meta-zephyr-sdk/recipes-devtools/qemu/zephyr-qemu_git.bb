@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=c04def7ae38850e7d3ef548588159913"
 
-SRCREV = "19b599f7664b2ebfd0f405fb79c14dd241557452"
+SRCREV = "32a1a94dd324d33578dca1dc96d7896a0244d768"
 SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
 "
