@@ -34,7 +34,6 @@ build:
       - unset CC
       - >
           if [ "${TARGET}" == 'tools' ]; then
-             git clone https://github.com/zephyrproject-rtos/meta-zephyr-sdk.git;
              ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
              ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh tools;
              mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .

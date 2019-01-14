@@ -1,0 +1,13 @@
+--- a/gcc/config.gcc	2016-07-29 12:21:37.971548000 -0700
++++ b/gcc/config.gcc	2016-09-19 10:29:08.788868569 -0700
+@@ -1365,6 +1365,10 @@
+ 	tmake_file="${tmake_file} ${cpu_type}/t-darwin64 t-slibgcc"
+ 	tm_file="${tm_file} ${cpu_type}/darwin64.h"
+ 	;;
++i586-zephyr-elf)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
++	tmake_file="${tmake_file} i386/t-zephyr"
++	;;
+ i[34567]86-*-elf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
+ 	;;

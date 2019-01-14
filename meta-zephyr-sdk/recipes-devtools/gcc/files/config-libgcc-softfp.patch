@@ -1,0 +1,12 @@
+--- a/libgcc/config.host	2016-09-20 12:33:51.334406972 -0700
++++ b/libgcc/config.host	2016-09-20 12:30:57.117543078 -0700
+@@ -551,6 +551,9 @@
+ 	tm_file="$tm_file i386/darwin-lib.h"
+ 	extra_parts="$extra_parts crtprec32.o crtprec64.o crtprec80.o crtfastmath.o"
+ 	;;
++i586-zephyr-elf)
++	tmake_file="$tmake_file i386/t-crtstuff t-softfp-sfdf i386/32/t-zephyr i386/t-softfp t-softfp t-dfprules"
++	;;
+ i[34567]86-*-elf*)
+ 	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
+ 	;;

@@ -1,0 +1,32 @@
+diff --git a/meta/classes/kernel-arch.bbclass b/meta/classes/kernel-arch.bbclass
+index ea976c6..57e9439 100644
+--- a/meta/classes/kernel-arch.bbclass
++++ b/meta/classes/kernel-arch.bbclass
+@@ -32,6 +32,7 @@ def map_kernel_arch(a, d):
+     elif re.match('microblazee[bl]', a):        return 'microblaze'
+     elif a in valid_archs:                      return a
+     else:
++        if d.getVar("TCLIBC", True) == "baremetal": return a;
+         bb.error("cannot map '%s' to a linux kernel architecture" % a)
+ 
+ export ARCH = "${@map_kernel_arch(d.getVar('TARGET_ARCH', True), d)}"
+diff --git a/meta/recipes-core/udev/eudev_3.2.bb b/meta/recipes-core/udev/eudev_3.2.bb
+index 211252c..672b689 100644
+--- a/meta/recipes-core/udev/eudev_3.2.bb
++++ b/meta/recipes-core/udev/eudev_3.2.bb
+@@ -99,3 +99,5 @@ pkg_postinst_eudev-hwdb () {
+ pkg_prerm_eudev-hwdb () {
+         rm -f $D${sysconfdir}/udev/hwdb.bin
+ }
++
++BBCLASSEXTEND = "nativesdk"
+diff --git a/meta/recipes-kernel/kmod/kmod_git.bb b/meta/recipes-kernel/kmod/kmod_git.bb
+index 69185b2..0205a1f 100644
+--- a/meta/recipes-kernel/kmod/kmod_git.bb
++++ b/meta/recipes-kernel/kmod/kmod_git.bb
+@@ -60,3 +60,5 @@ PACKAGES =+ "libkmod"
+ 
+ FILES_libkmod = "${base_libdir}/libkmod*${SOLIBS} ${libdir}/libkmod*${SOLIBS}"
+ FILES_${PN} += "${base_libdir}/depmod.d ${base_libdir}/modprobe.d"
++
++BBCLASSEXTEND = "nativesdk"
