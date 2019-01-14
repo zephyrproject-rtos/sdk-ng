@@ -1,0 +1,77 @@
+diff -Nur a/gcc/config/arm/t-arm-elf b/gcc/config/arm/t-arm-elf
+--- a/gcc/config/arm/t-arm-elf	2015-01-05 12:33:28.000000000 +0000
++++ b/gcc/config/arm/t-arm-elf	2016-06-30 17:57:09.412770309 +0100
+@@ -16,10 +16,56 @@
+ # along with GCC; see the file COPYING3.  If not see
+ # <http://www.gnu.org/licenses/>.
+ 
+-MULTILIB_OPTIONS     = marm/mthumb
+-MULTILIB_DIRNAMES    = arm thumb
+-MULTILIB_EXCEPTIONS  = 
+-MULTILIB_MATCHES     =
++MULTILIB_OPTIONS   = mthumb/marm
++MULTILIB_DIRNAMES  = thumb arm
++MULTILIB_OPTIONS  += march=armv6s-m/march=armv7-m/march=armv7e-m
++MULTILIB_DIRNAMES += armv6-m armv7-m armv7e-m
++MULTILIB_OPTIONS  += mfloat-abi=softfp/mfloat-abi=hard
++MULTILIB_DIRNAMES += softfp fpu
++MULTILIB_OPTIONS  += mfpu=fpv5-sp-d16/mfpu=fpv5-d16/mfpu=fpv4-sp-d16
++MULTILIB_DIRNAMES += fpv5-sp-d16 fpv5-d16 fpv4-sp-d16
++
++MULTILIB_EXCEPTIONS  =
++MULTILIB_MATCHES   = march?armv6s-m=mcpu?cortex-m0
++MULTILIB_MATCHES  += march?armv6s-m=mcpu?cortex-m0.small-multiply
++MULTILIB_MATCHES  += march?armv6s-m=mcpu?cortex-m0plus
++MULTILIB_MATCHES  += march?armv6s-m=mcpu?cortex-m0plus.small-multiply
++MULTILIB_MATCHES  += march?armv6s-m=mcpu?cortex-m1
++MULTILIB_MATCHES  += march?armv6s-m=mcpu?cortex-m1.small-multiply
++MULTILIB_MATCHES  += march?armv6s-m=march?armv6-m
++MULTILIB_MATCHES  += march?armv7-m=mcpu?cortex-m3
++MULTILIB_MATCHES  += march?armv7e-m=mcpu?cortex-m4
++MULTILIB_MATCHES  += march?armv7e-m=mcpu?cortex-m7
++
++MULTILIB_REQUIRED  = mthumb
++MULTILIB_REQUIRED += marm
++MULTILIB_REQUIRED += mfloat-abi=hard
++
++MULTILIB_OSDIRNAMES  = mthumb=!thumb
++MULTILIB_OSDIRNAMES += marm=!arm
++MULTILIB_OSDIRNAMES += mfloat-abi.hard=!fpu
++
++MULTILIB_REQUIRED   += mthumb/march=armv6s-m
++MULTILIB_OSDIRNAMES += mthumb/march.armv6s-m=!armv6-m
++
++MULTILIB_REQUIRED   += mthumb/march=armv7-m
++MULTILIB_OSDIRNAMES += mthumb/march.armv7-m=!armv7-m
++
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m/mfloat-abi=softfp/mfpu=fpv4-sp-d16
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m/mfloat-abi=hard/mfpu=fpv4-sp-d16
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m/mfloat-abi=softfp/mfpu=fpv5-d16
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m/mfloat-abi=hard/mfpu=fpv5-d16
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m/mfloat-abi=softfp/mfpu=fpv5-sp-d16
++MULTILIB_REQUIRED   += mthumb/march=armv7e-m/mfloat-abi=hard/mfpu=fpv5-sp-d16
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m=!armv7e-m
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m/mfloat-abi.hard/mfpu.fpv4-sp-d16=!armv7e-m/fpu
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m/mfloat-abi.softfp/mfpu.fpv4-sp-d16=!armv7e-m/softfp
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m/mfloat-abi.hard/mfpu.fpv5-d16=!armv7e-m/fpu/fpv5-d16
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m/mfloat-abi.softfp/mfpu.fpv5-d16=!armv7e-m/softfp/fpv5-d16
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m/mfloat-abi.hard/mfpu.fpv5-sp-d16=!armv7e-m/fpu/fpv5-sp-d16
++MULTILIB_OSDIRNAMES += mthumb/march.armv7e-m/mfloat-abi.softfp/mfpu.fpv5-sp-d16=!armv7e-m/softfp/fpv5-sp-d16
++
+ 
+ #MULTILIB_OPTIONS     += mcpu=fa526/mcpu=fa626/mcpu=fa606te/mcpu=fa626te/mcpu=fmp626/mcpu=fa726te
+ #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
+@@ -38,9 +84,9 @@
+ # Not quite true.  We can support hard-vfp calling in Thumb2, but how do we
+ # express that here?  Also, we really need architecture v5e or later
+ # (mcrr etc).
+-MULTILIB_OPTIONS       += mfloat-abi=hard
+-MULTILIB_DIRNAMES      += fpu
+-MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
++#MULTILIB_OPTIONS       += mfloat-abi=hard
++#MULTILIB_DIRNAMES      += fpu
++#MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
+ #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
+ #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
+ 

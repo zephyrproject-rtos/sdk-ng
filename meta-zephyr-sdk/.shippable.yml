@@ -1,0 +1,46 @@
+language: c
+
+compiler: gcc
+
+env:
+    matrix:
+        - SDK_TARGET=tools
+        - SDK_TARGET=xtensa
+        - SDK_TARGET=x86
+        - SDK_TARGET=arm
+        - SDK_TARGET=iamcu
+        - SDK_TARGET=arc
+        - SDK_TARGET=mips
+        - SDK_TARGET=nios2
+        - SDK_TARGET=riscv32
+
+build:
+    cache: false
+    pre_ci_boot:
+        image_name: zephyrprojectrtos/ci
+        image_tag: v0.4-rc7
+        pull: true
+        options: "-e HOME=/home/buildslave --privileged=true --tty --net=bridge --user buildslave"
+
+    ci:
+      - cd ..
+      - ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh
+      - ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh ${SDK_TARGET} || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh ${SDK_TARGET} || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build-split.sh ${SDK_TARGET}
+      - >
+          if [ "$IS_PULL_REQUEST" = "false" ]; then
+            sudo -E sh -c 'echo "IS_GIT_TAG=${IS_GIT_TAG}" >> $JOB_STATE/sdk.env';
+            sudo -E sh -c 'echo "IS_RELEASE=${IS_RELEASE}" >> $JOB_STATE/sdk.env';
+            sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
+            sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
+            cat $JOB_STATE/sdk.env;
+            export S3_PATH="s3://incoming.zephyrproject.org/sdk/${METAZEPHYRSDK_CIREPO_VERSIONNUMBER}";
+            mkdir -p ./meta-zephyr-sdk/scripts/toolchains/;
+            cp ./meta-zephyr-sdk/scripts/make_zephyr_sdk.sh ./meta-zephyr-sdk/scripts/toolchains/;
+            cp ./meta-zephyr-sdk/scripts/template_dir ./meta-zephyr-sdk/scripts/toolchains/;
+            aws s3 sync ./meta-zephyr-sdk/scripts/toolchains/ ${S3_PATH}/toolchains/;
+          fi
+
+integrations:
+  generic:
+    - integrationName: aws_s3_simple
+

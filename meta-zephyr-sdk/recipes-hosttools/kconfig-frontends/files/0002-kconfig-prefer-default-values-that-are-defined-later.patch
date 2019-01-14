@@ -1,0 +1,67 @@
+From a375f2682bebaf05fa704236f51f3bddbdeaac8d Mon Sep 17 00:00:00 2001
+From: Anas Nashif <anas.nashif@intel.com>
+Date: Sat, 19 Aug 2017 08:11:04 -0400
+Subject: [PATCH 2/2] kconfig: prefer default values that are defined later
+
+Signed-off-by: Anas Nashif <anas.nashif@intel.com>
+---
+ libs/parser/symbol.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/libs/parser/symbol.c b/libs/parser/symbol.c
+index 20136ff..1b7234e 100644
+--- a/libs/parser/symbol.c
++++ b/libs/parser/symbol.c
+@@ -11,6 +11,12 @@
+ 
+ #include "lkc.h"
+ 
++/* When this is set to 1, sym_get_default_prop() will
++ * return P_DEFAULT that are parsed later in Kconfig
++ * files.
++ */
++#define PREFER_LATER_DEFAULTS		1
++
+ struct symbol symbol_yes = {
+ 	.name = "y",
+ 	.curr = { "y", yes },
+@@ -112,6 +118,28 @@ struct property *sym_get_env_prop(struct symbol *sym)
+ 	return NULL;
+ }
+ 
++#if PREFER_LATER_DEFAULTS
++struct property *sym_get_default_prop(struct symbol *sym)
++{
++        struct property *prop;
++        struct property *ret_prop = NULL;
++
++        for_all_defaults(sym, prop) {
++                prop->visible.tri = expr_calc_value(prop->visible.expr);
++                if (prop->visible.tri != no) {
++                        if (prop->type == P_DEFAULT) {
++                                /* Prefer P_DEFAULT that are parsed
++                                 * later in all Kconfig files.
++                                 */
++                                ret_prop = prop;
++                                continue;
++                        }
++                        return prop;
++                }
++        }
++        return ret_prop;
++}
++#else
+ static struct property *sym_get_default_prop(struct symbol *sym)
+ {
+ 	struct property *prop;
+@@ -123,6 +151,7 @@ static struct property *sym_get_default_prop(struct symbol *sym)
+ 	}
+ 	return NULL;
+ }
++#endif
+ 
+ static struct property *sym_get_range_prop(struct symbol *sym)
+ {
+-- 
+2.9.4
+
