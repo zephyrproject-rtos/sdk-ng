@@ -1,0 +1,24 @@
+From ecaecdd11ec7dd096c7794d19840d48b01aa38fb Mon Sep 17 00:00:00 2001
+From: Michael Lohrer <michael.f.lohrer@gmail.com>
+Date: Fri, 18 Oct 2019 21:09:06 -0400
+Subject: [PATCH] Wait for EEFC flash to complete operations before reseting
+
+---
+ src/EefcFlash.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/EefcFlash.cpp b/src/EefcFlash.cpp
+index 4f61401..3d4afdb 100644
+--- a/src/EefcFlash.cpp
++++ b/src/EefcFlash.cpp
+@@ -272,6 +272,7 @@ EefcFlash::writeOptions()
+         waitFSR();
+         writeFCR0(EEFC_FCMD_SGPB, 0);
+     }
++    waitFSR();  // Verify that all flash operations have completed
+ }
+ 
+ void
+-- 
+2.25.4
+
