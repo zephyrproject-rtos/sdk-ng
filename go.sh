@@ -9,6 +9,7 @@ if [ -z "$TARGETS" ]; then
 fi
 if [ "$TARGETS" == "all" ]; then
 	TARGETS=$(ls -1 configs/ | sed 's/.config//')
+	TARGETS=${TARGETS}" tools"
 fi
 
 REQUIRED_VERSION=1.23.0
@@ -41,6 +42,14 @@ fi
 
 export SDK_NG_HOME=${PWD}
 
+for t in ${TARGETS}; do
+	if [ "${t}" = "tools" ]; then
+		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
+		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
+		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .
+	fi
+done
+
 if [ ! -d "crosstool-ng" ]; then
 	git clone https://github.com/crosstool-ng/crosstool-ng.git
 	echo "Patching tree"
@@ -66,6 +75,10 @@ cd build
 export CT_PREFIX=`pwd`/output
 mkdir -p ${CT_PREFIX}/sources
 for t in ${TARGETS}; do
+	if [ "${t}" = "tools" ]; then
+		# We handled tools above, so skip it here
+		continue
+	fi
 	if [ ! -f ${GITDIR}/configs/${t}.config ]; then
 		echo "Target configuration does not exist"
 		exit 1
