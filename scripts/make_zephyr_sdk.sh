@@ -11,30 +11,15 @@
 # Default installation directory should be /opt/zephyr-sdk/
 #
 
+product_name="zephyr-sdk"
 
-# Edit as needed:
-version_major=0
-version_minor=10
-subversion_minor=0
-prerelease=beta4
+root_dir=$(dirname $0)/..
+sdk_version=$(cat $root_dir/VERSION)
 
-if [ "$1" != "" ] ; then
-    product_name=$1
-  else
-    product_name=zephyr-sdk
-fi
+echo "Creating ${product_name}-${sdk_version}-setup.run"
 
 # Create ./setup.sh
 
-if [ "$subversion_minor" -ne "0" ]; then
-    sdk_version=$version_major.$version_minor.$subversion_minor
-else
-    sdk_version=$version_major.$version_minor
-fi
-
-if [ -n "$prerelease" ]; then
-    sdk_version=${sdk_version}-${prerelease}
-fi
 
 setup=toolchains/setup.sh
 default_dir=/opt/${product_name}/
