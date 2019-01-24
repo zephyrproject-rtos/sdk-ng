@@ -20,3 +20,15 @@ To build for any of the above, run:
 ```
 ./go.sh <arch>
 ```
+
+
+## Release Process
+
+To release a new SDK:
+
+- Update the VERSION file with the new version, for example 0.11.0 or
+  0.11.0-beta1 etc.
+- On https://github.com/zephyrproject-rtos/sdk-ng/releases, create the release
+  tag and add the release information.
+- One the release is created, CI will build the SDK image and will upload it to
+  the release page.
