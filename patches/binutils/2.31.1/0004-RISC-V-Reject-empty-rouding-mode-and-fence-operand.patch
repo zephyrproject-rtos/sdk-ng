@@ -1,0 +1,124 @@
+From 786eb936fd461e09d6bac819ba7486e64b216244 Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Thu, 23 Aug 2018 13:26:48 -0700
+Subject: [PATCH 04/15] RISC-V: Reject empty rouding mode and fence operand.
+
+	gas/
+	2018-08-23  Kito Cheng  <kito@andestech.com>
+	* config/tc-riscv.c (arg_lookup): Checking
+	length before look up.
+	* testsuite/gas/riscv/fence-fail.d: New file.
+	* testsuite/gas/riscv/fence-fail.l: Likewise.
+	* testsuite/gas/riscv/fence-fail.s: Likewise.
+	* testsuite/gas/riscv/rouding-fail.d: Likewise.
+	* testsuite/gas/riscv/rouding-fail.l: Likewise.
+	* testsuite/gas/riscv/rouding-fail.s: Likewise.
+---
+ gas/ChangeLog                          | 11 +++++++++++
+ gas/config/tc-riscv.c                  |  3 +++
+ gas/testsuite/gas/riscv/fence-fail.d   |  3 +++
+ gas/testsuite/gas/riscv/fence-fail.l   |  4 ++++
+ gas/testsuite/gas/riscv/fence-fail.s   |  4 ++++
+ gas/testsuite/gas/riscv/rouding-fail.d |  3 +++
+ gas/testsuite/gas/riscv/rouding-fail.l |  3 +++
+ gas/testsuite/gas/riscv/rouding-fail.s |  3 +++
+ 8 files changed, 34 insertions(+)
+ create mode 100644 gas/testsuite/gas/riscv/fence-fail.d
+ create mode 100644 gas/testsuite/gas/riscv/fence-fail.l
+ create mode 100644 gas/testsuite/gas/riscv/fence-fail.s
+ create mode 100644 gas/testsuite/gas/riscv/rouding-fail.d
+ create mode 100644 gas/testsuite/gas/riscv/rouding-fail.l
+ create mode 100644 gas/testsuite/gas/riscv/rouding-fail.s
+
+diff --git a/gas/ChangeLog b/gas/ChangeLog
+index f3e42b66ec..7014ef36b2 100644
+--- a/gas/ChangeLog
++++ b/gas/ChangeLog
+@@ -1,3 +1,14 @@
++2018-08-23  Kito Cheng  <kito@andestech.com>
++
++	* config/tc-riscv.c (arg_lookup): Checking
++	length before look up.
++	* testsuite/gas/riscv/fence-fail.d: New file.
++	* testsuite/gas/riscv/fence-fail.l: Likewise.
++	* testsuite/gas/riscv/fence-fail.s: Likewise.
++	* testsuite/gas/riscv/rouding-fail.d: Likewise.
++	* testsuite/gas/riscv/rouding-fail.l: Likewise.
++	* testsuite/gas/riscv/rouding-fail.s: Likewise.
++
+ 2018-07-27  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* configure.tgt (riscv*): Accept as alias for riscv32*.
+diff --git a/gas/config/tc-riscv.c b/gas/config/tc-riscv.c
+index bdec30741b..4a3648a9ee 100644
+--- a/gas/config/tc-riscv.c
++++ b/gas/config/tc-riscv.c
+@@ -618,6 +618,9 @@ arg_lookup (char **s, const char *const *array, size_t size, unsigned *regnop)
+   const char *p = strchr (*s, ',');
+   size_t i, len = p ? (size_t)(p - *s) : strlen (*s);
+ 
++  if (len == 0)
++    return FALSE;
++
+   for (i = 0; i < size; i++)
+     if (array[i] != NULL && strncmp (array[i], *s, len) == 0)
+       {
+diff --git a/gas/testsuite/gas/riscv/fence-fail.d b/gas/testsuite/gas/riscv/fence-fail.d
+new file mode 100644
+index 0000000000..05b158fd75
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/fence-fail.d
+@@ -0,0 +1,3 @@
++#as: -march=rv32i
++#source: fence-fail.s
++#error-output: fence-fail.l
+diff --git a/gas/testsuite/gas/riscv/fence-fail.l b/gas/testsuite/gas/riscv/fence-fail.l
+new file mode 100644
+index 0000000000..0d0912d5a9
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/fence-fail.l
+@@ -0,0 +1,4 @@
++.*: Assembler messages:
++.*: Error: illegal operands `fence ,'
++.*: Error: illegal operands `fence w,'
++.*: Error: illegal operands `fence ,w'
+diff --git a/gas/testsuite/gas/riscv/fence-fail.s b/gas/testsuite/gas/riscv/fence-fail.s
+new file mode 100644
+index 0000000000..9ce460ecfa
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/fence-fail.s
+@@ -0,0 +1,4 @@
++target:
++	fence ,
++	fence w,
++	fence ,w
+diff --git a/gas/testsuite/gas/riscv/rouding-fail.d b/gas/testsuite/gas/riscv/rouding-fail.d
+new file mode 100644
+index 0000000000..3544507e8b
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/rouding-fail.d
+@@ -0,0 +1,3 @@
++#as: -march=rv32ifd
++#source: rouding-fail.s
++#error-output: rouding-fail.l
+diff --git a/gas/testsuite/gas/riscv/rouding-fail.l b/gas/testsuite/gas/riscv/rouding-fail.l
+new file mode 100644
+index 0000000000..ea46e7c2d5
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/rouding-fail.l
+@@ -0,0 +1,3 @@
++.*: Assembler messages:
++.*: Error: illegal operands `fadd.s fa1,fa1,fa1,'
++.*: Error: illegal operands `fadd.d fa1,fa1,fa1,'
+diff --git a/gas/testsuite/gas/riscv/rouding-fail.s b/gas/testsuite/gas/riscv/rouding-fail.s
+new file mode 100644
+index 0000000000..d18f53efb5
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/rouding-fail.s
+@@ -0,0 +1,3 @@
++target:
++	fadd.s fa1,fa1,fa1,
++	fadd.d fa1,fa1,fa1,
+-- 
+2.20.1
+

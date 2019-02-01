@@ -1,0 +1,73 @@
+From 9bdd3d7bf4aa8d238c1c260826270e0f429259ad Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Thu, 20 Sep 2018 12:06:28 -0700
+Subject: [PATCH 08/15] RISC-V: Fix library search path for rv32.
+
+2018-09-19  Kito Cheng  <kito@andestech.com>
+ld/
+	* emulparams/elf32lriscv.sh: Correct the library search path.
+	* emulparams/elf32lriscv_ilp32.sh: Likewise.
+	* emulparams/elf32lriscv_ilp32f.sh: Likewise.
+---
+ ld/ChangeLog                        | 6 ++++++
+ ld/emulparams/elf32lriscv.sh        | 2 +-
+ ld/emulparams/elf32lriscv_ilp32.sh  | 2 +-
+ ld/emulparams/elf32lriscv_ilp32f.sh | 2 +-
+ 4 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/ld/ChangeLog b/ld/ChangeLog
+index c07e442c84..19c38bc996 100644
+--- a/ld/ChangeLog
++++ b/ld/ChangeLog
+@@ -1,3 +1,9 @@
++2018-09-20  Kito Cheng  <kito@andestech.com>
++
++	* emulparams/elf32lriscv.sh: Correct the library search path.
++	* emulparams/elf32lriscv_ilp32.sh: Likewise.
++	* emulparams/elf32lriscv_ilp32f.sh: Likewise.
++
+ 2018-07-18  Nick Clifton  <nickc@redhat.com>
+ 
+ 	2.31.1 Release point.
+diff --git a/ld/emulparams/elf32lriscv.sh b/ld/emulparams/elf32lriscv.sh
+index e91f884cec..e405da353c 100644
+--- a/ld/emulparams/elf32lriscv.sh
++++ b/ld/emulparams/elf32lriscv.sh
+@@ -9,7 +9,7 @@ case "$target" in
+   riscv32*-linux*)
+     case "$EMULATION_NAME" in
+       *32*)
+-	LIBPATH_SUFFIX="/ilp32d" ;;
++	LIBPATH_SUFFIX="32/ilp32d 32" ;;
+     esac
+     ;;
+ esac
+diff --git a/ld/emulparams/elf32lriscv_ilp32.sh b/ld/emulparams/elf32lriscv_ilp32.sh
+index ec676bcb1d..6b6affe9a9 100644
+--- a/ld/emulparams/elf32lriscv_ilp32.sh
++++ b/ld/emulparams/elf32lriscv_ilp32.sh
+@@ -8,7 +8,7 @@ case "$target" in
+   riscv32*-linux*)
+     case "$EMULATION_NAME" in
+       *32*)
+-	LIBPATH_SUFFIX="/ilp32" ;;
++	LIBPATH_SUFFIX="32/ilp32 32" ;;
+     esac
+     ;;
+ esac
+diff --git a/ld/emulparams/elf32lriscv_ilp32f.sh b/ld/emulparams/elf32lriscv_ilp32f.sh
+index 63304f9ef9..246f9ed4fb 100644
+--- a/ld/emulparams/elf32lriscv_ilp32f.sh
++++ b/ld/emulparams/elf32lriscv_ilp32f.sh
+@@ -8,7 +8,7 @@ case "$target" in
+   riscv32*-linux*)
+     case "$EMULATION_NAME" in
+       *32*)
+-	LIBPATH_SUFFIX="/ilp32f" ;;
++	LIBPATH_SUFFIX="32/ilp32f 32" ;;
+     esac
+     ;;
+ esac
+-- 
+2.20.1
+

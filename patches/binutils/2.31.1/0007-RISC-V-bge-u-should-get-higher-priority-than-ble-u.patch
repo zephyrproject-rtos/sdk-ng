@@ -1,0 +1,97 @@
+From 05497394b883d914d2cfff6bc622454dd25dc143 Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Mon, 17 Sep 2018 11:43:08 -0700
+Subject: [PATCH 07/15] RISC-V: bge[u] should get higher priority than ble[u].
+
+2018-09-17  Kito Cheng  <kito@andestech.com>
+gas/
+	* testsuite/gas/riscv/bge.d: New.
+	* testsuite/gas/riscv/bge.s: Likewise.
+opcodes/
+	* riscv-opc.c (riscv_opcodes): Adjust the order of ble and
+	  bleu.
+---
+ gas/ChangeLog                 |  5 +++++
+ gas/testsuite/gas/riscv/bge.d | 13 +++++++++++++
+ gas/testsuite/gas/riscv/bge.s |  5 +++++
+ opcodes/ChangeLog             |  4 ++++
+ opcodes/riscv-opc.c           |  4 ++--
+ 5 files changed, 29 insertions(+), 2 deletions(-)
+ create mode 100644 gas/testsuite/gas/riscv/bge.d
+ create mode 100644 gas/testsuite/gas/riscv/bge.s
+
+diff --git a/gas/ChangeLog b/gas/ChangeLog
+index 9bfbe1af73..a11fb146ae 100644
+--- a/gas/ChangeLog
++++ b/gas/ChangeLog
+@@ -1,3 +1,8 @@
++2018-09-17  Kito Cheng  <kito@andestech.com>
++
++	* testsuite/gas/riscv/bge.d: New.
++	* testsuite/gas/riscv/bge.s: Likewise.
++
+ 2018-08-31  Kito Cheng  <kito@andestech.com>
+ 
+ 	* testsuite/gas/riscv/c-fld-fsd-fail.d: New.
+diff --git a/gas/testsuite/gas/riscv/bge.d b/gas/testsuite/gas/riscv/bge.d
+new file mode 100644
+index 0000000000..b3db91c7e1
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/bge.d
+@@ -0,0 +1,13 @@
++#as:
++#objdump: -d
++
++.*:[ 	]+file format .*
++
++
++Disassembly of section .text:
++
++0+000 <foo>:
++[ 	]+0:[ 	]+00c5d063[ 	]+bge[ 	]+a1,a2,0 \<foo\>
++[ 	]+4:[ 	]+feb65ee3[ 	]+bge[ 	]+a2,a1,0 \<foo\>
++[ 	]+8:[ 	]+fec5fce3[ 	]+bgeu[ 	]+a1,a2,0 \<foo\>
++[ 	]+c:[ 	]+feb67ae3[ 	]+bgeu[ 	]+a2,a1,0 \<foo\>
+diff --git a/gas/testsuite/gas/riscv/bge.s b/gas/testsuite/gas/riscv/bge.s
+new file mode 100644
+index 0000000000..a28d25ea02
+--- /dev/null
++++ b/gas/testsuite/gas/riscv/bge.s
+@@ -0,0 +1,5 @@
++foo:
++	bge a1, a2, foo
++	ble a1, a2, foo
++	bgeu a1, a2, foo
++	bleu a1, a2, foo
+diff --git a/opcodes/ChangeLog b/opcodes/ChangeLog
+index fc2522ec9b..3a4045075d 100644
+--- a/opcodes/ChangeLog
++++ b/opcodes/ChangeLog
+@@ -1,3 +1,7 @@
++2018-09-17  Kito Cheng  <kito@andestech.com>
++
++	* riscv-opc.c (riscv_opcodes): Adjust the order of ble and bleu.
++
+ 2018-08-31  Kito Cheng  <kito@andestech.com>
+ 
+ 	* riscv-opc.c (riscv_opcodes): Fix incorrect subset info for
+diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
+index 945164a511..e0f711811f 100644
+--- a/opcodes/riscv-opc.c
++++ b/opcodes/riscv-opc.c
+@@ -250,10 +250,10 @@ const struct riscv_opcode riscv_opcodes[] =
+ {"beq",         0, {"I", 0},   "s,t,p",  MATCH_BEQ, MASK_BEQ, match_opcode, INSN_CONDBRANCH },
+ {"blez",        0, {"I", 0},   "t,p",  MATCH_BGE, MASK_BGE | MASK_RS1, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+ {"bgez",        0, {"I", 0},   "s,p",  MATCH_BGE, MASK_BGE | MASK_RS2, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+-{"ble",         0, {"I", 0},   "t,s,p",  MATCH_BGE, MASK_BGE, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+-{"bleu",        0, {"I", 0},   "t,s,p",  MATCH_BGEU, MASK_BGEU, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+ {"bge",         0, {"I", 0},   "s,t,p",  MATCH_BGE, MASK_BGE, match_opcode, INSN_CONDBRANCH },
+ {"bgeu",        0, {"I", 0},   "s,t,p",  MATCH_BGEU, MASK_BGEU, match_opcode, INSN_CONDBRANCH },
++{"ble",         0, {"I", 0},   "t,s,p",  MATCH_BGE, MASK_BGE, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
++{"bleu",        0, {"I", 0},   "t,s,p",  MATCH_BGEU, MASK_BGEU, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+ {"bltz",        0, {"I", 0},   "s,p",  MATCH_BLT, MASK_BLT | MASK_RS2, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+ {"bgtz",        0, {"I", 0},   "t,p",  MATCH_BLT, MASK_BLT | MASK_RS1, match_opcode, INSN_ALIAS|INSN_CONDBRANCH },
+ {"blt",         0, {"I", 0},   "s,t,p",  MATCH_BLT, MASK_BLT, match_opcode, INSN_CONDBRANCH },
+-- 
+2.20.1
+

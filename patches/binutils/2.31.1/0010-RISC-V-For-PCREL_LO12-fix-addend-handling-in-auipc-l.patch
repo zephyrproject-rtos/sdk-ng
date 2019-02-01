@@ -1,0 +1,55 @@
+From 91416315d21fe92cb6ea42b4229829ffc9139895 Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Mon, 24 Sep 2018 14:36:41 -0700
+Subject: [PATCH 10/15] RISC-V: For PCREL_LO12, fix addend handling in auipc
+ lookup.
+
+	bfd/
+	* elfnn-riscv.c (_bfd_riscv_relax_pc) <R_RISCV_PCREL_LO12_I>: New local
+	hi_sec_off which is symbol address with addend subtracted.  Use in
+	riscv_find_pcgp_hi_reloc and riscv_record_pcgp_lo_reloc calls.
+---
+ bfd/ChangeLog     | 4 ++++
+ bfd/elfnn-riscv.c | 9 +++++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/bfd/ChangeLog b/bfd/ChangeLog
+index 4a2a861c0b..f353103967 100644
+--- a/bfd/ChangeLog
++++ b/bfd/ChangeLog
+@@ -1,5 +1,9 @@
+ 2018-09-24  Jim Wilson  <jimw@sifive.com>
+ 
++	* elfnn-riscv.c (_bfd_riscv_relax_pc) <R_RISCV_PCREL_LO12_I>: New local
++	hi_sec_off which is symbol address with addend subtracted.  Use in
++	riscv_find_pcgp_hi_reloc and riscv_record_pcgp_lo_reloc calls.
++
+ 	* elfnn-riscv.c (riscv_resolve_pcrel_lo_relocs): Add check for reloc
+ 	overflow with addend.  Use reloc_dangerous instead of reloc_overflow.
+ 	Add strings for the two errors handled here.
+diff --git a/bfd/elfnn-riscv.c b/bfd/elfnn-riscv.c
+index 63ff07e13a..f3e2cc7c37 100644
+--- a/bfd/elfnn-riscv.c
++++ b/bfd/elfnn-riscv.c
+@@ -3226,11 +3226,16 @@ _bfd_riscv_relax_pc  (bfd *abfd,
+     case R_RISCV_PCREL_LO12_I:
+     case R_RISCV_PCREL_LO12_S:
+       {
++	/* If the %lo has an addend, it isn't for the label pointing at the
++	   hi part instruction, but rather for the symbol pointed at by the
++	   hi part instruction.  So we must subtract it here for the lookup.
++	   It is still used below in the final symbol address.  */
++	bfd_vma hi_sec_off = symval - sec_addr (sym_sec) - rel->r_addend;
+ 	riscv_pcgp_hi_reloc *hi = riscv_find_pcgp_hi_reloc (pcgp_relocs,
+-							    symval - sec_addr(sym_sec));
++							    hi_sec_off);
+ 	if (hi == NULL)
+ 	  {
+-	    riscv_record_pcgp_lo_reloc (pcgp_relocs, symval - sec_addr(sym_sec));
++	    riscv_record_pcgp_lo_reloc (pcgp_relocs, hi_sec_off);
+ 	    return TRUE;
+ 	  }
+ 
+-- 
+2.20.1
+
