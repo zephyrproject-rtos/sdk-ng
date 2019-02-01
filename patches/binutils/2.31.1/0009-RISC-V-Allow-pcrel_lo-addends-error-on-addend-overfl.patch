@@ -1,0 +1,179 @@
+From eaa6ffd53be58de015ba15a703ce7edb377dae81 Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Mon, 24 Sep 2018 14:05:32 -0700
+Subject: [PATCH 09/15] RISC-V: Allow pcrel_lo addends, error on addend
+ overflow.
+
+	bfd/
+	* elfnn-riscv.c (riscv_resolve_pcrel_lo_relocs): Add check for reloc
+	overflow with addend.  Use reloc_dangerous instead of reloc_overflow.
+	Add strings for the two errors handled here.
+	(riscv_elf_relocate_section) In case R_RISCV_PCREL_LO12_I, rewrite
+	comment.  Only give error with addend when used with section symbol.
+	In case bfd_reloc_dangerous, update error string.
+
+	ld/
+	* testsuite/ld-riscv-elf/ld-riscv-elf.exp: Run pcrel-lo-addend-2.
+	* testsuite/ld-riscv/elf/ld-riscv-elf/pcrel-lo-addend-2.d: New.
+	* testsuite/ld-riscv/elf/ld-riscv-elf/pcrel-lo-addend-2.s: New.
+	* testsuite/ld-riscv/elf/ld-riscv-elf/pcrel-lo-addend.d: Update name
+	and error string.
+---
+ bfd/ChangeLog                                 |  9 ++++++
+ bfd/elfnn-riscv.c                             | 28 +++++++++++--------
+ ld/ChangeLog                                  |  8 ++++++
+ ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp    |  1 +
+ ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.d |  5 ++++
+ ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.s | 16 +++++++++++
+ ld/testsuite/ld-riscv-elf/pcrel-lo-addend.d   |  4 +--
+ 7 files changed, 58 insertions(+), 13 deletions(-)
+ create mode 100644 ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.d
+ create mode 100644 ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.s
+
+diff --git a/bfd/ChangeLog b/bfd/ChangeLog
+index 2325c59daf..4a2a861c0b 100644
+--- a/bfd/ChangeLog
++++ b/bfd/ChangeLog
+@@ -1,3 +1,12 @@
++2018-09-24  Jim Wilson  <jimw@sifive.com>
++
++	* elfnn-riscv.c (riscv_resolve_pcrel_lo_relocs): Add check for reloc
++	overflow with addend.  Use reloc_dangerous instead of reloc_overflow.
++	Add strings for the two errors handled here.
++	(riscv_elf_relocate_section) In case R_RISCV_PCREL_LO12_I, rewrite
++	comment.  Only give error with addend when used with section symbol.
++	In case bfd_reloc_dangerous, update error string.
++
+ 2018-08-02  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* elfnn-riscv.c (riscv_elf_create_dynamic_sections): For .tdata.dyn,
+diff --git a/bfd/elfnn-riscv.c b/bfd/elfnn-riscv.c
+index 4be3eceda8..63ff07e13a 100644
+--- a/bfd/elfnn-riscv.c
++++ b/bfd/elfnn-riscv.c
+@@ -1651,11 +1651,16 @@ riscv_resolve_pcrel_lo_relocs (riscv_pcrel_relocs *p)
+ 
+       riscv_pcrel_hi_reloc search = {r->addr, 0};
+       riscv_pcrel_hi_reloc *entry = htab_find (p->hi_relocs, &search);
+-      if (entry == NULL)
++      if (entry == NULL
++	  /* Check for overflow into bit 11 when adding reloc addend.  */
++	  || (! (entry->value & 0x800)
++	      && ((entry->value + r->reloc->r_addend) & 0x800)))
+ 	{
+-	  ((*r->info->callbacks->reloc_overflow)
+-	   (r->info, NULL, r->name, r->howto->name, (bfd_vma) 0,
+-	    input_bfd, r->input_section, r->reloc->r_offset));
++	  char *string = (entry == NULL
++			  ? "%pcrel_lo missing matching %pcrel_hi"
++			  : "%pcrel_lo overflow with an addend");
++	  (*r->info->callbacks->reloc_dangerous)
++	    (r->info, string, input_bfd, r->input_section, r->reloc->r_offset);
+ 	  return TRUE;
+ 	}
+ 
+@@ -2026,11 +2031,12 @@ riscv_elf_relocate_section (bfd *output_bfd,
+ 
+ 	case R_RISCV_PCREL_LO12_I:
+ 	case R_RISCV_PCREL_LO12_S:
+-	  /* Addends are not allowed, because then riscv_relax_delete_bytes
+-	     would have to search through all relocs to update the addends.
+-	     Also, riscv_resolve_pcrel_lo_relocs does not support addends
+-	     when searching for a matching hi reloc.  */
+-	  if (rel->r_addend)
++	  /* We don't allow section symbols plus addends as the auipc address,
++	     because then riscv_relax_delete_bytes would have to search through
++	     all relocs to update these addends.  This is also ambiguous, as
++	     we do allow offsets to be added to the target address, which are
++	     not to be used to find the auipc address.  */
++	  if ((ELF_ST_TYPE (sym->st_info) == STT_SECTION) && rel->r_addend)
+ 	    {
+ 	      r = bfd_reloc_dangerous;
+ 	      break;
+@@ -2288,8 +2294,8 @@ riscv_elf_relocate_section (bfd *output_bfd,
+ 
+ 	case bfd_reloc_dangerous:
+ 	  info->callbacks->reloc_dangerous
+-	    (info, "%pcrel_lo with addend", input_bfd, input_section,
+-	     rel->r_offset);
++	    (info, "%pcrel_lo section symbol with an addend", input_bfd,
++	     input_section, rel->r_offset);
+ 	  break;
+ 
+ 	default:
+diff --git a/ld/ChangeLog b/ld/ChangeLog
+index 19c38bc996..eaebcc04fe 100644
+--- a/ld/ChangeLog
++++ b/ld/ChangeLog
+@@ -1,3 +1,11 @@
++2018-09-24  Jim Wilson  <jimw@sifive.com>
++
++	* testsuite/ld-riscv-elf/ld-riscv-elf.exp: Run pcrel-lo-addend-2.
++	* testsuite/ld-riscv/elf/ld-riscv-elf/pcrel-lo-addend-2.d: New.
++	* testsuite/ld-riscv/elf/ld-riscv-elf/pcrel-lo-addend-2.s: New.
++	* testsuite/ld-riscv/elf/ld-riscv-elf/pcrel-lo-addend.d: Update name
++	and error string.
++
+ 2018-09-20  Kito Cheng  <kito@andestech.com>
+ 
+ 	* emulparams/elf32lriscv.sh: Correct the library search path.
+diff --git a/ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp b/ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp
+index c06b618744..071f3a221a 100644
+--- a/ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp
++++ b/ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp
+@@ -23,6 +23,7 @@ if [istarget "riscv*-*-*"] {
+     run_dump_test "c-lui"
+     run_dump_test "disas-jalr"
+     run_dump_test "pcrel-lo-addend"
++    run_dump_test "pcrel-lo-addend-2"
+     run_ld_link_tests {
+ 	{ "Weak reference 32" "-T weakref.ld -melf32lriscv" ""
+ 	    "-march=rv32i -mabi=ilp32" {weakref32.s}
+diff --git a/ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.d b/ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.d
+new file mode 100644
+index 0000000000..9e94c5c399
+--- /dev/null
++++ b/ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.d
+@@ -0,0 +1,5 @@
++#name: %pcrel_lo overflow with an addend
++#source: pcrel-lo-addend-2.s
++#as: -march=rv32ic
++#ld: -melf32lriscv
++#error: .*dangerous relocation: %pcrel_lo overflow with an addend
+diff --git a/ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.s b/ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.s
+new file mode 100644
+index 0000000000..b7f82129ef
+--- /dev/null
++++ b/ld/testsuite/ld-riscv-elf/pcrel-lo-addend-2.s
+@@ -0,0 +1,16 @@
++	.text
++	.globl _start
++	.align 3
++_start:
++	nop
++	.LA0: auipc	a5,%pcrel_hi(ll)
++	lw	a0,%pcrel_lo(.LA0)(a5)
++	lw	a0,%pcrel_lo(.LA0+4)(a5)
++	ret
++	.globl ll
++	.data
++	.align 3
++	.zero 2024
++ll:
++	.word 0
++	.word 0
+diff --git a/ld/testsuite/ld-riscv-elf/pcrel-lo-addend.d b/ld/testsuite/ld-riscv-elf/pcrel-lo-addend.d
+index bd61b4bbff..ad658be844 100644
+--- a/ld/testsuite/ld-riscv-elf/pcrel-lo-addend.d
++++ b/ld/testsuite/ld-riscv-elf/pcrel-lo-addend.d
+@@ -1,5 +1,5 @@
+-#name: %pcrel_lo with an addend
++#name: %pcrel_lo section symbol with an addend
+ #source: pcrel-lo-addend.s
+ #as: -march=rv32ic
+ #ld: -melf32lriscv
+-#error: .*dangerous relocation: %pcrel_lo with addend
++#error: .*dangerous relocation: %pcrel_lo section symbol with an addend
+-- 
+2.20.1
+

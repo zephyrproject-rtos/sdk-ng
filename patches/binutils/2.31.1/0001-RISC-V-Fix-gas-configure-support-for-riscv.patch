@@ -1,0 +1,41 @@
+From 7d14370fd0026c9f3fd563dc4be6e97a410c0fb5 Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Fri, 27 Jul 2018 14:35:29 -0700
+Subject: [PATCH 01/15] RISC-V: Fix gas configure support for riscv*-*-*.
+
+	gas/
+	* configure.tgt (riscv*): Accept as alias for riscv32*.
+---
+ gas/ChangeLog     | 4 ++++
+ gas/configure.tgt | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gas/ChangeLog b/gas/ChangeLog
+index bb4541900d..f3e42b66ec 100644
+--- a/gas/ChangeLog
++++ b/gas/ChangeLog
+@@ -1,3 +1,7 @@
++2018-07-27  Jim Wilson  <jimw@sifive.com>
++
++	* configure.tgt (riscv*): Accept as alias for riscv32*.
++
+ 2018-07-18  Nick Clifton  <nickc@redhat.com>
+ 
+ 	2.31.1 Release point.
+diff --git a/gas/configure.tgt b/gas/configure.tgt
+index 3d0415c1aa..6df7dea31f 100644
+--- a/gas/configure.tgt
++++ b/gas/configure.tgt
+@@ -89,8 +89,8 @@ case ${cpu} in
+   pj*)			cpu_type=pj endian=big ;;
+   powerpc*le*)		cpu_type=ppc endian=little ;;
+   powerpc*)		cpu_type=ppc endian=big ;;
+-  riscv32*)		cpu_type=riscv endian=little arch=riscv32 ;;
+   riscv64*)		cpu_type=riscv endian=little arch=riscv64 ;;
++  riscv32* | riscv*)	cpu_type=riscv endian=little arch=riscv32 ;;
+   rs6000*)		cpu_type=ppc ;;
+   rl78*)		cpu_type=rl78 ;;
+   rx)			cpu_type=rx ;;
+-- 
+2.20.1
+
