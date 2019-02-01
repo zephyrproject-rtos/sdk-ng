@@ -1,0 +1,39 @@
+From 489c9e74775b580b9cb57adc80ef3277af5fee11 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Sat, 14 Jul 2018 20:05:39 +0000
+Subject: [PATCH 16/22] RISC-V: Fix nested function trampolines.
+
+	gcc/
+	* config/riscv/linux.h (TARGET_ASM_FILE_END): New.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@262660 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog            | 4 ++++
+ gcc/config/riscv/linux.h | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 0fe45890ae9..3a249233367 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,7 @@
++2018-07-14  Jim Wilson  <jimw@sifive.com>
++
++	* config/riscv/linux.h (TARGET_ASM_FILE_END): New.
++
+ 2018-07-12  Kito Cheng  <kito.cheng@gmail.com>
+ 
+         * config/riscv/riscv.c (enum riscv_privilege_levels): Add UNKNOWN_MODE.
+diff --git a/gcc/config/riscv/linux.h b/gcc/config/riscv/linux.h
+index 85561846dad..e208c95fe13 100644
+--- a/gcc/config/riscv/linux.h
++++ b/gcc/config/riscv/linux.h
+@@ -66,3 +66,5 @@ along with GCC; see the file COPYING3.  If not see
+       %{rdynamic:-export-dynamic} \
+       -dynamic-linker " GNU_USER_DYNAMIC_LINKER "} \
+     %{static:-static}}"
++
++#define TARGET_ASM_FILE_END file_end_indicate_exec_stack
+-- 
+2.20.1
+

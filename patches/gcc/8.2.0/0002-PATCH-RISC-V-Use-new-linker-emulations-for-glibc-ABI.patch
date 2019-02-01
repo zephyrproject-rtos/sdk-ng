@@ -1,0 +1,65 @@
+From 0b345eb3a1ec62baa9d9c82671e0842a194cb8a8 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Tue, 8 May 2018 21:27:04 +0000
+Subject: [PATCH 02/22] [PATCH] RISC-V: Use new linker emulations for glibc
+ ABI.
+
+	gcc/
+	* config/riscv/linux.h (MUSL_ABI_SUFFIX): Delete unnecessary backslash.
+	(LD_EMUL_SUFFIX): New.
+	(LINK_SPEC): Use it.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260056 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog            |  6 ++++++
+ gcc/config/riscv/linux.h | 12 ++++++++++--
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index b93dae5dfb0..1083f9ee4e8 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,9 @@
++2018-05-08  Jim Wilson  <jimw@sifive.com>
++
++	* config/riscv/linux.h (MUSL_ABI_SUFFIX): Delete unnecessary backslash.
++	(LD_EMUL_SUFFIX): New.
++	(LINK_SPEC): Use it.
++
+ 2018-07-26  Release Manager
+ 
+ 	* GCC 8.2.0 released.
+diff --git a/gcc/config/riscv/linux.h b/gcc/config/riscv/linux.h
+index aa8a28d5d31..85561846dad 100644
+--- a/gcc/config/riscv/linux.h
++++ b/gcc/config/riscv/linux.h
+@@ -30,7 +30,7 @@ along with GCC; see the file COPYING3.  If not see
+   "%{mabi=ilp32d:}" \
+   "%{mabi=lp64:-sf}" \
+   "%{mabi=lp64f:-sp}" \
+-  "%{mabi=lp64d:}" \
++  "%{mabi=lp64d:}"
+ 
+ #undef MUSL_DYNAMIC_LINKER
+ #define MUSL_DYNAMIC_LINKER "/lib/ld-musl-riscv" XLEN_SPEC MUSL_ABI_SUFFIX ".so.1"
+@@ -49,8 +49,16 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ #define CPP_SPEC "%{pthread:-D_REENTRANT}"
+ 
++#define LD_EMUL_SUFFIX \
++  "%{mabi=lp64d:}" \
++  "%{mabi=lp64f:_lp64f}" \
++  "%{mabi=lp64:_lp64}" \
++  "%{mabi=ilp32d:}" \
++  "%{mabi=ilp32f:_ilp32f}" \
++  "%{mabi=ilp32:_ilp32}"
++
+ #define LINK_SPEC "\
+--melf" XLEN_SPEC "lriscv \
++-melf" XLEN_SPEC "lriscv" LD_EMUL_SUFFIX " \
+ %{mno-relax:--no-relax} \
+ %{shared} \
+   %{!shared: \
+-- 
+2.20.1
+

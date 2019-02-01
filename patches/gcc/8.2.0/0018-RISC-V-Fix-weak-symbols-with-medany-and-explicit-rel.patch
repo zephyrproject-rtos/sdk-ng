@@ -1,0 +1,86 @@
+From 484742c5251b501473841fcc1820f58a62c4d165 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Tue, 25 Sep 2018 22:52:38 +0000
+Subject: [PATCH 18/22] RISC-V: Fix weak symbols with medany and explicit
+ relocs.
+
+	gcc/
+	* config/riscv/riscv.c (riscv_split_symbol): Mark auipc label as weak
+	when target symbol is weak.
+
+	gcc/testsuite/
+	* gcc.target/riscv/weak-1.c: New.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@264586 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                           |  5 +++++
+ gcc/config/riscv/riscv.c                |  5 +++++
+ gcc/testsuite/ChangeLog                 |  4 ++++
+ gcc/testsuite/gcc.target/riscv/weak-1.c | 14 ++++++++++++++
+ 4 files changed, 28 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/weak-1.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index da0009156fc..70ab10f99fc 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,8 @@
++2018-09-25  Jim Wilson  <jimw@sifive.com>
++
++	* config/riscv/riscv.c (riscv_split_symbol): Mark auipc label as weak
++	when target symbol is weak.
++
+ 2018-09-24  Jim Wilson  <jimw@sifive.com>
+ 
+ 	PR target/87391
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index c10c58e3cd5..76bb74fb2d4 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -1097,6 +1097,11 @@ riscv_split_symbol (rtx temp, rtx addr, machine_mode mode, rtx *low_out)
+ 
+ 	  label = gen_rtx_SYMBOL_REF (Pmode, ggc_strdup (buf));
+ 	  SYMBOL_REF_FLAGS (label) |= SYMBOL_FLAG_LOCAL;
++	  /* ??? Ugly hack to make weak symbols work.  May need to change the
++	     RTL for the auipc and/or low patterns to get a better fix for
++	     this.  */
++	  if (! nonzero_address_p (addr))
++	    SYMBOL_REF_WEAK (label) = 1;
+ 
+ 	  if (temp == NULL)
+ 	    temp = gen_reg_rtx (Pmode);
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index 0fa6c01b444..d0f15745998 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,7 @@
++2018-09-25  Jim Wilson  <jimw@sifive.com>
++
++	* gcc.target/riscv/weak-1.c: New.
++
+ 2018-07-12  Kito Cheng  <kito.cheng@gmail.com>
+ 
+         * gcc.target/riscv/interrupt-conflict-mode.c: New.
+diff --git a/gcc/testsuite/gcc.target/riscv/weak-1.c b/gcc/testsuite/gcc.target/riscv/weak-1.c
+new file mode 100644
+index 00000000000..0f20501f7c5
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/weak-1.c
+@@ -0,0 +1,14 @@
++/* { dg-do compile } */
++/* { dg-options "-mcmodel=medany -mexplicit-relocs -O" } */
++
++/* Verify that the branch doesn't get optimized away.  */
++extern int weak_func(void) __attribute__ ((weak));
++
++int
++sub (void)
++{
++  if (weak_func)
++    return weak_func ();
++  return 0;
++}
++/* { dg-final { scan-assembler "b\(ne|eq\)" } } */
+-- 
+2.20.1
+
