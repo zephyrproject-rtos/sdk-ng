@@ -1,0 +1,40 @@
+From 58c5d137f0eb55624a6396d1f71ace9dc357fb09 Mon Sep 17 00:00:00 2001
+From: sh <sh@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Fri, 15 Jun 2018 05:19:44 +0000
+Subject: [PATCH 11/22] RISC-V: Add custom RTEMS multilibs
+
+Add multilib variants for -march=rv64imafd, e.g. to support the BOOMv2 core.
+
+Add -mcmodel=medany as a variant of the 64-bit multilibs for RTEMS.  The
+rationale for this change is that several existing RISC-V chips map the
+RAM at 0x80000000.  In RTEMS, we do not use virtual memory, so
+applications will run at this location which is outside the +-2GiB range
+in a 64-bit configuration.
+
+gcc/
+	* config.gcc (riscv*-*-elf* | riscv*-*-rtems*): Use custom
+	multilibs for *-*-rtems*.
+	* config/riscv/t-rtems: New file.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@261619 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index ef462110cd7..5f84232960e 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,9 @@
++2018-06-15  Sebastian Huber  <sebastian.huber@embedded-brains.de>
++
++	* config.gcc (riscv*-*-elf* | riscv*-*-rtems*): Use custom
++	multilibs for *-*-rtems*.
++	* config/riscv/t-rtems: New file.
++
+ 2018-06-06  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* config/riscv/riscv.c (enum riscv_privilege_levels): New.
+-- 
+2.20.1
+

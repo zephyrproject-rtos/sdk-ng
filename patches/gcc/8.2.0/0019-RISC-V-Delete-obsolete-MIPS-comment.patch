@@ -1,0 +1,43 @@
+From f23bad71e986bc205494e4721127f1b2f167a1b0 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Wed, 26 Sep 2018 18:42:19 +0000
+Subject: [PATCH 19/22] RISC-V: Delete obsolete MIPS comment.
+
+	gcc/
+	* config/riscv/riscv.h (FUNCTION_ARG_REGNO_P): Fix comment.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@264652 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog            | 4 ++++
+ gcc/config/riscv/riscv.h | 3 +--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 70ab10f99fc..3e55d506d6a 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,7 @@
++2018-09-26  Jim Wilson  <jimw@sifive.com>
++
++	* config/riscv/riscv.h (FUNCTION_ARG_REGNO_P): Fix comment.
++
+ 2018-09-25  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* config/riscv/riscv.c (riscv_split_symbol): Mark auipc label as weak
+diff --git a/gcc/config/riscv/riscv.h b/gcc/config/riscv/riscv.h
+index 4bbb491ac87..3c9f96d6b4d 100644
+--- a/gcc/config/riscv/riscv.h
++++ b/gcc/config/riscv/riscv.h
+@@ -516,8 +516,7 @@ enum reg_class
+ #define FUNCTION_VALUE_REGNO_P(N) ((N) == GP_RETURN || (N) == FP_RETURN)
+ 
+ /* 1 if N is a possible register number for function argument passing.
+-   We have no FP argument registers when soft-float.  When FP registers
+-   are 32 bits, we can't directly reference the odd numbered ones.  */
++   We have no FP argument registers when soft-float.  */
+ 
+ /* Accept arguments in a0-a7, and in fa0-fa7 if permitted by the ABI.  */
+ #define FUNCTION_ARG_REGNO_P(N)						\
+-- 
+2.20.1
+

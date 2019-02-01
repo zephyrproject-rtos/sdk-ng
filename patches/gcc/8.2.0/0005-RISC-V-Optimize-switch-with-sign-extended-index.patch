@@ -1,0 +1,164 @@
+From e89f9f869fa27a75d290920784e45ad8b3c644ad Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Thu, 17 May 2018 22:37:38 +0000
+Subject: [PATCH 05/22] RISC-V: Optimize switch with sign-extended index.
+
+	gcc/
+	* expr.c (do_tablejump): When converting index to Pmode, if we have a
+	sign extended promoted subreg, and the range does not have the sign bit
+	set, then do a sign extend.
+
+	* config/riscv/riscv.c (riscv_extend_comparands): In unsigned QImode
+	test, check for sign extended subreg and/or constant operands, and
+	do a sign extend in that case.
+
+	gcc/testsuite/
+	* gcc.target/riscv/switch-qi.c: New.
+	* gcc.target/riscv/switch-si.c: New.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260340 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                              | 10 ++++++++++
+ gcc/config/riscv/riscv.c                   | 14 ++++++++++++--
+ gcc/expr.c                                 | 19 +++++++++++++++++--
+ gcc/testsuite/ChangeLog                    |  5 +++++
+ gcc/testsuite/gcc.target/riscv/switch-qi.c | 15 +++++++++++++++
+ gcc/testsuite/gcc.target/riscv/switch-si.c | 15 +++++++++++++++
+ 6 files changed, 74 insertions(+), 4 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/switch-qi.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/switch-si.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index aa2af8043f3..4cbec373314 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,13 @@
++2018-05-17  Jim Wilson  <jimw@sifive.com>
++
++	* expr.c (do_tablejump): When converting index to Pmode, if we have a
++	sign extended promoted subreg, and the range does not have the sign bit
++	set, then do a sign extend.
++
++	* config/riscv/riscv.c (riscv_extend_comparands): In unsigned QImode
++	test, check for sign extended subreg and/or constant operands, and
++	do a sign extend in that case.
++
+ 2018-05-16  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* config/riscv/riscv.md (<optab>si3_mask, <optab>si3_mask_1): Prepend
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index 2a8f87d1e94..b4975888bbb 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -2002,8 +2002,18 @@ riscv_extend_comparands (rtx_code code, rtx *op0, rtx *op1)
+   /* Comparisons consider all XLEN bits, so extend sub-XLEN values.  */
+   if (GET_MODE_SIZE (word_mode) > GET_MODE_SIZE (GET_MODE (*op0)))
+     {
+-      /* It is more profitable to zero-extend QImode values.  */
+-      if (unsigned_condition (code) == code && GET_MODE (*op0) == QImode)
++      /* It is more profitable to zero-extend QImode values.  But not if the
++	 first operand has already been sign-extended, and the second one is
++	 is a constant or has already been sign-extended also.  */
++      if (unsigned_condition (code) == code
++	  && (GET_MODE (*op0) == QImode
++	      && ! (GET_CODE (*op0) == SUBREG
++		    && SUBREG_PROMOTED_VAR_P (*op0)
++		    && SUBREG_PROMOTED_SIGNED_P (*op0)
++		    && (CONST_INT_P (*op1)
++			|| (GET_CODE (*op1) == SUBREG
++			    && SUBREG_PROMOTED_VAR_P (*op1)
++			    && SUBREG_PROMOTED_SIGNED_P (*op1))))))
+ 	{
+ 	  *op0 = gen_rtx_ZERO_EXTEND (word_mode, *op0);
+ 	  if (CONST_INT_P (*op1))
+diff --git a/gcc/expr.c b/gcc/expr.c
+index 9ca466144be..b14577f780f 100644
+--- a/gcc/expr.c
++++ b/gcc/expr.c
+@@ -11779,11 +11779,26 @@ do_tablejump (rtx index, machine_mode mode, rtx range, rtx table_label,
+     emit_cmp_and_jump_insns (index, range, GTU, NULL_RTX, mode, 1,
+ 			     default_label, default_probability);
+ 
+-
+   /* If index is in range, it must fit in Pmode.
+      Convert to Pmode so we can index with it.  */
+   if (mode != Pmode)
+-    index = convert_to_mode (Pmode, index, 1);
++    {
++      unsigned int width;
++
++      /* We know the value of INDEX is between 0 and RANGE.  If we have a
++	 sign-extended subreg, and RANGE does not have the sign bit set, then
++	 we have a value that is valid for both sign and zero extension.  In
++	 this case, we get better code if we sign extend.  */
++      if (GET_CODE (index) == SUBREG
++	  && SUBREG_PROMOTED_VAR_P (index)
++	  && SUBREG_PROMOTED_SIGNED_P (index)
++	  && ((width = GET_MODE_PRECISION (as_a <scalar_int_mode> (mode)))
++	      <= HOST_BITS_PER_WIDE_INT)
++	  && ! (UINTVAL (range) & (HOST_WIDE_INT_1U << (width - 1))))
++	index = convert_to_mode (Pmode, index, 0);
++      else
++	index = convert_to_mode (Pmode, index, 1);
++    }
+ 
+   /* Don't let a MEM slip through, because then INDEX that comes
+      out of PIC_CASE_VECTOR_ADDRESS won't be a valid address,
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index b80ff889f15..ff95cde01ed 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,8 @@
++2018-05-17  Jim Wilson  <jimw@sifive.com>
++
++	* gcc.target/riscv/switch-qi.c: New.
++	* gcc.target/riscv/switch-si.c: New.
++
+ 2018-07-26  Release Manager
+ 
+ 	* GCC 8.2.0 released.
+diff --git a/gcc/testsuite/gcc.target/riscv/switch-qi.c b/gcc/testsuite/gcc.target/riscv/switch-qi.c
+new file mode 100644
+index 00000000000..973d09aaaf1
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/switch-qi.c
+@@ -0,0 +1,15 @@
++/* { dg-do compile { target { riscv64*-*-* } } } */
++/* { dg-options "-march=rv64gc -mabi=lp64 -O2" } */
++
++/* Test for riscv_extend_comparands patch.  */
++extern void asdf(int);
++void foo(signed char x) {
++  switch (x) {
++  case 0: asdf(10); break;
++  case 1: asdf(11); break;
++  case 2: asdf(12); break;
++  case 3: asdf(13); break;
++  case 4: asdf(14); break;
++  }
++}
++/* { dg-final { scan-assembler-not "andi" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/switch-si.c b/gcc/testsuite/gcc.target/riscv/switch-si.c
+new file mode 100644
+index 00000000000..de4d68f4d0e
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/switch-si.c
+@@ -0,0 +1,15 @@
++/* { dg-do compile } */
++/* { dg-options "-O2" } */
++
++/* Test for do_tablejump patch.  */
++extern void asdf(int);
++void foo(int x) {
++  switch (x) {
++  case 0: asdf(10); break;
++  case 1: asdf(11); break;
++  case 2: asdf(12); break;
++  case 3: asdf(13); break;
++  case 4: asdf(14); break;
++  }
++}
++/* { dg-final { scan-assembler-not "srli" } } */
+-- 
+2.20.1
+
