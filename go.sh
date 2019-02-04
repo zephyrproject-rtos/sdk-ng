@@ -111,6 +111,6 @@ for t in ${TARGETS}; do
 	fi
 
 	popd
-	rm -rf  build_${t}
+	test -n ${DEBUG_BUILD} || rm -rf  build_${t}
 
 done
