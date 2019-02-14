@@ -1,0 +1,62 @@
+From e6b0389124aca8a2c772bde752a3be9bd34eb098 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Thu, 14 Feb 2019 07:34:09 -0600
+Subject: [PATCH] add newlib 3.1.0
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ packages/newlib/3.1.0.20181231/chksum                         | 4 ----
+ packages/newlib/3.1.0.20181231/version.desc                   | 1 -
+ .../0000-fix-unaligned-access-memcpy-m68k.patch               | 0
+ .../newlib/{3.1.0.20181231 => 3.1.0}/0001-fix-mt-cflags.patch | 0
+ packages/newlib/3.1.0/chksum                                  | 4 ++++
+ packages/newlib/3.1.0/version.desc                            | 0
+ 6 files changed, 4 insertions(+), 5 deletions(-)
+ delete mode 100644 packages/newlib/3.1.0.20181231/chksum
+ delete mode 100644 packages/newlib/3.1.0.20181231/version.desc
+ rename packages/newlib/{3.1.0.20181231 => 3.1.0}/0000-fix-unaligned-access-memcpy-m68k.patch (100%)
+ rename packages/newlib/{3.1.0.20181231 => 3.1.0}/0001-fix-mt-cflags.patch (100%)
+ create mode 100644 packages/newlib/3.1.0/chksum
+ create mode 100644 packages/newlib/3.1.0/version.desc
+
+diff --git a/packages/newlib/3.1.0.20181231/chksum b/packages/newlib/3.1.0.20181231/chksum
+deleted file mode 100644
+index 5a110684..00000000
+--- a/packages/newlib/3.1.0.20181231/chksum
++++ /dev/null
+@@ -1,4 +0,0 @@
+-md5 newlib-3.1.0.20181231.tar.gz d25fd33b39147d79741faece37dd33a8
+-sha1 newlib-3.1.0.20181231.tar.gz 82e378ae860308da57a4ec0327b8de150dce9451
+-sha256 newlib-3.1.0.20181231.tar.gz 9e12fea7297648b114434033ed4458755afe7b9b6c7d58123389e82bd37681c0
+-sha512 newlib-3.1.0.20181231.tar.gz 5c9035da51a86971095ae71c38a2806919abc0191ec1a91287bebb42881dcf23e74d414b0028fb2d323ffb82dd9b94a093d73dd1c05bd7ac03c08011355ed8a3
+diff --git a/packages/newlib/3.1.0.20181231/version.desc b/packages/newlib/3.1.0.20181231/version.desc
+deleted file mode 100644
+index 76f14476..00000000
+--- a/packages/newlib/3.1.0.20181231/version.desc
++++ /dev/null
+@@ -1 +0,0 @@
+-experimental='yes'
+diff --git a/packages/newlib/3.1.0.20181231/0000-fix-unaligned-access-memcpy-m68k.patch b/packages/newlib/3.1.0/0000-fix-unaligned-access-memcpy-m68k.patch
+similarity index 100%
+rename from packages/newlib/3.1.0.20181231/0000-fix-unaligned-access-memcpy-m68k.patch
+rename to packages/newlib/3.1.0/0000-fix-unaligned-access-memcpy-m68k.patch
+diff --git a/packages/newlib/3.1.0.20181231/0001-fix-mt-cflags.patch b/packages/newlib/3.1.0/0001-fix-mt-cflags.patch
+similarity index 100%
+rename from packages/newlib/3.1.0.20181231/0001-fix-mt-cflags.patch
+rename to packages/newlib/3.1.0/0001-fix-mt-cflags.patch
+diff --git a/packages/newlib/3.1.0/chksum b/packages/newlib/3.1.0/chksum
+new file mode 100644
+index 00000000..aa0fcbdc
+--- /dev/null
++++ b/packages/newlib/3.1.0/chksum
+@@ -0,0 +1,4 @@
++md5 newlib-3.1.0.tar.gz f84263b7d524df92a9c9fb30b79e0134
++sha1 newlib-3.1.0.tar.gz 6c0e467345ca6832eff6add85124c6e81e11d174
++sha256 newlib-3.1.0.tar.gz fb4fa1cc21e9060719208300a61420e4089d6de6ef59cf533b57fe74801d102a
++sha512 newlib-3.1.0.tar.gz efc4c3ab7153387780d141386bca5d3e20c9d25ae3e6b87cf94c8df9d301ce5926dacdff9bd33aeb9781559d933c3d0ae77f4e5b46120d90792f75dbfde702c7
+diff --git a/packages/newlib/3.1.0/version.desc b/packages/newlib/3.1.0/version.desc
+new file mode 100644
+index 00000000..e69de29b
+-- 
+2.20.1
+
