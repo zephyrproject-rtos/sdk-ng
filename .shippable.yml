@@ -6,15 +6,15 @@ env:
     global:
         - USE_CCACHE=1
     matrix:
-        - TARGET=i586
-        - TARGET=iamcu
-        - TARGET=nios2
-        - TARGET=arm
-        - TARGET=riscv32
-        - TARGET=mips
-        - TARGET=arc
-        - TARGET=xtensa
-        - TARGET="tools"
+      - TARGET=i586
+      - TARGET=iamcu
+      - TARGET=nios2
+      - TARGET=arm
+      - TARGET=riscv32
+      - TARGET=mips
+      - TARGET=arc
+      - TARGET=xtensa
+      - TARGET="tools"
 
 build:
     cache: true
@@ -34,23 +34,22 @@ build:
       - unset CC
       - ./go.sh ${TARGET}
       - >
-          if [ "$IS_PULL_REQUEST" = "false" ]; then
-            sudo -E sh -c 'echo "IS_GIT_TAG=${IS_GIT_TAG}" >> $JOB_STATE/sdk.env';
-            sudo -E sh -c 'echo "IS_RELEASE=${IS_RELEASE}" >> $JOB_STATE/sdk.env';
-            sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
-            sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
-            cat $JOB_STATE/sdk.env;
-            export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
-            if [ "${TARGET}" == 'tools' ]; then
-              echo "uploading zephyr-sdk-x86_64-hosttools-standalone-0.9.sh to ${S3_PATH}/";
-              aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
-            else
-              echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
-              pushd build/output
-              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.tar.bz2 *-zephyr-*
-              popd
-              aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
-            fi
+          sudo -E sh -c 'echo "IS_GIT_TAG=${IS_GIT_TAG}" >> $JOB_STATE/sdk.env';
+          sudo -E sh -c 'echo "IS_RELEASE=${IS_RELEASE}" >> $JOB_STATE/sdk.env';
+          sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
+          sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
+          sudo -E sh -c 'echo "PULL_REQUEST=${PULL_REQUEST}" >> $JOB_STATE/sdk.env';
+          cat $JOB_STATE/sdk.env;
+          export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
+          if [ "${TARGET}" == 'tools' ]; then
+            echo "uploading zephyr-sdk-x86_64-hosttools-standalone-0.9.sh to ${S3_PATH}/";
+            aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
+          else
+            echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
+            pushd build/output;
+            tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.tar.bz2 *-zephyr-*;
+            popd;
+            aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
           fi
       - ccache -s
 integrations:
