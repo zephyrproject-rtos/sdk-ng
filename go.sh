@@ -89,12 +89,17 @@ for t in ${TARGETS}; do
 
 	build_toolchain=1
 	if [ -n "${build_toolchain}" ]; then
-		cp -a ${SDK_NG_HOME}/overlays .
+		if [ "${t}" = "xtensa" ]; then
+			cp -a ${SDK_NG_HOME}/overlays .
+		fi
 
 		${CT_NG} clean
 		${CT_NG} defconfig DEFCONFIG=${GITDIR}/configs/${t}.config
 		${CT_NG} savedefconfig DEFCONFIG=${t}.config
 		${CT_NG} build -j ${JOBS}
+		if [ $? != 0 ]; then
+			exit 1
+		fi
 	fi
 
 	if [ "${t}" = "xtensa" ]; then
