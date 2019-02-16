@@ -10,7 +10,6 @@ TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-zephyr-qemu \
     nativesdk-openocd \
     nativesdk-bossa \
-    nativesdk-open-firmware-tools \
     nativesdk-dtc \
     nativesdk-hidapi-libraw \
     "
