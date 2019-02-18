@@ -193,7 +193,7 @@ inherit autotools pkgconfig
 #--disable-blobs : BIOS needed for x86
 #--disable-fdt: Cannot use if supporting ARM
 
-QEMUS_BUILT = "arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu"
+QEMUS_BUILT = "arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu x86_64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh2 --disable-vnc-png  --disable-seccomp \
