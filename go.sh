@@ -12,7 +12,7 @@ if [ "$TARGETS" == "all" ]; then
 	TARGETS=${TARGETS}" tools"
 fi
 
-COMMIT="fb744d81588395a97cee951a151a56501a500e42"
+COMMIT="2a1e0cb0314a9b50ba8421e21b5a262442ab7c9f"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
@@ -55,7 +55,6 @@ if [ ! -d "crosstool-ng" ]; then
 	pushd crosstool-ng
 	git checkout ${COMMIT}
 	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
-	patch -p1 < ${GITDIR}/patches/0001-add-newlib-3.1.0.patch
 	popd
 fi
 
