@@ -55,6 +55,7 @@ if [ ! -d "crosstool-ng" ]; then
 	pushd crosstool-ng
 	git checkout ${COMMIT}
 	patch -p1 < ${GITDIR}/patches/0001-iamcu-support-x86-iamcu-ABIs.patch
+	patch -p1 < ${GITDIR}/patches/0001-Update-to-gcc-8.3.0.patch
 	popd
 fi
 
