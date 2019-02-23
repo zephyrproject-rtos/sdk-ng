@@ -1,0 +1,568 @@
+From b96a10ab5ae245c7ab4b741c3b4fb502dc174b5d Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Fri, 22 Feb 2019 11:12:43 -0600
+Subject: [PATCH] Update to gcc 8.3.0
+
+Had to update the following patches so they'd apply:
+
+0006-libgfortran-missing-include.patch
+0010-crystax.patch
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ .../0006-libgfortran-missing-include.patch    |  14 --
+ packages/gcc/8.2.0/chksum                     |   8 --
+ .../0000-libtool-leave-framework-alone.patch  |   0
+ .../{8.2.0 => 8.3.0}/0001-uclibc-conf.patch   |   0
+ ...d-undefined-extern-var-refs-nor-fpic.patch |   0
+ ...cc-plugin-POSIX-include-sys-select-h.patch |   0
+ .../0004-arm-softfloat-libgcc.patch           |   0
+ .../0005-fix-m68k-uclinux.patch               |   0
+ .../0006-libgfortran-missing-include.patch    |  11 ++
+ .../0007-nios2-bad-multilib-default.patch     |   0
+ ...libgcc-disable-split-stack-nothreads.patch |   0
+ .../{8.2.0 => 8.3.0}/0009-bionic-ndk.patch    |   0
+ .../gcc/{8.2.0 => 8.3.0}/0010-crystax.patch   | 133 ++++++++++++------
+ .../gcc/{8.2.0 => 8.3.0}/0011-crystax.patch   |   0
+ .../gcc/{8.2.0 => 8.3.0}/0012-crystax.patch   |   0
+ .../gcc/{8.2.0 => 8.3.0}/0013-crystax.patch   |   0
+ .../gcc/{8.2.0 => 8.3.0}/0014-crystax.patch   |   0
+ .../gcc/{8.2.0 => 8.3.0}/0015-crystax.patch   |   0
+ .../gcc/{8.2.0 => 8.3.0}/0016-crystax.patch   |   0
+ .../gcc/{8.2.0 => 8.3.0}/0017-crystax.patch   |   0
+ ...d-multilib-support-for-linux-targets.patch |   0
+ .../gcc/{8.2.0 => 8.3.0}/0019-isl-0.20.patch  |   0
+ .../{8.2.0 => 8.3.0}/0020-ARM-fix-cmse.patch  |   0
+ ...1-arm-Make-arm_cmse.h-C99-compatible.patch |   0
+ packages/gcc/8.3.0/chksum                     |   8 ++
+ packages/gcc/{8.2.0 => 8.3.0}/version.desc    |   0
+ 26 files changed, 112 insertions(+), 62 deletions(-)
+ delete mode 100644 packages/gcc/8.2.0/0006-libgfortran-missing-include.patch
+ delete mode 100644 packages/gcc/8.2.0/chksum
+ rename packages/gcc/{8.2.0 => 8.3.0}/0000-libtool-leave-framework-alone.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0001-uclibc-conf.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0002-gcc-plugin-Win-Dont-need-undefined-extern-var-refs-nor-fpic.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0003-gcc-plugin-POSIX-include-sys-select-h.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0004-arm-softfloat-libgcc.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0005-fix-m68k-uclinux.patch (100%)
+ create mode 100644 packages/gcc/8.3.0/0006-libgfortran-missing-include.patch
+ rename packages/gcc/{8.2.0 => 8.3.0}/0007-nios2-bad-multilib-default.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0008-libgcc-disable-split-stack-nothreads.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0009-bionic-ndk.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0010-crystax.patch (77%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0011-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0012-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0013-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0014-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0015-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0016-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0017-crystax.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0018-ARC-Add-multilib-support-for-linux-targets.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0019-isl-0.20.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0020-ARM-fix-cmse.patch (100%)
+ rename packages/gcc/{8.2.0 => 8.3.0}/0021-arm-Make-arm_cmse.h-C99-compatible.patch (100%)
+ create mode 100644 packages/gcc/8.3.0/chksum
+ rename packages/gcc/{8.2.0 => 8.3.0}/version.desc (100%)
+
+diff --git a/packages/gcc/8.2.0/0006-libgfortran-missing-include.patch b/packages/gcc/8.2.0/0006-libgfortran-missing-include.patch
+deleted file mode 100644
+index 701e7b4f..00000000
+--- a/packages/gcc/8.2.0/0006-libgfortran-missing-include.patch
++++ /dev/null
+@@ -1,14 +0,0 @@
+----
+- libgfortran/io/close.c |    1 +
+- 1 file changed, 1 insertion(+)
+-
+---- a/libgfortran/io/close.c
+-+++ b/libgfortran/io/close.c
+-@@ -25,6 +25,7 @@
+- #include "io.h"
+- #include "unix.h"
+- #include <limits.h>
+-+#include <stdlib.h>
+- 
+- typedef enum
+- { CLOSE_DELETE, CLOSE_KEEP, CLOSE_UNSPECIFIED }
+diff --git a/packages/gcc/8.2.0/chksum b/packages/gcc/8.2.0/chksum
+deleted file mode 100644
+index 2035f371..00000000
+--- a/packages/gcc/8.2.0/chksum
++++ /dev/null
+@@ -1,8 +0,0 @@
+-md5 gcc-8.2.0.tar.xz 4ab282f414676496483b3e1793d07862
+-sha1 gcc-8.2.0.tar.xz 19926bdb6c4b58891015929853d41aeff019d400
+-sha256 gcc-8.2.0.tar.xz 196c3c04ba2613f893283977e6011b2345d1cd1af9abeac58e916b1aab3e0080
+-sha512 gcc-8.2.0.tar.xz 64898a165f67e136d802a92e7633bf1b06c85266027e52127ea025bf5fc2291b5e858288aac0bdba246e6cdf7c6ec88bc8e0e7f3f6f1985f4297710cafde56ed
+-md5 gcc-8.2.0.tar.gz ee04f0c22a941f5f17d93809387f2729
+-sha1 gcc-8.2.0.tar.gz 3895bb765c2ceecccd6dee86467f6d1bb1994cbd
+-sha256 gcc-8.2.0.tar.gz 1b0f36be1045ff58cbb9c83743835367b860810f17f0195a4e093458b372020f
+-sha512 gcc-8.2.0.tar.gz 3182cd248a37ce4c36ad2a43f1910da13325452472ea80855afc21f134c4e4792c29887f5e070fe21c3ff8e5953e59f69343e1d3b968ee1eb2d8b5c8ae9f48fa
+diff --git a/packages/gcc/8.2.0/0000-libtool-leave-framework-alone.patch b/packages/gcc/8.3.0/0000-libtool-leave-framework-alone.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0000-libtool-leave-framework-alone.patch
+rename to packages/gcc/8.3.0/0000-libtool-leave-framework-alone.patch
+diff --git a/packages/gcc/8.2.0/0001-uclibc-conf.patch b/packages/gcc/8.3.0/0001-uclibc-conf.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0001-uclibc-conf.patch
+rename to packages/gcc/8.3.0/0001-uclibc-conf.patch
+diff --git a/packages/gcc/8.2.0/0002-gcc-plugin-Win-Dont-need-undefined-extern-var-refs-nor-fpic.patch b/packages/gcc/8.3.0/0002-gcc-plugin-Win-Dont-need-undefined-extern-var-refs-nor-fpic.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0002-gcc-plugin-Win-Dont-need-undefined-extern-var-refs-nor-fpic.patch
+rename to packages/gcc/8.3.0/0002-gcc-plugin-Win-Dont-need-undefined-extern-var-refs-nor-fpic.patch
+diff --git a/packages/gcc/8.2.0/0003-gcc-plugin-POSIX-include-sys-select-h.patch b/packages/gcc/8.3.0/0003-gcc-plugin-POSIX-include-sys-select-h.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0003-gcc-plugin-POSIX-include-sys-select-h.patch
+rename to packages/gcc/8.3.0/0003-gcc-plugin-POSIX-include-sys-select-h.patch
+diff --git a/packages/gcc/8.2.0/0004-arm-softfloat-libgcc.patch b/packages/gcc/8.3.0/0004-arm-softfloat-libgcc.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0004-arm-softfloat-libgcc.patch
+rename to packages/gcc/8.3.0/0004-arm-softfloat-libgcc.patch
+diff --git a/packages/gcc/8.2.0/0005-fix-m68k-uclinux.patch b/packages/gcc/8.3.0/0005-fix-m68k-uclinux.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0005-fix-m68k-uclinux.patch
+rename to packages/gcc/8.3.0/0005-fix-m68k-uclinux.patch
+diff --git a/packages/gcc/8.3.0/0006-libgfortran-missing-include.patch b/packages/gcc/8.3.0/0006-libgfortran-missing-include.patch
+new file mode 100644
+index 00000000..7c56d6b1
+--- /dev/null
++++ b/packages/gcc/8.3.0/0006-libgfortran-missing-include.patch
+@@ -0,0 +1,11 @@
++diff -Nur a/libgfortran/io/close.c b/libgfortran/io/close.c
++--- a/libgfortran/io/close.c	2018-10-05 15:16:21.000000000 -0500
+++++ b/libgfortran/io/close.c	2019-02-22 11:21:54.547170028 -0600
++@@ -28,6 +28,7 @@
++ #if !HAVE_UNLINK_OPEN_FILE
++ #include <string.h>
++ #endif
+++#include <stdlib.h>
++ 
++ typedef enum
++ { CLOSE_DELETE, CLOSE_KEEP, CLOSE_UNSPECIFIED }
+diff --git a/packages/gcc/8.2.0/0007-nios2-bad-multilib-default.patch b/packages/gcc/8.3.0/0007-nios2-bad-multilib-default.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0007-nios2-bad-multilib-default.patch
+rename to packages/gcc/8.3.0/0007-nios2-bad-multilib-default.patch
+diff --git a/packages/gcc/8.2.0/0008-libgcc-disable-split-stack-nothreads.patch b/packages/gcc/8.3.0/0008-libgcc-disable-split-stack-nothreads.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0008-libgcc-disable-split-stack-nothreads.patch
+rename to packages/gcc/8.3.0/0008-libgcc-disable-split-stack-nothreads.patch
+diff --git a/packages/gcc/8.2.0/0009-bionic-ndk.patch b/packages/gcc/8.3.0/0009-bionic-ndk.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0009-bionic-ndk.patch
+rename to packages/gcc/8.3.0/0009-bionic-ndk.patch
+diff --git a/packages/gcc/8.2.0/0010-crystax.patch b/packages/gcc/8.3.0/0010-crystax.patch
+similarity index 77%
+rename from packages/gcc/8.2.0/0010-crystax.patch
+rename to packages/gcc/8.3.0/0010-crystax.patch
+index 0db3b69b..32e08e24 100644
+--- a/packages/gcc/8.2.0/0010-crystax.patch
++++ b/packages/gcc/8.3.0/0010-crystax.patch
+@@ -8,32 +8,38 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+ 
+ [Edited: keep libstdc++, drop libcrystax-related modifications]
+ ---
+- gcc/config.gcc                             |   17 +++++++-
+- gcc/config/aarch64/aarch64-linux-android.h |   59 +++++++++++++++++++++++++++++
+- gcc/config/aarch64/aarch64-linux.h         |    9 +++-
+- gcc/config/arm/arm.h                       |    3 -
+- gcc/config/arm/arm.md                      |    2 
+- gcc/config/arm/arm.opt                     |    4 +
+- gcc/config/arm/elf.h                       |    9 ++--
+- gcc/config/arm/linux-eabi.h                |    7 ++-
+- gcc/config/i386/gnu-user.h                 |    7 ++-
+- gcc/config/i386/gnu-user64.h               |    5 ++
+- gcc/config/i386/linux-common.h             |    8 +++
+- gcc/config/linux-android.h                 |   13 +++---
+- gcc/config/mips/android.h                  |   49 ++++++++++++++++++++++++
+- gcc/config/mips/gnu-user.h                 |    6 +-
+- gcc/config/mips/linux-common.h             |    2 
+- gcc/config/mips/t-linux-android            |    3 +
+- gcc/config/mips/t-linux-android64          |    4 +
+- libgcc/gthr-posix.h                        |   13 ++++++
+- libstdc++-v3/configure                     |   12 +++++
+- libstdc++-v3/include/bits/locale_facets.h  |   18 +++++++-
+- libstdc++-v3/libsupc++/guard.cc            |    5 ++
++ gcc/config.gcc                             | 17 ++++++-
++ gcc/config/aarch64/aarch64-linux-android.h | 59 ++++++++++++++++++++++
++ gcc/config/aarch64/aarch64-linux.h         |  9 +++-
++ gcc/config/arm/arm.h                       |  3 +-
++ gcc/config/arm/arm.md                      |  2 +-
++ gcc/config/arm/arm.opt                     |  4 ++
++ gcc/config/arm/elf.h                       |  9 ++--
++ gcc/config/arm/linux-eabi.h                |  7 ++-
++ gcc/config/i386/gnu-user.h                 |  7 ++-
++ gcc/config/i386/gnu-user64.h               |  5 ++
++ gcc/config/i386/linux-common.h             |  8 ++-
++ gcc/config/linux-android.h                 | 13 +++--
++ gcc/config/mips/android.h                  | 49 ++++++++++++++++++
++ gcc/config/mips/gnu-user.h                 |  6 ++-
++ gcc/config/mips/linux-common.h             |  2 +-
++ gcc/config/mips/t-linux-android            |  3 ++
++ gcc/config/mips/t-linux-android64          |  4 ++
++ libgcc/gthr-posix.h                        | 13 +++++
++ libstdc++-v3/configure                     | 12 +++++
++ libstdc++-v3/include/bits/locale_facets.h  | 18 ++++++-
++ libstdc++-v3/libsupc++/guard.cc            |  5 ++
+  21 files changed, 235 insertions(+), 20 deletions(-)
++ create mode 100644 gcc/config/aarch64/aarch64-linux-android.h
++ create mode 100644 gcc/config/mips/android.h
++ create mode 100644 gcc/config/mips/t-linux-android
++ create mode 100644 gcc/config/mips/t-linux-android64
+ 
++diff --git a/gcc/config.gcc b/gcc/config.gcc
++index 7af8e0281..a9ab8cea9 100644
+ --- a/gcc/config.gcc
+ +++ b/gcc/config.gcc
+-@@ -981,14 +981,18 @@
++@@ -981,14 +981,18 @@ aarch64*-*-freebsd*)
+  	tmake_file="${tmake_file} aarch64/t-aarch64 aarch64/t-aarch64-freebsd"
+  	;;
+  aarch64*-*-linux*)
+@@ -53,7 +59,7 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  	esac
+  	aarch64_multilibs="${with_multilib_list}"
+  	if test "$aarch64_multilibs" = "default"; then
+-@@ -2130,6 +2134,17 @@
++@@ -2133,6 +2137,17 @@ mips*-*-linux*)				# Linux MIPS, either endian.
+  	tm_file="dbxelf.h elfos.h gnu-user.h linux.h linux-android.h glibc-stdint.h ${tm_file} mips/gnu-user.h mips/linux.h mips/linux-common.h"
+  	extra_options="${extra_options} linux-android.opt"
+  	case ${target} in
+@@ -71,6 +77,9 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  		mipsisa32r6*)
+  			default_mips_arch=mips32r6
+  			;;
++diff --git a/gcc/config/aarch64/aarch64-linux-android.h b/gcc/config/aarch64/aarch64-linux-android.h
++new file mode 100644
++index 000000000..91d235ff1
+ --- /dev/null
+ +++ b/gcc/config/aarch64/aarch64-linux-android.h
+ @@ -0,0 +1,59 @@
+@@ -133,6 +142,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+ +  LINUX_OR_ANDROID_LD (GNU_USER_TARGET_ENDFILE_SPEC, ANDROID_ENDFILE_SPEC)
+ +
+ +#endif  /* GCC_AARCH64_LINUX_ANDROID_H */
++diff --git a/gcc/config/aarch64/aarch64-linux.h b/gcc/config/aarch64/aarch64-linux.h
++index bf1327e98..54613e4c6 100644
+ --- a/gcc/config/aarch64/aarch64-linux.h
+ +++ b/gcc/config/aarch64/aarch64-linux.h
+ @@ -21,7 +21,14 @@
+@@ -151,9 +162,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  
+  #undef MUSL_DYNAMIC_LINKER
+  #define MUSL_DYNAMIC_LINKER "/lib/ld-musl-aarch64%{mbig-endian:_be}%{mabi=ilp32:_ilp32}.so.1"
++diff --git a/gcc/config/arm/arm.h b/gcc/config/arm/arm.h
++index 2809112f6..753c60f9c 100644
+ --- a/gcc/config/arm/arm.h
+ +++ b/gcc/config/arm/arm.h
+-@@ -1840,10 +1840,11 @@
++@@ -1840,10 +1840,11 @@ enum arm_auto_incmodes
+  
+  #define CASE_VECTOR_PC_RELATIVE (TARGET_THUMB2				\
+  				 || (TARGET_THUMB1			\
+@@ -166,6 +179,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+     ? (min >= 0 && max < 512						\
+        ? (ADDR_DIFF_VEC_FLAGS (body).offset_unsigned = 1, QImode)	\
+        : min >= -256 && max < 256					\
++diff --git a/gcc/config/arm/arm.md b/gcc/config/arm/arm.md
++index 2d5359e53..4942d1ace 100644
+ --- a/gcc/config/arm/arm.md
+ +++ b/gcc/config/arm/arm.md
+ @@ -8640,7 +8640,7 @@
+@@ -177,9 +192,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+    "
+    {
+      enum insn_code code;
++diff --git a/gcc/config/arm/arm.opt b/gcc/config/arm/arm.opt
++index a1286a4a8..7e694df62 100644
+ --- a/gcc/config/arm/arm.opt
+ +++ b/gcc/config/arm/arm.opt
+-@@ -202,6 +202,10 @@
++@@ -202,6 +202,10 @@ mthumb-interwork
+  Target Report Mask(INTERWORK)
+  Support calls between Thumb and ARM instruction sets.
+  
+@@ -190,6 +207,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  mtls-dialect=
+  Target RejectNegative Joined Enum(tls_type) Var(target_tls_dialect) Init(TLS_GNU)
+  Specify thread local storage scheme.
++diff --git a/gcc/config/arm/elf.h b/gcc/config/arm/elf.h
++index ad3651ba8..b74e995b6 100644
+ --- a/gcc/config/arm/elf.h
+ +++ b/gcc/config/arm/elf.h
+ @@ -56,8 +56,7 @@
+@@ -222,6 +241,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+      && !target_pure_code)
+  
+  #ifndef LINK_SPEC
++diff --git a/gcc/config/arm/linux-eabi.h b/gcc/config/arm/linux-eabi.h
++index 8585fde3d..9b6b787f4 100644
+ --- a/gcc/config/arm/linux-eabi.h
+ +++ b/gcc/config/arm/linux-eabi.h
+ @@ -102,11 +102,16 @@
+@@ -242,9 +263,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  #undef  LIB_SPEC
+  #define LIB_SPEC							\
+    LINUX_OR_ANDROID_LD (GNU_USER_TARGET_LIB_SPEC,			\
++diff --git a/gcc/config/i386/gnu-user.h b/gcc/config/i386/gnu-user.h
++index 93a7f8d4c..b05df420a 100644
+ --- a/gcc/config/i386/gnu-user.h
+ +++ b/gcc/config/i386/gnu-user.h
+-@@ -65,9 +65,14 @@
++@@ -65,9 +65,14 @@ along with GCC; see the file COPYING3.  If not see
+     When the -shared link option is used a final link is not being
+     done.  */
+  
+@@ -254,15 +277,17 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+ +
+  #undef  ASM_SPEC
+  #define ASM_SPEC \
+--  "--32 %{!mno-sse2avx:%{mavx:-msse2avx}} %{msse2avx:%{!mavx:-msse2avx}}"
+-+  "--32 %{!mno-sse2avx:%{mavx:-msse2avx}} %{msse2avx:%{!mavx:-msse2avx}} " \
++-  "--32 %{msse2avx:%{!mavx:-msse2avx}}"
+++  "--32 %{msse2avx:%{!mavx:-msse2avx}} " \
+ +  LINUX_OR_ANDROID_CC ("", ANDROID_ASM_SPEC)
+  
+  #undef  SUBTARGET_EXTRA_SPECS
+  #define SUBTARGET_EXTRA_SPECS \
++diff --git a/gcc/config/i386/gnu-user64.h b/gcc/config/i386/gnu-user64.h
++index d9400638f..70d6fab1d 100644
+ --- a/gcc/config/i386/gnu-user64.h
+ +++ b/gcc/config/i386/gnu-user64.h
+-@@ -46,6 +46,11 @@
++@@ -46,6 +46,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+  #define SPEC_X32 "mx32"
+  #endif
+  
+@@ -274,9 +299,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  #undef ASM_SPEC
+  #define ASM_SPEC "%{" SPEC_32 ":--32} \
+   %{" SPEC_64 ":--64} \
++diff --git a/gcc/config/i386/linux-common.h b/gcc/config/i386/linux-common.h
++index d87738702..2eea2b664 100644
+ --- a/gcc/config/i386/linux-common.h
+ +++ b/gcc/config/i386/linux-common.h
+-@@ -30,7 +30,13 @@
++@@ -30,7 +30,13 @@ along with GCC; see the file COPYING3.  If not see
+  #undef CC1_SPEC
+  #define CC1_SPEC \
+    LINUX_OR_ANDROID_CC (GNU_USER_TARGET_CC1_SPEC, \
+@@ -291,6 +318,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  
+  #undef	LINK_SPEC
+  #define LINK_SPEC \
++diff --git a/gcc/config/linux-android.h b/gcc/config/linux-android.h
++index 9f3985d23..a58a3d837 100644
+ --- a/gcc/config/linux-android.h
+ +++ b/gcc/config/linux-android.h
+ @@ -38,15 +38,18 @@
+@@ -317,6 +346,9 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  
+  #define ANDROID_LIB_SPEC \
+    "%{!static: -ldl}"
++diff --git a/gcc/config/mips/android.h b/gcc/config/mips/android.h
++new file mode 100644
++index 000000000..32c539c8d
+ --- /dev/null
+ +++ b/gcc/config/mips/android.h
+ @@ -0,0 +1,49 @@
+@@ -369,9 +401,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+ +									\
+ +  /* Use the standard linux specs for everything else.  */		\
+ +  LINUX_DRIVER_SELF_SPECS
++diff --git a/gcc/config/mips/gnu-user.h b/gcc/config/mips/gnu-user.h
++index 22097e285..57cf31da4 100644
+ --- a/gcc/config/mips/gnu-user.h
+ +++ b/gcc/config/mips/gnu-user.h
+-@@ -36,6 +36,7 @@
++@@ -36,6 +36,7 @@ along with GCC; see the file COPYING3.  If not see
+      /* The GNU C++ standard library requires this.  */		\
+      if (c_dialect_cxx ())					\
+        builtin_define ("_GNU_SOURCE");				\
+@@ -379,7 +413,7 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+    } while (0)
+  
+  #undef SUBTARGET_CPP_SPEC
+-@@ -71,7 +72,8 @@
++@@ -71,7 +72,8 @@ along with GCC; see the file COPYING3.  If not see
+  
+  #undef SUBTARGET_ASM_SPEC
+  #define SUBTARGET_ASM_SPEC \
+@@ -389,7 +423,7 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  
+  /* The MIPS assembler has different syntax for .set. We set it to
+     .dummy to trap any errors.  */
+-@@ -120,7 +122,7 @@
++@@ -120,7 +122,7 @@ extern const char *host_detect_local_cpu (int argc, const char **argv);
+  #endif
+  
+  #define LINUX_DRIVER_SELF_SPECS \
+@@ -398,9 +432,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+    MARCH_MTUNE_NATIVE_SPECS,						\
+    /* -mplt has no effect without -mno-shared.  Simplify later		\
+       specs handling by removing a redundant option.  */			\
++diff --git a/gcc/config/mips/linux-common.h b/gcc/config/mips/linux-common.h
++index 570151f6a..c2f7630a8 100644
+ --- a/gcc/config/mips/linux-common.h
+ +++ b/gcc/config/mips/linux-common.h
+-@@ -35,7 +35,7 @@
++@@ -35,7 +35,7 @@ along with GCC; see the file COPYING3.  If not see
+  #undef  SUBTARGET_CC1_SPEC
+  #define SUBTARGET_CC1_SPEC						\
+    LINUX_OR_ANDROID_CC (GNU_USER_TARGET_CC1_SPEC,			\
+@@ -409,12 +445,18 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  
+  #undef  CC1PLUS_SPEC
+  #define CC1PLUS_SPEC							\
++diff --git a/gcc/config/mips/t-linux-android b/gcc/config/mips/t-linux-android
++new file mode 100644
++index 000000000..39f512c81
+ --- /dev/null
+ +++ b/gcc/config/mips/t-linux-android
+ @@ -0,0 +1,3 @@
+ +MULTILIB_OPTIONS = mips32r2/mips32r6
+ +MULTILIB_DIRNAMES = mips-r2 mips-r6
+ +MULTILIB_OSDIRNAMES = ../libr2 ../libr6
++diff --git a/gcc/config/mips/t-linux-android64 b/gcc/config/mips/t-linux-android64
++new file mode 100644
++index 000000000..55cab7d62
+ --- /dev/null
+ +++ b/gcc/config/mips/t-linux-android64
+ @@ -0,0 +1,4 @@
+@@ -422,9 +464,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+ +MULTILIB_DIRNAMES = 32 mips-r1 mips-r2 mips-r6 mips64-r2 mips64-r6
+ +MULTILIB_OSDIRNAMES = ../lib ../lib ../libr2 ../libr6 ../lib64r2 ../lib64
+ +MULTILIB_REQUIRED = mabi=32/mips32 mabi=32/mips32r2 mabi=32/mips32r6 mips64r2 mips64r6
++diff --git a/libgcc/gthr-posix.h b/libgcc/gthr-posix.h
++index e2f952f6c..a8d638396 100644
+ --- a/libgcc/gthr-posix.h
+ +++ b/libgcc/gthr-posix.h
+-@@ -32,6 +32,19 @@
++@@ -32,6 +32,19 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+  #define __GTHREADS 1
+  #define __GTHREADS_CXX0X 1
+  
+@@ -444,9 +488,11 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  #include <pthread.h>
+  
+  #if ((defined(_LIBOBJC) || defined(_LIBOBJC_WEAK)) \
++diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
++index 5535bfa2b..52f7e9c0c 100755
+ --- a/libstdc++-v3/configure
+ +++ b/libstdc++-v3/configure
+-@@ -78491,6 +78491,18 @@
++@@ -78491,6 +78491,18 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  /* end confdefs.h.  */
+  #include <sys/syscall.h>
+  	   int lk;
+@@ -465,6 +511,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  int
+  main ()
+  {
++diff --git a/libstdc++-v3/include/bits/locale_facets.h b/libstdc++-v3/include/bits/locale_facets.h
++index d5384e146..774a107fb 100644
+ --- a/libstdc++-v3/include/bits/locale_facets.h
+ +++ b/libstdc++-v3/include/bits/locale_facets.h
+ @@ -47,6 +47,20 @@
+@@ -488,16 +536,16 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  namespace std _GLIBCXX_VISIBILITY(default)
+  {
+  _GLIBCXX_BEGIN_NAMESPACE_VERSION
+-@@ -1102,7 +1116,7 @@
++@@ -1104,7 +1118,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+         *  @return  @a __hi.
+        */
+        virtual const char*
+ -      do_widen(const char* __lo, const char* __hi, char_type* __to) const
+ +      do_widen(const char* __lo, const char* __hi, char_type* __to) const __CRYSTAX_X86_DONT_OPTIMIZE
+        {
+- 	__builtin_memcpy(__to, __lo, __hi - __lo);
+- 	return __hi;
+-@@ -1163,7 +1177,7 @@
++ 	if (__builtin_expect(__hi != __lo, true))
++ 	  __builtin_memcpy(__to, __lo, __hi - __lo);
++@@ -1167,7 +1181,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+  
+      private:
+        void _M_narrow_init() const;
+@@ -506,6 +554,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+      };
+  
+  #ifdef _GLIBCXX_USE_WCHAR_T
++diff --git a/libstdc++-v3/libsupc++/guard.cc b/libstdc++-v3/libsupc++/guard.cc
++index 3a2ec3ad0..ffcd22cf1 100644
+ --- a/libstdc++-v3/libsupc++/guard.cc
+ +++ b/libstdc++-v3/libsupc++/guard.cc
+ @@ -34,7 +34,12 @@
+@@ -521,3 +571,6 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
+  # include <unistd.h>
+  # define _GLIBCXX_USE_FUTEX
+  # define _GLIBCXX_FUTEX_WAIT 0
++-- 
++2.20.1
++
+diff --git a/packages/gcc/8.2.0/0011-crystax.patch b/packages/gcc/8.3.0/0011-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0011-crystax.patch
+rename to packages/gcc/8.3.0/0011-crystax.patch
+diff --git a/packages/gcc/8.2.0/0012-crystax.patch b/packages/gcc/8.3.0/0012-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0012-crystax.patch
+rename to packages/gcc/8.3.0/0012-crystax.patch
+diff --git a/packages/gcc/8.2.0/0013-crystax.patch b/packages/gcc/8.3.0/0013-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0013-crystax.patch
+rename to packages/gcc/8.3.0/0013-crystax.patch
+diff --git a/packages/gcc/8.2.0/0014-crystax.patch b/packages/gcc/8.3.0/0014-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0014-crystax.patch
+rename to packages/gcc/8.3.0/0014-crystax.patch
+diff --git a/packages/gcc/8.2.0/0015-crystax.patch b/packages/gcc/8.3.0/0015-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0015-crystax.patch
+rename to packages/gcc/8.3.0/0015-crystax.patch
+diff --git a/packages/gcc/8.2.0/0016-crystax.patch b/packages/gcc/8.3.0/0016-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0016-crystax.patch
+rename to packages/gcc/8.3.0/0016-crystax.patch
+diff --git a/packages/gcc/8.2.0/0017-crystax.patch b/packages/gcc/8.3.0/0017-crystax.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0017-crystax.patch
+rename to packages/gcc/8.3.0/0017-crystax.patch
+diff --git a/packages/gcc/8.2.0/0018-ARC-Add-multilib-support-for-linux-targets.patch b/packages/gcc/8.3.0/0018-ARC-Add-multilib-support-for-linux-targets.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0018-ARC-Add-multilib-support-for-linux-targets.patch
+rename to packages/gcc/8.3.0/0018-ARC-Add-multilib-support-for-linux-targets.patch
+diff --git a/packages/gcc/8.2.0/0019-isl-0.20.patch b/packages/gcc/8.3.0/0019-isl-0.20.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0019-isl-0.20.patch
+rename to packages/gcc/8.3.0/0019-isl-0.20.patch
+diff --git a/packages/gcc/8.2.0/0020-ARM-fix-cmse.patch b/packages/gcc/8.3.0/0020-ARM-fix-cmse.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0020-ARM-fix-cmse.patch
+rename to packages/gcc/8.3.0/0020-ARM-fix-cmse.patch
+diff --git a/packages/gcc/8.2.0/0021-arm-Make-arm_cmse.h-C99-compatible.patch b/packages/gcc/8.3.0/0021-arm-Make-arm_cmse.h-C99-compatible.patch
+similarity index 100%
+rename from packages/gcc/8.2.0/0021-arm-Make-arm_cmse.h-C99-compatible.patch
+rename to packages/gcc/8.3.0/0021-arm-Make-arm_cmse.h-C99-compatible.patch
+diff --git a/packages/gcc/8.3.0/chksum b/packages/gcc/8.3.0/chksum
+new file mode 100644
+index 00000000..bf662eef
+--- /dev/null
++++ b/packages/gcc/8.3.0/chksum
+@@ -0,0 +1,8 @@
++md5 gcc-8.3.0.tar.xz 65b210b4bfe7e060051f799e0f994896
++sha1 gcc-8.3.0.tar.xz c27f4499dd263fe4fb01bcc5565917f3698583b2
++sha256 gcc-8.3.0.tar.xz 64baadfe6cc0f4947a84cb12d7f0dfaf45bb58b7e92461639596c21e02d97d2c
++sha512 gcc-8.3.0.tar.xz 1811337ae3add9680cec64968a2509d085b6dc5b6783fc1e8c295e3e47416196fd1a3ad8dfe7e10be2276b4f62c357659ce2902f239f60a8648548231b4b5802
++md5 gcc-8.3.0.tar.gz 9972f8c24c02ebcb5a342c1b30de69ff
++sha1 gcc-8.3.0.tar.gz f9e58b8aedd77eacc39d45a97ef7692cd59372bf
++sha256 gcc-8.3.0.tar.gz ea71adc1c3d86330874b8df19611424b143308f0d6612d542472600532c96d2d
++sha512 gcc-8.3.0.tar.gz c0e6c3b6de8e40f1f078583bec0d9c0237fbcfd5c73cebe3c188aee1fd702cabc5f2bd2a3b05b4dfd8336cc214d6158c8ad885fe412fc193a7cca4e519ba7ab3
+diff --git a/packages/gcc/8.2.0/version.desc b/packages/gcc/8.3.0/version.desc
+similarity index 100%
+rename from packages/gcc/8.2.0/version.desc
+rename to packages/gcc/8.3.0/version.desc
+-- 
+2.20.1
+
