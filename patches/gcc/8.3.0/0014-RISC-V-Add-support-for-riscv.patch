@@ -1,4 +1,4 @@
-From e9a98669739e0e921d26d32194170db27aea915b Mon Sep 17 00:00:00 2001
+From 0579984909ee2b264eab7d83ee0daaf59809e461 Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Fri, 6 Jul 2018 03:14:47 +0000
 Subject: [PATCH 14/22] RISC-V: Add support for riscv-*-*.
@@ -12,7 +12,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@262463 138bc75d-0d04-0410-961f-8
  2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 7e7349ba70d..83e17b7bb6f 100644
+index ea44ddbbc2a..963fc9f30a0 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,7 @@
@@ -24,10 +24,10 @@ index 7e7349ba70d..83e17b7bb6f 100644
  
  	* config/riscv/riscv.c (riscv_expand_epilogue): Use emit_jump_insn
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 1d6f34b46e1..912116ac164 100644
+index a845800d6a6..25905c6c9c5 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -4073,7 +4073,7 @@ case "${target}" in
+@@ -4076,7 +4076,7 @@ case "${target}" in
  		supported_defaults="abi arch tune"
  
  		case "${target}" in

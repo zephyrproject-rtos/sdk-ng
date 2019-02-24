@@ -1,4 +1,4 @@
-From 484742c5251b501473841fcc1820f58a62c4d165 Mon Sep 17 00:00:00 2001
+From eba0970bf5e320b740c58b7d8f094a64513a73ba Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Tue, 25 Sep 2018 22:52:38 +0000
 Subject: [PATCH 18/22] RISC-V: Fix weak symbols with medany and explicit
@@ -21,7 +21,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@264586 138bc75d-0d04-0410-961f-8
  create mode 100644 gcc/testsuite/gcc.target/riscv/weak-1.c
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index da0009156fc..70ab10f99fc 100644
+index a9f86ce62da..7693c61a18e 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,8 @@
@@ -50,7 +50,7 @@ index c10c58e3cd5..76bb74fb2d4 100644
  	  if (temp == NULL)
  	    temp = gen_reg_rtx (Pmode);
 diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
-index 0fa6c01b444..d0f15745998 100644
+index c74adf85d02..d8e6dabd82c 100644
 --- a/gcc/testsuite/ChangeLog
 +++ b/gcc/testsuite/ChangeLog
 @@ -1,3 +1,7 @@

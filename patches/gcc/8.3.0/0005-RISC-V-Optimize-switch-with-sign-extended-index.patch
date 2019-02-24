@@ -1,4 +1,4 @@
-From e89f9f869fa27a75d290920784e45ad8b3c644ad Mon Sep 17 00:00:00 2001
+From 493132f79766fd27908aec95358d56fa29311058 Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Thu, 17 May 2018 22:37:38 +0000
 Subject: [PATCH 05/22] RISC-V: Optimize switch with sign-extended index.
@@ -29,7 +29,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260340 138bc75d-0d04-0410-961f-8
  create mode 100644 gcc/testsuite/gcc.target/riscv/switch-si.c
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index aa2af8043f3..4cbec373314 100644
+index 321d78fca38..b657d3e5303 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,13 @@
@@ -72,10 +72,10 @@ index 2a8f87d1e94..b4975888bbb 100644
  	  *op0 = gen_rtx_ZERO_EXTEND (word_mode, *op0);
  	  if (CONST_INT_P (*op1))
 diff --git a/gcc/expr.c b/gcc/expr.c
-index 9ca466144be..b14577f780f 100644
+index bac0c787e4f..61321ab6e29 100644
 --- a/gcc/expr.c
 +++ b/gcc/expr.c
-@@ -11779,11 +11779,26 @@ do_tablejump (rtx index, machine_mode mode, rtx range, rtx table_label,
+@@ -11819,11 +11819,26 @@ do_tablejump (rtx index, machine_mode mode, rtx range, rtx table_label,
      emit_cmp_and_jump_insns (index, range, GTU, NULL_RTX, mode, 1,
  			     default_label, default_probability);
  
@@ -105,7 +105,7 @@ index 9ca466144be..b14577f780f 100644
    /* Don't let a MEM slip through, because then INDEX that comes
       out of PIC_CASE_VECTOR_ADDRESS won't be a valid address,
 diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
-index b80ff889f15..ff95cde01ed 100644
+index 7d5e65b1a74..4f4cdb8b486 100644
 --- a/gcc/testsuite/ChangeLog
 +++ b/gcc/testsuite/ChangeLog
 @@ -1,3 +1,8 @@
@@ -114,9 +114,9 @@ index b80ff889f15..ff95cde01ed 100644
 +	* gcc.target/riscv/switch-qi.c: New.
 +	* gcc.target/riscv/switch-si.c: New.
 +
- 2018-07-26  Release Manager
+ 2019-02-22  Release Manager
  
- 	* GCC 8.2.0 released.
+ 	* GCC 8.3.0 released.
 diff --git a/gcc/testsuite/gcc.target/riscv/switch-qi.c b/gcc/testsuite/gcc.target/riscv/switch-qi.c
 new file mode 100644
 index 00000000000..973d09aaaf1

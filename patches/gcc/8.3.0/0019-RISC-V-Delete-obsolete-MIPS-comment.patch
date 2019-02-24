@@ -1,4 +1,4 @@
-From f23bad71e986bc205494e4721127f1b2f167a1b0 Mon Sep 17 00:00:00 2001
+From 393d8be2235449774b0a77c3e8deaf31784f81f2 Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Wed, 26 Sep 2018 18:42:19 +0000
 Subject: [PATCH 19/22] RISC-V: Delete obsolete MIPS comment.
@@ -13,7 +13,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@264652 138bc75d-0d04-0410-961f-8
  2 files changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 70ab10f99fc..3e55d506d6a 100644
+index 7693c61a18e..a3dd791f266 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,7 @@

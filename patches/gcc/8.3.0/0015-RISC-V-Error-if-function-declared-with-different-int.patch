@@ -1,4 +1,4 @@
-From fbc2547bb1227b596d2f59f649fcc8a43de8c048 Mon Sep 17 00:00:00 2001
+From ddda5441e747997c43810609696e3b5f8e7f2c1c Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Thu, 12 Jul 2018 19:59:09 +0000
 Subject: [PATCH 15/22] RISC-V: Error if function declared with different
@@ -29,7 +29,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@262607 138bc75d-0d04-0410-961f-8
  create mode 100644 gcc/testsuite/gcc.target/riscv/interrupt-conflict-mode.c
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 83e17b7bb6f..0fe45890ae9 100644
+index 963fc9f30a0..3d952649b6a 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,14 @@
@@ -182,7 +182,7 @@ index d87836f53f8..c10c58e3cd5 100644
  #define TARGET_ATTRIBUTE_TABLE riscv_attribute_table
  
 diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
-index 90218e5d8bf..0fa6c01b444 100644
+index 2267d4e62ce..c74adf85d02 100644
 --- a/gcc/testsuite/ChangeLog
 +++ b/gcc/testsuite/ChangeLog
 @@ -1,3 +1,7 @@

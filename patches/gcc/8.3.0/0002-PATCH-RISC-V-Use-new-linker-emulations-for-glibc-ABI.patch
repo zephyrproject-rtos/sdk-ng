@@ -1,4 +1,4 @@
-From 0b345eb3a1ec62baa9d9c82671e0842a194cb8a8 Mon Sep 17 00:00:00 2001
+From 6e300c7b778e19bfe4a84455815dab0f35a7c33c Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Tue, 8 May 2018 21:27:04 +0000
 Subject: [PATCH 02/22] [PATCH] RISC-V: Use new linker emulations for glibc
@@ -16,7 +16,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260056 138bc75d-0d04-0410-961f-8
  2 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index b93dae5dfb0..1083f9ee4e8 100644
+index d1fd9f6a7b9..2b609c2dd0a 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,9 @@
@@ -26,9 +26,9 @@ index b93dae5dfb0..1083f9ee4e8 100644
 +	(LD_EMUL_SUFFIX): New.
 +	(LINK_SPEC): Use it.
 +
- 2018-07-26  Release Manager
+ 2019-02-22  Release Manager
  
- 	* GCC 8.2.0 released.
+ 	* GCC 8.3.0 released.
 diff --git a/gcc/config/riscv/linux.h b/gcc/config/riscv/linux.h
 index aa8a28d5d31..85561846dad 100644
 --- a/gcc/config/riscv/linux.h

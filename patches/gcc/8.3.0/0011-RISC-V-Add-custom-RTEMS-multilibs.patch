@@ -1,4 +1,4 @@
-From 58c5d137f0eb55624a6396d1f71ace9dc357fb09 Mon Sep 17 00:00:00 2001
+From 570652056685b6277b1e56dcecf9ee5641f58928 Mon Sep 17 00:00:00 2001
 From: sh <sh@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Fri, 15 Jun 2018 05:19:44 +0000
 Subject: [PATCH 11/22] RISC-V: Add custom RTEMS multilibs
@@ -22,7 +22,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@261619 138bc75d-0d04-0410-961f-8
  1 file changed, 6 insertions(+)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index ef462110cd7..5f84232960e 100644
+index 4ba08d2b23a..865be24edb1 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,9 @@

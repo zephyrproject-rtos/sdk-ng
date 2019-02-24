@@ -1,4 +1,4 @@
-From e8d37379b3407c1bac369cf5d4998d40787821f8 Mon Sep 17 00:00:00 2001
+From a6a764b7af0c5fadcec970afe8c5cae199b9f67c Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Tue, 25 Sep 2018 01:27:06 +0000
 Subject: [PATCH 17/22] RISC-V: Fix problems with ilp32e ABI support.
@@ -16,7 +16,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@264555 138bc75d-0d04-0410-961f-8
  2 files changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 3a249233367..da0009156fc 100644
+index a273d2da9dc..a9f86ce62da 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,10 @@

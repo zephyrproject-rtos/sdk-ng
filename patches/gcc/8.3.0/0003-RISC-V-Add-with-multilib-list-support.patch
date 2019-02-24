@@ -1,4 +1,4 @@
-From eb64d6b593a51f2cf2a6e8b043b90e555c8f6c62 Mon Sep 17 00:00:00 2001
+From fb9b78859bafc910d982bfae25340698590d83d5 Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Wed, 9 May 2018 21:17:14 +0000
 Subject: [PATCH 03/22] RISC-V: Add with-multilib-list support.
@@ -22,7 +22,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260096 138bc75d-0d04-0410-961f-8
  create mode 100644 gcc/config/riscv/withmultilib.h
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 1083f9ee4e8..98bd7ce0e07 100644
+index 2b609c2dd0a..f0f6dcfe75b 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,11 @@
@@ -38,10 +38,10 @@ index 1083f9ee4e8..98bd7ce0e07 100644
  
  	* config/riscv/linux.h (MUSL_ABI_SUFFIX): Delete unnecessary backslash.
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 532c33f4c2b..fd5d154e8f6 100644
+index 7af8e028104..822b0d034c5 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -4131,6 +4131,58 @@ case "${target}" in
+@@ -4134,6 +4134,58 @@ case "${target}" in
  			exit 1
  			;;
  		esac
@@ -170,21 +170,21 @@ index 00000000000..d703147fa64
 +# error "unsupported TARGET_MLIB_ARCH value"
 +#endif
 diff --git a/gcc/doc/install.texi b/gcc/doc/install.texi
-index ec20fd26685..7c5cdc762d3 100644
+index 1cc427249a4..0e161d0e61a 100644
 --- a/gcc/doc/install.texi
 +++ b/gcc/doc/install.texi
 @@ -1072,8 +1072,8 @@ sysv, aix.
  @itemx --without-multilib-list
  Specify what multilibs to build.  @var{list} is a comma separated list of
  values, possibly consisting of a single value.  Currently only implemented
--for arm*-*-*, sh*-*-* and x86-64-*-linux*.  The accepted values and meaning
--for each target is given below.
-+for arm*-*-*, riscv*-*-*, sh*-*-* and x86-64-*-linux*.  The accepted
-+values and meaning for each target is given below.
+-for aarch64*-*-*, arm*-*-*, sh*-*-* and x86-64-*-linux*.  The accepted
+-alues and meaning for each target is given below.
++for aarch64*-*-*, arm*-*-*, riscv*-*-*, sh*-*-* and x86-64-*-linux*.  The
++accepted values and meaning for each target is given below.
  
  @table @code
- @item arm*-*-*
-@@ -1128,6 +1128,13 @@ and @code{rmprofile}.
+ @item aarch64*-*-*
+@@ -1137,6 +1137,13 @@ and @code{rmprofile}.
  @code{-mfloat-abi=hard}
  @end multitable
  
