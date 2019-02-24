@@ -1,4 +1,4 @@
-From d2f7c2e7ddac5d2b2fe9d0a0daa4de6dfaad6255 Mon Sep 17 00:00:00 2001
+From 06ab742f982d23488ec2d8c0266cb720fe775f7c Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Fri, 18 May 2018 22:53:55 +0000
 Subject: [PATCH 06/22] RISC-V: Add RV32E support.
@@ -50,7 +50,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260384 138bc75d-0d04-0410-961f-8
  13 files changed, 166 insertions(+), 17 deletions(-)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 4cbec373314..77a06d49fbc 100644
+index b657d3e5303..2072ac7a8e0 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,26 @@
@@ -142,10 +142,10 @@ index 9db83015aed..8a78aebc320 100644
      {
        error_at (loc, "-march=%s: invalid ISA string", isa);
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index fd5d154e8f6..1d6f34b46e1 100644
+index 822b0d034c5..a845800d6a6 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -4080,19 +4080,20 @@ case "${target}" in
+@@ -4083,19 +4083,20 @@ case "${target}" in
  
  		# Infer arch from --with-arch, --target, and --with-abi.
  		case "${with_arch}" in
@@ -168,7 +168,7 @@ index fd5d154e8f6..1d6f34b46e1 100644
  			exit 1
  			;;
  		esac
-@@ -4101,11 +4102,12 @@ case "${target}" in
+@@ -4104,11 +4105,12 @@ case "${target}" in
  		# pick a default based on the ISA, preferring soft-float
  		# unless the D extension is present.
  		case "${with_abi}" in
@@ -182,7 +182,7 @@ index fd5d154e8f6..1d6f34b46e1 100644
  			rv32*) with_abi=ilp32 ;;
  			rv64*d* | rv64g*) with_abi=lp64d ;;
  			rv64*) with_abi=lp64 ;;
-@@ -4119,7 +4121,7 @@ case "${target}" in
+@@ -4122,7 +4124,7 @@ case "${target}" in
  
  		# Make sure ABI and ISA are compatible.
  		case "${with_abi},${with_arch}" in
@@ -354,10 +354,10 @@ index b37ac75d9bb..13693221d26 100644
 +
 +Mask(RVE)
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index bde6b7cbaaf..4477b6d400c 100644
+index e5c4e8125aa..0f88569984c 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -23054,7 +23054,9 @@ conventions are: @samp{ilp32}, @samp{ilp32f}, @samp{ilp32d}, @samp{lp64},
+@@ -23079,7 +23079,9 @@ conventions are: @samp{ilp32}, @samp{ilp32f}, @samp{ilp32d}, @samp{lp64},
  @samp{lp64f}, and @samp{lp64d}.  Some calling conventions are impossible to
  implement on some ISAs: for example, @samp{-march=rv32if -mabi=ilp32d} is
  invalid because the ABI requires 64-bit values be passed in F registers, but F
@@ -368,7 +368,7 @@ index bde6b7cbaaf..4477b6d400c 100644
  
  @item -mfdiv
  @itemx -mno-fdiv
-@@ -23073,7 +23075,8 @@ these instructions.
+@@ -23098,7 +23100,8 @@ these instructions.
  @item -march=@var{ISA-string}
  @opindex march
  Generate code for given RISC-V ISA (e.g.@ @samp{rv64im}).  ISA strings must be
@@ -379,7 +379,7 @@ index bde6b7cbaaf..4477b6d400c 100644
  @item -mtune=@var{processor-string}
  @opindex mtune
 diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
-index ff95cde01ed..4c86e7bd3fe 100644
+index 4f4cdb8b486..36311c6893d 100644
 --- a/gcc/testsuite/ChangeLog
 +++ b/gcc/testsuite/ChangeLog
 @@ -1,3 +1,7 @@
@@ -408,7 +408,7 @@ index 45d2c7b6aae..038bd4ec05c 100644
  #if defined (__AVR_3_BYTE_PC__ )
  #  define SIZE 251 /* 256 - 2 bytes for Y - 3 bytes for return address */
 diff --git a/libgcc/ChangeLog b/libgcc/ChangeLog
-index 1726ac15f53..050e41dd247 100644
+index 99d410137a5..d44cfdc18da 100644
 --- a/libgcc/ChangeLog
 +++ b/libgcc/ChangeLog
 @@ -1,3 +1,9 @@
@@ -418,9 +418,9 @@ index 1726ac15f53..050e41dd247 100644
 +
 +	* config/riscv/save-restore.S: Add support for rv32e.
 +
- 2018-07-26  Release Manager
+ 2019-02-22  Release Manager
  
- 	* GCC 8.2.0 released.
+ 	* GCC 8.3.0 released.
 diff --git a/libgcc/config/riscv/save-restore.S b/libgcc/config/riscv/save-restore.S
 index 9a6d0c9fcfc..a76c9780902 100644
 --- a/libgcc/config/riscv/save-restore.S

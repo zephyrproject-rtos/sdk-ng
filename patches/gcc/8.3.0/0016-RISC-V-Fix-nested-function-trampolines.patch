@@ -1,4 +1,4 @@
-From 489c9e74775b580b9cb57adc80ef3277af5fee11 Mon Sep 17 00:00:00 2001
+From 07f1afd95fbc9f10769f097a7c17e594c6b34210 Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Sat, 14 Jul 2018 20:05:39 +0000
 Subject: [PATCH 16/22] RISC-V: Fix nested function trampolines.
@@ -13,7 +13,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@262660 138bc75d-0d04-0410-961f-8
  2 files changed, 6 insertions(+)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index 0fe45890ae9..3a249233367 100644
+index 3d952649b6a..a273d2da9dc 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,7 @@

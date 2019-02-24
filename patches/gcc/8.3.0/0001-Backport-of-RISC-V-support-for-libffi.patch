@@ -1,4 +1,4 @@
-From e0f10f22f9dd52a0abf02068176d1720159fc1da Mon Sep 17 00:00:00 2001
+From dc11802c62f9e829ec57f6fd6ada01d7c97e7edf Mon Sep 17 00:00:00 2001
 From: schwab <schwab@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Tue, 8 May 2018 10:29:16 +0000
 Subject: [PATCH 01/22] Backport of RISC-V support for libffi
@@ -24,7 +24,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@260033 138bc75d-0d04-0410-961f-8
  create mode 100644 libffi/src/riscv/sysv.S
 
 diff --git a/libffi/ChangeLog b/libffi/ChangeLog
-index fc8a4f82a4c..c1cb542c7ca 100644
+index 97bdfd02bae..5963137eabb 100644
 --- a/libffi/ChangeLog
 +++ b/libffi/ChangeLog
 @@ -1,3 +1,12 @@
@@ -37,9 +37,9 @@ index fc8a4f82a4c..c1cb542c7ca 100644
 +	* src/riscv/ffi.c, src/riscv/ffitarget.h, src/riscv/sysv.S: New
 +	files.
 +
- 2018-07-26  Release Manager
+ 2019-02-22  Release Manager
  
- 	* GCC 8.2.0 released.
+ 	* GCC 8.3.0 released.
 diff --git a/libffi/Makefile.am b/libffi/Makefile.am
 index dc433285362..37f5ecaf3c3 100644
 --- a/libffi/Makefile.am

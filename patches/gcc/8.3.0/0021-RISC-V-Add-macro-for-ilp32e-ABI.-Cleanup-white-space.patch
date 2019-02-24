@@ -1,4 +1,4 @@
-From b38487782bb1a4f1036126bd9867eee91c7916f7 Mon Sep 17 00:00:00 2001
+From cc790d2506ec5215ba456570a0fcd53958b7cb38 Mon Sep 17 00:00:00 2001
 From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Wed, 3 Oct 2018 19:09:32 +0000
 Subject: [PATCH 21/22] RISC-V: Add macro for ilp32e ABI.  Cleanup white space.
@@ -14,7 +14,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@264821 138bc75d-0d04-0410-961f-8
  2 files changed, 20 insertions(+), 12 deletions(-)
 
 diff --git a/gcc/ChangeLog b/gcc/ChangeLog
-index ed2c2ddb3e9..4192e0b053c 100644
+index 1576ea34701..cba14bb029d 100644
 --- a/gcc/ChangeLog
 +++ b/gcc/ChangeLog
 @@ -1,3 +1,8 @@
