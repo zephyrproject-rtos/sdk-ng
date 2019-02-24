@@ -1,0 +1,35 @@
+From 593005d075c50ca0a0d3bd655cfb8d8ad7dbdebf Mon Sep 17 00:00:00 2001
+From: "H.J. Lu" <hjl.tools@gmail.com>
+Date: Thu, 30 Apr 2015 14:53:37 -0700
+Subject: [PATCH] Add Intel MCU support to gdb
+
+---
+ gdb/i386-linux-tdep.c | 2 ++
+ gdb/i386-tdep.c       | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/gdb/i386-linux-tdep.c b/gdb/i386-linux-tdep.c
+index f5b039b794..faa939796f 100644
+--- a/gdb/i386-linux-tdep.c
++++ b/gdb/i386-linux-tdep.c
+@@ -1081,6 +1081,8 @@ _initialize_i386_linux_tdep (void)
+ {
+   gdbarch_register_osabi (bfd_arch_i386, 0, GDB_OSABI_LINUX,
+ 			  i386_linux_init_abi);
++  gdbarch_register_osabi (bfd_arch_iamcu, 0, GDB_OSABI_LINUX,
++			  i386_linux_init_abi);
+ 
+ #if GDB_SELF_TEST
+   struct
+diff --git a/gdb/i386-tdep.c b/gdb/i386-tdep.c
+index b1d502f482..e4229d5140 100644
+--- a/gdb/i386-tdep.c
++++ b/gdb/i386-tdep.c
+@@ -8991,6 +8991,7 @@ void
+ _initialize_i386_tdep (void)
+ {
+   register_gdbarch_init (bfd_arch_i386, i386_gdbarch_init);
++  register_gdbarch_init (bfd_arch_iamcu, i386_gdbarch_init);
+ 
+   /* Add the variable that controls the disassembly flavor.  */
+   add_setshow_enum_cmd ("disassembly-flavor", no_class, valid_flavors,
