@@ -12,8 +12,9 @@ Currently we build the following toolchains:
 - iamcu
 - nios2
 - arm
-- riscv32 (experimental branch)
+- riscv32
 - mips
+- xtensa
 
 To build for any of the above, run:
 
@@ -21,6 +22,11 @@ To build for any of the above, run:
 ./go.sh <arch>
 ```
 
+## PR Builds
+
+Successfull PR builds will get posted here:
+
+https://builds.zephyrproject.org/zephyrproject-rtos/sdk-ng/<PR NUMBER>/zephyr-sdk-<VERISON>-setup.run
 
 ## Release Process
 
