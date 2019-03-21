@@ -1,0 +1,74 @@
+From 86410e2694be9f007d76c765c237cd8907e98000 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Mon, 6 May 2019 15:55:48 -0500
+Subject: [PATCH] initial patch for x86_64
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ gcc/config.gcc             |  4 ++++
+ gcc/config/i386/t-zephyr64 | 38 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+ create mode 100644 gcc/config/i386/t-zephyr64
+
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 439f62900..e4a5b9459 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1504,6 +1504,10 @@ i586-zephyr-elf)
+ i[34567]86-*-elf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
+ 	;;
++x86_64-zephyr-elf*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
++	tmake_file="${tmake_file} i386/t-zephyr64"
++	;;
+ x86_64-*-elf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
+ 	;;
+diff --git a/gcc/config/i386/t-zephyr64 b/gcc/config/i386/t-zephyr64
+new file mode 100644
+index 000000000..8ea0faff3
+--- /dev/null
++++ b/gcc/config/i386/t-zephyr64
+@@ -0,0 +1,38 @@
++# Copyright (C) 2002-2018 Free Software Foundation, Inc.
++#
++# This file is part of GCC.
++#
++# GCC is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++#
++# GCC is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++
++# On Debian, Ubuntu and other derivative distributions, the 32bit libraries
++# are found in /lib32 and /usr/lib32, /lib64 and /usr/lib64 are symlinks to
++# /lib and /usr/lib, while other distributions install libraries into /lib64
++# and /usr/lib64.  The LSB does not enforce the use of /lib64 and /usr/lib64,
++# it doesn't tell anything about the 32bit libraries on those systems.  Set
++# MULTILIB_OSDIRNAMES according to what is found on the target.
++
++# To support i386, x86-64 and x32 libraries, the directory structrue
++# should be:
++#
++# 	/lib has i386 libraries.
++# 	/lib64 has x86-64 libraries.
++# 	/libx32 has x32 libraries.
++#
++comma=,
++MULTILIB_OPTIONS    = $(subst $(comma),/,$(TM_MULTILIB_CONFIG))
++MULTILIB_DIRNAMES   = $(patsubst m%, %, $(subst /, ,$(MULTILIB_OPTIONS)))
++MULTILIB_OSDIRNAMES = m64=../lib64$(call if_multiarch,:x86_64-linux-gnu)
++MULTILIB_OSDIRNAMES+= m32=$(if $(wildcard $(shell echo $(SYSTEM_HEADER_DIR))/../../usr/lib32),../lib32,../lib)$(call if_multiarch,:i386-linux-gnu)
++MULTILIB_OSDIRNAMES+= mx32=../libx32$(call if_multiarch,:x86_64-linux-gnux32)
+-- 
+2.20.1
+

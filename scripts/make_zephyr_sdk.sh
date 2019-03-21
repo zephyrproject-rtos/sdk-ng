@@ -57,6 +57,7 @@ parse_toolchain_name file_gcc_mips mips
 parse_toolchain_name file_gcc_nios2 nios2
 parse_toolchain_name file_gcc_xtensa xtensa
 parse_toolchain_name file_gcc_riscv32 riscv32
+parse_toolchain_name file_gcc_x86_64 x86_64
 parse_toolchain_name file_hosttools hosttools
 
 # Host tools are non-optional
@@ -125,6 +126,13 @@ fi
 if [ -n "$file_gcc_riscv32" ]; then
   echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_riscv32 > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing riscv32 tools...\"" >> $setup
+  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
+  echo "echo \"\"" >>$setup
+fi
+
+if [ -n "$file_gcc_x86_64" ]; then
+  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_x86_64 > /dev/null &" >> $setup
+  echo "spinner \$!  \"Installing x86_64 tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
