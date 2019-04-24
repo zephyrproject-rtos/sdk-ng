@@ -1,6 +1,6 @@
-From 50a5a7b223f7c447a0e1d0f56a2da4a8459a7f2e Mon Sep 17 00:00:00 2001
+From 1c7173de9571f2bdb4052bc7407aa16609e8055f Mon Sep 17 00:00:00 2001
 From: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
-Date: Fri, 14 Sep 2018 20:35:05 +0530
+Date: Fri, 17 May 2019 10:15:15 -0500
 Subject: [PATCH] qemu/nios2: Add Altera MAX 10 board support for Zephyr OS
 
 Exisitng 10m50_devboard is not supporting qemu-niso2 on Zephyr OS
@@ -12,20 +12,21 @@ So added support for Zephyr qemu-nios2 board.
 Signed-off-by: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
 ---
  hw/nios2/Makefile.objs         |   2 +-
- hw/nios2/altera_10m50_zephyr.c | 163 +++++++++++++++++++++++++++++++++++++++++
+ hw/nios2/altera_10m50_zephyr.c | 163 +++++++++++++++++++++++++++++++++
  2 files changed, 164 insertions(+), 1 deletion(-)
  create mode 100644 hw/nios2/altera_10m50_zephyr.c
 
 diff --git a/hw/nios2/Makefile.objs b/hw/nios2/Makefile.objs
-index 6b5c421..6723586 100644
+index 89a419a9f5..07b6eb0a66 100644
 --- a/hw/nios2/Makefile.objs
 +++ b/hw/nios2/Makefile.objs
-@@ -1 +1 @@
--obj-y = boot.o cpu_pic.o 10m50_devboard.o
-+obj-y = boot.o cpu_pic.o 10m50_devboard.o altera_10m50_zephyr.o
+@@ -1,2 +1,2 @@
+ obj-y = boot.o cpu_pic.o
+-obj-$(CONFIG_NIOS2_10M50) += 10m50_devboard.o
++obj-$(CONFIG_NIOS2_10M50) += 10m50_devboard.o altera_10m50_zephyr.o
 diff --git a/hw/nios2/altera_10m50_zephyr.c b/hw/nios2/altera_10m50_zephyr.c
 new file mode 100644
-index 0000000..91ec9d7
+index 0000000000..a3329a9288
 --- /dev/null
 +++ b/hw/nios2/altera_10m50_zephyr.c
 @@ -0,0 +1,163 @@
@@ -159,7 +160,7 @@ index 0000000..91ec9d7
 +        uint64_t entry;
 +
 +        /* Boots a kernel elf binary.  */
-+        kernel_size = load_elf(kernel_filename, NULL, NULL,
++        kernel_size = load_elf(kernel_filename, NULL, NULL, NULL,
 +                               &entry, NULL, NULL,
 +                               0, EM_ALTERA_NIOS2, 0, 0);
 +
@@ -193,5 +194,5 @@ index 0000000..91ec9d7
 +
 +DEFINE_MACHINE("altera_10m50_zephyr", altera_10m50_zephyr_machine_init)
 -- 
-2.9.5
+2.20.1
 

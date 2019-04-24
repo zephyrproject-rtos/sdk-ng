@@ -3,9 +3,9 @@ DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
 LICENSE = "GPLv2"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
-                    file://COPYING.LIB;endline=24;md5=c04def7ae38850e7d3ef548588159913"
+                    file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "32a1a94dd324d33578dca1dc96d7896a0244d768"
+SRCREV = "131b9a05705636086699df15d4a6d328bb2585e8"
 SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
 "
@@ -198,7 +198,7 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh2 --disable-vnc-png  --disable-seccomp \
   --disable-tpm  --disable-numa --disable-glusterfs \
-  --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses\
+  --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
   "
 
 do_configure() {
