@@ -6,13 +6,13 @@ HOMEPAGE = "https://github.com/shumatech/BOSSA"
 #     sudo apt-get install wx2.8-headers libwxgtk2.8-0 libwxgtk2.8-dev
 #
 
-LICENSE = "BSD"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=bcf9399f7b9b96149837290bcdc3ad39"
+LICENSE = "SHUMATECH"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=94411054a7f6921218ab9c05b6b4b15b"
 
 DEPENDS = "readline"
 
 PR = "r0"
-SRCREV = "3279031813093aa404b8561c8dd7a39dd24ebc70"
+SRCREV = "5cae9fee241bd3c95c197b2464e9b83240994c43"
 SRC_URI = "git://github.com/shumatech/BOSSA.git;protocol=https"
 
 S = "${WORKDIR}/git"
