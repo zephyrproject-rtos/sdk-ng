@@ -53,7 +53,7 @@ parse_toolchain_name file_gcc_arm arm
 parse_toolchain_name file_gcc_arc arc
 parse_toolchain_name file_gcc_x86 i586
 parse_toolchain_name file_gcc_iamcu iamcu
-parse_toolchain_name file_gcc_mips mips32r2
+parse_toolchain_name file_gcc_mips mips
 parse_toolchain_name file_gcc_nios2 nios2
 parse_toolchain_name file_gcc_xtensa xtensa
 parse_toolchain_name file_gcc_riscv32 riscv32
