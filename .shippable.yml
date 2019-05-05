@@ -39,8 +39,9 @@ build:
           sudo -E sh -c 'echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $JOB_STATE/sdk.env';
           sudo -E sh -c 'echo "GIT_TAG_NAME=${GIT_TAG_NAME}" >> $JOB_STATE/sdk.env';
           sudo -E sh -c 'echo "PULL_REQUEST=${PULL_REQUEST}" >> $JOB_STATE/sdk.env';
+          sudo -E sh -c 'echo "SDKNG_CIREPO_VERSIONNAME=${SDKNG_CIREPO_VERSIONNAME}" >> $JOB_STATE/sdk.env';
           cat $JOB_STATE/sdk.env;
-          export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNUMBER}";
+          export S3_PATH="s3://incoming.zephyrproject.org/sdk-ng/${SDKNG_CIREPO_VERSIONNAME}";
           if [ "${TARGET}" == 'tools' ]; then
             echo "uploading zephyr-sdk-x86_64-hosttools-standalone-0.9.sh to ${S3_PATH}/";
             aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
