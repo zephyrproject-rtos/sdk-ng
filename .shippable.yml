@@ -14,6 +14,7 @@ env:
       - TARGET=mips
       - TARGET=arc
       - TARGET=xtensa
+      - TARGET=x86_64-zephyr-elf
       - TARGET="tools"
 
 build:

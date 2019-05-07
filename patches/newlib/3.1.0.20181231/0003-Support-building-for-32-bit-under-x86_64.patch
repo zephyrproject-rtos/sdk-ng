@@ -1,0 +1,37 @@
+From 5d17ef2b46a5a0b5aaf7069b9eac4876699f7ade Mon Sep 17 00:00:00 2001
+From: Daniel Leung <daniel.leung@intel.com>
+Date: Wed, 8 May 2019 09:17:10 -0700
+Subject: [PATCH 3/3] Support building for 32-bit under x86_64
+
+This is for multilib support under x86_64. When compiling for
+32-bit (with -m32), the machine_dir needs to be i386 instead of
+x86_64.
+
+Signed-off-by: Daniel Leung <daniel.leung@intel.com>
+---
+ newlib/configure.host | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/newlib/configure.host b/newlib/configure.host
+index 6c49cb7..1f66c96 100644
+--- a/newlib/configure.host
++++ b/newlib/configure.host
+@@ -333,7 +333,14 @@ case "${host_cpu}" in
+ 	machine_dir=w65
+ 	;;
+   x86_64)
+-	machine_dir=x86_64
++	case "${CC}" in
++	  *-m32)
++	      machine_dir=i386
++	      ;;
++	  *)
++	      machine_dir=x86_64
++	      ;;
++	esac
+ 	;;
+   xc16x*)
+         machine_dir=xc16x
+-- 
+2.21.0
+
