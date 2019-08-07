@@ -1,0 +1,220 @@
+From 851f7642b7b89c52152be23757850c9192cbc729 Mon Sep 17 00:00:00 2001
+From: aburgess <aburgess@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Mon, 18 Mar 2019 10:42:53 +0000
+Subject: [PATCH 35/42] gcc/riscv: Correctly ignore empty C++ structs when
+ flattening for ABI
+
+This fixes PR target/89627.
+
+The RISC-V ABI document[1] says:
+
+   For the purposes of this section, "struct" refers to a C struct
+   with its hierarchy flattened, including any array fields. That is,
+   struct { struct { float f[1]; } g[2]; } and struct { float f; float
+   g; } are treated the same. Fields containing empty structs or
+   unions are ignored while flattening, even in C++, unless they have
+   nontrivial copy constructors or destructors.
+
+However, this flattening only applies when one of the fields of the
+flattened structure can be placed into a floating point register,
+otherwise no flattening occurs.
+
+Currently GCC fails to correctly consider that empty C++ structures
+have a non-zero size when constructing the arguments from a flattened
+structure, and as a result, trying to pass a C++ structure like this:
+
+  struct sf { struct {} e; float f; };
+
+Doesn't work correctly, GCC fails to take the offset of 'f' within
+'sf' into account and will actually pass the space backing 'e' as the
+contents of 'f'.
+
+This patch fixes this so that 'f' will be passed correctly.  A couple
+of new tests are added to cover this functionality.
+
+[1] https://github.com/riscv/riscv-elf-psabi-doc/blob/master/riscv-elf.md
+
+gcc/ChangeLog:
+
+	PR target/89627
+	* config/riscv/riscv.c (riscv_pass_fpr_single): Add offset
+	parameter, and make use of it.
+	(riscv_get_arg_info): Pass offset to riscv_pass_fpr_single.
+
+gcc/testsuite/ChangeLog:
+
+	PR target/89627
+	* g++.target/riscv/call-with-empty-struct-float.C: New file.
+	* g++.target/riscv/call-with-empty-struct-int.C: New file.
+	* g++.target/riscv/call-with-empty-struct.H: New file.
+	* g++.target/riscv/riscv.exp: New file.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@269760 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                                 |  7 ++++
+ gcc/config/riscv/riscv.c                      |  8 +++--
+ gcc/testsuite/ChangeLog                       |  8 +++++
+ .../riscv/call-with-empty-struct-float.C      |  6 ++++
+ .../riscv/call-with-empty-struct-int.C        |  6 ++++
+ .../g++.target/riscv/call-with-empty-struct.H | 19 +++++++++++
+ gcc/testsuite/g++.target/riscv/riscv.exp      | 34 +++++++++++++++++++
+ 7 files changed, 85 insertions(+), 3 deletions(-)
+ create mode 100644 gcc/testsuite/g++.target/riscv/call-with-empty-struct-float.C
+ create mode 100644 gcc/testsuite/g++.target/riscv/call-with-empty-struct-int.C
+ create mode 100644 gcc/testsuite/g++.target/riscv/call-with-empty-struct.H
+ create mode 100644 gcc/testsuite/g++.target/riscv/riscv.exp
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 0960169381c..b34ea1795c1 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,10 @@
++2019-03-18  Andrew Burgess  <andrew.burgess@embecosm.com>
++
++	PR target/89627
++	* config/riscv/riscv.c (riscv_pass_fpr_single): Add offset
++	parameter, and make use of it.
++	(riscv_get_arg_info): Pass offset to riscv_pass_fpr_single.
++
+ 2019-04-09  Jakub Jelinek  <jakub@redhat.com>
+ 
+ 	PR target/90015
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index 0b6069bfcd6..6e5e4924c6a 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -2536,13 +2536,14 @@ riscv_pass_aggregate_in_fpr_and_gpr_p (const_tree type,
+ 
+ static rtx
+ riscv_pass_fpr_single (machine_mode type_mode, unsigned regno,
+-		       machine_mode value_mode)
++		       machine_mode value_mode,
++		       HOST_WIDE_INT offset)
+ {
+   rtx x = gen_rtx_REG (value_mode, regno);
+ 
+   if (type_mode != value_mode)
+     {
+-      x = gen_rtx_EXPR_LIST (VOIDmode, x, const0_rtx);
++      x = gen_rtx_EXPR_LIST (VOIDmode, x, GEN_INT (offset));
+       x = gen_rtx_PARALLEL (type_mode, gen_rtvec (1, x));
+     }
+   return x;
+@@ -2604,7 +2605,8 @@ riscv_get_arg_info (struct riscv_arg_info *info, const CUMULATIVE_ARGS *cum,
+ 	  {
+ 	  case 1:
+ 	    return riscv_pass_fpr_single (mode, fregno,
+-					  TYPE_MODE (fields[0].type));
++					  TYPE_MODE (fields[0].type),
++					  fields[0].offset);
+ 
+ 	  case 2:
+ 	    return riscv_pass_fpr_pair (mode, fregno,
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index 58127bed0e0..ff9a736308e 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,11 @@
++2019-03-18  Andrew Burgess  <andrew.burgess@embecosm.com>
++
++	PR target/89627
++	* g++.target/riscv/call-with-empty-struct-float.C: New file.
++	* g++.target/riscv/call-with-empty-struct-int.C: New file.
++	* g++.target/riscv/call-with-empty-struct.H: New file.
++	* g++.target/riscv/riscv.exp: New file.
++
+ 2019-04-09  Jakub Jelinek  <jakub@redhat.com>
+ 
+ 	PR target/90015
+diff --git a/gcc/testsuite/g++.target/riscv/call-with-empty-struct-float.C b/gcc/testsuite/g++.target/riscv/call-with-empty-struct-float.C
+new file mode 100644
+index 00000000000..76d0dc6d93d
+--- /dev/null
++++ b/gcc/testsuite/g++.target/riscv/call-with-empty-struct-float.C
+@@ -0,0 +1,6 @@
++// { dg-do run }
++
++#include "call-with-empty-struct.H"
++
++MAKE_STRUCT_PASSING_TEST(float,2.5)
++
+diff --git a/gcc/testsuite/g++.target/riscv/call-with-empty-struct-int.C b/gcc/testsuite/g++.target/riscv/call-with-empty-struct-int.C
+new file mode 100644
+index 00000000000..cc82912dc3e
+--- /dev/null
++++ b/gcc/testsuite/g++.target/riscv/call-with-empty-struct-int.C
+@@ -0,0 +1,6 @@
++/* { dg-do run } */
++
++#include "call-with-empty-struct.H"
++
++MAKE_STRUCT_PASSING_TEST(int,2)
++
+diff --git a/gcc/testsuite/g++.target/riscv/call-with-empty-struct.H b/gcc/testsuite/g++.target/riscv/call-with-empty-struct.H
+new file mode 100644
+index 00000000000..d2a46e78619
+--- /dev/null
++++ b/gcc/testsuite/g++.target/riscv/call-with-empty-struct.H
+@@ -0,0 +1,19 @@
++#define MAKE_STRUCT_PASSING_TEST(type,val)                              \
++  static struct struct_ ## type ## _t                                   \
++  {                                                                     \
++    struct { } e;                                                       \
++    struct { type f; } s;                                               \
++  } global_struct_ ## type = { {}, { val } };                           \
++                                                                        \
++  static bool                                                           \
++  check_struct_ ## type (struct_ ## type ## _t obj)                     \
++  {                                                                     \
++    return (obj.s.f == global_struct_ ## type .s.f);                    \
++  }                                                                     \
++                                                                        \
++  int                                                                   \
++  main ()                                                               \
++  {                                                                     \
++    bool result = check_struct_ ## type ( global_struct_ ## type );     \
++    return result ? 0 : 1;                                              \
++  }
+diff --git a/gcc/testsuite/g++.target/riscv/riscv.exp b/gcc/testsuite/g++.target/riscv/riscv.exp
+new file mode 100644
+index 00000000000..a339b5cc56d
+--- /dev/null
++++ b/gcc/testsuite/g++.target/riscv/riscv.exp
+@@ -0,0 +1,34 @@
++# Copyright (C) 2019 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++
++# GCC testsuite that uses the `dg.exp' driver.
++
++# Exit immediately if this isn't a RISC-V target.
++if ![istarget riscv*-*-*] then {
++  return
++}
++
++# Load support procs.
++load_lib g++-dg.exp
++
++# Initialize `dg'.
++dg-init
++
++# Main loop.
++dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.C]] "" ""
++
++# All done.
++dg-finish
+-- 
+2.20.1
+

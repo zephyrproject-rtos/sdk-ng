@@ -1,0 +1,79 @@
+From a3fb5274fbd3858d9dfa78490a9bbdc47dd6ce73 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Wed, 31 Jul 2019 21:36:41 +0000
+Subject: [PATCH 38/42] RISC-V: Raise error on unexpected ISA string at end.
+
+	2019-07-31  Maxim Blinov  <maxim.blinov@embecosm.com>
+	gcc/
+	* common/config/riscv/riscv-common.c: Check -march string ends
+	with null.
+	gcc/testsuite/
+	* gcc.target/riscv/attribute-10.c: New test.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@273951 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                                 | 5 +++++
+ gcc/common/config/riscv/riscv-common.c        | 7 +++++++
+ gcc/testsuite/ChangeLog                       | 4 ++++
+ gcc/testsuite/gcc.target/riscv/attribute-10.c | 6 ++++++
+ 4 files changed, 22 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-10.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 952ad59a0df..8d47e15faaa 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,8 @@
++2019-07-31  Maxim Blinov  <maxim.blinov@embecosm.com>
++
++	* common/config/riscv/riscv-common.c: Check -march string ends
++	with null.
++
+ 2019-07-22  Ilia Diachkov  <ilia.diachkov@optimitech.com>
+ 
+ 	* config/riscv/riscv-opts.h (struct riscv_align_data): New.
+diff --git a/gcc/common/config/riscv/riscv-common.c b/gcc/common/config/riscv/riscv-common.c
+index dadc1c47964..3d6e8347037 100644
+--- a/gcc/common/config/riscv/riscv-common.c
++++ b/gcc/common/config/riscv/riscv-common.c
+@@ -513,6 +513,13 @@ riscv_subset_list::parse (const char *arch, location_t loc)
+   if (p == NULL)
+     goto fail;
+ 
++  if (*p != '\0')
++    {
++      error_at (loc, "%<-march=%s%>: unexpected ISA string at end: %qs",
++               arch, p);
++      goto fail;
++    }
++
+   return subset_list;
+ 
+ fail:
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index ff9a736308e..8bff961c3df 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,7 @@
++2019-07-31  Maxim Blinov  <maxim.blinov@embecosm.com>
++
++	* gcc.target/riscv/attribute-10.c: New test.
++
+ 2019-03-18  Andrew Burgess  <andrew.burgess@embecosm.com>
+ 
+ 	PR target/89627
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-10.c b/gcc/testsuite/gcc.target/riscv/attribute-10.c
+new file mode 100644
+index 00000000000..dd817879a67
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-10.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv32im_s_sx_unexpectedstring -mabi=ilp32" } */
++int foo()
++{
++}
++/* { dg-error "unexpected ISA string at end:" "" { target { "riscv*-*-*" } } 0 } */
+-- 
+2.20.1
+

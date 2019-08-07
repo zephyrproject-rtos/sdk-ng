@@ -1,0 +1,673 @@
+From 27047c6c2b33272817165e2e1b2648a80b126e0d Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Fri, 29 Mar 2019 21:51:58 +0000
+Subject: [PATCH 28/42] RISC-V: Fix __riscv_compressed regression.
+
+This was accidentally broken by the patch adding ELF attribute support.
+The __riscv_compressed predefined macro is not being defined when the
+target supports the C extension.  The fix adds testcases to verify that
+all of the predefined macros are correct for various option combinations.
+
+	gcc/
+	* common/config/riscv/riscv-common.c (riscv_parse_arch_string):
+	Clear MASK_RVC and then set if C subset supported.
+
+	gcc/testsuite/
+	* gcc.target/riscv/predef-1.c: New.
+	* gcc.target/riscv/predef-2.c: New.
+	* gcc.target/riscv/predef-3.c: New.
+	* gcc.target/riscv/predef-4.c: New.
+	* gcc.target/riscv/predef-5.c: New.
+	* gcc.target/riscv/predef-6.c: New.
+	* gcc.target/riscv/predef-7.c: New.
+	* gcc.target/riscv/predef-8.c: New.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@270026 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                             |  5 ++
+ gcc/common/config/riscv/riscv-common.c    |  4 ++
+ gcc/testsuite/ChangeLog                   | 11 ++++
+ gcc/testsuite/gcc.target/riscv/predef-1.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-2.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-3.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-4.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-5.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-6.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-7.c | 66 +++++++++++++++++++++++
+ gcc/testsuite/gcc.target/riscv/predef-8.c | 66 +++++++++++++++++++++++
+ 11 files changed, 548 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-1.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-2.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-3.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-4.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-5.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-6.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-7.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/predef-8.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 9d9f307ce19..6c4a8f3f3e9 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,8 @@
++2019-03-29  Jim Wilson  <jimw@sifive.com>
++
++	* common/config/riscv/riscv-common.c (riscv_parse_arch_string):
++	Clear MASK_RVC and then set if C subset supported.
++
+ 2019-03-26  Andrew Waterman  <andrew@sifive.com>
+ 	    Jim Wilson  <jimw@sifive.com>
+ 
+diff --git a/gcc/common/config/riscv/riscv-common.c b/gcc/common/config/riscv/riscv-common.c
+index 8c3efec661e..dadc1c47964 100644
+--- a/gcc/common/config/riscv/riscv-common.c
++++ b/gcc/common/config/riscv/riscv-common.c
+@@ -564,6 +564,10 @@ riscv_parse_arch_string (const char *isa, int *flags, location_t loc)
+   if (subset_list->lookup ("d"))
+     *flags |= MASK_DOUBLE_FLOAT;
+ 
++  *flags &= ~MASK_RVC;
++  if (subset_list->lookup ("c"))
++    *flags |= MASK_RVC;
++
+   if (current_subset_list)
+     delete current_subset_list;
+ 
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index 1cbd7759fd4..3078fc02a56 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,14 @@
++2019-03-29  Jim Wilson  <jimw@sifive.com>
++
++	* gcc.target/riscv/predef-1.c: New.
++	* gcc.target/riscv/predef-2.c: New.
++	* gcc.target/riscv/predef-3.c: New.
++	* gcc.target/riscv/predef-4.c: New.
++	* gcc.target/riscv/predef-5.c: New.
++	* gcc.target/riscv/predef-6.c: New.
++	* gcc.target/riscv/predef-7.c: New.
++	* gcc.target/riscv/predef-8.c: New.
++
+ 2019-03-19  Jim Wilson  <jimw@sifive.com>
+ 
+ 	PR target/89411
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-1.c b/gcc/testsuite/gcc.target/riscv/predef-1.c
+new file mode 100644
+index 00000000000..70f121f15fa
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-1.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv32i -mabi=ilp32 -mcmodel=medlow" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 32
++#error "__riscv_xlen"
++#endif
++
++#if defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if !defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if !defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-2.c b/gcc/testsuite/gcc.target/riscv/predef-2.c
+new file mode 100644
+index 00000000000..6f3c8c3864d
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-2.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv32imaf -mabi=ilp32f -mcmodel=medany" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if !defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if !defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if !defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if !defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 32
++#error "__riscv_xlen"
++#endif
++
++#if !defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if !defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if !defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if !defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-3.c b/gcc/testsuite/gcc.target/riscv/predef-3.c
+new file mode 100644
+index 00000000000..6f4f2e21994
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-3.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv32imafdc -mabi=ilp32d -fpic" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if !defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if !defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if !defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if !defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if !defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 32
++#error "__riscv_xlen"
++#endif
++
++#if !defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if !defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if !defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if !defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-4.c b/gcc/testsuite/gcc.target/riscv/predef-4.c
+new file mode 100644
+index 00000000000..822f61782c3
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-4.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv64ia -mabi=lp64 -mcmodel=medlow" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if !defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 64
++#error "__riscv_xlen"
++#endif
++
++#if defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if !defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if !defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-5.c b/gcc/testsuite/gcc.target/riscv/predef-5.c
+new file mode 100644
+index 00000000000..6649049099d
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-5.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv64imf -mabi=lp64f -mcmodel=medany" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if !defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if !defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if !defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 64
++#error "__riscv_xlen"
++#endif
++
++#if !defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if !defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if !defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if !defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-6.c b/gcc/testsuite/gcc.target/riscv/predef-6.c
+new file mode 100644
+index 00000000000..ee4e02bcb63
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-6.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv64gc -mabi=lp64d -fpic" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if !defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if !defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if !defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if !defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if !defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 64
++#error "__riscv_xlen"
++#endif
++
++#if !defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if !defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if !defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if !defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-7.c b/gcc/testsuite/gcc.target/riscv/predef-7.c
+new file mode 100644
+index 00000000000..0358f325c5d
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-7.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv32em -mabi=ilp32e -mno-div -mcmodel=medlow" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if !defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if !defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 32
++#error "__riscv_xlen"
++#endif
++
++#if defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if !defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if !defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if !defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/predef-8.c b/gcc/testsuite/gcc.target/riscv/predef-8.c
+new file mode 100644
+index 00000000000..41cd9feab03
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/predef-8.c
+@@ -0,0 +1,66 @@
++/* { dg-do compile } */
++/* { dg-options "-O2 -march=rv32if -mabi=ilp32f -mno-fdiv -mcmodel=medany" } */
++
++int main () {
++#if !defined(__riscv)
++#error "__riscv"
++#endif
++
++#if defined(__riscv_compressed)
++#error "__riscv_compressed"
++#endif
++
++#if defined(__riscv_32e)
++#error "__riscv_32e"
++#endif
++
++#if defined(__riscv_atomic)
++#error "__riscv_atomic"
++#endif
++
++#if defined(__riscv_mul)
++#error "__riscv_mul"
++#endif
++#if defined(__riscv_div)
++#error "__riscv_div"
++#endif
++#if defined(__riscv_muldiv)
++#error "__riscv_muldiv"
++#endif
++
++#if __riscv_xlen != 32
++#error "__riscv_xlen"
++#endif
++
++#if defined(__riscv_fdiv)
++#error "__riscv_fdiv"
++#endif
++#if defined(__riscv_fsqrt)
++#error "__riscv_fsqrt"
++#endif
++
++#if defined(__riscv_abi_rve)
++#error "__riscv_abi_rve"
++#endif
++#if defined(__riscv_float_abi_soft)
++#error "__riscv_float_abi_soft"
++#endif
++#if !defined(__riscv_float_abi_single)
++#error "__riscv_float_abi_single"
++#endif
++#if defined(__riscv_float_abi_double)
++#error "__riscv_float_abi_double"
++#endif
++
++#if defined(__riscv_cmodel_medlow)
++#error "__riscv_cmodel_medlow"
++#endif
++#if !defined(__riscv_cmodel_medany)
++#error "__riscv_cmodel_medlow"
++#endif
++#if defined(__riscv_cmodel_pic)
++#error "__riscv_cmodel_medlow"
++#endif
++
++  return 0;
++}
+-- 
+2.20.1
+

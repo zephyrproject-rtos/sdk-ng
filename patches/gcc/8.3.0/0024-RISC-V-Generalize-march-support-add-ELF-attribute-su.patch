@@ -1,0 +1,1207 @@
+From cc988ae8cc6b34a2bf263855f8d01304c7a13fac Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Sat, 2 Mar 2019 00:36:22 +0000
+Subject: [PATCH 24/42] RISC-V: Generalize -march support, add ELF attribute
+ support.
+
+	Kito Cheng  <kito.cheng@gmail.com>
+	Monk Chiang  <sh.chiang04@gmail.com>
+
+	gcc/
+	* common/config/riscv/riscv-common.c: Include sstream.
+	(riscv_subset_list::to_string): New.
+	(riscv_arch_str): Likewise.
+	* config.gcc (riscv*-*-*): Handle --with-riscv-attribute=
+	* config.in: Regen.
+	* config/riscv/riscv-protos.h (riscv_arch_str): New.
+	* config/riscv/riscv.c (INCLUDE_STRING): Defined.
+	(riscv_emit_attribute): New.
+	(riscv_file_start): Emit attribute if needed.
+	(riscv_option_override): Init riscv_emit_attribute_p.
+	* config/riscv/riscv.opt (mriscv-attribute): New option.
+	* configure.ac (riscv*-*-*): Check binutils is supporting ELF
+	* configure: Regen.
+	* doc/install.texi: Document --with-riscv-attribute.
+	* doc/invoke.texi: Document -mriscv-attribute.
+
+	* common/config/riscv/riscv-common.c:
+	Include config/riscv/riscv-protos.h.
+	(INCLUDE_STRING): Defined.
+	(RISCV_DONT_CARE_VERSION): Defined.
+	(riscv_subset_t): Declare.
+	(riscv_subset_t::riscv_subset_t): New.
+	(riscv_subset_list): Declare.
+	(riscv_subset_list::riscv_subset_list): New.
+	(riscv_subset_list::~riscv_subset_list): Likewise.
+	(riscv_subset_list::parsing_subset_version): Likewise.
+	(riscv_subset_list::parse_std_ext): Likewise.
+	(riscv_subset_list::parse_sv_or_non_std_ext): Likewise.
+	(riscv_subset_list::add): Likewise.
+	(riscv_subset_list::lookup): Likewise.
+	(riscv_subset_list::xlen): Likewise.
+	(riscv_subset_list::parse): Likewise.
+	(riscv_supported_std_ext): Likewise.
+	(current_subset_list): Likewise.
+	(riscv_parse_arch_string): Using riscv_subset_list::parse to
+	parse.
+
+	gcc/testsuite/
+	* gcc.target/riscv/attribute-1.c: New.
+	* gcc.target/riscv/attribute-2.c: Likewise.
+	* gcc.target/riscv/attribute-3.c: Likewise.
+	* gcc.target/riscv/attribute-4.c: Likewise.
+	* gcc.target/riscv/attribute-5.c: Likewise.
+	* gcc.target/riscv/attribute-6.c: Likewise.
+	* gcc.target/riscv/attribute-7.c: Likewise.
+	* gcc.target/riscv/attribute-8.c: Likewise.
+	* gcc.target/riscv/attribute-9.c: Likewise.
+
+	* gcc.target/riscv/arch-1.c: New.
+	* gcc.target/riscv/arch-2.c: Likewise.
+	* gcc.target/riscv/arch-3.c: Likewise.
+	* gcc.target/riscv/arch-4.c: Likewise.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@269337 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                                |  40 ++
+ gcc/common/config/riscv/riscv-common.c       | 563 +++++++++++++++++--
+ gcc/config.gcc                               |  26 +-
+ gcc/config.in                                |   6 +
+ gcc/config/riscv/riscv-protos.h              |   3 +
+ gcc/config/riscv/riscv.c                     |  29 +
+ gcc/config/riscv/riscv.opt                   |   4 +
+ gcc/configure                                |  37 ++
+ gcc/configure.ac                             |   7 +
+ gcc/doc/install.texi                         |   7 +
+ gcc/doc/invoke.texi                          |   7 +-
+ gcc/testsuite/ChangeLog                      |  18 +
+ gcc/testsuite/gcc.target/riscv/arch-1.c      |   6 +
+ gcc/testsuite/gcc.target/riscv/arch-2.c      |   5 +
+ gcc/testsuite/gcc.target/riscv/arch-3.c      |   5 +
+ gcc/testsuite/gcc.target/riscv/arch-4.c      |   5 +
+ gcc/testsuite/gcc.target/riscv/attribute-1.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-2.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-3.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-4.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-5.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-6.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-7.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-8.c |   6 +
+ gcc/testsuite/gcc.target/riscv/attribute-9.c |   6 +
+ 25 files changed, 763 insertions(+), 59 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/arch-1.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/arch-2.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/arch-3.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/arch-4.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-1.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-2.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-3.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-4.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-5.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-6.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-7.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-8.c
+ create mode 100644 gcc/testsuite/gcc.target/riscv/attribute-9.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 5b61aee9b1b..926dda129fe 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,43 @@
++2019-03-01  Kito Cheng  <kito.cheng@gmail.com>
++	    Monk Chiang  <sh.chiang04@gmail.com>
++
++	* common/config/riscv/riscv-common.c: Include sstream.
++	(riscv_subset_list::to_string): New.
++	(riscv_arch_str): Likewise.
++	* config.gcc (riscv*-*-*): Handle --with-riscv-attribute=
++	* config.in: Regen.
++	* config/riscv/riscv-protos.h (riscv_arch_str): New.
++	* config/riscv/riscv.c (INCLUDE_STRING): Defined.
++	(riscv_emit_attribute): New.
++	(riscv_file_start): Emit attribute if needed.
++	(riscv_option_override): Init riscv_emit_attribute_p.
++	* config/riscv/riscv.opt (mriscv-attribute): New option.
++	* configure.ac (riscv*-*-*): Check binutils is supporting ELF
++	* configure: Regen.
++	* doc/install.texi: Document --with-riscv-attribute.
++	* doc/invoke.texi: Document -mriscv-attribute.
++
++	* common/config/riscv/riscv-common.c:
++	Include config/riscv/riscv-protos.h.
++	(INCLUDE_STRING): Defined.
++	(RISCV_DONT_CARE_VERSION): Defined.
++	(riscv_subset_t): Declare.
++	(riscv_subset_t::riscv_subset_t): New.
++	(riscv_subset_list): Declare.
++	(riscv_subset_list::riscv_subset_list): New.
++	(riscv_subset_list::~riscv_subset_list): Likewise.
++	(riscv_subset_list::parsing_subset_version): Likewise.
++	(riscv_subset_list::parse_std_ext): Likewise.
++	(riscv_subset_list::parse_sv_or_non_std_ext): Likewise.
++	(riscv_subset_list::add): Likewise.
++	(riscv_subset_list::lookup): Likewise.
++	(riscv_subset_list::xlen): Likewise.
++	(riscv_subset_list::parse): Likewise.
++	(riscv_supported_std_ext): Likewise.
++	(current_subset_list): Likewise.
++	(riscv_parse_arch_string): Using riscv_subset_list::parse to
++	parse.
++
+ 2018-11-17  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* config/riscv/riscv.c (epilogue_cfa_sp_offset): New.
+diff --git a/gcc/common/config/riscv/riscv-common.c b/gcc/common/config/riscv/riscv-common.c
+index 8a78aebc320..8c3efec661e 100644
+--- a/gcc/common/config/riscv/riscv-common.c
++++ b/gcc/common/config/riscv/riscv-common.c
+@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
+ along with GCC; see the file COPYING3.  If not see
+ <http://www.gnu.org/licenses/>.  */
+ 
++#include <sstream>
++
++#define INCLUDE_STRING
+ #include "config.h"
+ #include "system.h"
+ #include "coretypes.h"
+@@ -26,99 +29,545 @@ along with GCC; see the file COPYING3.  If not see
+ #include "opts.h"
+ #include "flags.h"
+ #include "diagnostic-core.h"
++#include "config/riscv/riscv-protos.h"
+ 
+-/* Parse a RISC-V ISA string into an option mask.  Must clear or set all arch
+-   dependent mask bits, in case more than one -march string is passed.  */
++#define RISCV_DONT_CARE_VERSION -1
+ 
+-static void
+-riscv_parse_arch_string (const char *isa, int *flags, location_t loc)
++/* Subset info.  */
++struct riscv_subset_t
+ {
+-  const char *p = isa;
++  riscv_subset_t ();
+ 
+-  if (strncmp (p, "rv32", 4) == 0)
+-    *flags &= ~MASK_64BIT, p += 4;
+-  else if (strncmp (p, "rv64", 4) == 0)
+-    *flags |= MASK_64BIT, p += 4;
+-  else
++  std::string name;
++  int major_version;
++  int minor_version;
++  struct riscv_subset_t *next;
++};
++
++/* Subset list.  */
++class riscv_subset_list
++{
++private:
++  /* Original arch string.  */
++  const char *m_arch;
++
++  /* Location of arch string, used for report error.  */
++  location_t m_loc;
++
++  /* Head of subset info list.  */
++  riscv_subset_t *m_head;
++
++  /* Tail of subset info list.  */
++  riscv_subset_t *m_tail;
++
++  /* X-len of m_arch. */
++  unsigned m_xlen;
++
++  riscv_subset_list (const char *, location_t);
++
++  const char *parsing_subset_version (const char *, unsigned *, unsigned *,
++				      unsigned, unsigned, bool);
++
++  const char *parse_std_ext (const char *);
++
++  const char *parse_sv_or_non_std_ext (const char *, const char *,
++				       const char *);
++
++public:
++  ~riscv_subset_list ();
++
++  void add (const char *, int, int);
++
++  riscv_subset_t *lookup (const char *,
++			  int major_version = RISCV_DONT_CARE_VERSION,
++			  int minor_version = RISCV_DONT_CARE_VERSION) const;
++
++  std::string to_string () const;
++
++  unsigned xlen() const {return m_xlen;};
++
++  static riscv_subset_list *parse (const char *, location_t);
++
++};
++
++static const char *riscv_supported_std_ext (void);
++
++static riscv_subset_list *current_subset_list = NULL;
++
++riscv_subset_t::riscv_subset_t ()
++  : name (), major_version (0), minor_version (0), next (NULL)
++{
++}
++
++riscv_subset_list::riscv_subset_list (const char *arch, location_t loc)
++  : m_arch (arch), m_loc (loc), m_head (NULL), m_tail (NULL), m_xlen (0)
++{
++}
++
++riscv_subset_list::~riscv_subset_list ()
++{
++  if (!m_head)
++    return;
++
++  riscv_subset_t *item = this->m_head;
++  while (item != NULL)
+     {
+-      error_at (loc, "-march=%s: ISA string must begin with rv32 or rv64", isa);
+-      return;
++      riscv_subset_t *next = item->next;
++      delete item;
++      item = next;
+     }
++}
+ 
+-  if (*p == 'g')
+-    {
+-      p++;
++/* Add new subset to list.  */
+ 
+-      *flags &= ~MASK_RVE;
++void
++riscv_subset_list::add (const char *subset, int major_version,
++			int minor_version)
++{
++  riscv_subset_t *s = new riscv_subset_t ();
+ 
+-      *flags |= MASK_MUL;
+-      *flags |= MASK_ATOMIC;
+-      *flags |= MASK_HARD_FLOAT;
+-      *flags |= MASK_DOUBLE_FLOAT;
+-    }
+-  else if (*p == 'i')
++  if (m_head == NULL)
++    m_head = s;
++
++  s->name = subset;
++  s->major_version = major_version;
++  s->minor_version = minor_version;
++  s->next = NULL;
++
++  if (m_tail != NULL)
++    m_tail->next = s;
++
++  m_tail = s;
++}
++
++/* Convert subset info to string with explicit version info.  */
++
++std::string
++riscv_subset_list::to_string () const
++{
++  std::ostringstream oss;
++  oss << "rv" << m_xlen;
++
++  bool first = true;
++  riscv_subset_t *subset = m_head;
++
++  while (subset != NULL)
+     {
+-      p++;
++      if (!first)
++	oss << '_';
++      first = false;
++
++      oss << subset->name
++	  << subset->major_version
++	  << 'p'
++	  << subset->minor_version;
++      subset = subset->next;
++    }
++
++  return oss.str ();
++}
++
++/* Find subset in list with version checking, return NULL if not found.
++   major/minor version checking can be ignored if major_version/minor_version
++   is RISCV_DONT_CARE_VERSION.  */
++
++riscv_subset_t *
++riscv_subset_list::lookup (const char *subset, int major_version,
++			   int minor_version) const
++{
++  riscv_subset_t *s;
++
++  for (s = m_head; s != NULL; s = s->next)
++    if (strcasecmp (s->name.c_str (), subset) == 0)
++      {
++	if ((major_version != RISCV_DONT_CARE_VERSION)
++	    && (s->major_version != major_version))
++	  return NULL;
++
++	if ((minor_version != RISCV_DONT_CARE_VERSION)
++	    && (s->minor_version != minor_version))
++	  return NULL;
++
++	return s;
++      }
++
++  return s;
++}
++
++/* Return string which contains all supported standard extensions in
++   canonical order.  */
+ 
+-      *flags &= ~MASK_RVE;
++static const char *
++riscv_supported_std_ext (void)
++{
++  return "mafdqlcbjtpvn";
++}
++
++/* Parsing subset version.
+ 
+-      *flags &= ~MASK_MUL;
+-      if (*p == 'm')
+-	*flags |= MASK_MUL, p++;
++   Return Value:
++     Points to the end of version
+ 
+-      *flags &= ~MASK_ATOMIC;
+-      if (*p == 'a')
+-	*flags |= MASK_ATOMIC, p++;
++   Arguments:
++     `p`: Current parsing position.
++     `major_version`: Parsing result of major version, using
++      default_major_version if version is not present in arch string.
++     `minor_version`: Parsing result of minor version, set to 0 if version is
++     not present in arch string, but set to `default_minor_version` if
++     `major_version` using default_major_version.
++     `default_major_version`: Default major version.
++     `default_minor_version`: Default minor version.
++     `std_ext_p`: True if parsing std extension.  */
+ 
+-      *flags &= ~(MASK_HARD_FLOAT | MASK_DOUBLE_FLOAT);
+-      if (*p == 'f')
++const char *
++riscv_subset_list::parsing_subset_version (const char *p,
++					   unsigned *major_version,
++					   unsigned *minor_version,
++					   unsigned default_major_version,
++					   unsigned default_minor_version,
++					   bool std_ext_p)
++{
++  bool major_p = true;
++  unsigned version = 0;
++  unsigned major = 0;
++  unsigned minor = 0;
++  char np;
++
++  for (; *p; ++p)
++    {
++      if (*p == 'p')
+ 	{
+-	  *flags |= MASK_HARD_FLOAT, p++;
++	  np = *(p + 1);
+ 
+-	  if (*p == 'd')
++	  if (!ISDIGIT (np))
+ 	    {
+-	      *flags |= MASK_DOUBLE_FLOAT;
+-	      p++;
++	      /* Might be beginning of `p` extension.  */
++	      if (std_ext_p)
++		{
++		  *major_version = version;
++		  *minor_version = 0;
++		  return p;
++		}
++	      else
++		{
++		  error_at (m_loc, "-march=%s: Expect number after `%dp'.",
++			    m_arch, version);
++		  return NULL;
++		}
+ 	    }
++
++	  major = version;
++	  major_p = false;
++	  version = 0;
+ 	}
++      else if (ISDIGIT (*p))
++	version = (version * 10) + (*p - '0');
++      else
++	break;
+     }
+-  else if (*p == 'e')
++
++  if (major_p)
++    major = version;
++  else
++    minor = version;
++
++  if (major == 0 && minor == 0)
++    {
++      /* We didn't find any version string, use default version.  */
++      *major_version = default_major_version;
++      *minor_version = default_minor_version;
++    }
++  else
++    {
++      *major_version = major;
++      *minor_version = minor;
++    }
++  return p;
++}
++
++/* Parsing function for standard extensions.
++
++   Return Value:
++     Points to the end of extensions.
++
++   Arguments:
++     `p`: Current parsing position.  */
++
++const char *
++riscv_subset_list::parse_std_ext (const char *p)
++{
++  const char *all_std_exts = riscv_supported_std_ext ();
++  const char *std_exts = all_std_exts;
++
++  unsigned major_version = 0;
++  unsigned minor_version = 0;
++  char std_ext = '\0';
++
++  /* First letter must start with i, e or g.  */
++  switch (*p)
+     {
++    case 'i':
++      p++;
++      p = parsing_subset_version (p, &major_version, &minor_version,
++				  /* default_major_version= */ 2,
++				  /* default_minor_version= */ 0,
++				  /* std_ext_p= */ true);
++      add ("i", major_version, minor_version);
++      break;
++
++    case 'e':
+       p++;
++      p = parsing_subset_version (p, &major_version, &minor_version,
++				  /* default_major_version= */ 1,
++				  /* default_minor_version= */ 9,
++				  /* std_ext_p= */ true);
+ 
+-      *flags |= MASK_RVE;
++      add ("e", major_version, minor_version);
+ 
+-      if (*flags & MASK_64BIT)
++      if (m_xlen > 32)
+ 	{
+-	  error ("RV64E is not a valid base ISA");
+-	  return;
++	  error_at (m_loc, "-march=%s: rv%de is not a valid base ISA", m_arch,
++		    m_xlen);
++	  return NULL;
+ 	}
++      break;
+ 
+-      *flags &= ~MASK_MUL;
+-      if (*p == 'm')
+-	*flags |= MASK_MUL, p++;
++    case 'g':
++      p++;
++      p = parsing_subset_version (p, &major_version, &minor_version,
++				  /* default_major_version= */ 2,
++				  /* default_minor_version= */ 0,
++				  /* std_ext_p= */ true);
++      add ("i", major_version, minor_version);
+ 
+-      *flags &= ~MASK_ATOMIC;
+-      if (*p == 'a')
+-	*flags |= MASK_ATOMIC, p++;
++      for (; *std_exts != 'q'; std_exts++)
++	{
++	  const char subset[] = {*std_exts, '\0'};
++	  add (subset, major_version, minor_version);
++	}
++      break;
+ 
+-      *flags &= ~(MASK_HARD_FLOAT | MASK_DOUBLE_FLOAT);
++    default:
++      error_at (m_loc, "-march=%s: first ISA subset must be `e', `i' or `g'",
++		m_arch);
++      return NULL;
+     }
+-  else
++
++  while (*p)
+     {
+-      error_at (loc, "-march=%s: invalid ISA string", isa);
+-      return;
++      char subset[2] = {0, 0};
++
++      if (*p == 'x' || *p == 's')
++	break;
++
++      if (*p == '_')
++	{
++	  p++;
++	  continue;
++	}
++
++      std_ext = *p;
++
++      /* Checking canonical order.  */
++      while (*std_exts && std_ext != *std_exts)
++	std_exts++;
++
++      if (std_ext != *std_exts)
++	{
++	  if (strchr (all_std_exts, std_ext) == NULL)
++	    error_at (m_loc, "-march=%s: unsupported ISA subset `%c'",
++		      m_arch, *p);
++	  else
++	    error_at (m_loc,
++		      "-march=%s: ISA string is not in canonical order. `%c'",
++		      m_arch, *p);
++	  return NULL;
++	}
++
++      std_exts++;
++
++      p++;
++      p = parsing_subset_version (p, &major_version, &minor_version,
++				  /* default_major_version= */ 2,
++				  /* default_minor_version= */ 0,
++				  /* std_ext_p= */ true);
++
++      subset[0] = std_ext;
++
++      add (subset, major_version, minor_version);
+     }
++  return p;
++}
+ 
+-  *flags &= ~MASK_RVC;
+-  if (*p == 'c')
+-    *flags |= MASK_RVC, p++;
++/* Parsing function for non-standard and supervisor extensions.
+ 
+-  if (*p)
++   Return Value:
++     Points to the end of extensions.
++
++   Arguments:
++     `p`: Current parsing position.
++     `ext_type`: What kind of extensions, 'x', 's' or 'sx'.
++     `ext_type_str`: Full name for kind of extension.  */
++
++const char *
++riscv_subset_list::parse_sv_or_non_std_ext (const char *p,
++					    const char *ext_type,
++					    const char *ext_type_str)
++{
++  unsigned major_version = 0;
++  unsigned minor_version = 0;
++  size_t ext_type_len = strlen (ext_type);
++
++  while (*p)
+     {
+-      error_at (loc, "-march=%s: unsupported ISA substring %qs", isa, p);
+-      return;
++      if (*p == '_')
++	{
++	  p++;
++	  continue;
++	}
++
++      if (strncmp (p, ext_type, ext_type_len) != 0)
++	break;
++
++      /* It's non-standard supervisor extension if it prefix with sx.  */
++      if ((ext_type[0] == 's') && (ext_type_len == 1)
++	  && (*(p + 1) == 'x'))
++	break;
++
++      char *subset = xstrdup (p);
++      char *q = subset;
++      const char *end_of_version;
++
++      while (*++q != '\0' && *q != '_' && !ISDIGIT (*q))
++	;
++
++      end_of_version
++	= parsing_subset_version (q, &major_version, &minor_version,
++				  /* default_major_version= */ 2,
++				  /* default_minor_version= */ 0,
++				  /* std_ext_p= */ FALSE);
++
++      *q = '\0';
++
++      add (subset, major_version, minor_version);
++      free (subset);
++      p += end_of_version - subset;
++
++      if (*p != '\0' && *p != '_')
++	{
++	  error_at (m_loc, "-march=%s: %s must separate with _",
++		    m_arch, ext_type_str);
++	  return NULL;
++	}
+     }
++
++  return p;
++}
++
++/* Parsing arch string to subset list, return NULL if parsing failed.  */
++
++riscv_subset_list *
++riscv_subset_list::parse (const char *arch, location_t loc)
++{
++  riscv_subset_list *subset_list = new riscv_subset_list (arch, loc);
++  const char *p = arch;
++  if (strncmp (p, "rv32", 4) == 0)
++    {
++      subset_list->m_xlen = 32;
++      p += 4;
++    }
++  else if (strncmp (p, "rv64", 4) == 0)
++    {
++      subset_list->m_xlen = 64;
++      p += 4;
++    }
++  else
++    {
++      error_at (loc, "-march=%s: ISA string must begin with rv32 or rv64",
++		arch);
++      goto fail;
++    }
++
++  /* Parsing standard extension.  */
++  p = subset_list->parse_std_ext (p);
++
++  if (p == NULL)
++    goto fail;
++
++  /* Parsing non-standard extension.  */
++  p = subset_list->parse_sv_or_non_std_ext (p, "x", "non-standard extension");
++
++  if (p == NULL)
++    goto fail;
++
++  /* Parsing supervisor extension.  */
++  p = subset_list->parse_sv_or_non_std_ext (p, "s", "supervisor extension");
++
++  if (p == NULL)
++    goto fail;
++
++  /* Parsing non-standard supervisor extension.  */
++  p = subset_list->parse_sv_or_non_std_ext
++    (p, "sx", "non-standard supervisor extension");
++
++  if (p == NULL)
++    goto fail;
++
++  return subset_list;
++
++fail:
++  delete subset_list;
++  return NULL;
++}
++
++/* Return the current arch string.  */
++
++std::string
++riscv_arch_str ()
++{
++  gcc_assert (current_subset_list);
++  return current_subset_list->to_string ();
++}
++
++/* Parse a RISC-V ISA string into an option mask.  Must clear or set all arch
++   dependent mask bits, in case more than one -march string is passed.  */
++
++static void
++riscv_parse_arch_string (const char *isa, int *flags, location_t loc)
++{
++  riscv_subset_list *subset_list;
++  subset_list = riscv_subset_list::parse (isa, loc);
++  if (!subset_list)
++    return;
++
++  if (subset_list->xlen () == 32)
++    *flags &= ~MASK_64BIT;
++  else if (subset_list->xlen () == 64)
++    *flags |= MASK_64BIT;
++
++  *flags &= ~MASK_RVE;
++  if (subset_list->lookup ("e"))
++    *flags |= MASK_RVE;
++
++  *flags &= ~MASK_MUL;
++  if (subset_list->lookup ("m"))
++    *flags |= MASK_MUL;
++
++  *flags &= ~MASK_ATOMIC;
++  if (subset_list->lookup ("a"))
++    *flags |= MASK_ATOMIC;
++
++  *flags &= ~(MASK_HARD_FLOAT | MASK_DOUBLE_FLOAT);
++  if (subset_list->lookup ("f"))
++    *flags |= MASK_HARD_FLOAT;
++
++  if (subset_list->lookup ("d"))
++    *flags |= MASK_DOUBLE_FLOAT;
++
++  if (current_subset_list)
++    delete current_subset_list;
++
++  current_subset_list = subset_list;
+ }
+ 
+ /* Implement TARGET_HANDLE_OPTION.  */
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 25905c6c9c5..1886f08c573 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -4073,7 +4073,7 @@ case "${target}" in
+ 		;;
+ 
+ 	riscv*-*-*)
+-		supported_defaults="abi arch tune"
++		supported_defaults="abi arch tune riscv_attribute"
+ 
+ 		case "${target}" in
+ 		riscv-* | riscv32*) xlen=32 ;;
+@@ -4081,6 +4081,30 @@ case "${target}" in
+ 		*) echo "Unsupported RISC-V target ${target}" 1>&2; exit 1 ;;
+ 		esac
+ 
++		case "${with_riscv_attribute}" in
++		yes)
++			tm_defines="${tm_defines} TARGET_RISCV_ATTRIBUTE=1"
++			;;
++		no)
++			tm_defines="${tm_defines} TARGET_RISCV_ATTRIBUTE=0"
++			;;
++		""|default)
++			case "${target}" in
++			riscv*-*-elf*)
++				tm_defines="${tm_defines} TARGET_RISCV_ATTRIBUTE=1"
++				;;
++			*)
++				tm_defines="${tm_defines} TARGET_RISCV_ATTRIBUTE=0"
++				;;
++			esac
++			;;
++		*)
++			echo "--with-riscv-attribute=${with_riscv_attribute} is not supported.  The argument must begin with yes, no or default." 1>&2
++			exit 1
++			;;
++		esac
++
++
+ 		# Infer arch from --with-arch, --target, and --with-abi.
+ 		case "${with_arch}" in
+ 		rv32e* | rv32i* | rv32g* | rv64i* | rv64g*)
+diff --git a/gcc/config.in b/gcc/config.in
+index 5bccb408016..38d846b7553 100644
+--- a/gcc/config.in
++++ b/gcc/config.in
+@@ -655,6 +655,12 @@
+ #endif
+ 
+ 
++/* Define if your assembler supports .attribute. */
++#ifndef USED_FOR_TARGET
++#undef HAVE_AS_RISCV_ATTRIBUTE
++#endif
++
++
+ /* Define if your assembler supports relocs needed by -fpic. */
+ #ifndef USED_FOR_TARGET
+ #undef HAVE_AS_SMALL_PIC_RELOCS
+diff --git a/gcc/config/riscv/riscv-protos.h b/gcc/config/riscv/riscv-protos.h
+index f158ed007dd..6d889da5314 100644
+--- a/gcc/config/riscv/riscv-protos.h
++++ b/gcc/config/riscv/riscv-protos.h
+@@ -81,4 +81,7 @@ extern rtx riscv_expand_builtin (tree, rtx, rtx, machine_mode, int);
+ extern tree riscv_builtin_decl (unsigned int, bool);
+ extern void riscv_init_builtins (void);
+ 
++/* Routines implemented in riscv-common.c.  */
++extern std::string riscv_arch_str ();
++
+ #endif /* ! GCC_RISCV_PROTOS_H */
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index c0a9557638e..02a3c3af540 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -21,6 +21,7 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ #define IN_TARGET_CODE 1
+ 
++#define INCLUDE_STRING
+ #include "config.h"
+ #include "system.h"
+ #include "coretypes.h"
+@@ -4171,6 +4172,20 @@ riscv_issue_rate (void)
+   return tune_info->issue_rate;
+ }
+ 
++/* Auxiliary function to emit RISC-V ELF attribute. */
++static void
++riscv_emit_attribute ()
++{
++  fprintf (asm_out_file, "\t.attribute arch, \"%s\"\n",
++	   riscv_arch_str ().c_str ());
++
++  fprintf (asm_out_file, "\t.attribute unaligned_access, %d\n",
++           TARGET_STRICT_ALIGN ? 0 : 1);
++
++  fprintf (asm_out_file, "\t.attribute stack_align, %d\n",
++           riscv_stack_boundary / 8);
++}
++
+ /* Implement TARGET_ASM_FILE_START.  */
+ 
+ static void
+@@ -4185,6 +4200,9 @@ riscv_file_start (void)
+      relaxation in the assembler.  */
+   if (! riscv_mrelax)
+     fprintf (asm_out_file, "\t.option norelax\n");
++
++  if (riscv_emit_attribute_p)
++    riscv_emit_attribute ();
+ }
+ 
+ /* Implement TARGET_ASM_OUTPUT_MI_THUNK.  Generate rtl rather than asm text
+@@ -4355,6 +4373,17 @@ riscv_option_override (void)
+ 
+       riscv_stack_boundary = 8 << riscv_preferred_stack_boundary_arg;
+     }
++
++  if (riscv_emit_attribute_p < 0)
++#ifdef HAVE_AS_RISCV_ATTRIBUTE
++    riscv_emit_attribute_p = TARGET_RISCV_ATTRIBUTE;
++#else
++    riscv_emit_attribute_p = 0;
++
++  if (riscv_emit_attribute_p)
++    error ("-mriscv-attribute RISC-V ELF attribute requires GNU as 2.32"
++	   " [-mriscv-attribute]");
++#endif
+ }
+ 
+ /* Implement TARGET_CONDITIONAL_REGISTER_USAGE.  */
+diff --git a/gcc/config/riscv/riscv.opt b/gcc/config/riscv/riscv.opt
+index 13693221d26..eccdbbfbd7d 100644
+--- a/gcc/config/riscv/riscv.opt
++++ b/gcc/config/riscv/riscv.opt
+@@ -127,3 +127,7 @@ Mask(DOUBLE_FLOAT)
+ Mask(RVC)
+ 
+ Mask(RVE)
++
++mriscv-attribute
++Target Report Var(riscv_emit_attribute_p) Init(-1)
++Emit RISC-V ELF attribute.
+diff --git a/gcc/configure b/gcc/configure
+index 6121e163259..c734938bafe 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -27646,6 +27646,43 @@ fi
+        && test x$with_nan != x; then
+       as_fn_error "Requesting --with-nan= requires assembler support for -mnan=" "$LINENO" 5
+     fi
++    ;;
++    riscv*-*-*)
++    { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler for .attribute support" >&5
++$as_echo_n "checking assembler for .attribute support... " >&6; }
++if ${gcc_cv_as_riscv_attribute+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  gcc_cv_as_riscv_attribute=no
++    if test $in_tree_gas = yes; then
++    if test $gcc_cv_gas_vers -ge `expr \( \( 2 \* 1000 \) + 32 \) \* 1000 + 0`
++  then gcc_cv_as_riscv_attribute=yes
++fi
++  elif test x$gcc_cv_as != x; then
++    $as_echo '.attribute stack_align,4' > conftest.s
++    if { ac_try='$gcc_cv_as $gcc_cv_as_flags  -o conftest.o conftest.s >&5'
++  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
++  (eval $ac_try) 2>&5
++  ac_status=$?
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; }; }
++    then
++	gcc_cv_as_riscv_attribute=yes
++    else
++      echo "configure: failed program was" >&5
++      cat conftest.s >&5
++    fi
++    rm -f conftest.o conftest.s
++  fi
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_as_riscv_attribute" >&5
++$as_echo "$gcc_cv_as_riscv_attribute" >&6; }
++if test $gcc_cv_as_riscv_attribute = yes; then
++
++$as_echo "#define HAVE_AS_RISCV_ATTRIBUTE 1" >>confdefs.h
++
++fi
++
+     ;;
+     s390*-*-*)
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler for .gnu_attribute support" >&5
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index b066cc609e1..1aa17e63e81 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -4863,6 +4863,13 @@ pointers into PC-relative form.])
+ 	[Requesting --with-nan= requires assembler support for -mnan=])
+     fi
+     ;;
++    riscv*-*-*)
++    gcc_GAS_CHECK_FEATURE([.attribute support],
++      gcc_cv_as_riscv_attribute, [2,32,0],,
++      [.attribute stack_align,4],,
++      [AC_DEFINE(HAVE_AS_RISCV_ATTRIBUTE, 1,
++	  [Define if your assembler supports .attribute.])])
++    ;;
+     s390*-*-*)
+     gcc_GAS_CHECK_FEATURE([.gnu_attribute support],
+       gcc_cv_as_s390_gnu_attribute, [2,18,0],,
+diff --git a/gcc/doc/install.texi b/gcc/doc/install.texi
+index 0e161d0e61a..bad696e3663 100644
+--- a/gcc/doc/install.texi
++++ b/gcc/doc/install.texi
+@@ -2124,6 +2124,13 @@ is used, it is enabled on Linux/x86 if target binutils
+ supports @code{Intel CET} instructions and disabled otherwise.
+ In this case the target libraries are configured to get additional
+ @option{-fcf-protection} option.
++
++@item --with-riscv-attribute=@samp{yes}, @samp{no} or @samp{default}
++Generate RISC-V attribute by default, in order to record extra build
++information in object.
++
++The option is disabled by default. It is enabled on RISC-V/ELF (bare-metal)
++target if target binutils supported.
+ @end table
+ 
+ @subheading Cross-Compiler-Specific Options
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 0f88569984c..f4cd44fcaec 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -1043,7 +1043,8 @@ See RS/6000 and PowerPC Options.
+ -mstrict-align -mno-strict-align @gol
+ -mcmodel=medlow -mcmodel=medany @gol
+ -mexplicit-relocs  -mno-explicit-relocs @gol
+--mrelax -mno-relax @gol}
++-mrelax -mno-relax @gol
++-mriscv-attribute  -mmo-riscv-attribute}
+ 
+ @emph{RL78 Options}
+ @gccoptlist{-msim  -mmul=none  -mmul=g13  -mmul=g14  -mallregs @gol
+@@ -23162,6 +23163,10 @@ Take advantage of linker relaxations to reduce the number of instructions
+ required to materialize symbol addresses. The default is to take advantage of
+ linker relaxations.
+ 
++@item -memit-attribute
++@itemx -mno-emit-attribute
++Emit (do not emit) RISC-V attribute to record extra information into ELF
++objects.  This feature requires at least binutils 2.32.
+ @end table
+ 
+ @node RL78 Options
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index d8e6dabd82c..f921141978e 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,21 @@
++2019-03-01  Kito Cheng  <kito.cheng@gmail.com>
++	    Monk Chiang  <sh.chiang04@gmail.com>
++
++	* gcc.target/riscv/attribute-1.c: New.
++	* gcc.target/riscv/attribute-2.c: Likewise.
++	* gcc.target/riscv/attribute-3.c: Likewise.
++	* gcc.target/riscv/attribute-4.c: Likewise.
++	* gcc.target/riscv/attribute-5.c: Likewise.
++	* gcc.target/riscv/attribute-6.c: Likewise.
++	* gcc.target/riscv/attribute-7.c: Likewise.
++	* gcc.target/riscv/attribute-8.c: Likewise.
++	* gcc.target/riscv/attribute-9.c: Likewise.
++
++	* gcc.target/riscv/arch-1.c: New.
++	* gcc.target/riscv/arch-2.c: Likewise.
++	* gcc.target/riscv/arch-3.c: Likewise.
++	* gcc.target/riscv/arch-4.c: Likewise.
++
+ 2018-09-25  Jim Wilson  <jimw@sifive.com>
+ 
+ 	* gcc.target/riscv/weak-1.c: New.
+diff --git a/gcc/testsuite/gcc.target/riscv/arch-1.c b/gcc/testsuite/gcc.target/riscv/arch-1.c
+new file mode 100644
+index 00000000000..83d5c8a54c4
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/arch-1.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -march=rv32i -march=rv32I -mabi=ilp32" } */
++int foo()
++{
++}
++/* { dg-error ".-march=rv32I: first ISA subset must be `e', `i' or `g'" "" { target *-*-* } 0 } */
+diff --git a/gcc/testsuite/gcc.target/riscv/arch-2.c b/gcc/testsuite/gcc.target/riscv/arch-2.c
+new file mode 100644
+index 00000000000..36b7850d7c6
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/arch-2.c
+@@ -0,0 +1,5 @@
++/* { dg-do compile } */
++/* { dg-options "-O -march=rv32ixabc_xfoo -mabi=ilp32" } */
++int foo()
++{
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/arch-3.c b/gcc/testsuite/gcc.target/riscv/arch-3.c
+new file mode 100644
+index 00000000000..6aaa0a650fa
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/arch-3.c
+@@ -0,0 +1,5 @@
++/* { dg-do compile } */
++/* { dg-options "-O -march=rv32ixbar_sabc_sxfoo -mabi=ilp32" } */
++int foo()
++{
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/arch-4.c b/gcc/testsuite/gcc.target/riscv/arch-4.c
+new file mode 100644
+index 00000000000..6e55a7eaef5
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/arch-4.c
+@@ -0,0 +1,5 @@
++/* { dg-do compile } */
++/* { dg-options "-O -march=rv32i2p3_m4p2 -mabi=ilp32" } */
++int foo()
++{
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-1.c b/gcc/testsuite/gcc.target/riscv/attribute-1.c
+new file mode 100644
+index 00000000000..7150f492b07
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-1.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute arch" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-2.c b/gcc/testsuite/gcc.target/riscv/attribute-2.c
+new file mode 100644
+index 00000000000..3636a1a29f3
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-2.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mno-riscv-attribute" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler-not ".attribute arch" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-3.c b/gcc/testsuite/gcc.target/riscv/attribute-3.c
+new file mode 100644
+index 00000000000..735992df791
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-3.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -mpreferred-stack-boundary=8" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute stack_align, 256" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-4.c b/gcc/testsuite/gcc.target/riscv/attribute-4.c
+new file mode 100644
+index 00000000000..404faada308
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-4.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -mstrict-align" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute unaligned_access, 0" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-5.c b/gcc/testsuite/gcc.target/riscv/attribute-5.c
+new file mode 100644
+index 00000000000..de8909435b1
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-5.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -mno-strict-align" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute unaligned_access, 1" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-6.c b/gcc/testsuite/gcc.target/riscv/attribute-6.c
+new file mode 100644
+index 00000000000..c75b0d62200
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-6.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -march=rv32g2p0 -mabi=ilp32" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_m2p0_a2p0_f2p0_d2p0\"" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-7.c b/gcc/testsuite/gcc.target/riscv/attribute-7.c
+new file mode 100644
+index 00000000000..3d033931b6f
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-7.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -march=rv32e1p9 -mabi=ilp32e" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute arch, \"rv32e1p9\"" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-8.c b/gcc/testsuite/gcc.target/riscv/attribute-8.c
+new file mode 100644
+index 00000000000..1d161763805
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-8.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -march=rv32i2p0xv5_xabc -mabi=ilp32" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_xv5p0_xabc2p0\"" } } */
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-9.c b/gcc/testsuite/gcc.target/riscv/attribute-9.c
+new file mode 100644
+index 00000000000..670944a1cbe
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/attribute-9.c
+@@ -0,0 +1,6 @@
++/* { dg-do compile } */
++/* { dg-options "-O -mriscv-attribute -march=rv32i2p0xbar_sabc_sxfoo -mabi=ilp32e" } */
++int foo()
++{
++}
++/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_xbar2p0_sabc2p0_sxfoo2p0\"" } } */
+-- 
+2.20.1
+
