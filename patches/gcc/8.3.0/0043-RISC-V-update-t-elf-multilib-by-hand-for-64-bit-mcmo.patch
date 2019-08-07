@@ -1,0 +1,37 @@
+From e4a3a81df6c5d29cda86c56402c96e93bc48f500 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Wed, 7 Aug 2019 09:22:01 -0500
+Subject: [PATCH] RISC-V: update t-elf-multilib by hand for 64-bit
+ mcmodel=medany
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ gcc/config/riscv/t-elf-multilib | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/config/riscv/t-elf-multilib b/gcc/config/riscv/t-elf-multilib
+index 19f9434616c..06cf4de5f7f 100644
+--- a/gcc/config/riscv/t-elf-multilib
++++ b/gcc/config/riscv/t-elf-multilib
+@@ -16,13 +16,17 @@ rv64gc ilp32 \
+ ilp32f \
+ lp64 \
+ lp64d
++MULTILIB_OPTIONS += mcmodel=medany
++MULTILIB_DIRNAMES += medany
+ MULTILIB_REQUIRED = march=rv32i/mabi=ilp32 \
+ march=rv32im/mabi=ilp32 \
+ march=rv32iac/mabi=ilp32 \
+ march=rv32imac/mabi=ilp32 \
+ march=rv32imafc/mabi=ilp32f \
+ march=rv64imac/mabi=lp64 \
+-march=rv64imafdc/mabi=lp64d
++march=rv64imac/mabi=lp64/mcmodel=medany \
++march=rv64imafdc/mabi=lp64d \
++march=rv64imafdc/mabi=lp64d/mcmodel=medany
+ MULTILIB_REUSE = march.rv32i/mabi.ilp32=march.rv32ic/mabi.ilp32 \
+ march.rv32im/mabi.ilp32=march.rv32imc/mabi.ilp32 \
+ march.rv32imafc/mabi.ilp32f=march.rv32imafdc/mabi.ilp32f \
+-- 
+2.20.1
+
