@@ -1,0 +1,567 @@
+From f107452e10431a04e7c2024a3f4d230a0d8cf60f Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Tue, 26 Mar 2019 19:41:02 +0000
+Subject: [PATCH 27/42] RISC-V: Add sifive-7 pipeline description.
+
+	* config/riscv/generic.md (generic_alu, generic_load, generic_store)
+	(generic_xfer, generic_branch, generic_imul, generic_idivsi)
+	(generic_idivdi, generic_fmul_single, generic_fmul_double)
+	(generic_fdiv, generic_fsqrt): Add check for generic tune.
+	(generic_alu): Add auipc to type list.
+	* config/riscv/riscv-opts.h (enum riscv_microarchitecture_type): New.
+	(riscv_microarchitecture): Declare.
+	* config/riscv/riscv-protos.h (riscv_store_data_bypass_p): Declare.
+	* config/riscv/riscv.c (struct riscv_cpu_info): Add microarchitecture
+	field.
+	(riscv_microarchitecture): New.
+	(sifive_7_tune_info): New.
+	(riscv_cpu_info_table): Add microarchitecture value for rocket and
+	size.  Add sifive-3-series, sifive-5-series, and sifive-7-series
+	entries.
+	(riscv_store_data_bypass_p): New.
+	(riscv_option_override): Set riscv_microarchitecture from
+	cpu->microarchitecture.
+	* config/riscv/riscv.md: Include sifive-7.md.
+	(type): Add auipc.
+	(tune): New.
+	(auipc<mode>): Change type to auipc.
+	(restore_stack_nonlocal): New.
+	* config/riscv/sifive-7.md: New.
+	* doc/invoke.texi (RISC-V Options): Update mtune docs.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@269954 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                   |  29 ++++++++
+ gcc/config/riscv/generic.md     |  44 +++++++-----
+ gcc/config/riscv/riscv-opts.h   |   7 ++
+ gcc/config/riscv/riscv-protos.h |   1 +
+ gcc/config/riscv/riscv.c        | 114 +++++++++++++++++++++++++++++-
+ gcc/config/riscv/riscv.md       |  28 +++++++-
+ gcc/config/riscv/sifive-7.md    | 120 ++++++++++++++++++++++++++++++++
+ gcc/doc/invoke.texi             |  11 ++-
+ 8 files changed, 333 insertions(+), 21 deletions(-)
+ create mode 100644 gcc/config/riscv/sifive-7.md
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index a696ceceabe..9d9f307ce19 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,32 @@
++2019-03-26  Andrew Waterman  <andrew@sifive.com>
++	    Jim Wilson  <jimw@sifive.com>
++
++	* config/riscv/generic.md (generic_alu, generic_load, generic_store)
++	(generic_xfer, generic_branch, generic_imul, generic_idivsi)
++	(generic_idivdi, generic_fmul_single, generic_fmul_double)
++	(generic_fdiv, generic_fsqrt): Add check for generic tune.
++	(generic_alu): Add auipc to type list.
++	* config/riscv/riscv-opts.h (enum riscv_microarchitecture_type): New.
++	(riscv_microarchitecture): Declare.
++	* config/riscv/riscv-protos.h (riscv_store_data_bypass_p): Declare.
++	* config/riscv/riscv.c (struct riscv_cpu_info): Add microarchitecture
++	field.
++	(riscv_microarchitecture): New.
++	(sifive_7_tune_info): New.
++	(riscv_cpu_info_table): Add microarchitecture value for rocket and
++	size.  Add sifive-3-series, sifive-5-series, and sifive-7-series
++	entries.
++	(riscv_store_data_bypass_p): New.
++	(riscv_option_override): Set riscv_microarchitecture from
++	cpu->microarchitecture.
++	* config/riscv/riscv.md: Include sifive-7.md.
++	(type): Add auipc.
++	(tune): New.
++	(auipc<mode>): Change type to auipc.
++	(restore_stack_nonlocal): New.
++	* config/riscv/sifive-7.md: New.
++	* doc/invoke.texi (RISC-V Options): Update mtune docs.
++
+ 2019-03-19  Jim Wilson  <jimw@sifive.com>
+ 
+ 	PR target/89411
+diff --git a/gcc/config/riscv/generic.md b/gcc/config/riscv/generic.md
+index ba05b6ac859..2a58e864b46 100644
+--- a/gcc/config/riscv/generic.md
++++ b/gcc/config/riscv/generic.md
+@@ -26,53 +26,65 @@
+ (define_cpu_unit "fdivsqrt" "pipe0")
+ 
+ (define_insn_reservation "generic_alu" 1
+-  (eq_attr "type" "unknown,const,arith,shift,slt,multi,nop,logical,move")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "unknown,const,arith,shift,slt,multi,auipc,nop,logical,move"))
+   "alu")
+ 
+ (define_insn_reservation "generic_load" 3
+-  (eq_attr "type" "load,fpload")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "load,fpload"))
+   "alu")
+ 
+ (define_insn_reservation "generic_store" 1
+-  (eq_attr "type" "store,fpstore")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "store,fpstore"))
+   "alu")
+ 
+ (define_insn_reservation "generic_xfer" 3
+-  (eq_attr "type" "mfc,mtc,fcvt,fmove,fcmp")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "mfc,mtc,fcvt,fmove,fcmp"))
+   "alu")
+ 
+ (define_insn_reservation "generic_branch" 1
+-  (eq_attr "type" "branch,jump,call")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "branch,jump,call"))
+   "alu")
+ 
+ (define_insn_reservation "generic_imul" 10
+-  (eq_attr "type" "imul")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "imul"))
+   "imuldiv*10")
+ 
+ (define_insn_reservation "generic_idivsi" 34
+-  (and (eq_attr "type" "idiv")
+-       (eq_attr "mode" "SI"))
++  (and (eq_attr "tune" "generic")
++       (and (eq_attr "type" "idiv")
++	    (eq_attr "mode" "SI")))
+   "imuldiv*34")
+ 
+ (define_insn_reservation "generic_idivdi" 66
+-  (and (eq_attr "type" "idiv")
+-       (eq_attr "mode" "DI"))
++  (and (eq_attr "tune" "generic")
++       (and (eq_attr "type" "idiv")
++	    (eq_attr "mode" "DI")))
+   "imuldiv*66")
+ 
+ (define_insn_reservation "generic_fmul_single" 5
+-  (and (eq_attr "type" "fadd,fmul,fmadd")
+-       (eq_attr "mode" "SF"))
++  (and (eq_attr "tune" "generic")
++       (and (eq_attr "type" "fadd,fmul,fmadd")
++	    (eq_attr "mode" "SF")))
+   "alu")
+ 
+ (define_insn_reservation "generic_fmul_double" 7
+-  (and (eq_attr "type" "fadd,fmul,fmadd")
+-       (eq_attr "mode" "DF"))
++  (and (eq_attr "tune" "generic")
++       (and (eq_attr "type" "fadd,fmul,fmadd")
++	    (eq_attr "mode" "DF")))
+   "alu")
+ 
+ (define_insn_reservation "generic_fdiv" 20
+-  (eq_attr "type" "fdiv")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "fdiv"))
+   "fdivsqrt*20")
+ 
+ (define_insn_reservation "generic_fsqrt" 25
+-  (eq_attr "type" "fsqrt")
++  (and (eq_attr "tune" "generic")
++       (eq_attr "type" "fsqrt"))
+   "fdivsqrt*25")
+diff --git a/gcc/config/riscv/riscv-opts.h b/gcc/config/riscv/riscv-opts.h
+index b7ed72ebb75..55d75e3d3ce 100644
+--- a/gcc/config/riscv/riscv-opts.h
++++ b/gcc/config/riscv/riscv-opts.h
+@@ -39,4 +39,11 @@ enum riscv_code_model {
+ };
+ extern enum riscv_code_model riscv_cmodel;
+ 
++/* Keep this list in sync with define_attr "tune" in riscv.md.  */
++enum riscv_microarchitecture_type {
++  generic,
++  sifive_7
++};
++extern enum riscv_microarchitecture_type riscv_microarchitecture;
++
+ #endif /* ! GCC_RISCV_OPTS_H */
+diff --git a/gcc/config/riscv/riscv-protos.h b/gcc/config/riscv/riscv-protos.h
+index 6d889da5314..b89edf8bd23 100644
+--- a/gcc/config/riscv/riscv-protos.h
++++ b/gcc/config/riscv/riscv-protos.h
+@@ -71,6 +71,7 @@ extern bool riscv_epilogue_uses (unsigned int);
+ extern bool riscv_can_use_return_insn (void);
+ extern rtx riscv_function_value (const_tree, const_tree, enum machine_mode);
+ extern bool riscv_expand_block_move (rtx, rtx, rtx);
++extern bool riscv_store_data_bypass_p (rtx_insn *, rtx_insn *);
+ 
+ /* Routines implemented in riscv-c.c.  */
+ void riscv_cpu_cpp_builtins (cpp_reader *);
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index 65b3d2e1459..3618c67a8da 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -226,6 +226,9 @@ struct riscv_cpu_info {
+   /* This CPU's canonical name.  */
+   const char *name;
+ 
++  /* Which automaton to use for tuning.  */
++  enum riscv_microarchitecture_type microarchitecture;
++
+   /* Tuning parameters for this CPU.  */
+   const struct riscv_tune_info *tune_info;
+ };
+@@ -246,6 +249,9 @@ static int epilogue_cfa_sp_offset;
+ /* Which tuning parameters to use.  */
+ static const struct riscv_tune_info *tune_info;
+ 
++/* Which automaton to use for tuning.  */
++enum riscv_microarchitecture_type riscv_microarchitecture;
++
+ /* Index R is the smallest register class that contains register R.  */
+ const enum reg_class riscv_regno_to_class[FIRST_PSEUDO_REGISTER] = {
+   GR_REGS,	GR_REGS,	GR_REGS,	GR_REGS,
+@@ -280,6 +286,19 @@ static const struct riscv_tune_info rocket_tune_info = {
+   true,						/* slow_unaligned_access */
+ };
+ 
++/* Costs to use when optimizing for Sifive 7 Series.  */
++static const struct riscv_tune_info sifive_7_tune_info = {
++  {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_add */
++  {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_mul */
++  {COSTS_N_INSNS (20), COSTS_N_INSNS (20)},	/* fp_div */
++  {COSTS_N_INSNS (4), COSTS_N_INSNS (4)},	/* int_mul */
++  {COSTS_N_INSNS (6), COSTS_N_INSNS (6)},	/* int_div */
++  2,						/* issue_rate */
++  4,						/* branch_cost */
++  3,						/* memory_cost */
++  true,						/* slow_unaligned_access */
++};
++
+ /* Costs to use when optimizing for size.  */
+ static const struct riscv_tune_info optimize_size_tune_info = {
+   {COSTS_N_INSNS (1), COSTS_N_INSNS (1)},	/* fp_add */
+@@ -316,8 +335,11 @@ static const struct attribute_spec riscv_attribute_table[] =
+ 
+ /* A table describing all the processors GCC knows about.  */
+ static const struct riscv_cpu_info riscv_cpu_info_table[] = {
+-  { "rocket", &rocket_tune_info },
+-  { "size", &optimize_size_tune_info },
++  { "rocket", generic, &rocket_tune_info },
++  { "sifive-3-series", generic, &rocket_tune_info },
++  { "sifive-5-series", generic, &rocket_tune_info },
++  { "sifive-7-series", sifive_7, &sifive_7_tune_info },
++  { "size", generic, &optimize_size_tune_info },
+ };
+ 
+ /* Return the riscv_cpu_info entry for the given name string.  */
+@@ -4086,6 +4108,93 @@ riscv_can_use_return_insn (void)
+ 	  && ! cfun->machine->interrupt_handler_p);
+ }
+ 
++/* Given that there exists at least one variable that is set (produced)
++   by OUT_INSN and read (consumed) by IN_INSN, return true iff
++   IN_INSN represents one or more memory store operations and none of
++   the variables set by OUT_INSN is used by IN_INSN as the address of a
++   store operation.  If either IN_INSN or OUT_INSN does not represent
++   a "single" RTL SET expression (as loosely defined by the
++   implementation of the single_set function) or a PARALLEL with only
++   SETs, CLOBBERs, and USEs inside, this function returns false.
++
++   Borrowed from rs6000, riscv_store_data_bypass_p checks for certain
++   conditions that result in assertion failures in the generic
++   store_data_bypass_p function and returns FALSE in such cases.
++
++   This is required to make -msave-restore work with the sifive-7
++   pipeline description.  */
++
++bool
++riscv_store_data_bypass_p (rtx_insn *out_insn, rtx_insn *in_insn)
++{
++  rtx out_set, in_set;
++  rtx out_pat, in_pat;
++  rtx out_exp, in_exp;
++  int i, j;
++
++  in_set = single_set (in_insn);
++  if (in_set)
++    {
++      if (MEM_P (SET_DEST (in_set)))
++	{
++	  out_set = single_set (out_insn);
++	  if (!out_set)
++	    {
++	      out_pat = PATTERN (out_insn);
++	      if (GET_CODE (out_pat) == PARALLEL)
++		{
++		  for (i = 0; i < XVECLEN (out_pat, 0); i++)
++		    {
++		      out_exp = XVECEXP (out_pat, 0, i);
++		      if ((GET_CODE (out_exp) == CLOBBER)
++			  || (GET_CODE (out_exp) == USE))
++			continue;
++		      else if (GET_CODE (out_exp) != SET)
++			return false;
++		    }
++		}
++	    }
++	}
++    }
++  else
++    {
++      in_pat = PATTERN (in_insn);
++      if (GET_CODE (in_pat) != PARALLEL)
++	return false;
++
++      for (i = 0; i < XVECLEN (in_pat, 0); i++)
++	{
++	  in_exp = XVECEXP (in_pat, 0, i);
++	  if ((GET_CODE (in_exp) == CLOBBER) || (GET_CODE (in_exp) == USE))
++	    continue;
++	  else if (GET_CODE (in_exp) != SET)
++	    return false;
++
++	  if (MEM_P (SET_DEST (in_exp)))
++	    {
++	      out_set = single_set (out_insn);
++	      if (!out_set)
++		{
++		  out_pat = PATTERN (out_insn);
++		  if (GET_CODE (out_pat) != PARALLEL)
++		    return false;
++		  for (j = 0; j < XVECLEN (out_pat, 0); j++)
++		    {
++		      out_exp = XVECEXP (out_pat, 0, j);
++		      if ((GET_CODE (out_exp) == CLOBBER)
++			  || (GET_CODE (out_exp) == USE))
++			continue;
++		      else if (GET_CODE (out_exp) != SET)
++			return false;
++		    }
++		}
++	    }
++	}
++    }
++
++  return store_data_bypass_p (out_insn, in_insn);
++}
++
+ /* Implement TARGET_SECONDARY_MEMORY_NEEDED.
+ 
+    When floating-point registers are wider than integer ones, moves between
+@@ -4350,6 +4459,7 @@ riscv_option_override (void)
+   /* Handle -mtune.  */
+   cpu = riscv_parse_cpu (riscv_tune_string ? riscv_tune_string :
+ 			 RISCV_TUNE_STRING_DEFAULT);
++  riscv_microarchitecture = cpu->microarchitecture;
+   tune_info = optimize_size ? &optimize_size_tune_info : cpu->tune_info;
+ 
+   /* Use -mtune's setting for slow_unaligned_access, even when optimizing
+diff --git a/gcc/config/riscv/riscv.md b/gcc/config/riscv/riscv.md
+index 668668fc2ab..d6f8608ddcf 100644
+--- a/gcc/config/riscv/riscv.md
++++ b/gcc/config/riscv/riscv.md
+@@ -156,7 +156,7 @@
+ (define_attr "type"
+   "unknown,branch,jump,call,load,fpload,store,fpstore,
+    mtc,mfc,const,arith,logical,shift,slt,imul,idiv,move,fmove,fadd,fmul,
+-   fmadd,fdiv,fcmp,fcvt,fsqrt,multi,nop,ghost"
++   fmadd,fdiv,fcmp,fcvt,fsqrt,multi,auipc,nop,ghost"
+   (cond [(eq_attr "got" "load") (const_string "load")
+ 
+ 	 ;; If a doubleword move uses these expensive instructions,
+@@ -235,6 +235,12 @@
+ ;; Is copying of this instruction disallowed?
+ (define_attr "cannot_copy" "no,yes" (const_string "no"))
+ 
++;; Microarchitectures we know how to tune for.
++;; Keep this in sync with enum riscv_microarchitecture.
++(define_attr "tune"
++  "generic,sifive_7"
++  (const (symbol_ref "((enum attr_tune) riscv_microarchitecture)")))
++
+ ;; Describe a user's asm statement.
+ (define_asm_attributes
+   [(set_attr "type" "multi")])
+@@ -1237,7 +1243,7 @@
+ 	    UNSPEC_AUIPC))]
+   ""
+   ".LA%2: auipc\t%0,%h1"
+-  [(set_attr "type" "arith")
++  [(set_attr "type" "auipc")
+    (set_attr "cannot_copy" "yes")])
+ 
+ ;; Instructions for adding the low 12 bits of an address to a register.
+@@ -2412,7 +2418,25 @@
+   [(set_attr "length" "0")]
+ )
+ 
++;; This fixes a failure with gcc.c-torture/execute/pr64242.c at -O2 for a
++;; 32-bit target when using -mtune=sifive-7-series.  The first sched pass
++;; runs before register elimination, and we have a non-obvious dependency
++;; between a use of the soft fp and a set of the hard fp.  We fix this by
++;; emitting a clobber using the hard fp between the two insns.
++(define_expand "restore_stack_nonlocal"
++  [(match_operand 0 "register_operand")
++   (match_operand 1 "memory_operand")]
++  ""
++{
++  emit_move_insn (operands[0], operands[1]);
++  /* Prevent the following hard fp restore from being moved before the move
++     insn above which uses a copy of the soft fp reg.  */
++  emit_clobber (gen_rtx_MEM (BLKmode, hard_frame_pointer_rtx));
++  DONE;
++})
++
+ (include "sync.md")
+ (include "peephole.md")
+ (include "pic.md")
+ (include "generic.md")
++(include "sifive-7.md")
+diff --git a/gcc/config/riscv/sifive-7.md b/gcc/config/riscv/sifive-7.md
+new file mode 100644
+index 00000000000..d58e01f8936
+--- /dev/null
++++ b/gcc/config/riscv/sifive-7.md
+@@ -0,0 +1,120 @@
++(define_automaton "sifive_7")
++
++;; Sifive 7 Series Base Core
++;; This has two pipelines, A (Address) and B (Branch).
++;; Loads, stores, and FP <-> integer moves use the A-pipe.
++;; Branches, MUL/DIV, and FP ops use the B-pipe.
++;; Integer ALU ops can use either pipe.
++
++(define_cpu_unit "sifive_7_A" "sifive_7")
++(define_cpu_unit "sifive_7_B" "sifive_7")
++
++(define_cpu_unit "sifive_7_idiv" "sifive_7")
++(define_cpu_unit "sifive_7_fpu" "sifive_7")
++
++(define_insn_reservation "sifive_7_load" 3
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "load"))
++  "sifive_7_A")
++
++(define_insn_reservation "sifive_7_fpload" 2
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "fpload"))
++  "sifive_7_A")
++
++(define_insn_reservation "sifive_7_store" 1
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "store"))
++  "sifive_7_A")
++
++(define_insn_reservation "sifive_7_fpstore" 1
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "fpstore"))
++  "sifive_7_A")
++
++(define_insn_reservation "sifive_7_branch" 1
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "branch"))
++  "sifive_7_B")
++
++(define_insn_reservation "sifive_7_jump" 1
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "jump,call"))
++  "sifive_7_B")
++
++(define_insn_reservation "sifive_7_mul" 3
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "imul"))
++  "sifive_7_B")
++
++(define_insn_reservation "sifive_7_div" 16
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "idiv"))
++  "sifive_7_B,sifive_7_idiv*15")
++
++(define_insn_reservation "sifive_7_alu" 2
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "unknown,arith,shift,slt,multi,logical,move"))
++  "sifive_7_A|sifive_7_B")
++
++(define_insn_reservation "sifive_7_load_immediate" 1
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "nop,const,auipc"))
++  "sifive_7_A|sifive_7_B")
++
++(define_insn_reservation "sifive_7_sfma" 5
++  (and (eq_attr "tune" "sifive_7")
++       (and (eq_attr "type" "fadd,fmul,fmadd")
++	    (eq_attr "mode" "SF")))
++  "sifive_7_B")
++
++(define_insn_reservation "sifive_7_dfma" 7
++  (and (eq_attr "tune" "sifive_7")
++       (and (eq_attr "type" "fadd,fmul,fmadd")
++	    (eq_attr "mode" "DF")))
++  "sifive_7_B")
++
++(define_insn_reservation "sifive_7_fp_other" 3
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "fcvt,fcmp,fmove"))
++  "sifive_7_B")
++
++(define_insn_reservation "sifive_7_fdiv_s" 27
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "fdiv,fsqrt")
++       (eq_attr "mode" "SF"))
++  "sifive_7_B,sifive_7_fpu*26")
++
++(define_insn_reservation "sifive_7_fdiv_d" 56
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "fdiv,fsqrt")
++       (eq_attr "mode" "DF"))
++  "sifive_7_B,sifive_7_fpu*55")
++
++(define_insn_reservation "sifive_7_i2f" 3
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "mtc"))
++  "sifive_7_A")
++
++(define_insn_reservation "sifive_7_f2i" 3
++  (and (eq_attr "tune" "sifive_7")
++       (eq_attr "type" "mfc"))
++  "sifive_7_A")
++
++(define_bypass 1 "sifive_7_load,sifive_7_alu,sifive_7_mul,sifive_7_f2i"
++  "sifive_7_alu,sifive_7_branch")
++
++(define_bypass 1 "sifive_7_load,sifive_7_alu,sifive_7_mul,sifive_7_f2i"
++  "sifive_7_store" "riscv_store_data_bypass_p")
++
++(define_bypass 2 "sifive_7_i2f"
++  "sifive_7_sfma,sifive_7_dfma,sifive_7_fp_other,sifive_7_fdiv_s,sifive_7_fdiv_d")
++
++(define_bypass 2 "sifive_7_fp_other"
++  "sifive_7_sfma,sifive_7_dfma,sifive_7_fp_other,sifive_7_fdiv_s,sifive_7_fdiv_d")
++
++(define_bypass 2 "sifive_7_fp_other"
++  "sifive_7_alu,sifive_7_branch")
++
++(define_bypass 2 "sifive_7_fp_other"
++  "sifive_7_store" "riscv_store_data_bypass_p")
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index f4cd44fcaec..5447b67eed7 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -23107,7 +23107,16 @@ lower-case.  Examples include @samp{rv64i}, @samp{rv32g}, @samp{rv32e}, and
+ @item -mtune=@var{processor-string}
+ @opindex mtune
+ Optimize the output for the given processor, specified by microarchitecture
+-name.
++name.  Permissible values for this option are: @samp{rocket},
++@samp{sifive-3-series}, @samp{sifive-5-series}, @samp{sifive-7-series},
++and @samp{size}.
++
++When @option{-mtune=} is not specified, the default is @samp{rocket}.
++
++The @samp{size} choice is not intended for use by end-users.  This is used
++when @option{-Os} is specified.  It overrides the instruction cost info
++provided by @option{-mtune=}, but does not override the pipeline info.  This
++helps reduce code size while still giving good performance.
+ 
+ @item -mpreferred-stack-boundary=@var{num}
+ @opindex mpreferred-stack-boundary
+-- 
+2.20.1
+

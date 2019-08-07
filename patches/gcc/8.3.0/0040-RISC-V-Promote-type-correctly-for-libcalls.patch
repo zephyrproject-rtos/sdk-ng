@@ -1,0 +1,148 @@
+From ef0f25c74a696df963628e8bc10f3331864dc7f7 Mon Sep 17 00:00:00 2001
+From: kito <kito@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Mon, 5 Aug 2019 03:32:38 +0000
+Subject: [PATCH 40/42] RISC-V: Promote type correctly for libcalls
+
+ - argument and return value for libcall won't promote at
+   default_promote_function_mode_always_promote, however we expect it
+   should sign-extend as normal function.
+
+ - Witout this patch, this test case will fail at -march=rv64i -mabi=lp64.
+
+ - The implementation of riscv_promote_function_mode is borrowed from MIPS.
+
+gcc/ChangeLog
+
+	* config/riscv/riscv.c (riscv_promote_function_mode): New.
+	(TARGET_PROMOTE_FUNCTION_MODE): Use riscv_promote_function_mode.
+
+gcc/testsuite/ChangeLog
+
+	* gcc.target/riscv/promote-type-for-libcall.c: New.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@274107 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                                 |  5 +++
+ gcc/config/riscv/riscv.c                      | 28 +++++++++++++-
+ gcc/testsuite/ChangeLog                       |  4 ++
+ .../riscv/promote-type-for-libcall.c          | 37 +++++++++++++++++++
+ 4 files changed, 73 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/promote-type-for-libcall.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 8d47e15faaa..2640cfb4f44 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,8 @@
++2019-08-05  Kito Cheng  <kito.cheng@sifive.com>
++
++	* config/riscv/riscv.c (riscv_promote_function_mode): New.
++	(TARGET_PROMOTE_FUNCTION_MODE): Use riscv_promote_function_mode.
++
+ 2019-07-31  Maxim Blinov  <maxim.blinov@embecosm.com>
+ 
+ 	* common/config/riscv/riscv-common.c: Check -march string ends
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index cb3e32ac51f..ad30803ea1b 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -4901,6 +4901,32 @@ riscv_constant_alignment (const_tree exp, HOST_WIDE_INT align)
+   return align;
+ }
+ 
++/* Implement TARGET_PROMOTE_FUNCTION_MODE.  */
++
++/* This function is equivalent to default_promote_function_mode_always_promote
++   except that it returns a promoted mode even if type is NULL_TREE.  This is
++   needed by libcalls which have no type (only a mode) such as fixed conversion
++   routines that take a signed or unsigned char/short/int argument and convert
++   it to a fixed type.  */
++
++static machine_mode
++riscv_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
++			     machine_mode mode,
++			     int *punsignedp ATTRIBUTE_UNUSED,
++			     const_tree fntype ATTRIBUTE_UNUSED,
++			     int for_return ATTRIBUTE_UNUSED)
++{
++  int unsignedp;
++
++  if (type != NULL_TREE)
++    return promote_mode (type, mode, punsignedp);
++
++  unsignedp = *punsignedp;
++  PROMOTE_MODE (mode, unsignedp, type);
++  *punsignedp = unsignedp;
++  return mode;
++}
++
+ /* Initialize the GCC target structure.  */
+ #undef TARGET_ASM_ALIGNED_HI_OP
+ #define TARGET_ASM_ALIGNED_HI_OP "\t.half\t"
+@@ -4942,7 +4968,7 @@ riscv_constant_alignment (const_tree exp, HOST_WIDE_INT align)
+ #define TARGET_EXPAND_BUILTIN_VA_START riscv_va_start
+ 
+ #undef  TARGET_PROMOTE_FUNCTION_MODE
+-#define TARGET_PROMOTE_FUNCTION_MODE default_promote_function_mode_always_promote
++#define TARGET_PROMOTE_FUNCTION_MODE riscv_promote_function_mode
+ 
+ #undef TARGET_RETURN_IN_MEMORY
+ #define TARGET_RETURN_IN_MEMORY riscv_return_in_memory
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index 57a5fffb3a0..ba5d9c5206d 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,7 @@
++2019-08-05  Kito Cheng  <kito.cheng@sifive.com>
++
++	* gcc.target/riscv/promote-type-for-libcall.c: New.
++
+ 2019-08-01  Kito Cheng  <kito.cheng@sifive.com>
+ 
+ 	* gcc.target/riscv/attribute-10.c: Fix testcase on rv64.
+diff --git a/gcc/testsuite/gcc.target/riscv/promote-type-for-libcall.c b/gcc/testsuite/gcc.target/riscv/promote-type-for-libcall.c
+new file mode 100644
+index 00000000000..bdbcbc0316a
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/promote-type-for-libcall.c
+@@ -0,0 +1,37 @@
++/* { dg-do run } */
++/* { dg-options "-O1 -ftree-slp-vectorize -funroll-loops" } */
++
++#include <stdio.h>
++#include <stdlib.h>
++#define N 4
++volatile float f[N];
++int x[N] __attribute__((aligned(8)));
++int main() {
++  int i;
++  x[0] = -1;
++  x[1] = 2;
++  x[2] = -2;
++  x[3] = 2;
++
++  for (i=0;i<N;++i){
++    f[i] = x[i];
++  }
++
++  if (f[0] != -1.0f) {
++    abort();
++  }
++
++  if (f[1] != 2.0f) {
++    abort();
++  }
++
++  if (f[2] != -2.0f) {
++    abort();
++  }
++
++  if (f[3] != 2.0f) {
++    abort();
++  }
++
++  return 0;
++}
+-- 
+2.20.1
+

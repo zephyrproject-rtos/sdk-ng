@@ -1,0 +1,165 @@
+From cc3bba6d32444bbd6f1fcd56ff331ab68158efb6 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Tue, 19 Mar 2019 22:33:34 +0000
+Subject: [PATCH 26/42] RISC-V: Fix %lo overflow with BLKmode references.
+
+	gcc/
+	PR target/89411
+	* config/riscv/riscv.c (riscv_valid_lo_sum_p): New arg x.  New locals
+	align, size, offset.  Use them to handle a BLKmode reference.  Update
+	comment.
+	(riscv_classify_address): Pass info->offset to riscv_valid_lo_sum_p.
+
+	gcc/testsuite/
+	PR target/89411
+	* gcc.target/riscv/losum-overflow.c: New test.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@269813 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                                 |  8 ++++
+ gcc/config/riscv/riscv.c                      | 43 ++++++++++++++++---
+ gcc/testsuite/ChangeLog                       |  5 +++
+ .../gcc.target/riscv/losum-overflow.c         | 29 +++++++++++++
+ 4 files changed, 79 insertions(+), 6 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/losum-overflow.c
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 926dda129fe..a696ceceabe 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,11 @@
++2019-03-19  Jim Wilson  <jimw@sifive.com>
++
++	PR target/89411
++	* config/riscv/riscv.c (riscv_valid_lo_sum_p): New arg x.  New locals
++	align, size, offset.  Use them to handle a BLKmode reference.  Update
++	comment.
++	(riscv_classify_address): Pass info->offset to riscv_valid_lo_sum_p.
++
+ 2019-03-01  Kito Cheng  <kito.cheng@gmail.com>
+ 	    Monk Chiang  <sh.chiang04@gmail.com>
+ 
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index 02a3c3af540..65b3d2e1459 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -708,11 +708,15 @@ riscv_split_symbol_type (enum riscv_symbol_type symbol_type)
+ }
+ 
+ /* Return true if a LO_SUM can address a value of mode MODE when the
+-   LO_SUM symbol has type SYM_TYPE.  */
++   LO_SUM symbol has type SYM_TYPE.  X is the LO_SUM second operand, which
++   is used when the mode is BLKmode.  */
+ 
+ static bool
+-riscv_valid_lo_sum_p (enum riscv_symbol_type sym_type, machine_mode mode)
++riscv_valid_lo_sum_p (enum riscv_symbol_type sym_type, machine_mode mode,
++		      rtx x)
+ {
++  int align, size;
++
+   /* Check that symbols of type SYMBOL_TYPE can be used to access values
+      of mode MODE.  */
+   if (riscv_symbol_insns (sym_type) == 0)
+@@ -722,11 +726,38 @@ riscv_valid_lo_sum_p (enum riscv_symbol_type sym_type, machine_mode mode)
+   if (!riscv_split_symbol_type (sym_type))
+     return false;
+ 
++  /* We can't tell size or alignment when we have BLKmode, so try extracing a
++     decl from the symbol if possible.  */
++  if (mode == BLKmode)
++    {
++      rtx offset;
++
++      /* Extract the symbol from the LO_SUM operand, if any.  */
++      split_const (x, &x, &offset);
++
++      /* Might be a CODE_LABEL.  We can compute align but not size for that,
++	 so don't bother trying to handle it.  */
++      if (!SYMBOL_REF_P (x))
++	return false;
++
++      /* Use worst case assumptions if we don't have a SYMBOL_REF_DECL.  */
++      align = (SYMBOL_REF_DECL (x)
++	       ? DECL_ALIGN (SYMBOL_REF_DECL (x))
++	       : 1);
++      size = (SYMBOL_REF_DECL (x) && DECL_SIZE (SYMBOL_REF_DECL (x))
++	      ? tree_to_uhwi (DECL_SIZE (SYMBOL_REF_DECL (x)))
++	      : 2*BITS_PER_WORD);
++    }
++  else
++    {
++      align = GET_MODE_ALIGNMENT (mode);
++      size = GET_MODE_BITSIZE (mode);
++    }
++
+   /* We may need to split multiword moves, so make sure that each word
+      can be accessed without inducing a carry.  */
+-  if (GET_MODE_SIZE (mode) > UNITS_PER_WORD
+-      && (!TARGET_STRICT_ALIGN
+-	  || GET_MODE_BITSIZE (mode) > GET_MODE_ALIGNMENT (mode)))
++  if (size > BITS_PER_WORD
++      && (!TARGET_STRICT_ALIGN || size > align))
+     return false;
+ 
+   return true;
+@@ -772,7 +803,7 @@ riscv_classify_address (struct riscv_address_info *info, rtx x,
+       info->symbol_type
+ 	= riscv_classify_symbolic_expression (info->offset);
+       return (riscv_valid_base_register_p (info->reg, mode, strict_p)
+-	      && riscv_valid_lo_sum_p (info->symbol_type, mode));
++	      && riscv_valid_lo_sum_p (info->symbol_type, mode, info->offset));
+ 
+     case CONST_INT:
+       /* Small-integer addresses don't occur very often, but they
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index f921141978e..1cbd7759fd4 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,8 @@
++2019-03-19  Jim Wilson  <jimw@sifive.com>
++
++	PR target/89411
++	* gcc.target/riscv/losum-overflow.c: New test.
++
+ 2019-03-01  Kito Cheng  <kito.cheng@gmail.com>
+ 	    Monk Chiang  <sh.chiang04@gmail.com>
+ 
+diff --git a/gcc/testsuite/gcc.target/riscv/losum-overflow.c b/gcc/testsuite/gcc.target/riscv/losum-overflow.c
+new file mode 100644
+index 00000000000..9c01c7feb54
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/losum-overflow.c
+@@ -0,0 +1,29 @@
++/* { dg-do compile } */
++/* { dg-options "-march=rv32gc -mabi=ilp32 -O2 -fno-section-anchors" } */
++
++/* Check for %lo overflow.  Adding an offset larger than the alignment can
++   overflow if the data is allocated to an address mod 4KB that is between
++   2KB-offset+1 and 2KB-1.  */
++typedef long long int int64_t;
++
++#pragma pack(push)
++#pragma pack(1)
++struct S0 {
++   signed f0 : 4;
++   const volatile int64_t  f1;
++   volatile signed f2 : 1;
++   signed f3 : 31;
++   unsigned f4 : 8;
++   signed f5 : 20;
++   unsigned f6 : 5;
++};
++#pragma pack(pop)
++
++struct S0 g_3030 = {0,-9L,-0,-22553,7,-841,1};
++
++int64_t
++sub (void)
++{
++  return g_3030.f1;
++}
++/* { dg-final { scan-assembler-not "%lo\\(g_3030\\+4\\)" } } */
+-- 
+2.20.1
+
