@@ -1,0 +1,57 @@
+From af731a30046181336ba8a888c2bd8d4fc1df85d2 Mon Sep 17 00:00:00 2001
+From: Jim Wilson <jimw@sifive.com>
+Date: Wed, 26 Jun 2019 17:17:09 -0700
+Subject: [PATCH 08/11] RISC-V: Make objdump disassembly work right for binary
+ files.
+
+Without the ELF header to set info->endian, it ends up as BFD_UNKNOWN_ENDIAN
+which gets printed as big-endian.  But RISC-V instructions are always little
+endian, so we can set endian_code correctly, and then set display_endian from
+that.  This is similar to how the aarch64 support works, but without the
+support for constant pools, as we don't have that on RISC-V.
+
+	opcodes/
+	PR binutils/24739
+	* riscv-dis.c (riscv_disasemble_insn): Set info->endian_code.
+	Set info->display_endian to info->endian_code.
+---
+ opcodes/ChangeLog   | 6 ++++++
+ opcodes/riscv-dis.c | 6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/opcodes/ChangeLog b/opcodes/ChangeLog
+index 63226c6a27..5dab8424c8 100644
+--- a/opcodes/ChangeLog
++++ b/opcodes/ChangeLog
+@@ -1,3 +1,9 @@
++2019-06-26  Jim Wilson  <jimw@sifive.com>
++
++	PR binutils/24739
++	* riscv-dis.c (riscv_disasemble_insn): Set info->endian_code.
++	Set info->display_endian to info->endian_code.
++
+ 2019-02-02  Nick Clifton  <nickc@redhat.com>
+ 
+ 	2.32 Release
+diff --git a/opcodes/riscv-dis.c b/opcodes/riscv-dis.c
+index 764c4d4d25..40893c3dcb 100644
+--- a/opcodes/riscv-dis.c
++++ b/opcodes/riscv-dis.c
+@@ -395,9 +395,13 @@ riscv_disassemble_insn (bfd_vma memaddr, insn_t word, disassemble_info *info)
+ 
+   insnlen = riscv_insn_length (word);
+ 
++  /* RISC-V instructions are always little-endian.  */
++  info->endian_code = BFD_ENDIAN_LITTLE;
++
+   info->bytes_per_chunk = insnlen % 4 == 0 ? 4 : 2;
+   info->bytes_per_line = 8;
+-  info->display_endian = info->endian;
++  /* We don't support constant pools, so this must be code.  */
++  info->display_endian = info->endian_code;
+   info->insn_info_valid = 1;
+   info->branch_delay_insns = 0;
+   info->data_size = 0;
+-- 
+2.20.1
+
