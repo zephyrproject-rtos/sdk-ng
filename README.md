@@ -9,7 +9,6 @@ apply patches where needed.
 
 Currently we build the following toolchains:
 - i586
-- iamcu
 - nios2
 - arm
 - riscv64

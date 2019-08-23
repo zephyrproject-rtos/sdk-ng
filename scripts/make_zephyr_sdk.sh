@@ -52,7 +52,6 @@ parse_toolchain_name()
 parse_toolchain_name file_gcc_arm arm
 parse_toolchain_name file_gcc_arc arc
 parse_toolchain_name file_gcc_x86 i586
-parse_toolchain_name file_gcc_iamcu iamcu
 #parse_toolchain_name file_gcc_mips mips
 parse_toolchain_name file_gcc_nios2 nios2
 parse_toolchain_name file_gcc_xtensa xtensa
@@ -91,13 +90,6 @@ fi
 if [ -n "$file_gcc_arc" ]; then
   echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_arc > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing arc tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_iamcu" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_iamcu > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing iamcu tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
