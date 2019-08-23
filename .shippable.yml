@@ -10,7 +10,6 @@ env:
       - TARGET=iamcu
       - TARGET=nios2
       - TARGET=arm
-      - TARGET=riscv32
       - TARGET=riscv64
       - TARGET=mips
       - TARGET=arc

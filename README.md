@@ -12,7 +12,6 @@ Currently we build the following toolchains:
 - iamcu
 - nios2
 - arm
-- riscv32
 - riscv64
 - mips
 - xtensa
