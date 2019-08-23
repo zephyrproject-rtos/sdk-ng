@@ -1,0 +1,108 @@
+From b46c86f43d2a7d206c6fcba4fda61a5e9e6f0497 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Mon, 18 Feb 2019 10:53:49 -0600
+Subject: [PATCH 13/14] Enable soft-fp on i586
+
+This is a porting of the patches in meta-zephyr-sdk to gcc-8.2.0
+
+We merge:
+	recipes-devtools/gcc/files/libgcc-t-zephyr.patch
+	recipes-devtools/gcc/files/config-x86-multi-gcc.patch
+	recipes-devtools/gcc/files/x86-multilib.patch
+	recipes-devtools/gcc/files/config-libgcc-softfp.patch
+
+Into one patch.  There are some changes to libgcc/config.host in
+gcc-8.2.0 that required updating the patch to that file.  There's some
+common code to handle soft-fp on x86.  In gcc-8.2.0 that common code
+would by default get applied to a zephyr build.  However the common
+code doesn't handle soft-fp the way we need so we add
+i[34567]86-zephyr-elf as a special case similar to
+i[34567]86-*-elfiamcu.
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ gcc/config.gcc                 |  4 ++++
+ gcc/config/i386/t-zephyr       | 23 +++++++++++++++++++++++
+ libgcc/config.host             |  5 ++++-
+ libgcc/config/i386/32/t-zephyr |  1 +
+ 4 files changed, 32 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/config/i386/t-zephyr
+ create mode 100644 libgcc/config/i386/32/t-zephyr
+
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 34efe191505..75b1f8d4a72 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1632,6 +1632,10 @@ x86_64-*-darwin*)
+ i[34567]86-*-elfiamcu)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/iamcu.h"
+ 	;;
++i586-zephyr-elf)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
++	tmake_file="${tmake_file} i386/t-zephyr"
++	;;
+ i[34567]86-*-elf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
+ 	;;
+diff --git a/gcc/config/i386/t-zephyr b/gcc/config/i386/t-zephyr
+new file mode 100644
+index 00000000000..852e3996f18
+--- /dev/null
++++ b/gcc/config/i386/t-zephyr
+@@ -0,0 +1,23 @@
++# Copyright (C) 2016 Intel Corporation.
++#
++# This file is part of GCC.
++#
++# GCC is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++#
++# GCC is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++#
++
++MULTILIB_OPTIONS += msoft-float
++MULTILIB_DIRNAMES += soft-float
++MULTILIB_MATCHES = msoft-float=mno-80387
++MULTILIB_EXCEPTIONS =
+diff --git a/libgcc/config.host b/libgcc/config.host
+index 623291995c7..962422e21a7 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -629,6 +629,9 @@ x86_64-*-darwin*)
+ i[34567]86-*-elfiamcu)
+ 	tmake_file="$tmake_file i386/t-crtstuff t-softfp-sfdftf i386/32/t-softfp i386/32/t-iamcu i386/t-softfp t-softfp t-dfprules"
+ 	;;
++i586-zephyr-elf)
++	tmake_file="$tmake_file i386/t-crtstuff t-softfp-sfdf i386/32/t-zephyr i386/t-softfp t-softfp t-dfprules"
++	;;
+ i[34567]86-*-elf*)
+ 	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
+ 	;;
+@@ -1450,7 +1453,7 @@ i[34567]86-*-linux* | x86_64-*-linux* | \
+ esac
+ 
+ case ${host} in
+-i[34567]86-*-elfiamcu | i[34567]86-*-rtems*)
++i[34567]86-*-elfiamcu | i[34567]86-zephyr-elf | i[34567]86-*-rtems*)
+ 	# These use soft-fp for SFmode and DFmode, not just TFmode.
+ 	;;
+ i[34567]86-*-* | x86_64-*-*)
+diff --git a/libgcc/config/i386/32/t-zephyr b/libgcc/config/i386/32/t-zephyr
+new file mode 100644
+index 00000000000..7595cdeed84
+--- /dev/null
++++ b/libgcc/config/i386/32/t-zephyr
+@@ -0,0 +1 @@
++HOST_LIBGCC2_CFLAGS += -mlong-double-80
+-- 
+2.20.1
+

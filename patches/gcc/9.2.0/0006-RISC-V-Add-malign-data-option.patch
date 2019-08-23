@@ -1,0 +1,167 @@
+From a9b2b01c46d6d13c1d36a895a771b8b39f7dbcb9 Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Tue, 23 Jul 2019 01:29:34 +0000
+Subject: [PATCH 06/14] RISC-V: Add -malign-data= option.
+
+	gcc/
+	Ilia Diachkov  <ilia.diachkov@optimitech.com>
+	* config/riscv/riscv-opts.h (struct riscv_align_data): New.
+	* config/riscv/riscv.c (riscv_constant_alignment): Use
+	riscv_align_data_type.
+	* config/riscv/riscv.h (RISCV_EXPAND_ALIGNMENT): New.
+	(DATA_ALIGNMENT): Use RISCV_EXPAND_ALIGNMENT.
+	(LOCAL_ALIGNMENT): Use RISCV_EXPAND_ALIGNMENT.
+	* config/riscv/riscv.opt (malign-data): New.
+	* doc/invoke.texi (RISC-V Options): Document -malign-data=.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@273714 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog                 | 11 +++++++++++
+ gcc/config/riscv/riscv-opts.h |  5 +++++
+ gcc/config/riscv/riscv.c      |  3 ++-
+ gcc/config/riscv/riscv.h      | 17 +++++++++++------
+ gcc/config/riscv/riscv.opt    | 14 ++++++++++++++
+ gcc/doc/invoke.texi           | 10 +++++++++-
+ 6 files changed, 52 insertions(+), 8 deletions(-)
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 1d442625011..f7227c527e1 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,14 @@
++2019-07-22  Ilia Diachkov  <ilia.diachkov@optimitech.com>
++
++	* config/riscv/riscv-opts.h (struct riscv_align_data): New.
++	* config/riscv/riscv.c (riscv_constant_alignment): Use
++	riscv_align_data_type.
++	* config/riscv/riscv.h (RISCV_EXPAND_ALIGNMENT): New.
++	(DATA_ALIGNMENT): Use RISCV_EXPAND_ALIGNMENT.
++	(LOCAL_ALIGNMENT): Use RISCV_EXPAND_ALIGNMENT.
++	* config/riscv/riscv.opt (malign-data): New.
++	* doc/invoke.texi (RISC-V Options): Document -malign-data=.
++
+ 2019-06-27  Ilia Diachkov  <ilia.diachkov@optimitech.com>
+ 
+ 	* doc/install.texi: Document --disable-tm-clone-registry.
+diff --git a/gcc/config/riscv/riscv-opts.h b/gcc/config/riscv/riscv-opts.h
+index f3031f2e523..d00fbe20f27 100644
+--- a/gcc/config/riscv/riscv-opts.h
++++ b/gcc/config/riscv/riscv-opts.h
+@@ -46,4 +46,9 @@ enum riscv_microarchitecture_type {
+ };
+ extern enum riscv_microarchitecture_type riscv_microarchitecture;
+ 
++enum riscv_align_data {
++  riscv_align_data_type_xlen,
++  riscv_align_data_type_natural
++};
++
+ #endif /* ! GCC_RISCV_OPTS_H */
+diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
+index cdcc81ca780..44168689862 100644
+--- a/gcc/config/riscv/riscv.c
++++ b/gcc/config/riscv/riscv.c
+@@ -4901,7 +4901,8 @@ riscv_can_change_mode_class (machine_mode, machine_mode, reg_class_t rclass)
+ static HOST_WIDE_INT
+ riscv_constant_alignment (const_tree exp, HOST_WIDE_INT align)
+ {
+-  if (TREE_CODE (exp) == STRING_CST || TREE_CODE (exp) == CONSTRUCTOR)
++  if ((TREE_CODE (exp) == STRING_CST || TREE_CODE (exp) == CONSTRUCTOR)
++      && (riscv_align_data_type == riscv_align_data_type_xlen))
+     return MAX (align, BITS_PER_WORD);
+   return align;
+ }
+diff --git a/gcc/config/riscv/riscv.h b/gcc/config/riscv/riscv.h
+index 8856cee599e..2e27e83962d 100644
+--- a/gcc/config/riscv/riscv.h
++++ b/gcc/config/riscv/riscv.h
+@@ -168,6 +168,13 @@ along with GCC; see the file COPYING3.  If not see
+    mode that should actually be used.  We allow pairs of registers.  */
+ #define MAX_FIXED_MODE_SIZE GET_MODE_BITSIZE (TARGET_64BIT ? TImode : DImode)
+ 
++/* DATA_ALIGNMENT and LOCAL_ALIGNMENT common definition.  */
++#define RISCV_EXPAND_ALIGNMENT(COND, TYPE, ALIGN)			\
++  (((COND) && ((ALIGN) < BITS_PER_WORD)					\
++    && (TREE_CODE (TYPE) == ARRAY_TYPE					\
++	|| TREE_CODE (TYPE) == UNION_TYPE				\
++	|| TREE_CODE (TYPE) == RECORD_TYPE)) ? BITS_PER_WORD : (ALIGN))
++
+ /* If defined, a C expression to compute the alignment for a static
+    variable.  TYPE is the data type, and ALIGN is the alignment that
+    the object would ordinarily have.  The value of this macro is used
+@@ -180,18 +187,16 @@ along with GCC; see the file COPYING3.  If not see
+    cause character arrays to be word-aligned so that `strcpy' calls
+    that copy constants to character arrays can be done inline.  */
+ 
+-#define DATA_ALIGNMENT(TYPE, ALIGN)					\
+-  ((((ALIGN) < BITS_PER_WORD)						\
+-    && (TREE_CODE (TYPE) == ARRAY_TYPE					\
+-	|| TREE_CODE (TYPE) == UNION_TYPE				\
+-	|| TREE_CODE (TYPE) == RECORD_TYPE)) ? BITS_PER_WORD : (ALIGN))
++#define DATA_ALIGNMENT(TYPE, ALIGN)						\
++  RISCV_EXPAND_ALIGNMENT (riscv_align_data_type == riscv_align_data_type_xlen,	\
++			  TYPE, ALIGN)
+ 
+ /* We need this for the same reason as DATA_ALIGNMENT, namely to cause
+    character arrays to be word-aligned so that `strcpy' calls that copy
+    constants to character arrays can be done inline, and 'strcmp' can be
+    optimised to use word loads. */
+ #define LOCAL_ALIGNMENT(TYPE, ALIGN) \
+-  DATA_ALIGNMENT (TYPE, ALIGN)
++  RISCV_EXPAND_ALIGNMENT (true, TYPE, ALIGN)
+ 
+ /* Define if operations between registers always perform the operation
+    on the full register even if a narrower mode is specified.  */
+diff --git a/gcc/config/riscv/riscv.opt b/gcc/config/riscv/riscv.opt
+index 3b25f9a1014..7f0c35e9e9c 100644
+--- a/gcc/config/riscv/riscv.opt
++++ b/gcc/config/riscv/riscv.opt
+@@ -131,3 +131,17 @@ Mask(RVE)
+ mriscv-attribute
+ Target Report Var(riscv_emit_attribute_p) Init(-1)
+ Emit RISC-V ELF attribute.
++
++malign-data=
++Target RejectNegative Joined Var(riscv_align_data_type) Enum(riscv_align_data) Init(riscv_align_data_type_xlen)
++Use the given data alignment.
++
++Enum
++Name(riscv_align_data) Type(enum riscv_align_data)
++Known data alignment choices (for use with the -malign-data= option):
++
++EnumValue
++Enum(riscv_align_data) String(xlen) Value(riscv_align_data_type_xlen)
++
++EnumValue
++Enum(riscv_align_data) String(natural) Value(riscv_align_data_type_natural)
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 6ef36ce02aa..2b0ff17ee7f 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -1058,7 +1058,8 @@ See RS/6000 and PowerPC Options.
+ -mcmodel=medlow  -mcmodel=medany @gol
+ -mexplicit-relocs  -mno-explicit-relocs @gol
+ -mrelax  -mno-relax @gol
+--mriscv-attribute  -mmo-riscv-attribute}
++-mriscv-attribute  -mmo-riscv-attribute @gol
++-malign-data=@var{type}}
+ 
+ @emph{RL78 Options}
+ @gccoptlist{-msim  -mmul=none  -mmul=g13  -mmul=g14  -mallregs @gol
+@@ -23863,6 +23864,13 @@ linker relaxations.
+ @itemx -mno-emit-attribute
+ Emit (do not emit) RISC-V attribute to record extra information into ELF
+ objects.  This feature requires at least binutils 2.32.
++
++@item -malign-data=@var{type}
++@opindex malign-data
++Control how GCC aligns variables and constants of array, structure, or union
++types.  Supported values for @var{type} are @samp{xlen} which uses x register
++width as the alignment value, and @samp{natural} which uses natural alignment.
++@samp{xlen} is the default.
+ @end table
+ 
+ @node RL78 Options
+-- 
+2.20.1
+
