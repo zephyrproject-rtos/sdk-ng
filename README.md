@@ -13,7 +13,6 @@ Currently we build the following toolchains:
 - nios2
 - arm
 - riscv64
-- mips
 - xtensa
 
 To build for any of the above, run:
