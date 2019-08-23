@@ -10,7 +10,6 @@ env:
       - TARGET=nios2
       - TARGET=arm
       - TARGET=riscv64
-      - TARGET=mips
       - TARGET=arc
       - TARGET=xtensa
       - TARGET=x86_64-zephyr-elf
