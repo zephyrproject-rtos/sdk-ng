@@ -7,7 +7,6 @@ env:
         - USE_CCACHE=1
     matrix:
       - TARGET=i586
-      - TARGET=iamcu
       - TARGET=nios2
       - TARGET=arm
       - TARGET=riscv64
