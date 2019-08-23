@@ -1,0 +1,196 @@
+From c751c96f0e7f8e48690443796f71f05bb564763d Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Wed, 7 Aug 2019 05:20:44 -0500
+Subject: [PATCH 12/14] Add support to build for x86_64-zephyr-elf
+
+This adds the necessary bits to build for x86_64-zephyr-elf with
+multilib support (m32, mx32 and m64), following the x86_64-*-linux*
+footsteps.
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+Signed-off-by: Daniel Leung <daniel.leung@intel.com>
+---
+ configure                        |  2 +-
+ gcc/acinclude.m4                 | 12 ++++++++++
+ gcc/config.gcc                   | 27 +++++++++++++++++++++++
+ gcc/config/i386/t-zephyr64       | 38 ++++++++++++++++++++++++++++++++
+ gcc/configure                    |  9 ++++++++
+ libgcc/config.host               |  7 +++++-
+ libgcc/config/i386/64/t-zephyr64 |  1 +
+ 7 files changed, 94 insertions(+), 2 deletions(-)
+ create mode 100644 gcc/config/i386/t-zephyr64
+ create mode 100644 libgcc/config/i386/64/t-zephyr64
+
+diff --git a/configure b/configure
+index abd93a990a9..4d30ac4e320 100755
+--- a/configure
++++ b/configure
+@@ -7561,7 +7561,7 @@ fi
+ # Special user-friendly check for native x86_64-linux build, if
+ # multilib is not explicitly enabled.
+ case "$target:$have_compiler:$host:$target:$enable_multilib" in
+-  x86_64-*linux*:yes:$build:$build:)
++  x86_64-*linux*:yes:$build:$build: | x86_64-zephyr-elf:yes:$build:$build:)
+     # Make sure we have a development environment that handles 32-bit
+     dev64=no
+     echo "int main () { return 0; }" > conftest.c
+diff --git a/gcc/acinclude.m4 b/gcc/acinclude.m4
+index e3d50dca708..09d9380227e 100644
+--- a/gcc/acinclude.m4
++++ b/gcc/acinclude.m4
+@@ -507,6 +507,18 @@ AC_DEFUN([gcc_GAS_FLAGS],
+     dnl Override the default, which may be incompatible.
+     gcc_cv_as_flags=--64
+     ;;
++  i[[34567]]86-zephyr*)
++    dnl Override the default, which may be incompatible.
++    gcc_cv_as_flags=--32
++    ;;
++  x86_64-zephyr-elfx32)
++    dnl Override the default, which may be incompatible.
++    gcc_cv_as_flags=--x32
++    ;;
++  x86_64-zephyr*)
++    dnl Override the default, which may be incompatible.
++    gcc_cv_as_flags=--64
++    ;;
+   powerpc*-*-darwin*)
+     dnl Always pass -arch ppc to assembler.
+     gcc_cv_as_flags="-arch ppc"
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index ddd3b8f4d9d..34efe191505 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1635,6 +1635,33 @@ i[34567]86-*-elfiamcu)
+ i[34567]86-*-elf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
+ 	;;
++x86_64-zephyr-elf*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
++	tmake_file="${tmake_file} i386/t-zephyr64"
++	x86_multilibs="${with_multilib_list}"
++	if test "$x86_multilibs" = "default"; then
++		case ${with_abi} in
++		x32 | mx32)
++			x86_multilibs="mx32"
++			;;
++		*)
++			x86_multilibs="m64,m32"
++			;;
++		esac
++	fi
++	x86_multilibs=`echo $x86_multilibs | sed -e 's/,/ /g'`
++	for x86_multilib in ${x86_multilibs}; do
++		case ${x86_multilib} in
++		m32 | m64 | mx32)
++			TM_MULTILIB_CONFIG="${TM_MULTILIB_CONFIG},${x86_multilib}"
++			;;
++		*)
++			echo "--with-multilib-list=${x86_with_multilib} not supported."
++			exit 1
++		esac
++	done
++	TM_MULTILIB_CONFIG=`echo $TM_MULTILIB_CONFIG | sed 's/^,//'`
++	;;
+ x86_64-*-elf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
+ 	;;
+diff --git a/gcc/config/i386/t-zephyr64 b/gcc/config/i386/t-zephyr64
+new file mode 100644
+index 00000000000..a47de29029e
+--- /dev/null
++++ b/gcc/config/i386/t-zephyr64
+@@ -0,0 +1,38 @@
++# Copyright (C) 2002-2018 Free Software Foundation, Inc.
++#
++# This file is part of GCC.
++#
++# GCC is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++#
++# GCC is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++
++# On Debian, Ubuntu and other derivative distributions, the 32bit libraries
++# are found in /lib32 and /usr/lib32, /lib64 and /usr/lib64 are symlinks to
++# /lib and /usr/lib, while other distributions install libraries into /lib64
++# and /usr/lib64.  The LSB does not enforce the use of /lib64 and /usr/lib64,
++# it doesn't tell anything about the 32bit libraries on those systems.  Set
++# MULTILIB_OSDIRNAMES according to what is found on the target.
++
++# To support i386, x86-64 and x32 libraries, the directory structrue
++# should be:
++#
++# 	/lib has i386 libraries.
++# 	/lib64 has x86-64 libraries.
++# 	/libx32 has x32 libraries.
++#
++comma=,
++MULTILIB_OPTIONS    = $(subst $(comma),/,$(TM_MULTILIB_CONFIG))
++MULTILIB_DIRNAMES   = $(patsubst m%, %, $(subst /, ,$(MULTILIB_OPTIONS)))
++MULTILIB_OSDIRNAMES = m64=../lib64$(call if_multiarch,:x86_64-zephyr-elf)
++MULTILIB_OSDIRNAMES+= m32=$(if $(wildcard $(shell echo $(SYSTEM_HEADER_DIR))/../../usr/lib32),../lib32,../lib)$(call if_multiarch,:i386-zephyr-elf)
++MULTILIB_OSDIRNAMES+= mx32=../libx32$(call if_multiarch,:x86_64-zephyr-elfx32)
+diff --git a/gcc/configure b/gcc/configure
+index 481071b4265..802fa4c67f8 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -22671,6 +22671,15 @@ else
+   x86_64-*-linux*)
+         gcc_cv_as_flags=--64
+     ;;
++  i[34567]86-zephyr*)
++        gcc_cv_as_flags=--32
++    ;;
++  x86_64-zephyr-elfx32)
++        gcc_cv_as_flags=--x32
++    ;;
++  x86_64-zephyr*)
++        gcc_cv_as_flags=--64
++    ;;
+   powerpc*-*-darwin*)
+         gcc_cv_as_flags="-arch ppc"
+     ;;
+diff --git a/libgcc/config.host b/libgcc/config.host
+index 91abc84da03..623291995c7 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -632,6 +632,11 @@ i[34567]86-*-elfiamcu)
+ i[34567]86-*-elf*)
+ 	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
+ 	;;
++x86_64-zephyr-elf)
++	tmake_file="$tmake_file i386/t-crtstuff i386/64/t-zephyr64 t-dfprules"
++	tm_file="${tm_file} i386/elf-lib.h"
++	md_unwind_header=i386/linux-unwind.h
++	;;
+ x86_64-*-elf* | x86_64-*-rtems*)
+ 	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
+ 	case ${host} in
+@@ -1458,7 +1463,7 @@ i[34567]86-*-* | x86_64-*-*)
+ esac
+ 
+ case ${host} in
+-i[34567]86-*-linux* | x86_64-*-linux*)
++i[34567]86-*-linux* | x86_64-*-linux* | x86_64-zephyr-elf)
+ 	# Provide backward binary compatibility for 64bit Linux/x86.
+ 	if test "${host_address}" = 64; then
+ 		tmake_file="${tmake_file} i386/${host_address}/t-softfp-compat"
+diff --git a/libgcc/config/i386/64/t-zephyr64 b/libgcc/config/i386/64/t-zephyr64
+new file mode 100644
+index 00000000000..7595cdeed84
+--- /dev/null
++++ b/libgcc/config/i386/64/t-zephyr64
+@@ -0,0 +1 @@
++HOST_LIBGCC2_CFLAGS += -mlong-double-80
+-- 
+2.20.1
+

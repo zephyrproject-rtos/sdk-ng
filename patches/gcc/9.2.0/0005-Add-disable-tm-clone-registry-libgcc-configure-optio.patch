@@ -1,0 +1,164 @@
+From 615f1c9aacf58aaf002385af939c3412555dc65d Mon Sep 17 00:00:00 2001
+From: wilson <wilson@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Thu, 27 Jun 2019 23:41:03 +0000
+Subject: [PATCH 05/14] Add --disable-tm-clone-registry libgcc configure
+ option.
+
+This patch adds libgcc configuration option to disable TM clone
+registry. This option helps to reduce code size for embedded targets
+which do not need transactional memory support.
+
+	gcc/
+	* doc/install.texi: Document --disable-tm-clone-registry.
+	libgcc/
+	* Makefile.in (USE_TM_CLONE_REGISTRY): New.
+	(CRTSTUFF_CFLAGS): Use USE_TM_CLONE_REGISTRY.
+	* configure.ac: Add --disable-tm-clone-registry option.
+	* configure: Regenerate.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@272769 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/ChangeLog        |  4 ++++
+ gcc/doc/install.texi |  5 +++++
+ libgcc/ChangeLog     |  7 +++++++
+ libgcc/Makefile.in   |  4 +++-
+ libgcc/configure     | 15 +++++++++++++++
+ libgcc/configure.ac  | 10 ++++++++++
+ 6 files changed, 44 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index 0d1f7561d57..1d442625011 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,7 @@
++2019-06-27  Ilia Diachkov  <ilia.diachkov@optimitech.com>
++
++	* doc/install.texi: Document --disable-tm-clone-registry.
++
+ 2019-06-06  Jim Wilson  <jimw@sifive.com>
+ 
+ 	PR target/89955
+diff --git a/gcc/doc/install.texi b/gcc/doc/install.texi
+index 911875f9578..0f3a5fbb95e 100644
+--- a/gcc/doc/install.texi
++++ b/gcc/doc/install.texi
+@@ -1285,6 +1285,11 @@ assumptions made by the configure test are incorrect.
+ Specify that the target does not support TLS.
+ This is an alias for @option{--enable-tls=no}.
+ 
++@item --disable-tm-clone-registry
++Disable TM clone registry in libgcc. It is enabled in libgcc by default.
++This option helps to reduce code size for embedded targets which do
++not use transactional memory.
++
+ @item --with-cpu=@var{cpu}
+ @itemx --with-cpu-32=@var{cpu}
+ @itemx --with-cpu-64=@var{cpu}
+diff --git a/libgcc/ChangeLog b/libgcc/ChangeLog
+index 348c54c0b3e..bb9d3b75089 100644
+--- a/libgcc/ChangeLog
++++ b/libgcc/ChangeLog
+@@ -1,3 +1,10 @@
++2019-06-27  Ilia Diachkov  <ilia.diachkov@optimitech.com>
++
++	* Makefile.in (USE_TM_CLONE_REGISTRY): New.
++	(CRTSTUFF_CFLAGS): Use USE_TM_CLONE_REGISTRY.
++	* configure.ac: Add --disable-tm-clone-registry option.
++	* configure: Regenerate.
++
+ 2019-08-12  Release Manager
+ 
+ 	* GCC 9.2.0 released.
+diff --git a/libgcc/Makefile.in b/libgcc/Makefile.in
+index ea390a5bbea..f2fef8637ed 100644
+--- a/libgcc/Makefile.in
++++ b/libgcc/Makefile.in
+@@ -259,6 +259,8 @@ PICFLAG = @PICFLAG@
+ 
+ CET_FLAGS = @CET_FLAGS@
+ 
++USE_TM_CLONE_REGISTRY = @use_tm_clone_registry@
++
+ # Defined in libgcc2.c, included only in the static library.
+ LIB2FUNCS_ST = _eprintf __gcc_bcmp
+ 
+@@ -299,7 +301,7 @@ CRTSTUFF_CFLAGS = -O2 $(GCC_CFLAGS) $(INCLUDES) $(MULTILIB_CFLAGS) -g0 \
+   $(NO_PIE_CFLAGS) -finhibit-size-directive -fno-inline -fno-exceptions \
+   -fno-zero-initialized-in-bss -fno-toplevel-reorder -fno-tree-vectorize \
+   -fbuilding-libgcc -fno-stack-protector $(FORCE_EXPLICIT_EH_REGISTRY) \
+-  $(INHIBIT_LIBC_CFLAGS)
++  $(INHIBIT_LIBC_CFLAGS) $(USE_TM_CLONE_REGISTRY)
+ 
+ # Extra flags to use when compiling crt{begin,end}.o.
+ CRTSTUFF_T_CFLAGS =
+diff --git a/libgcc/configure b/libgcc/configure
+index 36dbbc1f699..283703767cb 100644
+--- a/libgcc/configure
++++ b/libgcc/configure
+@@ -604,6 +604,7 @@ vis_hide
+ solaris_ld_v2_maps
+ real_host_noncanonical
+ accel_dir_suffix
++use_tm_clone_registry
+ force_explicit_eh_registry
+ CET_FLAGS
+ fixed_point
+@@ -712,6 +713,7 @@ enable_decimal_float
+ with_system_libunwind
+ enable_cet
+ enable_explicit_exception_frame_registration
++enable_tm_clone_registry
+ with_glibc_version
+ enable_tls
+ with_gcc_major_version_only
+@@ -1355,6 +1357,7 @@ Optional Features:
+                           register exception tables explicitly at module
+                           start, for use e.g. for compatibility with
+                           installations without PT_GNU_EH_FRAME support
++  --disable-tm-clone-registry    disable TM clone registry
+   --enable-tls            Use thread-local storage [default=yes]
+ 
+ Optional Packages:
+@@ -4953,6 +4956,18 @@ fi
+ 
+ 
+ 
++# Check whether --enable-tm-clone-registry was given.
++if test "${enable_tm_clone_registry+set}" = set; then :
++  enableval=$enable_tm_clone_registry;
++use_tm_clone_registry=
++if test "$enable_tm_clone_registry" = no; then
++  use_tm_clone_registry=-DUSE_TM_CLONE_REGISTRY=0
++fi
++
++fi
++
++
++
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking if the linker ($LD) is GNU ld" >&5
+ $as_echo_n "checking if the linker ($LD) is GNU ld... " >&6; }
+ if ${acl_cv_prog_gnu_ld+:} false; then :
+diff --git a/libgcc/configure.ac b/libgcc/configure.ac
+index 8e96cafdf8b..2a2b9e71480 100644
+--- a/libgcc/configure.ac
++++ b/libgcc/configure.ac
+@@ -261,6 +261,16 @@ fi
+ ])
+ AC_SUBST([force_explicit_eh_registry])
+ 
++AC_ARG_ENABLE([tm-clone-registry],
++[  --disable-tm-clone-registry    disable TM clone registry],
++[
++use_tm_clone_registry=
++if test "$enable_tm_clone_registry" = no; then
++  use_tm_clone_registry=-DUSE_TM_CLONE_REGISTRY=0
++fi
++])
++AC_SUBST([use_tm_clone_registry])
++
+ AC_LIB_PROG_LD_GNU
+ 
+ AC_MSG_CHECKING([for thread model used by GCC])
+-- 
+2.20.1
+

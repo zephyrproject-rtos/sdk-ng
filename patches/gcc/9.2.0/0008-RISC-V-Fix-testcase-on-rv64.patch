@@ -1,0 +1,41 @@
+From 3c04a7b1da66ff6aa49b9547b52977f5f91f6404 Mon Sep 17 00:00:00 2001
+From: kito <kito@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Thu, 1 Aug 2019 06:33:48 +0000
+Subject: [PATCH 08/14] RISC-V: Fix testcase on rv64
+
+gcc/testsuite/ChangeLog:
+
+	* gcc.target/riscv/attribute-10.c: Fix testcase on rv64.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@273968 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/testsuite/ChangeLog                       | 4 ++++
+ gcc/testsuite/gcc.target/riscv/attribute-10.c | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index f6600feaf6b..f3ed3afd297 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,7 @@
++2019-08-01  Kito Cheng  <kito.cheng@sifive.com>
++
++	* gcc.target/riscv/attribute-10.c: Fix testcase on rv64.
++
+ 2019-07-31  Maxim Blinov  <maxim.blinov@embecosm.com>
+ 
+ 	* gcc.target/riscv/attribute-10.c: New test.
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-10.c b/gcc/testsuite/gcc.target/riscv/attribute-10.c
+index dd817879a67..a874a6234dc 100644
+--- a/gcc/testsuite/gcc.target/riscv/attribute-10.c
++++ b/gcc/testsuite/gcc.target/riscv/attribute-10.c
+@@ -1,5 +1,5 @@
+ /* { dg-do compile } */
+-/* { dg-options "-O2 -march=rv32im_s_sx_unexpectedstring -mabi=ilp32" } */
++/* { dg-options "-O2 -march=rv32i -march=rv32im_s_sx_unexpectedstring -mabi=ilp32" } */
+ int foo()
+ {
+ }
+-- 
+2.20.1
+
