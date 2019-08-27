@@ -54,6 +54,7 @@ if [ ! -d "crosstool-ng" ]; then
 	echo "Patching tree"
 	pushd crosstool-ng
 	git checkout ${COMMIT}
+	patch -p1 < ${GITDIR}/patches/0001-Add-config-option-to-setup-files-according-to-nano.s.patch
 	popd
 fi
 

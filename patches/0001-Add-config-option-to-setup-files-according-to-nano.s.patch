@@ -1,0 +1,90 @@
+From 4b07cb34a3f292c78f63069dcfe63f0e57195b9f Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Tue, 27 Aug 2019 08:55:41 -0500
+Subject: [PATCH] Add config option to setup files according to nano.spec
+
+Introduce config option LIBC_NEWLIB_NANO_SPEC that will have the build
+setup file layout as aspected by nano.spec.  This renames
+lib{c,g,rdimon,stdc++,supc++}.a -> lib{c,g,rdimon,stdc++,supc++}_nano.a.
+It also installs newlib.h in newlib-nano/newlib.h
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ config/libc/newlib.in        |  9 +++++++++
+ scripts/build/libc/newlib.sh | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+
+diff --git a/config/libc/newlib.in b/config/libc/newlib.in
+index 268f9564..29dd5149 100644
+--- a/config/libc/newlib.in
++++ b/config/libc/newlib.in
+@@ -209,6 +209,15 @@ config LIBC_NEWLIB_NANO_FORMATTED_IO
+       with size constraint issues.  This option does not affect wide-char
+       formatted I/O functions.
+ 
++config LIBC_NEWLIB_NANO_SPEC
++    bool
++    prompt "Enable Nano SPEC layout"
++    depends on LIBC_NEWLIB_NANO_MALLOC || LIBC_NEWLIB_NANO_FORMATTED_IO
++    help
++      Layout files according to what the nano.spec file expects.  This renames
++      lib{c,g,rdimon,stdc++,supc++}.a to have a nano postfix (ie libc_nano.a).
++      Also moves newlib.h to newlib-nano/newlib.h.
++
+ config LIBC_NEWLIB_EXTRA_CONFIG_ARRAY
+     string
+     prompt "Extra config for newlib"
+diff --git a/scripts/build/libc/newlib.sh b/scripts/build/libc/newlib.sh
+index 95ab7910..e12adde5 100644
+--- a/scripts/build/libc/newlib.sh
++++ b/scripts/build/libc/newlib.sh
+@@ -5,6 +5,30 @@
+ # Edited by Martin Lund <mgl@doredevelopment.dk>
+ #
+ 
++newlib_nano_movelibs()
++{
++    local multi_flags multi_dir multi_os_dir multi_os_dir_gcc multi_root multi_index multi_count
++
++    for arg in "$@"; do
++        eval "${arg// /\\ }"
++    done
++
++    CT_DoExecLog ALL mv "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libc.a" \
++                        "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libc_nano.a"
++    CT_DoExecLog ALL mv "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libg.a" \
++                        "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libg_nano.a"
++    if [ -f ${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/librdimon.a ]; then
++        CT_DoExecLog ALL mv "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/librdimon.a" \
++                            "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/librdimon_nano.a"
++    fi
++    if [ "${CT_CC_GCC_STATIC_LIBSTDCXX}" = "y" ]; then
++        CT_DoExecLog ALL mv "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libstdc++.a" \
++                            "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libstdc++_nano.a"
++        CT_DoExecLog ALL mv "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libsupc++.a" \
++                            "${CT_PREFIX_DIR}/${CT_TARGET}/lib/${multi_dir}/libsupc++_nano.a"
++    fi
++}
++
+ newlib_start_files()
+ {
+     CT_DoStep INFO "Installing C library headers & start files"
+@@ -131,3 +155,15 @@ ENABLE_TARGET_OPTSPACE:target-optspace
+     CT_Popd
+     CT_EndStep
+ }
++
++newlib_post_cc()
++{
++    if [ "${CT_LIBC_NEWLIB_NANO_SPEC}" = "y" ]; then
++        CT_DoLog EXTRA "Move files to match nano.spec layout"
++        CT_IterateMultilibs newlib_nano_movelibs newlib_nano_libs
++
++        CT_DoExecLog ALL mkdir -p "${CT_PREFIX_DIR}/${CT_TARGET}/include/newlib-nano"
++        CT_DoExecLog ALL mv "${CT_PREFIX_DIR}/${CT_TARGET}/include/newlib.h" \
++                            "${CT_PREFIX_DIR}/${CT_TARGET}/include/newlib-nano"
++    fi
++}
+-- 
+2.20.1
+
