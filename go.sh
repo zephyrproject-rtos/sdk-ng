@@ -67,11 +67,10 @@ fi
 
 CT_NG=${SDK_NG_HOME}/bin/ct-ng
 
-
 mkdir -p build
 cd build
-export CT_PREFIX=`pwd`/output
-mkdir -p ${CT_PREFIX}/sources
+export OUTPUT_DIR=`pwd`/output
+mkdir -p ${OUTPUT_DIR}/sources
 for t in ${TARGETS}; do
 	if [ "${t}" = "tools" ]; then
 		# We handled tools above, so skip it here
@@ -87,9 +86,16 @@ for t in ${TARGETS}; do
 
 	build_toolchain=1
 	if [ -n "${build_toolchain}" ]; then
-		if [ "${t}" = "xtensa" ]; then
-			cp -a ${SDK_NG_HOME}/overlays .
-		fi
+		case "${t}" in
+			xtensa_*)
+				cp -a ${SDK_NG_HOME}/overlays .
+				export CT_PREFIX=${OUTPUT_DIR}/xtensa/${t#xtensa_}
+				mkdir -p ${CT_PREFIX}
+				;;
+			*)
+				export CT_PREFIX=${OUTPUT_DIR}
+				;;
+		esac
 
 		${CT_NG} clean
 		${CT_NG} defconfig DEFCONFIG=${GITDIR}/configs/${t}.config
@@ -100,17 +106,32 @@ for t in ${TARGETS}; do
 		fi
 	fi
 
-	if [ "${t}" = "xtensa" ]; then
+	# Need to build HAL to Xtensa
+	if [[ ${t} == xtensa_* ]]; then
+		# Extract HAL from source
 		wget https://github.com/foss-xtensa/xtensa-hal/archive/RF-2015.2.tar.gz
 		tar xf RF-2015.2.tar.gz
-		cd xtensa-hal-RF-2015.2
-		wget https://github.com/foss-xtensa/xtensa-config/releases/download/201702/sample_controller_linux.tgz
-		./import-core.sh sample_controller_linux.tgz
-		export CC=${CT_PREFIX}/xtensa-zephyr-elf/bin/xtensa-zephyr-elf-gcc
-		./configure --host xtensa-zephyr-elf --prefix ${CT_PREFIX}/xtensa-zephyr-elf
-		make
-		make install
-		unset CC
+		pushd xtensa-hal-RF-2015.2
+
+		# Extract SoC specific config file into HAL directory
+		case "${t}" in
+			xtensa_sample_controller)
+				wget https://github.com/foss-xtensa/xtensa-config/releases/download/201702/sample_controller_linux.tgz
+				./import-core.sh sample_controller_linux.tgz
+				;;
+		esac
+
+		# Build the HAL
+		cat <<-EOF > build.sh
+			export PATH=${CT_PREFIX}/xtensa-zephyr-elf/bin:$PATH
+			export CC=${CT_PREFIX}/xtensa-zephyr-elf/bin/xtensa-zephyr-elf-gcc
+			./configure --host xtensa-zephyr-elf --prefix ${CT_PREFIX}/xtensa-zephyr-elf
+			make
+			make install
+			EOF
+		$BASH build.sh
+
+		popd
 	fi
 
 	popd
