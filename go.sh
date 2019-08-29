@@ -122,6 +122,9 @@ for t in ${TARGETS}; do
 			xtensa_intel_apl_adsp)
 				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_apl_adsp/0001-Adding-APL-DSP-config-files.patch
 				;;
+			xtensa_intel_s1000)
+				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_s1000/0001-Add-Sue-Creek-config-files.patch
+				;;
 		esac
 
 		# Build the HAL
