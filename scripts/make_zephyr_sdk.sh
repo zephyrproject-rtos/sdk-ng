@@ -58,6 +58,7 @@ parse_toolchain_name file_gcc_xtensa xtensa
 parse_toolchain_name file_gcc_riscv64 riscv64
 parse_toolchain_name file_gcc_x86_64 x86_64-zephyr-elf
 parse_toolchain_name file_gcc_xtensa_sample_controller xtensa_sample_controller
+parse_toolchain_name file_gcc_xtensa_intel_apl_adsp xtensa_intel_apl_adsp
 parse_toolchain_name file_hosttools hosttools
 
 # Host tools are non-optional
@@ -133,6 +134,13 @@ fi
 if [ -n "$file_gcc_xtensa_sample_controller" ]; then
   echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_xtensa_sample_controller > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing xtensa sample_controller tools...\"" >> $setup
+  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
+  echo "echo \"\"" >>$setup
+fi
+
+if [ -n "$file_gcc_xtensa_intel_apl_adsp" ]; then
+  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_xtensa_intel_apl_adsp > /dev/null &" >> $setup
+  echo "spinner \$!  \"Installing xtensa intel_apl_adsp tools...\"" >> $setup
   echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
   echo "echo \"\"" >>$setup
 fi
