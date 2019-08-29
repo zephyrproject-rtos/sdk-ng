@@ -13,6 +13,7 @@ env:
       - TARGET=arc
       - TARGET=x86_64-zephyr-elf
       - TARGET=xtensa_sample_controller
+      - TARGET=xtensa_intel_apl_adsp
       - TARGET="tools"
 
 build:

@@ -119,6 +119,9 @@ for t in ${TARGETS}; do
 				wget https://github.com/foss-xtensa/xtensa-config/releases/download/201702/sample_controller_linux.tgz
 				./import-core.sh sample_controller_linux.tgz
 				;;
+			xtensa_intel_apl_adsp)
+				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_apl_adsp/0001-Adding-APL-DSP-config-files.patch
+				;;
 		esac
 
 		# Build the HAL
