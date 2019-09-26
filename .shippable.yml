@@ -61,6 +61,13 @@ build:
             aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
           fi
       - ccache -s
+
+    on_failure:
+      - >
+          if [ "${TARGET}" != 'tools' ]; then
+            cat build/build_${TARGET}/build.log;
+          fi
+
 integrations:
   generic:
     - integrationName: aws_s3_simple
