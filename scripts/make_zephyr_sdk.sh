@@ -8,7 +8,7 @@
 # Major versions for big interface/usage changes
 # Minor versions for additions of interfaces, transparent changes
 #
-# Default installation directory should be /opt/zephyr-sdk/
+# Default installation directory should be $HOME/zephyr-sdk/
 #
 
 product_name="zephyr-sdk"
@@ -22,7 +22,7 @@ echo "Creating ${product_name}-${sdk_version}-setup.run"
 
 
 setup=toolchains/setup.sh
-default_dir=/opt/${product_name}/
+default_dir=\${HOME}/${product_name}/
 toolchain_name=${product_name}-${sdk_version}-setup.run
 version_dir=info-zephyr-sdk-${sdk_version}
 
