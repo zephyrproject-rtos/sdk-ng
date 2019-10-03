@@ -111,13 +111,6 @@ if [ -n "$file_gcc_nios2" ]; then
   echo "echo \"\"" >>$setup
 fi
 
-if [ -n "$file_gcc_xtensa" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_xtensa > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing xtensa tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
 if [ -n "$file_gcc_riscv64" ]; then
   echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_riscv64 > /dev/null &" >> $setup
   echo "spinner \$!  \"Installing riscv64 tools...\"" >> $setup
