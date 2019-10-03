@@ -2,6 +2,7 @@
 target_sdk_dir=""
 post_install_cleanup=1
 confirm=0
+rc_confirm=0
 
 usage () {
   cat << EOF
@@ -62,6 +63,7 @@ while [ "$1" != "" ]; do
 			;;
 		-y )
 			confirm="y";
+			rc_confirm="y";
 			;;
 		* )
 			echo "Error: Invalid argument \"$1\""
@@ -103,6 +105,34 @@ do_cleanup()
 	mv version-* $VERSION_DIR
 	echo "$SDK_VERSION" > sdk_version
 	chmod 0644 sdk_version
+}
+
+do_zephyrrc()
+{
+	echo
+	echo "You need to setup the following environment variables to use the toolchain:"
+	echo
+	echo "     export ZEPHYR_TOOLCHAIN_VARIANT=zephyr"
+	echo "     export ZEPHYR_SDK_INSTALL_DIR=$target_sdk_dir"
+	echo
+	if [ "$rc_confirm" != "y" ]; then
+		echo "Update/Create $HOME/.zephyrrc with environment variables setup for you (y/n)? "
+		while read rc_confirm; do
+			[ "$rc_confirm" = "Y" -o "$rc_confirm" = "y" \
+			-o "$rc_confirm" = "n" \
+			-o "$rc_confirm" = "N" ] && break
+			echo "Invalid input \"$rc_confirm\", please input 'y' or 'n': "
+		done
+	fi
+	if [ "$rc_confirm" = "y" -o "$rc_confirm" = "Y" ]; then
+		if [ -f $HOME/.zephyrrc ]; then
+			sed -i "s#ZEPHYR_SDK_INSTALL_DIR=.*#ZEPHYR_SDK_INSTALL_DIR=${target_sdk_dir}#" $HOME/.zephyrrc
+			sed -i "s#ZEPHYR_TOOLCHAIN_VARIANT=.*#ZEPHYR_TOOLCHAIN_VARIANT=zephyr#" $HOME/.zephyrrc
+		else
+			echo "export ZEPHYR_TOOLCHAIN_VARIANT=zephyr" >> ~/.zephyrrc
+			echo "export ZEPHYR_SDK_INSTALL_DIR=$target_sdk_dir" >> ~/.zephyrrc
+		fi
+	fi
 }
 
 # Read the input "y"

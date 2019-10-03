@@ -141,7 +141,13 @@ echo "" >>$setup
 echo "do_cleanup"  >>$setup
 echo "" >>$setup
 
-echo "echo \"Success installing SDK. SDK is ready to be used.\"" >>$setup
+echo "echo \"Success installing SDK.\"" >>$setup
+
+echo "" >>$setup
+echo "do_zephyrrc"  >>$setup
+echo "" >>$setup
+
+echo "echo \"SDK is ready to be used.\"" >>$setup
 chmod 777 $setup
 
 makeself toolchains/ $toolchain_name  "SDK for Zephyr" ./setup.sh
