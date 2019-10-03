@@ -12,7 +12,7 @@ if [ "$TARGETS" == "all" ]; then
 	TARGETS=${TARGETS}" tools"
 fi
 
-COMMIT="afaf7b9a25b5d77991002936be5c47fc5ff549de"
+COMMIT="3f461da11f1f8e9dcfdffef24e1982b5ffd10305"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
@@ -54,7 +54,6 @@ if [ ! -d "crosstool-ng" ]; then
 	echo "Patching tree"
 	pushd crosstool-ng
 	git checkout ${COMMIT}
-	patch -p1 < ${GITDIR}/patches/0001-Update-to-gcc-9.2.0.patch
 	popd
 fi
 
