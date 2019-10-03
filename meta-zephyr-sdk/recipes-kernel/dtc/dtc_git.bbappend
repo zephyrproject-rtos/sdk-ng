@@ -1,5 +1,7 @@
-SRCREV = "78e113e81c9d33d0f33704b187a46399d5a75419"
-PV = "1.4.7+git"
+LIC_FILES_CHKSUM = "file://GPL;md5=b234ee4d69f5fce4486a80fdaf4a4263"
+
+SRCREV = "60e0db3d65a1218b0d5a29474e769f28a18e3ca6"
+PV = "1.5.1"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 do_install () {
