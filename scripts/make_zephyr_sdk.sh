@@ -68,6 +68,8 @@ setup_arch()
 	local setup=$1
 	local arch=$2
 
+	echo "SETUP_ARCH: ${arch}"
+
 	var_file_arch=file_gcc_${arch}
 	file_gcc_arch=${!var_file_arch}
 
@@ -154,6 +156,7 @@ create_sdk()
 
 	setup_hdr $setup $toolchain_name
 	for arch in $arch_list; do
+		echo "CREATE_SDK FOR arch ${arch}"
 		setup_arch $setup $arch
 	done
 
