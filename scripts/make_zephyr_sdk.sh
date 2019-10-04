@@ -15,15 +15,15 @@ product_name="zephyr-sdk"
 
 root_dir=$(dirname $0)/..
 sdk_version=$(cat $root_dir/VERSION)
+arch_list="x86 arm arc nios2 riscv64 x86_64 xtensa_sample_controller \
+           xtensa_intel_apl_adsp xtensa_intel_s1000"
 
 echo "Creating ${product_name}-${sdk_version}-setup.run"
 
 # Create ./setup.sh
 
 
-setup=toolchains/setup.sh
 default_dir=\${HOME}/${product_name}/
-toolchain_name=${product_name}-${sdk_version}-setup.run
 version_dir=info-zephyr-sdk-${sdk_version}
 
 # Identify files present in toolchains folder
@@ -49,6 +49,120 @@ parse_toolchain_name()
     eval "$varname=\$filename"
 }
 
+setup_hdr()
+{
+	local setup=$1
+	local toolchain_name=$2
+
+	echo '#!/bin/bash' > $setup
+	echo "DEFAULT_INSTALL_DIR=$default_dir" >> $setup
+	echo "TOOLCHAIN_NAME=$toolchain_name" >> $setup
+	echo "VERSION_DIR=$version_dir" >> $setup
+	echo "SDK_VERSION=${sdk_version}" >> $setup
+
+	cat template_dir >>$setup
+}
+
+setup_arch()
+{
+	local setup=$1
+	local arch=$2
+
+	var_file_arch=file_gcc_${arch}
+	file_gcc_arch=${!var_file_arch}
+
+	if [ -n "$file_gcc_arch" ]; then
+	  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_arch > /dev/null &" >> $setup
+	  echo "spinner \$! \"Installing $arch tools...\"" >> $setup
+	  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
+	  echo "echo \"\"" >>$setup
+	fi
+}
+
+setup_host()
+{
+	local setup=$1
+
+	echo "./$file_hosttools -y -d \$target_sdk_dir > /dev/null &" >> $setup
+	echo "spinner \$! \"Installing additional host tools...\"" >> $setup
+	echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
+	echo "echo \"\"" >>$setup
+}
+
+setup_ftr_common()
+{
+	local setup=$1
+	local label=$2
+
+	echo "" >>$setup
+	echo "do_cleanup"  >>$setup
+	echo "" >>$setup
+
+	echo "echo \"Success installing $label.\"" >>$setup
+
+	echo "" >>$setup
+	echo "do_zephyrrc"  >>$setup
+	echo "" >>$setup
+
+	echo "echo \"$label is ready to be used.\"" >>$setup
+	chmod 777 $setup
+}
+
+setup_ftr_sdk()
+{
+	setup_ftr_common $1 SDK
+}
+
+setup_ftr_toolchain()
+{
+	setup_ftr_common $1 Toolchain
+}
+
+create_toolchain()
+{
+	local arch=$1
+	local setup=toolchains/${arch}/setup.sh
+	local toolchain_name=zephyr-toolchain-${arch}-${sdk_version}-setup.run
+
+	var_file_arch=file_gcc_${arch}
+	file_gcc_arch=${!var_file_arch}
+
+	if [ -n "$file_gcc_arch" ]; then
+		mkdir -p toolchains/${arch}
+		ln toolchains/${file_gcc_arch} toolchains/${arch}
+		ln toolchains/${file_hosttools} toolchains/${arch}
+
+		setup_hdr $setup $toolchain_name
+		setup_arch $setup $arch
+		setup_host $setup
+		setup_ftr_toolchain $setup
+
+		makeself toolchains/${arch} $toolchain_name "${arch} toolchain for Zephyr" ./setup.sh
+
+		# cleanup
+		rm $setup
+		rm toolchains/${arch}/${file_gcc_arch}
+		rm toolchains/${arch}/${file_hosttools}
+		rmdir toolchains/${arch}
+	fi
+}
+
+create_sdk()
+{
+	local setup=toolchains/setup.sh
+	local toolchain_name=${product_name}-${sdk_version}-setup.run
+
+	setup_hdr $setup $toolchain_name
+	for arch in $arch_list; do
+		setup_arch $setup $arch
+	done
+
+	setup_host $setup
+	setup_ftr_sdk $setup
+
+	makeself toolchains/ $toolchain_name  "SDK for Zephyr" ./setup.sh
+}
+
 parse_toolchain_name file_gcc_arm arm
 parse_toolchain_name file_gcc_arc arc
 parse_toolchain_name file_gcc_x86 i586
@@ -68,103 +182,8 @@ if  [ -z "$file_hosttools" ]; then
   exit 1
 fi
 
-echo '#!/bin/bash' > $setup
-echo "DEFAULT_INSTALL_DIR=$default_dir" >> $setup
-echo "TOOLCHAIN_NAME=$toolchain_name" >> $setup
-echo "VERSION_DIR=$version_dir" >> $setup
-echo "SDK_VERSION=${sdk_version}" >> $setup
+create_sdk
 
-cat template_dir >>$setup
-
-if [ -n "$file_gcc_x86" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_x86 > /dev/null &" >> $setup
-  echo "spinner \$! \"Installing x86 tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_arm" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_arm > /dev/null &" >> $setup
-  echo "spinner \$! \"Installing arm tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_arc" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_arc > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing arc tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-#if [ -n "$file_gcc_mips" ]; then
-#  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_mips > /dev/null &" >> $setup
-#  echo "spinner \$!  \"Installing mips tools...\"" >> $setup
-#  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-#  echo "echo \"\"" >>$setup
-#fi
-
-if [ -n "$file_gcc_nios2" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_nios2 > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing nios2 tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_riscv64" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_riscv64 > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing riscv64 tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_x86_64" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_x86_64 > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing x86_64 tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_xtensa_sample_controller" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_xtensa_sample_controller > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing xtensa sample_controller tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_xtensa_intel_apl_adsp" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_xtensa_intel_apl_adsp > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing xtensa intel_apl_adsp tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_gcc_xtensa_intel_s1000" ]; then
-  echo "tar -C \$target_sdk_dir -jxf ./$file_gcc_xtensa_intel_s1000 > /dev/null &" >> $setup
-  echo "spinner \$!  \"Installing xtensa intel_s1000 tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-if [ -n "$file_hosttools" ]; then
-  echo "./$file_hosttools -y -d \$target_sdk_dir > /dev/null &" >> $setup
-  echo "spinner \$! \"Installing additional host tools...\"" >> $setup
-  echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
-  echo "echo \"\"" >>$setup
-fi
-
-
-echo "" >>$setup
-echo "do_cleanup"  >>$setup
-echo "" >>$setup
-
-echo "echo \"Success installing SDK.\"" >>$setup
-
-echo "" >>$setup
-echo "do_zephyrrc"  >>$setup
-echo "" >>$setup
-
-echo "echo \"SDK is ready to be used.\"" >>$setup
-chmod 777 $setup
-
-makeself toolchains/ $toolchain_name  "SDK for Zephyr" ./setup.sh
+for arch in $arch_list; do
+	create_toolchain $arch
+done
