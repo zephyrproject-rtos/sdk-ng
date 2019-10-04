@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # The folder "toolchains" should contain the toolchains and host tools
 # This script merges all files into a single installable file.
