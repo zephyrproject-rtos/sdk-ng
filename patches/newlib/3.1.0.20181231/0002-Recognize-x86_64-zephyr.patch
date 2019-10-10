@@ -1,14 +1,16 @@
-From bf9162f855ebb9c55f184b28bf1a4b477cafb3e6 Mon Sep 17 00:00:00 2001
+From 337c5a644abc6b2cb380f453a5185bcfd47f1ba3 Mon Sep 17 00:00:00 2001
 From: Daniel Leung <daniel.leung@intel.com>
 Date: Tue, 19 Mar 2019 18:27:16 -0700
-Subject: [PATCH 2/3] Recognize x86_64-*-elf
+Subject: [PATCH 2/3] Recognize x86_64-zephyr-*
 
-This extends the configure scripts to recognize x86_64-*-elf
+This extends the configure scripts to recognize x86_64-zephyr-*
 for multilib support.
 
 Signed-off-by: Daniel Leung <daniel.leung@intel.com>
 ---
  config/dfp.m4                                             | 2 +-
+ configure                                                 | 2 +-
+ configure.ac                                              | 2 +-
  libtool.m4                                                | 6 +++---
  newlib/configure                                          | 6 +++---
  newlib/iconvdata/configure                                | 6 +++---
@@ -25,10 +27,10 @@ Signed-off-by: Daniel Leung <daniel.leung@intel.com>
  newlib/libm/configure                                     | 6 +++---
  newlib/libm/machine/configure                             | 6 +++---
  newlib/libm/machine/i386/configure                        | 6 +++---
- 17 files changed, 49 insertions(+), 49 deletions(-)
+ 19 files changed, 51 insertions(+), 51 deletions(-)
 
 diff --git a/config/dfp.m4 b/config/dfp.m4
-index 5b29089..8b167c9 100644
+index 5b29089..a8e1c64 100644
 --- a/config/dfp.m4
 +++ b/config/dfp.m4
 @@ -20,7 +20,7 @@ Valid choices are 'yes', 'bid', 'dpd', and 'no'.]) ;;
@@ -36,12 +38,38 @@ index 5b29089..8b167c9 100644
  [
    case $1 in
 -    powerpc*-*-linux* | i?86*-*-linux* | x86_64*-*-linux* | s390*-*-linux* | \
-+    powerpc*-*-linux* | i?86*-*-linux* | x86_64*-*-linux* | x86_64-*-elf | s390*-*-linux* | \
++    powerpc*-*-linux* | i?86*-*-linux* | x86_64*-*-linux* | x86_64-zephyr-* | s390*-*-linux* | \
      i?86*-*-elfiamcu | i?86*-*-gnu* | \
      i?86*-*-mingw* | x86_64*-*-mingw* | \
      i?86*-*-cygwin* | x86_64*-*-cygwin*)
+diff --git a/configure b/configure
+index 5db5270..6ef128e 100755
+--- a/configure
++++ b/configure
+@@ -7510,7 +7510,7 @@ fi
+ # Special user-friendly check for native x86_64-linux build, if
+ # multilib is not explicitly enabled.
+ case "$target:$have_compiler:$host:$target:$enable_multilib" in
+-  x86_64-*linux*:yes:$build:$build:)
++  x86_64-*linux*:yes:$build:$build: | x86_64-zephyr-elf:yes:$build:$build:)
+     # Make sure we have a development environment that handles 32-bit
+     dev64=no
+     echo "int main () { return 0; }" > conftest.c
+diff --git a/configure.ac b/configure.ac
+index cf856e5..36d478a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3109,7 +3109,7 @@ fi
+ # Special user-friendly check for native x86_64-linux build, if
+ # multilib is not explicitly enabled.
+ case "$target:$have_compiler:$host:$target:$enable_multilib" in
+-  x86_64-*linux*:yes:$build:$build:)
++  x86_64-*linux*:yes:$build:$build: | x86_64-zephyr-elf:yes:$build:$build:)
+     # Make sure we have a development environment that handles 32-bit
+     dev64=no
+     echo "int main () { return 0; }" > conftest.c
 diff --git a/libtool.m4 b/libtool.m4
-index 24d13f3..8ebf1d5 100644
+index 24d13f3..53a90a1 100644
 --- a/libtool.m4
 +++ b/libtool.m4
 @@ -1220,7 +1220,7 @@ ia64-*-hpux*)
@@ -49,7 +77,7 @@ index 24d13f3..8ebf1d5 100644
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -58,7 +86,7 @@ index 24d13f3..8ebf1d5 100644
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -67,12 +95,12 @@ index 24d13f3..8ebf1d5 100644
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/configure b/newlib/configure
-index 6eef23c..e0049b8 100755
+index 6eef23c..ea61835 100755
 --- a/newlib/configure
 +++ b/newlib/configure
 @@ -7329,7 +7329,7 @@ ia64-*-hpux*)
@@ -80,7 +108,7 @@ index 6eef23c..e0049b8 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -89,7 +117,7 @@ index 6eef23c..e0049b8 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -98,12 +126,12 @@ index 6eef23c..e0049b8 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/iconvdata/configure b/newlib/iconvdata/configure
-index cfac613..e90d51e 100755
+index cfac613..d2c1bbf 100755
 --- a/newlib/iconvdata/configure
 +++ b/newlib/iconvdata/configure
 @@ -6932,7 +6932,7 @@ ia64-*-hpux*)
@@ -111,7 +139,7 @@ index cfac613..e90d51e 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -120,7 +148,7 @@ index cfac613..e90d51e 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -129,12 +157,12 @@ index cfac613..e90d51e 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/configure b/newlib/libc/configure
-index 0dc213e..5ddf0fe 100755
+index 0dc213e..8ad28ca 100755
 --- a/newlib/libc/configure
 +++ b/newlib/libc/configure
 @@ -7056,7 +7056,7 @@ ia64-*-hpux*)
@@ -142,7 +170,7 @@ index 0dc213e..5ddf0fe 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -151,7 +179,7 @@ index 0dc213e..5ddf0fe 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -160,12 +188,12 @@ index 0dc213e..5ddf0fe 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/machine/configure b/newlib/libc/machine/configure
-index f3229e9..443b534 100755
+index f3229e9..f2f4445 100755
 --- a/newlib/libc/machine/configure
 +++ b/newlib/libc/machine/configure
 @@ -6991,7 +6991,7 @@ ia64-*-hpux*)
@@ -173,7 +201,7 @@ index f3229e9..443b534 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -182,7 +210,7 @@ index f3229e9..443b534 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -191,12 +219,12 @@ index f3229e9..443b534 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/machine/i386/configure b/newlib/libc/machine/i386/configure
-index 34a14f7..aa799c1 100755
+index 34a14f7..c188030 100755
 --- a/newlib/libc/machine/i386/configure
 +++ b/newlib/libc/machine/i386/configure
 @@ -6934,7 +6934,7 @@ ia64-*-hpux*)
@@ -204,7 +232,7 @@ index 34a14f7..aa799c1 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -213,7 +241,7 @@ index 34a14f7..aa799c1 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -222,12 +250,12 @@ index 34a14f7..aa799c1 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/configure b/newlib/libc/sys/configure
-index 08485a1..3b7338f 100755
+index 08485a1..a24e95d 100755
 --- a/newlib/libc/sys/configure
 +++ b/newlib/libc/sys/configure
 @@ -6963,7 +6963,7 @@ ia64-*-hpux*)
@@ -235,7 +263,7 @@ index 08485a1..3b7338f 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -244,7 +272,7 @@ index 08485a1..3b7338f 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -253,12 +281,12 @@ index 08485a1..3b7338f 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/linux/configure b/newlib/libc/sys/linux/configure
-index 2ac7230..806a635 100755
+index 2ac7230..ac2e66b 100755
 --- a/newlib/libc/sys/linux/configure
 +++ b/newlib/libc/sys/linux/configure
 @@ -6980,7 +6980,7 @@ ia64-*-hpux*)
@@ -266,7 +294,7 @@ index 2ac7230..806a635 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -275,7 +303,7 @@ index 2ac7230..806a635 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -284,12 +312,12 @@ index 2ac7230..806a635 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/linux/linuxthreads/configure b/newlib/libc/sys/linux/linuxthreads/configure
-index ca62ff1..a20ff72 100755
+index ca62ff1..83b3e3e 100755
 --- a/newlib/libc/sys/linux/linuxthreads/configure
 +++ b/newlib/libc/sys/linux/linuxthreads/configure
 @@ -6978,7 +6978,7 @@ ia64-*-hpux*)
@@ -297,7 +325,7 @@ index ca62ff1..a20ff72 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -306,7 +334,7 @@ index ca62ff1..a20ff72 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -315,12 +343,12 @@ index ca62ff1..a20ff72 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/linux/linuxthreads/machine/configure b/newlib/libc/sys/linux/linuxthreads/machine/configure
-index dea024c..06f5a90 100755
+index dea024c..6b1b1c4 100755
 --- a/newlib/libc/sys/linux/linuxthreads/machine/configure
 +++ b/newlib/libc/sys/linux/linuxthreads/machine/configure
 @@ -6936,7 +6936,7 @@ ia64-*-hpux*)
@@ -328,7 +356,7 @@ index dea024c..06f5a90 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -337,7 +365,7 @@ index dea024c..06f5a90 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -346,12 +374,12 @@ index dea024c..06f5a90 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/linux/linuxthreads/machine/i386/configure b/newlib/libc/sys/linux/linuxthreads/machine/i386/configure
-index 35a8c81..eed3874 100755
+index 35a8c81..39f9551 100755
 --- a/newlib/libc/sys/linux/linuxthreads/machine/i386/configure
 +++ b/newlib/libc/sys/linux/linuxthreads/machine/i386/configure
 @@ -6974,7 +6974,7 @@ ia64-*-hpux*)
@@ -359,7 +387,7 @@ index 35a8c81..eed3874 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -368,7 +396,7 @@ index 35a8c81..eed3874 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -377,12 +405,12 @@ index 35a8c81..eed3874 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/linux/machine/configure b/newlib/libc/sys/linux/machine/configure
-index 359b7a3..b4aca37 100755
+index 359b7a3..fe112f6 100755
 --- a/newlib/libc/sys/linux/machine/configure
 +++ b/newlib/libc/sys/linux/machine/configure
 @@ -6937,7 +6937,7 @@ ia64-*-hpux*)
@@ -390,7 +418,7 @@ index 359b7a3..b4aca37 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -399,7 +427,7 @@ index 359b7a3..b4aca37 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -408,12 +436,12 @@ index 359b7a3..b4aca37 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libc/sys/linux/machine/i386/configure b/newlib/libc/sys/linux/machine/i386/configure
-index 48ebb68..819785a 100755
+index 48ebb68..34be4a9 100755
 --- a/newlib/libc/sys/linux/machine/i386/configure
 +++ b/newlib/libc/sys/linux/machine/i386/configure
 @@ -6974,7 +6974,7 @@ ia64-*-hpux*)
@@ -421,7 +449,7 @@ index 48ebb68..819785a 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -430,7 +458,7 @@ index 48ebb68..819785a 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -439,12 +467,12 @@ index 48ebb68..819785a 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libm/configure b/newlib/libm/configure
-index e8a0a99..dd94bcb 100755
+index e8a0a99..1f7fb34 100755
 --- a/newlib/libm/configure
 +++ b/newlib/libm/configure
 @@ -6996,7 +6996,7 @@ ia64-*-hpux*)
@@ -452,7 +480,7 @@ index e8a0a99..dd94bcb 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -461,7 +489,7 @@ index e8a0a99..dd94bcb 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -470,12 +498,12 @@ index e8a0a99..dd94bcb 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libm/machine/configure b/newlib/libm/machine/configure
-index 071a70c..f8b9c38 100755
+index 071a70c..fc80dad 100755
 --- a/newlib/libm/machine/configure
 +++ b/newlib/libm/machine/configure
 @@ -6942,7 +6942,7 @@ ia64-*-hpux*)
@@ -483,7 +511,7 @@ index 071a70c..f8b9c38 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -492,7 +520,7 @@ index 071a70c..f8b9c38 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -501,12 +529,12 @@ index 071a70c..f8b9c38 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/newlib/libm/machine/i386/configure b/newlib/libm/machine/i386/configure
-index f2625be..57725fa 100755
+index f2625be..c8382b5 100755
 --- a/newlib/libm/machine/i386/configure
 +++ b/newlib/libm/machine/i386/configure
 @@ -6932,7 +6932,7 @@ ia64-*-hpux*)
@@ -514,7 +542,7 @@ index f2625be..57725fa 100755
    ;;
  
 -x86_64-*kfreebsd*-gnu|x86_64-*linux*|powerpc*-*linux*| \
-+x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-*-elf|powerpc*-*linux*| \
++x86_64-*kfreebsd*-gnu|x86_64-*linux*|x86_64-zephyr-*|powerpc*-*linux*| \
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
@@ -523,7 +551,7 @@ index f2625be..57725fa 100755
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
@@ -532,7 +560,7 @@ index f2625be..57725fa 100755
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
 -	  x86_64-*linux*)
-+	  x86_64-*linux* | x86_64-*-elf)
++	  x86_64-*linux* | x86_64-zephyr-*)
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
