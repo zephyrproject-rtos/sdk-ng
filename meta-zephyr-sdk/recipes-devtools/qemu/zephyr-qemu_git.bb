@@ -1,5 +1,6 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
+DEPENDS = "glib-2.0 zlib pixman gnutls dtc zephyr-seabios"
+DEPENDS_append_class-nativesdk = " nativesdk-zephyr-seabios"
 LICENSE = "GPLv2"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
@@ -200,6 +201,17 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
   --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
   "
+
+copy_seabios() {
+    cp ${STAGING_DIR}/usr/share/firmware/bios.bin ${S}/pc-bios/bios.bin
+    cp ${STAGING_DIR}/usr/share/firmware/bios-256k.bin ${S}/pc-bios/bios-256k.bin
+}
+
+do_unpack_append() {
+    bb.build.exec_func('copy_seabios', d)
+}
+
+do_unpack[depends] = "zephyr-seabios:do_populate_sysroot"
 
 do_configure() {
     ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
