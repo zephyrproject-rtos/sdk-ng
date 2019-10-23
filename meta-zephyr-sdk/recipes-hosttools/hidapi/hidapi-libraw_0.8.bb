@@ -5,7 +5,7 @@ SECTION = "libs"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE-bsd.txt;md5=b5fa085ce0926bb50d0621620a82361f"
 
-DEPENDS += "udev"
+DEPENDS += "udev libusb1"
 RDEPENDS_${PN} += "udev"
 
 PR = "r0"
