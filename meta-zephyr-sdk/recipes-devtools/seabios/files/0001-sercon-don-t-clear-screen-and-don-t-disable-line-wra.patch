@@ -1,0 +1,35 @@
+From a6030cbfc6f7e98c7ed0e217332cba27daa1a686 Mon Sep 17 00:00:00 2001
+From: Daniel Leung <daniel.leung@intel.com>
+Date: Sat, 12 Oct 2019 14:57:08 -0700
+Subject: [PATCH 1/1] sercon: don't clear screen and don't disable line
+ wrapping
+
+This helps with looking at emulator outputs (from both running
+locally and sanitycheck) as clearing screen and disabling line
+wrapping affect developer terminal.
+
+Signed-off-by: Daniel Leung <daniel.leung@intel.com>
+---
+ src/sercon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/sercon.c b/src/sercon.c
+index a5dadb7..80bd4b1 100644
+--- a/src/sercon.c
++++ b/src/sercon.c
+@@ -346,10 +346,12 @@ static void sercon_1000(struct bregs *regs)
+     SET_LOW(sercon_row_last, 0);
+     SET_LOW(sercon_attr_last, 0);
+ 
++#if 0
+     sercon_term_reset();
+     sercon_term_no_linewrap();
+     if (clearscreen)
+         sercon_term_clear_screen();
++#endif
+ }
+ 
+ /* Set text-mode cursor shape */
+-- 
+2.23.0
+
