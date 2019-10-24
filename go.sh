@@ -44,7 +44,7 @@ export SDK_NG_HOME=${PWD}
 for t in ${TARGETS}; do
 	if [ "${t}" = "tools" ]; then
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
-		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools || ./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
+		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
 		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .
 	fi
 done
