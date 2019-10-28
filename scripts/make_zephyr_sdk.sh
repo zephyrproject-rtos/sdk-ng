@@ -165,7 +165,6 @@ create_sdk()
 
 parse_toolchain_name file_gcc_arm arm
 parse_toolchain_name file_gcc_arc arc
-parse_toolchain_name file_gcc_x86 i586
 parse_toolchain_name file_gcc_nios2 nios2
 parse_toolchain_name file_gcc_riscv64 riscv64
 parse_toolchain_name file_gcc_x86_64 x86_64-zephyr-elf

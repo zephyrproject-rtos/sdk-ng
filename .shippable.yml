@@ -6,7 +6,6 @@ env:
     global:
         - USE_CCACHE=1
     matrix:
-      - TARGET=i586
       - TARGET=nios2
       - TARGET=arm
       - TARGET=riscv64
