@@ -1,10 +1,10 @@
-From 08fb7674fc7ec232c81fb460da77ef7c342985a7 Mon Sep 17 00:00:00 2001
-From: Daniel Leung <danielcp@gmail.com>
+From 505f637d4f7f6f890458bdbd74e6b4a27db2408c Mon Sep 17 00:00:00 2001
+From: Daniel Leung <daniel.leung@intel.com>
 Date: Fri, 11 Oct 2019 16:36:17 -0700
 Subject: [PATCH 12/14] Add support to build for x86_64-zephyr-elf
 
 This adds the necessary bits to build for x86_64-zephyr-elf with
-multilib support (m32, mx32 and m64), following the x86_64-*-linux*
+multilib support (m32 and m64), following the x86_64-*-linux*
 footsteps.
 
 Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
@@ -13,7 +13,7 @@ Signed-off-by: Daniel Leung <daniel.leung@intel.com>
  config/dfp.m4                    |  1 +
  gcc/acinclude.m4                 | 12 ++++++++++
  gcc/config.gcc                   |  5 ++++
- gcc/config/i386/t-zephyr64       | 35 ++++++++++++++++++++++++++++
+ gcc/config/i386/t-zephyr64       | 38 +++++++++++++++++++++++++++++++
  gcc/config/i386/zephyr64.h       | 39 ++++++++++++++++++++++++++++++++
  gcc/configure                    | 16 ++++++++++---
  libatomic/configure              |  6 ++---
@@ -21,7 +21,7 @@ Signed-off-by: Daniel Leung <daniel.leung@intel.com>
  libcc1/configure                 |  6 ++---
  libdecnumber/configure           |  1 +
  libffi/configure                 |  6 ++---
- libgcc/config.host               |  5 ++++
+ libgcc/config.host               |  3 +++
  libgcc/config/i386/64/t-zephyr64 |  1 +
  libgcc/configure                 |  1 +
  libgfortran/configure            |  6 ++---
@@ -38,7 +38,7 @@ Signed-off-by: Daniel Leung <daniel.leung@intel.com>
  libvtv/configure                 |  6 ++---
  lto-plugin/configure             |  6 ++---
  zlib/configure                   |  6 ++---
- 28 files changed, 173 insertions(+), 54 deletions(-)
+ 28 files changed, 174 insertions(+), 54 deletions(-)
  create mode 100644 gcc/config/i386/t-zephyr64
  create mode 100644 gcc/config/i386/zephyr64.h
  create mode 100644 libgcc/config/i386/64/t-zephyr64
@@ -96,10 +96,10 @@ index ddd3b8f4d..21a46922c 100644
  	;;
 diff --git a/gcc/config/i386/t-zephyr64 b/gcc/config/i386/t-zephyr64
 new file mode 100644
-index 000000000..6101785fd
+index 000000000..e73ac6309
 --- /dev/null
 +++ b/gcc/config/i386/t-zephyr64
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,38 @@
 +# Copyright (C) 2002-2018 Free Software Foundation, Inc.
 +#
 +# This file is part of GCC.
@@ -132,9 +132,12 @@ index 000000000..6101785fd
 +# 	/lib64 has x86-64 libraries.
 +# 	/libx32 has x32 libraries.
 +#
-+MULTILIB_OPTIONS    = m64/m32/mx32
-+MULTILIB_DIRNAMES   = 64 32 x32
-+MULTILIB_OSDIRNAMES = m64=!64 m32=!32 mx32=!x32
++MULTILIB_OPTIONS    = m64/m32 msoft-float
++MULTILIB_DIRNAMES   = 64 32 soft-float
++MULTILIB_REQUIRED   = m64 m32 m32/msoft-float
++MULTILIB_EXCEPTIONS = msoft-float
++MULTILIB_OSDIRNAMES = m64=!64 m32=!32 m32/msoft-float=!32/soft-float
++MULTILIB_MATCHES    = msoft-float=mno-80387
 diff --git a/gcc/config/i386/zephyr64.h b/gcc/config/i386/zephyr64.h
 new file mode 100644
 index 000000000..dba11cdf2
@@ -372,17 +375,15 @@ index 2324890a5..5025d959b 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libgcc/config.host b/libgcc/config.host
-index 91abc84da..d94f092a2 100644
+index 91abc84da..cec55ed38 100644
 --- a/libgcc/config.host
 +++ b/libgcc/config.host
-@@ -632,6 +632,11 @@ i[34567]86-*-elfiamcu)
+@@ -632,6 +632,9 @@ i[34567]86-*-elfiamcu)
  i[34567]86-*-elf*)
  	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
  	;;
 +x86_64-zephyr-elf)
 +	tmake_file="$tmake_file i386/t-crtstuff i386/64/t-zephyr64 t-dfprules"
-+	tm_file="${tm_file} i386/elf-lib.h"
-+	md_unwind_header=i386/linux-unwind.h
 +	;;
  x86_64-*-elf* | x86_64-*-rtems*)
  	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
@@ -830,5 +831,5 @@ index 7a8b49b0b..9325722c5 100755
  	    ;;
  	  powerpcle-*linux*)
 -- 
-2.21.0
+2.23.0
 

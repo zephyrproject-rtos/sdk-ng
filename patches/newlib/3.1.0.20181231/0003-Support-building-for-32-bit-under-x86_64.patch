@@ -1,4 +1,4 @@
-From 245f1a8ff4395e5d4bda79cec59acf1e2e1ad5f2 Mon Sep 17 00:00:00 2001
+From 7dd18c12276cd4cb784dbebd9eb22eed45a49db6 Mon Sep 17 00:00:00 2001
 From: Daniel Leung <daniel.leung@intel.com>
 Date: Wed, 8 May 2019 09:17:10 -0700
 Subject: [PATCH 3/3] Support building for 32-bit under x86_64
@@ -13,7 +13,7 @@ Signed-off-by: Daniel Leung <daniel.leung@intel.com>
  1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 6c49cb7..3587510 100644
+index 6c49cb7..0a40b1a 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -333,7 +333,17 @@ case "${host_cpu}" in
@@ -22,7 +22,7 @@ index 6c49cb7..3587510 100644
    x86_64)
 -	machine_dir=x86_64
 +	case "${CC}" in
-+	  *-m32)
++	  *-m32*)
 +	      machine_dir=i386
 +	      ;;
 +	  *-mx32)
@@ -36,5 +36,5 @@ index 6c49cb7..3587510 100644
    xc16x*)
          machine_dir=xc16x
 -- 
-2.21.0
+2.23.0
 
