@@ -2,6 +2,7 @@ SANITY_TESTED_DISTROS = " \
             Ubuntu-14.04 \n \
             Ubuntu-15.04 \n \
             Ubuntu-16.04 \n \
+            Ubuntu-18.04 \n \
             Fedora-23 \n \
             "
 
