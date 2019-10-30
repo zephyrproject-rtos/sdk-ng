@@ -1,0 +1,28 @@
+diff --git a/meta/recipes-devtools/gcc/gcc-6.2.inc b/meta/recipes-devtools/gcc/gcc-6.2.inc
+index b118995e1d..fccd39ce9f 100644
+--- a/meta/recipes-devtools/gcc/gcc-6.2.inc
++++ b/meta/recipes-devtools/gcc/gcc-6.2.inc
+@@ -78,6 +78,7 @@ SRC_URI = "\
+            file://0045-libgcc-Add-knob-to-use-ldbl-128-on-ppc.patch \
+            file://0046-Link-libgcc-using-LDFLAGS-not-just-SHLIB_LDFLAGS.patch \
+            file://0047-libgcc_s-Use-alias-for-__cpu_indicator_init-instead-.patch \
++           file://fix_ubsan_iso_cpp_forbids_comparison_between_pointer_and_integer.patch \
+            ${BACKPORTS} \
+ "
+ BACKPORTS = ""
+diff --git a/meta/recipes-devtools/gcc/gcc-6.2/fix_ubsan_iso_cpp_forbids_comparison_between_pointer_and_integer.patch b/meta/recipes-devtools/gcc/gcc-6.2/fix_ubsan_iso_cpp_forbids_comparison_between_pointer_and_integer.patch
+new file mode 100644
+index 0000000000..9b70db6ee2
+--- /dev/null
++++ b/meta/recipes-devtools/gcc/gcc-6.2/fix_ubsan_iso_cpp_forbids_comparison_between_pointer_and_integer.patch
+@@ -0,0 +1,10 @@
++--- a/gcc/ubsan.c
+++++ b/gcc/ubsan.c
++@@ -1471,7 +1471,7 @@ ubsan_use_new_style_p (location_t loc)
++
++   expanded_location xloc = expand_location (loc);
++   if (xloc.file == NULL || strncmp (xloc.file, "\1", 2) == 0
++-      || xloc.file == '\0' || xloc.file[0] == '\xff'
+++      || xloc.file[0] == '\0' || xloc.file[0] == '\xff'
++       || xloc.file[1] == '\xff')
++     return false;
