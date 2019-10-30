@@ -8,6 +8,7 @@ env:
     matrix:
       - TARGET=nios2
       - TARGET=arm
+      - TARGET=arm64
       - TARGET=riscv64
       - TARGET=arc
       - TARGET=x86_64-zephyr-elf

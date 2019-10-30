@@ -15,7 +15,7 @@ product_name="zephyr-sdk"
 
 root_dir=$(dirname $0)/..
 sdk_version=$(cat $root_dir/VERSION)
-arch_list="x86 arm arc nios2 riscv64 x86_64 xtensa_sample_controller \
+arch_list="x86 arm arm64 arc nios2 riscv64 x86_64 xtensa_sample_controller \
            xtensa_intel_apl_adsp xtensa_intel_s1000"
 
 echo "Creating ${product_name}-${sdk_version}-setup.run"
@@ -164,6 +164,7 @@ create_sdk()
 }
 
 parse_toolchain_name file_gcc_arm arm
+parse_toolchain_name file_gcc_arm64 arm64
 parse_toolchain_name file_gcc_arc arc
 parse_toolchain_name file_gcc_nios2 nios2
 parse_toolchain_name file_gcc_riscv64 riscv64
