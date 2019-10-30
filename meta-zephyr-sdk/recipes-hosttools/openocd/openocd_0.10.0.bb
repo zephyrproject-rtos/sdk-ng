@@ -9,7 +9,7 @@ RDEPENDS_${PN} = "libusb1 hidapi-libraw"
 SRC_URI = " \
 	git://github.com/zephyrproject-rtos/openocd.git;protocol=https;nobranch=1 \
 	"
-SRCREV = "5aa5f5ef3338660311ea13e4f51148e0ca5915e6"
+SRCREV = "918f21c2036d224a1aecd37620f00157fa330171"
 
 S = "${WORKDIR}/git"
 
