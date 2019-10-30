@@ -11,6 +11,7 @@ Currently we build the following toolchains:
 - i586
 - nios2
 - arm
+- arm64
 - riscv64
 - xtensa
 
