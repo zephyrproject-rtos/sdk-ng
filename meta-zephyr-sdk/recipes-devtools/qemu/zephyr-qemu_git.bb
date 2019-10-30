@@ -9,6 +9,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 SRCREV = "9e06029aea3b2eca1d5261352e695edc1e7d7b8b"
 SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
+	   file://0002-add-arm-generic-fdt-from-xilinx-fork.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"

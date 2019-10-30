@@ -30,7 +30,7 @@ new file mode 100644
 index 0000000000..a3329a9288
 --- /dev/null
 +++ b/hw/nios2/altera_10m50_zephyr.c
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,165 @@
 +/*
 + * Copyright (c) 2018 Intel Corporation
 + *
@@ -49,7 +49,9 @@ index 0000000000..a3329a9288
 +#include "cpu.h"
 +#include "hw/sysbus.h"
 +#include "hw/hw.h"
++#include "hw/qdev-properties.h"
 +#include "hw/char/serial.h"
++#include "sysemu/reset.h"
 +#include "sysemu/sysemu.h"
 +#include "hw/boards.h"
 +#include "hw/loader.h"
