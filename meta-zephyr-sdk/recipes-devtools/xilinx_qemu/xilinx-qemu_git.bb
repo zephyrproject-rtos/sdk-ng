@@ -1,14 +1,12 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc zephyr-seabios"
-DEPENDS_append_class-nativesdk = " nativesdk-zephyr-seabios"
+DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
 LICENSE = "GPLv2"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "9e06029aea3b2eca1d5261352e695edc1e7d7b8b"
-SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
-	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
+SRCREV = "b1aa9923432b55765d3dc3a93d8398783887233e"
+SRC_URI = "git://github.com/Xilinx/qemu.git;protocol=https \
 "
 
 BBCLASSEXTEND = "native nativesdk"
@@ -16,6 +14,8 @@ INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 INHIBIT_PACKAGE_STRIP = "1"
 
 S = "${WORKDIR}/git"
+
+xilinx_qemu_prefix = "${base_prefix}/usr/xilinx"
 
 inherit autotools pkgconfig
 
@@ -190,36 +190,24 @@ inherit autotools pkgconfig
 #  --disable-numa           disable libnuma support
 #  --enable-numa            enable libnuma support
 
+#--disable-fdt: Cannot use if supporting arm-generic-fdt machine type
 
-#--disable-blobs : BIOS needed for x86
-#--disable-fdt: Cannot use if supporting ARM
-
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu x86_64-softmmu"
+QEMUS_BUILT = "aarch64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
-  --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
+  --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio \
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
-  --disable-tpm  --disable-numa --disable-glusterfs \
+  --disable-tpm  --disable-numa --disable-glusterfs --disable-blobs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
   "
 
-copy_seabios() {
-    cp ${STAGING_DIR}/usr/share/firmware/bios.bin ${S}/pc-bios/bios.bin
-    cp ${STAGING_DIR}/usr/share/firmware/bios-256k.bin ${S}/pc-bios/bios-256k.bin
-}
-
-do_unpack_append() {
-    bb.build.exec_func('copy_seabios', d)
-}
-
-do_unpack[depends] = "zephyr-seabios:do_populate_sysroot"
+# NOTE: Once --prefix is set, QEMU configure script automatically figures out adequate sysconfdir,
+#       libexecdir and localstatedir based on the prefix directory; therefore, it is not necessary
+#       to manually specify these directories. Using the global directory variables to specify
+#       these directories will lead to shared file conflict with the upstream QEMU that resides in
+#       /usr.
 
 do_configure() {
-    ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
-        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir}
-}
-
-do_install_append() {
-    ln -sf ../xilinx/bin/qemu-system-aarch64 ${D}${bindir}/qemu-system-xilinx-aarch64
+    ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${xilinx_qemu_prefix}
 }
 
 FILES_${PN} = " \
@@ -227,6 +215,3 @@ FILES_${PN} = " \
   "
 
 INSANE_SKIP_${PN} = "already-stripped"
-
-
-
