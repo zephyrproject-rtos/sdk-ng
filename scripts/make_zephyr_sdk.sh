@@ -35,17 +35,21 @@ parse_toolchain_name()
     local num
     local filename
 
-    num=$(ls toolchains | grep $arch | wc -l)
-    if [ "$num" -gt "1" ]; then
-        echo "Error: Multiple toolchains for \"$arch\" "
-        exit 1
-    fi
+    if [ -f toolchains/$arch.tar.bz2 ]; then
+	filename="$arch.tar.bz2"
+    else
+        num=$(ls toolchains | grep $arch | wc -l)
+        if [ "$num" -gt "1" ]; then
+            echo "Error: Multiple toolchains for \"$arch\" "
+            exit 1
+        fi
 
-    if [ "$num" -eq "0" ]; then
-        echo "Warning: Missing toolchain for \"$arch\" "
-    fi
+        if [ "$num" -eq "0" ]; then
+            echo "Warning: Missing toolchain for \"$arch\" "
+        fi
 
-    filename=$(ls toolchains | grep $arch)
+        filename=$(ls toolchains | grep $arch)
+    fi
     eval "$varname=\$filename"
 }
 
