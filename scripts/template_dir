@@ -223,8 +223,8 @@ fi
 
 if (( EUID != 0 )); then
 	umask 0002
-#else
-#	umask 0022
+else
+	umask 0022
 fi
 
 
