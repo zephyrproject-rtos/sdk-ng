@@ -1,4 +1,4 @@
-From 4f3b9e1e8a9c05f4e2bc1fba97d14784832b7f6b Mon Sep 17 00:00:00 2001
+From 4809f7db06e9394f372605d0d1207e42fbdf2a0a Mon Sep 17 00:00:00 2001
 From: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
 Date: Fri, 17 May 2019 10:15:15 -0500
 Subject: [PATCH] qemu/nios2: Add Altera MAX 10 board support for Zephyr OS
@@ -12,8 +12,8 @@ So added support for Zephyr qemu-nios2 board.
 Signed-off-by: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
 ---
  hw/nios2/Makefile.objs         |   2 +-
- hw/nios2/altera_10m50_zephyr.c | 163 +++++++++++++++++++++++++++++++++
- 2 files changed, 164 insertions(+), 1 deletion(-)
+ hw/nios2/altera_10m50_zephyr.c | 165 +++++++++++++++++++++++++++++++++
+ 2 files changed, 166 insertions(+), 1 deletion(-)
  create mode 100644 hw/nios2/altera_10m50_zephyr.c
 
 diff --git a/hw/nios2/Makefile.objs b/hw/nios2/Makefile.objs
@@ -27,10 +27,10 @@ index 3e017981ba..4b05c2aa7f 100644
  obj-$(CONFIG_NIOS2_GENERIC_NOMMU) += generic_nommu.o
 diff --git a/hw/nios2/altera_10m50_zephyr.c b/hw/nios2/altera_10m50_zephyr.c
 new file mode 100644
-index 0000000000..a3329a9288
+index 0000000000..a0a201d78f
 --- /dev/null
 +++ b/hw/nios2/altera_10m50_zephyr.c
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,165 @@
 +/*
 + * Copyright (c) 2018 Intel Corporation
 + *
@@ -51,6 +51,8 @@ index 0000000000..a3329a9288
 +#include "hw/hw.h"
 +#include "hw/char/serial.h"
 +#include "sysemu/sysemu.h"
++#include "sysemu/reset.h"
++#include "hw/qdev-properties.h"
 +#include "hw/boards.h"
 +#include "hw/loader.h"
 +#include "exec/memory.h"
