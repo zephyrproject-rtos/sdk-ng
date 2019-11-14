@@ -13,6 +13,7 @@ Currently we build the following toolchains:
 - arm
 - arm64
 - riscv64
+- sparc
 - xtensa
 
 To build for any of the above, run:
