@@ -11,6 +11,7 @@ env:
       - TARGET=arm64
       - TARGET=riscv64
       - TARGET=arc
+      - TARGET=sparc
       - TARGET=x86_64-zephyr-elf
       - TARGET=xtensa_sample_controller
       - TARGET=xtensa_intel_apl_adsp
@@ -71,4 +72,3 @@ build:
 integrations:
   generic:
     - integrationName: aws_s3_simple
-
