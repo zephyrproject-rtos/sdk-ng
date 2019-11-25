@@ -1,0 +1,103 @@
+From 9ccfc36d78f50a9506379bcabf795e0da0f98bee Mon Sep 17 00:00:00 2001
+From: Yasushi SHOJI <y-shoji@ispace-inc.com>
+Date: Mon, 9 Dec 2019 11:56:20 +0900
+Subject: [PATCH 4/4] hw/sparc/leon: Switch to transaction-based ptimer API
+
+Switch the leon code away from old ptimers to the new
+transaction-based ptimer API.  This requires adding begin/commit calls
+around the various places that modify the ptimer state, and not
+calling leon_timer_enable() from leon_timer_hit() since
+leon_timer_hit() is called within a transcation enabled ptimer_tick().
+
+Signed-off-by: Yasushi SHOJI <y-shoji@ispace-inc.com>
+---
+ hw/sparc/leon.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
+index 8e38a33c62..f2e12d714f 100644
+--- a/hw/sparc/leon.c
++++ b/hw/sparc/leon.c
+@@ -156,7 +156,6 @@ typedef struct LeonUartState {
+ } LeonUartState;
+ 
+ struct LeonTimerState {
+-        QEMUBH *bh;
+         struct ptimer_state *ptimer;
+ 
+         qemu_irq irq;
+@@ -404,6 +403,7 @@ static void leon_uart_init(Chardev *chr,
+ 
+ static void leon_timer_enable(struct LeonTimerState *s)
+ {
++    ptimer_transaction_begin(s->ptimer);
+     ptimer_stop(s->ptimer);
+ 
+     if (s->control & TIMCTR_LD) {
+@@ -424,6 +424,7 @@ static void leon_timer_enable(struct LeonTimerState *s)
+ 
+     ptimer_set_count(s->ptimer, s->counter + 1);
+     ptimer_run(s->ptimer, 1);
++    ptimer_transaction_commit(s->ptimer);
+ }
+ 
+ static void leon_timer_hit(void *opaque)
+@@ -437,7 +438,10 @@ static void leon_timer_hit(void *opaque)
+     if (s->control & TIMCTR_RL) {
+         /* reload */
+         s->control |= TIMCTR_LD;
+-        leon_timer_enable(s);
++        ptimer_stop(s->ptimer);
++        s->counter = s->reload;
++        ptimer_set_count(s->ptimer, s->counter + 1);
++        ptimer_run(s->ptimer, 1);
+     }
+ }
+ 
+@@ -455,11 +459,15 @@ static uint32_t leon_timer_io_read(void *opaque, hwaddr addr)
+         break;
+ 
+     case TIMER_1_COUNTER_REGISTER:
++        ptimer_transaction_begin(s->timer1.ptimer);
+         ret = ptimer_get_count(s->timer1.ptimer);
++        ptimer_transaction_commit(s->timer2.ptimer);
+         break;
+ 
+     case TIMER_2_COUNTER_REGISTER:
++        ptimer_transaction_begin(s->timer1.ptimer);
+         ret = ptimer_get_count(s->timer2.ptimer);
++        ptimer_transaction_commit(s->timer2.ptimer);
+         break;
+ 
+     case TIMER_1_RELOAD_REGISTER:
+@@ -502,8 +510,12 @@ static void leon_timer_io_write(LeonIoState *s, hwaddr addr,
+     case PRESCALER_RELOAD_REGISTER:
+         s->scar = val & 0x3ff;
+         val = CPU_CLK / (s->scar + 1);
++        ptimer_transaction_begin(s->timer1.ptimer);
+         ptimer_set_freq(s->timer1.ptimer, val);
++        ptimer_transaction_commit(s->timer1.ptimer);
++        ptimer_transaction_begin(s->timer2.ptimer);
+         ptimer_set_freq(s->timer2.ptimer, val);
++        ptimer_transaction_commit(s->timer2.ptimer);
+         break;
+ 
+     case TIMER_1_COUNTER_REGISTER:
+@@ -549,11 +561,11 @@ static void leon_timer_init(struct LeonTimerState *s, qemu_irq irq, int id)
+     s->reload  = 0;
+     s->control = 0;
+     s->irq     = irq;
+-    s->bh      = qemu_bh_new(leon_timer_hit, s);
+-    s->ptimer  = ptimer_init(s->bh, PTIMER_POLICY_DEFAULT);
++    s->ptimer  = ptimer_init(leon_timer_hit, s, PTIMER_POLICY_DEFAULT);
+ 
++    ptimer_transaction_begin(s->ptimer);
+     ptimer_set_freq(s->ptimer, CPU_CLK);
+-
++    ptimer_transaction_commit(s->ptimer);
+ }
+ 
+ static uint64_t leon_io_read(void *opaque, hwaddr addr,
+-- 
+2.24.0
+
