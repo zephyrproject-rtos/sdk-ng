@@ -9,6 +9,10 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 SRCREV = "52901abf94477b400cf88c1f70bb305e690ba2de"
 SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
+	   file://0001-hw-sparc-Add-leon-at697-machine.patch \
+	   file://0002-hw-sparc-leon-Fix-compilation-errors.patch \
+	   file://0003-hw-sparc-leon-timer-Call-leon_timer_io_read-for-TIME.patch \
+	   file://0004-hw-sparc-leon-Switch-to-transaction-based-ptimer-API.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"
