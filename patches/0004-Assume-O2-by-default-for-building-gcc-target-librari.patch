@@ -1,0 +1,78 @@
+From 6a20aad951cd79b4141842f261b68614b10088d1 Mon Sep 17 00:00:00 2001
+From: Stephanos Ioannidis <root@stephanos.io>
+Date: Sat, 30 Nov 2019 01:42:18 +0900
+Subject: [PATCH 4/5] Assume '-O2' by default for building gcc target libraries
+
+The gcc target libraries (e.g. libstdc++) are currently built without
+any optimisation flag when 'CT_CC_GCC_ENABLE_TARGET_OPTSPACE' is not
+enabled and default to '-O0' unless user explicitly specifies an
+optimisation flag.
+
+This commit updates the gcc build script to assume '-O2' for building
+target libraries unless user provides a different optimisation flag.
+
+Note also that this is the default behaviour for gcc when
+C[XX]FLAGS_FOR_TARGET is not overridden.
+
+Signed-off-by: Stephanos Ioannidis <root@stephanos.io>
+---
+ scripts/build/cc/gcc.sh | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/build/cc/gcc.sh b/scripts/build/cc/gcc.sh
+index 851d4970..642fada0 100644
+--- a/scripts/build/cc/gcc.sh
++++ b/scripts/build/cc/gcc.sh
+@@ -583,6 +583,9 @@ do_gcc_core_backend() {
+         cflags_for_target="${cflags_for_target} -idirafter ${CT_HEADERS_DIR}"
+     fi
+ 
++    # Assume '-O2' by default for building target libraries.
++    cflags_for_target="-g -O2 ${cflags_for_target}"
++
+     # Use --with-local-prefix so older gccs don't look in /usr/local (http://gcc.gnu.org/PR10532).
+     # Pass only user-specified CFLAGS/LDFLAGS in CFLAGS_FOR_TARGET/LDFLAGS_FOR_TARGET: during
+     # the build of, for example, libatomic, GCC tried to compile multiple variants for runtime
+@@ -967,6 +970,7 @@ do_gcc_backend() {
+     local lang_list
+     local cflags
+     local cflags_for_build
++    local cflags_for_target
+     local ldflags
+     local build_manuals
+     local build_step
+@@ -1227,8 +1231,9 @@ do_gcc_backend() {
+ 
+     CT_DoLog DEBUG "Extra config passed: '${extra_config[*]}'"
+ 
+-    # We may need to modify host/build CFLAGS separately below
++    # We may need to modify host/build/target CFLAGS separately below
+     cflags_for_build="${cflags}"
++    cflags_for_target="${CT_TARGET_CFLAGS}"
+ 
+     # Clang's default bracket-depth is 256, and building GCC
+     # requires somewhere between 257 and 512.
+@@ -1244,6 +1249,9 @@ do_gcc_backend() {
+         fi
+     fi
+ 
++    # Assume '-O2' by default for building target libraries.
++    cflags_for_target="-g -O2 ${cflags_for_target}"
++
+     # NB: not using CT_ALL_TARGET_CFLAGS/CT_ALL_TARGET_LDFLAGS here!
+     # See do_gcc_core_backend for explanation.
+     CT_DoExecLog CFG                                   \
+@@ -1253,8 +1261,8 @@ do_gcc_backend() {
+     CXXFLAGS="${cflags}"                               \
+     CXXFLAGS_FOR_BUILD="${cflags_for_build}"           \
+     LDFLAGS="${final_LDFLAGS[*]}"                      \
+-    CFLAGS_FOR_TARGET="${CT_TARGET_CFLAGS}"            \
+-    CXXFLAGS_FOR_TARGET="${CT_TARGET_CFLAGS}"          \
++    CFLAGS_FOR_TARGET="${cflags_for_target}"           \
++    CXXFLAGS_FOR_TARGET="${cflags_for_target}"         \
+     LDFLAGS_FOR_TARGET="${CT_TARGET_LDFLAGS}"          \
+     ${CONFIG_SHELL}                                    \
+     "${CT_SRC_DIR}/gcc/configure"                      \
+-- 
+2.17.1
+
