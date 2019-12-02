@@ -54,6 +54,7 @@ if [ ! -d "crosstool-ng" ]; then
 	echo "Patching tree"
 	pushd crosstool-ng
 	git checkout ${COMMIT}
+	for p in ${GITDIR}/patches/*.patch; do patch -p1 < $p; done
 	popd
 fi
 
