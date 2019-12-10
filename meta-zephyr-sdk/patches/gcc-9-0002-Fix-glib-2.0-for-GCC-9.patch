@@ -1,0 +1,106 @@
+From 1b1de0670e587a37b5ed7f6f10a3d72018d271d9 Mon Sep 17 00:00:00 2001
+From: Stephanos Ioannidis <root@stephanos.io>
+Date: Tue, 10 Dec 2019 16:22:18 +0900
+Subject: [PATCH 2/2] Fix glib-2.0 for GCC 9
+
+Signed-off-by: Stephanos Ioannidis <root@stephanos.io>
+---
+ ...01-gdbus-Avoid-printing-null-strings.patch | 73 +++++++++++++++++++
+ meta/recipes-core/glib-2.0/glib-2.0_2.48.2.bb |  1 +
+ 2 files changed, 74 insertions(+)
+ create mode 100644 meta/recipes-core/glib-2.0/glib-2.0/0001-gdbus-Avoid-printing-null-strings.patch
+
+diff --git a/meta/recipes-core/glib-2.0/glib-2.0/0001-gdbus-Avoid-printing-null-strings.patch b/meta/recipes-core/glib-2.0/glib-2.0/0001-gdbus-Avoid-printing-null-strings.patch
+new file mode 100644
+index 0000000000..7783ea0451
+--- /dev/null
++++ b/meta/recipes-core/glib-2.0/glib-2.0/0001-gdbus-Avoid-printing-null-strings.patch
+@@ -0,0 +1,73 @@
++From 6d55964a0cce38c6ad265a05280025ca0ce1aa51 Mon Sep 17 00:00:00 2001
++From: Ernestas Kulik <ekulik@redhat.com>
++Date: Tue, 29 Jan 2019 09:50:46 +0100
++Subject: [PATCH] gdbus: Avoid printing null strings
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++This mostly affects the 2.56 branch, but, given that GCC 9 is being
++stricter about passing null string pointers to printf-like functions, it
++might make sense to proactively fix such calls.
++
++gdbusauth.c: In function '_g_dbus_auth_run_server':
++gdbusauth.c:1302:11: error: '%s' directive argument is null
++[-Werror=format-overflow=]
++ 1302 |           debug_print ("SERVER: WaitingForBegin, read '%s'",
++ line);
++       |
++
++gdbusmessage.c: In function ‘g_dbus_message_to_blob’:
++gdbusmessage.c:2730:30: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
++ 2730 |       tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
++      |
++
++(cherry picked from commit 566e1d61a500267c7849ad0b2552feec9c9a29a6)
++---
++ gio/gdbusauth.c    | 2 +-
++ gio/gdbusmessage.c | 5 ++---
++ 2 files changed, 3 insertions(+), 4 deletions(-)
++
++diff --git a/gio/gdbusauth.c b/gio/gdbusauth.c
++index 4036d778a..05ab1a98e 100644
++--- a/gio/gdbusauth.c
+++++ b/gio/gdbusauth.c
++@@ -1295,9 +1295,9 @@ _g_dbus_auth_run_server (GDBusAuth              *auth,
++                                                     &line_length,
++                                                     cancellable,
++                                                     error);
++-          debug_print ("SERVER: WaitingForBegin, read '%s'", line);
++           if (line == NULL)
++             goto out;
+++          debug_print ("SERVER: WaitingForBegin, read '%s'", line);
++           if (g_strcmp0 (line, "BEGIN") == 0)
++             {
++               /* YAY, done! */
++diff --git a/gio/gdbusmessage.c b/gio/gdbusmessage.c
++index d9d8f3726..bb1b8d337 100644
++--- a/gio/gdbusmessage.c
+++++ b/gio/gdbusmessage.c
++@@ -2695,7 +2695,6 @@ g_dbus_message_to_blob (GDBusMessage          *message,
++   if (message->body != NULL)
++     {
++       gchar *tupled_signature_str;
++-      tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
++       if (signature == NULL)
++         {
++           g_set_error (error,
++@@ -2703,10 +2702,10 @@ g_dbus_message_to_blob (GDBusMessage          *message,
++                        G_IO_ERROR_INVALID_ARGUMENT,
++                        _("Message body has signature '%s' but there is no signature header"),
++                        signature_str);
++-          g_free (tupled_signature_str);
++           goto out;
++         }
++-      else if (g_strcmp0 (tupled_signature_str, g_variant_get_type_string (message->body)) != 0)
+++      tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
+++      if (g_strcmp0 (tupled_signature_str, g_variant_get_type_string (message->body)) != 0)
++         {
++           g_set_error (error,
++                        G_IO_ERROR,
++-- 
++2.17.1
++
+diff --git a/meta/recipes-core/glib-2.0/glib-2.0_2.48.2.bb b/meta/recipes-core/glib-2.0/glib-2.0_2.48.2.bb
+index a45f644448..d9c33ea4fc 100644
+--- a/meta/recipes-core/glib-2.0/glib-2.0_2.48.2.bb
++++ b/meta/recipes-core/glib-2.0/glib-2.0_2.48.2.bb
+@@ -17,6 +17,7 @@ SRC_URI = "${GNOME_MIRROR}/glib/${SHRT_VER}/glib-${PV}.tar.xz \
+            file://0001-Install-gio-querymodules-as-libexec_PROGRAM.patch \
+            file://0001-Do-not-ignore-return-value-of-write.patch \
+            file://0002-tests-Ignore-y2k-warnings.patch \
++           file://0001-gdbus-Avoid-printing-null-strings.patch \
+            "
+ 
+ SRC_URI_append_class-native = " file://glib-gettextize-dir.patch \
+-- 
+2.17.1
+
