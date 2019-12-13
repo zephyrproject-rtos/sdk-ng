@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "b1aa9923432b55765d3dc3a93d8398783887233e"
+SRCREV = "293badb9e42930393d2246cbc4d0eb78409243ba"
 SRC_URI = "git://github.com/Xilinx/qemu.git;protocol=https \
 "
 
