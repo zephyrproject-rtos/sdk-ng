@@ -1,7 +1,7 @@
 From 62f28beb597e8299a79add217281143fc6cb5ac2 Mon Sep 17 00:00:00 2001
 From: Stephanos Ioannidis <root@stephanos.io>
 Date: Thu, 28 Nov 2019 23:32:10 +0900
-Subject: [PATCH 1/5] Add newlib nano variant configurations
+Subject: [PATCH 1/6] Add newlib nano variant configurations
 
 This commit adds the new configuration option 'LIBC_NANO_NEWLIB' for
 specifying the additional 'nano' variant of newlib to be built.
