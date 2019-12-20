@@ -1,7 +1,7 @@
 From 6fca4742a80e26ae00c1ca947e93ed20f8845714 Mon Sep 17 00:00:00 2001
 From: Stephanos Ioannidis <root@stephanos.io>
 Date: Fri, 29 Nov 2019 22:25:17 +0900
-Subject: [PATCH 5/5] Allow stripping target toolchain libraries
+Subject: [PATCH 5/6] Allow stripping target toolchain libraries
 
 This commit adds an option to strip the target toolchain libraries
 (e.g. libc, libstdc++) of any unneeded or debugging information.

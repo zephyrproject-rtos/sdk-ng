@@ -1,7 +1,7 @@
 From c7e4eafab9bd940058ce38ca0484dd897c6202c1 Mon Sep 17 00:00:00 2001
 From: Stephanos Ioannidis <root@stephanos.io>
 Date: Fri, 29 Nov 2019 01:35:57 +0900
-Subject: [PATCH 2/5] Support building newlib nano variant
+Subject: [PATCH 2/6] Support building newlib nano variant
 
 This commit updates the newlib build script to build the additional
 newlib nano variant using the nano variant-specific build options.

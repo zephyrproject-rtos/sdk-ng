@@ -1,7 +1,7 @@
 From 6a20aad951cd79b4141842f261b68614b10088d1 Mon Sep 17 00:00:00 2001
 From: Stephanos Ioannidis <root@stephanos.io>
 Date: Sat, 30 Nov 2019 01:42:18 +0900
-Subject: [PATCH 4/5] Assume '-O2' by default for building gcc target libraries
+Subject: [PATCH 4/6] Assume '-O2' by default for building gcc target libraries
 
 The gcc target libraries (e.g. libstdc++) are currently built without
 any optimisation flag when 'CT_CC_GCC_ENABLE_TARGET_OPTSPACE' is not

@@ -1,7 +1,7 @@
 From 3fe25cedd9b6db08dcf1d990784dc3ab89c10e86 Mon Sep 17 00:00:00 2001
 From: Stephanos Ioannidis <root@stephanos.io>
 Date: Fri, 29 Nov 2019 20:44:21 +0900
-Subject: [PATCH 3/5] Support building libstdc++ nano variant
+Subject: [PATCH 3/6] Support building libstdc++ nano variant
 
 This commit adds the new configuration option 'CC_GCC_LIBSTDCXX_NANO'
 for specifying the additional 'nano' variant of libstdc++ to be built
