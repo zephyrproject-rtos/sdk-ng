@@ -7,6 +7,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 
 SRCREV = "293badb9e42930393d2246cbc4d0eb78409243ba"
 SRC_URI = "git://github.com/Xilinx/qemu.git;protocol=https \
+	   file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"
