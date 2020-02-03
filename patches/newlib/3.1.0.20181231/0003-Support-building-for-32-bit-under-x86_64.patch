@@ -1,4 +1,4 @@
-From 7dd18c12276cd4cb784dbebd9eb22eed45a49db6 Mon Sep 17 00:00:00 2001
+From dc48595340a292f044a0fddcab2d67a81650010f Mon Sep 17 00:00:00 2001
 From: Daniel Leung <daniel.leung@intel.com>
 Date: Wed, 8 May 2019 09:17:10 -0700
 Subject: [PATCH 3/3] Support building for 32-bit under x86_64
@@ -8,22 +8,25 @@ This is for multilib support under x86_64. When compiling for
 x86_64.
 
 Signed-off-by: Daniel Leung <daniel.leung@intel.com>
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
 ---
- newlib/configure.host | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ newlib/configure.host | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 6c49cb7..0a40b1a 100644
+index 6c49cb750..37d2b9b2e 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -333,7 +333,17 @@ case "${host_cpu}" in
+@@ -333,7 +333,19 @@ case "${host_cpu}" in
  	machine_dir=w65
  	;;
    x86_64)
 -	machine_dir=x86_64
 +	case "${CC}" in
 +	  *-m32*)
++	      libm_machine_dir=i386
 +	      machine_dir=i386
++	      mach_add_setjmp=true
 +	      ;;
 +	  *-mx32)
 +	      machine_dir=x86_64
@@ -36,5 +39,5 @@ index 6c49cb7..0a40b1a 100644
    xc16x*)
          machine_dir=xc16x
 -- 
-2.23.0
+2.24.1
 
