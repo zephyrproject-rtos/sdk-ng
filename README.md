@@ -4,8 +4,8 @@ This project is to replace the current Yocto based SDK with a new framework for
 building the Zephyr SDK using crosstool-ng.
 
 The repoistory consists of configurations for the various architectures (not
-fully tests) and a script that builds on Linux and Mac in a consistent way,
-apply patches where needed.
+fully tests) and a script that builds on Linux (x86_64) and Mac in a consistent
+way, apply patches where needed.
 
 Currently we build the following toolchains:
 - i586
@@ -14,13 +14,20 @@ Currently we build the following toolchains:
 - arm64
 - riscv64
 - sparc
-- xtensa
+- xtensa (sample_controller, intel_apl_adsp, intel_s1000)
 
 To build for any of the above, run:
 
 ```
 ./go.sh <arch>
 ```
+
+## Released Binaries packages
+
+Pre-built binaries releases of the SDK are made and currently only available for
+an x86_64 Linux host environment.  The releases can be found here:
+
+https://github.com/zephyrproject-rtos/sdk-ng/releases
 
 ## PR Builds
 
