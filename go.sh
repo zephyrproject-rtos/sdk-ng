@@ -132,6 +132,9 @@ for t in ${TARGETS}; do
 			xtensa_nxp_imx_adsp)
 				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/nxp_imx_adsp/0001-Adding-IMX8-DSP-config-files.patch
 				;;
+			xtensa_nxp_imx8m_adsp)
+				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/nxp_imx8m_adsp/0001-Adding-IMX8M-DSP-config-files.patch
+				;;
 			xtensa_intel_s1000)
 				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_s1000/0001-Add-Sue-Creek-config-files.patch
 				;;
