@@ -14,7 +14,7 @@ Currently we build the following toolchains:
 - arm64
 - riscv64
 - sparc
-- xtensa (sample_controller, intel_apl_adsp, intel_s1000)
+- xtensa (sample_controller, intel_apl_adsp, intel_s1000, intel_bdw_adsp)
 
 To build for any of the above, run:
 
