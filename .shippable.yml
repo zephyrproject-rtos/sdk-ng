@@ -18,6 +18,7 @@ env:
       - TARGET=xtensa_intel_bdw_adsp
       - TARGET=xtensa_intel_byt_adsp
       - TARGET=xtensa_intel_s1000
+      - TARGET=xtensa_nxp_imx_adsp
       - TARGET="tools"
 
 build:
