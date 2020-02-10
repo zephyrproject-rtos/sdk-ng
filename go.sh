@@ -126,6 +126,9 @@ for t in ${TARGETS}; do
 			xtensa_intel_bdw_adsp)
 				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_bdw_adsp/0001-Adding-BDW-DSP-config-files.patch
 				;;
+			xtensa_intel_byt_adsp)
+				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_byt_adsp/0001-Adding-BYT-DSP-config-files.patch
+				;;
 			xtensa_intel_s1000)
 				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_s1000/0001-Add-Sue-Creek-config-files.patch
 				;;
