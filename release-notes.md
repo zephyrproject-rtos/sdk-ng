@@ -13,3 +13,6 @@
   On newer fedora systems this can show up and be fixed by:
 
   `sudo dnf install python36`
+- Added support for Intel BDW and BDW Audio DSP xtensa toolchains.
+- Added support for NXP IMX8 and IMX8M Audio DSP xtensa toolchains.
+- Updated xtensa targets to GDB 8.3.1
