@@ -1,7 +1,7 @@
-From 4bde2c46a979ba1539c05ffa6d4fc22ab6a2a9c2 Mon Sep 17 00:00:00 2001
+From ef1724e0a558a0f6bc93530114173955bf67cf30 Mon Sep 17 00:00:00 2001
 From: Stephanos Ioannidis <root@stephanos.io>
 Date: Wed, 8 Jan 2020 17:47:05 +0900
-Subject: [PATCH] Revert "target/arm: Revert back to YIELD for WFI"
+Subject: [PATCH 1/2] Revert "target/arm: Revert back to YIELD for WFI"
 
 This reverts commit 5f38ea92fb697b94ad43f01fe162f3ed6e6b0e16.
 
