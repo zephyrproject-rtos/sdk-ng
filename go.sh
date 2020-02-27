@@ -107,52 +107,6 @@ for t in ${TARGETS}; do
 		fi
 	fi
 
-	# Need to build HAL to Xtensa
-	if [[ ${t} == xtensa_* ]]; then
-		# Extract HAL from source
-		wget https://github.com/foss-xtensa/xtensa-hal/archive/RF-2015.2.tar.gz
-		tar xf RF-2015.2.tar.gz
-		pushd xtensa-hal-RF-2015.2
-
-		# Extract SoC specific config file into HAL directory
-		case "${t}" in
-			xtensa_sample_controller)
-				wget https://github.com/foss-xtensa/xtensa-config/releases/download/201702/sample_controller_linux.tgz
-				./import-core.sh sample_controller_linux.tgz
-				;;
-			xtensa_intel_apl_adsp)
-				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_apl_adsp/0001-Adding-APL-DSP-config-files.patch
-				;;
-			xtensa_intel_bdw_adsp)
-				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_bdw_adsp/0001-Adding-BDW-DSP-config-files.patch
-				;;
-			xtensa_intel_byt_adsp)
-				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_byt_adsp/0001-Adding-BYT-DSP-config-files.patch
-				;;
-			xtensa_nxp_imx_adsp)
-				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/nxp_imx_adsp/0001-Adding-IMX8-DSP-config-files.patch
-				;;
-			xtensa_nxp_imx8m_adsp)
-				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/nxp_imx8m_adsp/0001-Adding-IMX8M-DSP-config-files.patch
-				;;
-			xtensa_intel_s1000)
-				patch -p1 -N < ${GITDIR}/patches/xtensa/hal/intel_s1000/0001-Add-Sue-Creek-config-files.patch
-				;;
-		esac
-
-		# Build the HAL
-		cat <<-EOF > build.sh
-			export PATH=${CT_PREFIX}/xtensa-zephyr-elf/bin:$PATH
-			export CC=${CT_PREFIX}/xtensa-zephyr-elf/bin/xtensa-zephyr-elf-gcc
-			./configure --host xtensa-zephyr-elf --prefix ${CT_PREFIX}/xtensa-zephyr-elf
-			make
-			make install
-			EOF
-		$BASH build.sh
-
-		popd
-	fi
-
 	popd
 	test -n ${DEBUG_BUILD} || rm -rf  build_${t}
 
