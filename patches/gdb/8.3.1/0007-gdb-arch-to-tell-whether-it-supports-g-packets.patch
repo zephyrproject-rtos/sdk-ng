@@ -1,0 +1,149 @@
+From 47025e48aa513c04010016d671d14dd77bd4fa1b Mon Sep 17 00:00:00 2001
+From: Daniel Leung <danielcp@gmail.com>
+Date: Thu, 5 Mar 2020 14:27:42 -0800
+Subject: [PATCH 7/8] gdb: arch to tell whether it supports 'g' packets
+
+This adds a callback to gdbarch so indicate whether
+the architecture supports 'g' packets to remote target.
+For example, on Xtensa, xt-ocd does not support 'g'
+packet. However, the register fetching code keeps on
+trying 'g' packet which results in infinite loop. So
+this provides a mechanism for architecture to indicate
+whether 'g' packet is supported.
+
+Signed-off-by: Daniel Leung <danielcp@gmail.com>
+---
+ gdb/arch-utils.c |  6 ++++++
+ gdb/arch-utils.h |  2 ++
+ gdb/gdbarch.c    | 22 ++++++++++++++++++++++
+ gdb/gdbarch.h    |  6 ++++++
+ gdb/remote.c     |  5 ++++-
+ 5 files changed, 40 insertions(+), 1 deletion(-)
+
+diff --git a/gdb/arch-utils.c b/gdb/arch-utils.c
+index d2e27d9555..37b478eecd 100644
+--- a/gdb/arch-utils.c
++++ b/gdb/arch-utils.c
+@@ -996,6 +996,12 @@ default_type_align (struct gdbarch *gdbarch, struct type *type)
+   return type_length_units (check_typedef (type));
+ }
+ 
++int
++default_remote_supports_g_packet (struct gdbarch *gdbarch)
++{
++  return 1;
++}
++
+ void
+ _initialize_gdbarch_utils (void)
+ {
+diff --git a/gdb/arch-utils.h b/gdb/arch-utils.h
+index 155cf5cfe3..cecd133aac 100644
+--- a/gdb/arch-utils.h
++++ b/gdb/arch-utils.h
+@@ -271,4 +271,6 @@ extern bool default_in_indirect_branch_thunk (gdbarch *gdbarch,
+ extern ULONGEST default_type_align (struct gdbarch *gdbarch,
+ 				    struct type *type);
+ 
++int default_remote_supports_g_packet (struct gdbarch *gdbarch);
++
+ #endif /* ARCH_UTILS_H */
+diff --git a/gdb/gdbarch.c b/gdb/gdbarch.c
+index 420252f2e6..a8d07e0ac6 100644
+--- a/gdb/gdbarch.c
++++ b/gdb/gdbarch.c
+@@ -357,6 +357,7 @@ struct gdbarch
+   char ** disassembler_options;
+   const disasm_options_and_args_t * valid_disassembler_options;
+   gdbarch_type_align_ftype *type_align;
++  gdbarch_remote_supports_g_packet_ftype *remote_supports_g_packet;
+ };
+ 
+ /* Create a new ``struct gdbarch'' based on information provided by
+@@ -472,6 +473,7 @@ gdbarch_alloc (const struct gdbarch_info *info,
+   gdbarch->gnu_triplet_regexp = default_gnu_triplet_regexp;
+   gdbarch->addressable_memory_unit_size = default_addressable_memory_unit_size;
+   gdbarch->type_align = default_type_align;
++  gdbarch->remote_supports_g_packet = default_remote_supports_g_packet;
+   /* gdbarch_alloc() */
+ 
+   return gdbarch;
+@@ -1492,6 +1494,9 @@ gdbarch_dump (struct gdbarch *gdbarch, struct ui_file *file)
+   fprintf_unfiltered (file,
+                       "gdbarch_dump: xml_syscall_file = %s\n",
+                       pstring (gdbarch->xml_syscall_file));
++  fprintf_unfiltered (file,
++                      "gdbarch_dump: remote_supports_g_packet = <%s>\n",
++                      host_address_to_string (gdbarch->remote_supports_g_packet));
+   if (gdbarch->dump_tdep != NULL)
+     gdbarch->dump_tdep (gdbarch, file);
+ }
+@@ -5124,6 +5129,23 @@ set_gdbarch_type_align (struct gdbarch *gdbarch,
+   gdbarch->type_align = type_align;
+ }
+ 
++int
++gdbarch_remote_supports_g_packet (struct gdbarch *gdbarch)
++{
++  gdb_assert (gdbarch != NULL);
++  gdb_assert (gdbarch->remote_supports_g_packet != NULL);
++  if (gdbarch_debug >= 2)
++    fprintf_unfiltered (gdb_stdlog, "gdbarch_remote_supports_g_packet called\n");
++  return gdbarch->remote_supports_g_packet (gdbarch);
++}
++
++void
++set_gdbarch_remote_supports_g_packet (struct gdbarch *gdbarch,
++                                      gdbarch_remote_supports_g_packet_ftype *remote_supports_g_packet)
++{
++  gdbarch->remote_supports_g_packet = remote_supports_g_packet;
++}
++
+ 
+ /* Keep a registry of per-architecture data-pointers required by GDB
+    modules.  */
+diff --git a/gdb/gdbarch.h b/gdb/gdbarch.h
+index 284a6faea1..92a5093740 100644
+--- a/gdb/gdbarch.h
++++ b/gdb/gdbarch.h
+@@ -1627,6 +1627,12 @@ extern void set_gdbarch_type_align (struct gdbarch *gdbarch, gdbarch_type_align_
+ 
+ extern struct gdbarch_tdep *gdbarch_tdep (struct gdbarch *gdbarch);
+ 
++/* If arch supports 'g' packets */
++
++typedef int (gdbarch_remote_supports_g_packet_ftype) (struct gdbarch *gdbarch);
++extern int gdbarch_remote_supports_g_packet (struct gdbarch *gdbarch);
++extern void set_gdbarch_remote_supports_g_packet (struct gdbarch *gdbarch, gdbarch_remote_supports_g_packet_ftype *remote_supports_g_packet);
++
+ 
+ /* Mechanism for co-ordinating the selection of a specific
+    architecture.
+diff --git a/gdb/remote.c b/gdb/remote.c
+index c8c5b32c74..de90837663 100644
+--- a/gdb/remote.c
++++ b/gdb/remote.c
+@@ -1316,6 +1316,7 @@ map_regcache_remote_table (struct gdbarch *gdbarch, struct packet_reg *regs)
+ {
+   int regnum, num_remote_regs, offset;
+   struct packet_reg **remote_regs;
++  int remote_supports_g_packet;
+ 
+   for (regnum = 0; regnum < gdbarch_num_regs (gdbarch); regnum++)
+     {
+@@ -1344,9 +1345,11 @@ map_regcache_remote_table (struct gdbarch *gdbarch, struct packet_reg *regs)
+   qsort (remote_regs, num_remote_regs, sizeof (struct packet_reg *),
+ 	 compare_pnums);
+ 
++  remote_supports_g_packet = gdbarch_remote_supports_g_packet(gdbarch);
++
+   for (regnum = 0, offset = 0; regnum < num_remote_regs; regnum++)
+     {
+-      remote_regs[regnum]->in_g_packet = 1;
++      remote_regs[regnum]->in_g_packet = remote_supports_g_packet;
+       remote_regs[regnum]->offset = offset;
+       offset += register_size (gdbarch, remote_regs[regnum]->regnum);
+     }
+-- 
+2.24.1
+
