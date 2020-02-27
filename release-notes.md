@@ -16,3 +16,4 @@
 - Added support for Intel BDW and BDW Audio DSP xtensa toolchains.
 - Added support for NXP IMX8 and IMX8M Audio DSP xtensa toolchains.
 - Updated xtensa targets to GDB 8.3.1
+- Removed HAL from xtensa builds as HAL module should now be used.
