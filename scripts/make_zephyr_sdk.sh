@@ -68,6 +68,16 @@ setup_hdr()
 	cat template_dir >>$setup
 }
 
+setup_cmake()
+{
+	local setup=$1
+
+	echo "tar -C \$target_sdk_dir -jxf ./$file_cmake > /dev/null &" >> $setup
+	echo "spinner \$! \"Installing CMake files...\"" >> $setup
+	echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
+	echo "echo \"\"" >>$setup
+}
+
 setup_arch()
 {
 	local setup=$1
@@ -162,6 +172,8 @@ create_sdk()
 		setup_arch $setup $arch
 	done
 
+	setup_cmake $setup
+
 	setup_host $setup
 	setup_ftr_sdk $setup
 
@@ -183,6 +195,7 @@ parse_toolchain_name file_gcc_xtensa_nxp_imx_adsp xtensa_nxp_imx_adsp
 parse_toolchain_name file_gcc_xtensa_nxp_imx8m_adsp xtensa_nxp_imx8m_adsp
 parse_toolchain_name file_gcc_xtensa_intel_s1000 xtensa_intel_s1000
 parse_toolchain_name file_hosttools hosttools
+parse_toolchain_name file_cmake cmake
 
 # Host tools are non-optional
 if  [ -z "$file_hosttools" ]; then

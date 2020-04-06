@@ -46,6 +46,8 @@ for t in ${TARGETS}; do
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
 		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .
+	elif [ "${t}" = "cmake" ]; then
+		tar -jcvf ${t}.tar.bz2 -C ${SDK_NG_HOME} cmake;
 	fi
 done
 
@@ -75,6 +77,9 @@ mkdir -p ${OUTPUT_DIR}/sources
 for t in ${TARGETS}; do
 	if [ "${t}" = "tools" ]; then
 		# We handled tools above, so skip it here
+		continue
+	elif [ "${t}" = "cmake" ]; then
+		# We handled cmake above, so skip it here
 		continue
 	fi
 	if [ ! -f ${GITDIR}/configs/${t}.config ]; then

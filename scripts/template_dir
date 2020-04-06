@@ -118,6 +118,10 @@ do_cleanup()
 
 do_zephyrrc()
 {
+	if [ ! $create_zephyrrc ]; then
+		return
+	fi
+
 	echo
 	echo "You need to setup the following environment variables to use the toolchain:"
 	echo
@@ -145,10 +149,10 @@ do_zephyrrc()
 }
 
 # Read the input "y"
+# $1 is optional, but allows the caller to provide additional text.
 read_confirm () {
-    echo "The directory $target_sdk_dir/sysroots will be removed! "
   if [ "$confirm" != "y" ]; then
-      echo "Do you want to continue (y/n)? "
+      echo "Do you want to continue $1(y/n)? "
       while read confirm; do
           [ "$confirm" = "Y" -o "$confirm" = "y" -o "$confirm" = "n" \
             -o "$confirm" = "N" ] && break
@@ -197,6 +201,38 @@ if [ -n "$(echo $target_sdk_dir|grep ' ')" ]; then
 	exit 1
 fi
 
+# Verify that the install forlder is among the default search paths for CMake.
+# If not, prompt the user before continue, and create ~/.zephyrrc
+eval sdk_dirname=$(dirname "$target_sdk_dir")
+eval sdk_basename=$(basename "$target_sdk_dir")
+if [    "$sdk_dirname" != "/opt" \
+	-a "$sdk_dirname" != "/usr" \
+	-a "$sdk_dirname" != "/usr/local" \
+	-a "$sdk_dirname" != "$HOME" \
+	-a "$sdk_dirname" != "$HOME/.local" \
+	-a "$sdk_dirname" != "$HOME/.local/opt" \
+	-a "$sdk_dirname" != "$HOME/bin" ] ||\
+	[[ "${sdk_basename}" != "zephyr-sdk"* ]]; then
+	echo
+	echo "It is recommended to install Zephyr SDK at one of the following locations:"
+	echo "  ${HOME}/zephyr-sdk[-${SDK_VERSION}]"
+	echo "  ${HOME}/.local/zephyr-sdk[-${SDK_VERSION}]"
+	echo "  ${HOME}/.local/opt/zephyr-sdk[-${SDK_VERSION}]"
+	echo "  ${HOME}/bin/zephyr-sdk[-${SDK_VERSION}]"
+	echo "  /opt/zephyr-sdk[-${SDK_VERSION}]"
+	echo "  /usr/zephyr-sdk[-${SDK_VERSION}]"
+	echo "  /usr/local/zephyr-sdk[-${SDK_VERSION}]"
+	echo
+
+	read_confirm "installing to ${target_sdk_dir} "
+	if [ "$confirm" = "n" -o "$confirm" = "N" ]; then
+		# Abort the installation
+		echo "SDK installation aborted!"
+		exit 1
+	fi
+	create_zephyrrc=true
+fi
+
 echo "Installing SDK to $target_sdk_dir"
 
 if [ -d $target_sdk_dir ]; then
@@ -207,16 +243,17 @@ if [ -d $target_sdk_dir ]; then
 	else
 		# wipe the directory first
 		if [ -d $target_sdk_dir/sysroots ]; then
-		read_confirm
-	    if [ "$confirm" = "y" -o "$confirm" = "Y" ]; then
-		        rm -rf $target_sdk_dir/sysroots/
-			rm -rf $target_sdk_dir/info-zephyr-sdk*/
-			rm -fr $target_sdk_dir/sdk_version
-		else
-		    # Abort the installation
-		    echo "SDK installation aborted!"
-		    exit 1
-		    fi
+			echo "The directory $target_sdk_dir/sysroots will be removed! "
+			read_confirm
+			if [ "$confirm" = "y" -o "$confirm" = "Y" ]; then
+		        	rm -rf $target_sdk_dir/sysroots/
+				rm -rf $target_sdk_dir/info-zephyr-sdk*/
+				rm -fr $target_sdk_dir/sdk_version
+			else
+		    		# Abort the installation
+		    		echo "SDK installation aborted!"
+		    		exit 1
+		    	fi
 		fi
 	fi
 else
