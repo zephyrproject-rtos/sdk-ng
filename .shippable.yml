@@ -21,6 +21,7 @@ env:
       - TARGET=xtensa_nxp_imx_adsp
       - TARGET=xtensa_nxp_imx8m_adsp
       - TARGET="tools"
+      - TARGET="cmake"
 
 build:
     cache: true
@@ -51,6 +52,9 @@ build:
           if [ "${TARGET}" == 'tools' ]; then
             echo "uploading zephyr-sdk-x86_64-hosttools-standalone-0.9.sh to ${S3_PATH}/";
             aws s3 cp zephyr-sdk-x86_64-hosttools-standalone-0.9.sh ${S3_PATH}/;
+          elif [ "${TARGET}" == 'cmake' ]; then
+            echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
+            aws s3 cp ${TARGET}.tar.bz2 ${S3_PATH}/;
           else
             echo "uploading ${TARGET}.tar.bz2 to ${S3_PATH}/";
             pushd build/output;
