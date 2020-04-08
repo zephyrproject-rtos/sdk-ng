@@ -1,4 +1,4 @@
-From dc2b51e48106bd1fb178673e65b844281caa4141 Mon Sep 17 00:00:00 2001
+From 68db83222de1fcedc274c8e895f2ad5af3f7287e Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Wed, 9 Mar 2016 12:22:16 +0100
 Subject: [PATCH 1/4] hw/sparc: Add leon (at697) machine
@@ -57,7 +57,7 @@ index d57e33f83e..c585fdd9d4 100644
 +obj-y += leon.o
 diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
 new file mode 100644
-index 0000000000..1505bf0e0b
+index 0000000000..316bd70288
 --- /dev/null
 +++ b/hw/sparc/leon.c
 @@ -0,0 +1,878 @@
@@ -432,7 +432,7 @@ index 0000000000..1505bf0e0b
 +    leon_uart_check_irq(s);
 +}
 +
-+static void leon_uart_event(void *opaque, int event)
++static void leon_uart_event(void *opaque, QEMUChrEvent event)
 +{
 +    trace_leon_uart_event(event);
 +}
@@ -914,9 +914,9 @@ index 0000000000..1505bf0e0b
 +        long     kernel_size;
 +        uint64_t entry;
 +
-+        kernel_size = load_elf(kernel_filename, NULL, NULL, NULL, &entry,
-+                               NULL, NULL, 1 /* big endian */, EM_SPARC, 0,
-+                               0);
++        kernel_size = load_elf(kernel_filename, NULL, NULL, NULL,
++                               &entry, NULL, NULL, NULL,
++                               1 /* big endian */, EM_SPARC, 0, 0);
 +        if (kernel_size < 0) {
 +            fprintf(stderr, "qemu: could not load kernel '%s'\n",
 +                    kernel_filename);
@@ -961,7 +961,7 @@ index 355b07ae05..6c71aaf345 100644
 +leon_readl(uint64_t addr, uint32_t val) "addr:0x%"PRIx64" val:0x%x"
 +leon_writel(uint64_t addr, uint32_t val) "addr:0x%"PRIx64" val:0x%x"
 diff --git a/target/sparc/cpu.c b/target/sparc/cpu.c
-index bc65929552..483b7377a6 100644
+index 3f05aba9d6..21c8f80225 100644
 --- a/target/sparc/cpu.c
 +++ b/target/sparc/cpu.c
 @@ -514,7 +514,7 @@ static const sparc_def_t sparc_defs[] = {
@@ -974,5 +974,5 @@ index bc65929552..483b7377a6 100644
          .mmu_cxr_mask = 0x0000003f,
          .mmu_sfsr_mask = 0xffffffff,
 -- 
-2.24.0
+2.17.1
 
