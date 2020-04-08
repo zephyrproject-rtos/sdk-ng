@@ -6,7 +6,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "b0ca999a43a22b38158a222233d3f5881648bb4f"
+SRCREV = "fdd76fecdde1ad444ff4deb7f1c4f7e4a1ef97d6"
 SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
 	   file://0001-hw-sparc-Add-leon-at697-machine.patch \
