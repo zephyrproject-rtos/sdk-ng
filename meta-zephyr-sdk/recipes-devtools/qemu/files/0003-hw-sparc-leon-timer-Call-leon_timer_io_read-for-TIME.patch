@@ -1,4 +1,4 @@
-From a04f2e8db3f112596cec1ea37d44864eb6f49d23 Mon Sep 17 00:00:00 2001
+From 7c55b9caf16c6d4b65a790546a6ad14002a9c571 Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Fri, 17 May 2019 21:42:30 +0900
 Subject: [PATCH 3/4] hw/sparc/leon: timer: Call leon_timer_io_read() for
@@ -21,7 +21,7 @@ Signed-off-by: Yasushi SHOJI <y-shoji@ispace-inc.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
-index c4ddef0718..8e38a33c62 100644
+index cab394ba4b..d2dc8e55c8 100644
 --- a/hw/sparc/leon.c
 +++ b/hw/sparc/leon.c
 @@ -616,7 +616,7 @@ static uint64_t leon_io_read(void *opaque, hwaddr addr,
@@ -43,5 +43,5 @@ index c4ddef0718..8e38a33c62 100644
          break;
  
 -- 
-2.24.0
+2.17.1
 

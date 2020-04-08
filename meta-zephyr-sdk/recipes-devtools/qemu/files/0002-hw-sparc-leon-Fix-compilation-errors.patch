@@ -1,4 +1,4 @@
-From 21a648b2aa12c05c1482987c85a321904b354a24 Mon Sep 17 00:00:00 2001
+From e15e39df22e05e46fa6290b7159f58af2018cb4b Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Thu, 5 Sep 2019 11:06:56 +0900
 Subject: [PATCH 2/4] hw/sparc/leon: Fix compilation errors
@@ -22,7 +22,7 @@ Signed-off-by: Yasushi SHOJI <y-shoji@ispace-inc.com>
  1 file changed, 7 insertions(+), 12 deletions(-)
 
 diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
-index 1505bf0e0b..c4ddef0718 100644
+index 316bd70288..cab394ba4b 100644
 --- a/hw/sparc/leon.c
 +++ b/hw/sparc/leon.c
 @@ -22,12 +22,16 @@
@@ -87,5 +87,5 @@ index 1505bf0e0b..c4ddef0718 100644
      if (kernel_filename != NULL) {
          long     kernel_size;
 -- 
-2.24.0
+2.17.1
 
