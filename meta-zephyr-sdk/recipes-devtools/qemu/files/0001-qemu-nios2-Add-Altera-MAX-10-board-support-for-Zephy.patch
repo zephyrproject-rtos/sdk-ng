@@ -1,4 +1,4 @@
-From 4809f7db06e9394f372605d0d1207e42fbdf2a0a Mon Sep 17 00:00:00 2001
+From e896d97b008901e79003fc9fb5acc20ba0a062f9 Mon Sep 17 00:00:00 2001
 From: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
 Date: Fri, 17 May 2019 10:15:15 -0500
 Subject: [PATCH] qemu/nios2: Add Altera MAX 10 board support for Zephyr OS
@@ -27,7 +27,7 @@ index 3e017981ba..4b05c2aa7f 100644
  obj-$(CONFIG_NIOS2_GENERIC_NOMMU) += generic_nommu.o
 diff --git a/hw/nios2/altera_10m50_zephyr.c b/hw/nios2/altera_10m50_zephyr.c
 new file mode 100644
-index 0000000000..a0a201d78f
+index 0000000000..d3cb558c19
 --- /dev/null
 +++ b/hw/nios2/altera_10m50_zephyr.c
 @@ -0,0 +1,165 @@
@@ -164,7 +164,7 @@ index 0000000000..a0a201d78f
 +
 +        /* Boots a kernel elf binary.  */
 +        kernel_size = load_elf(kernel_filename, NULL, NULL, NULL,
-+                               &entry, NULL, NULL,
++                               &entry, NULL, NULL, NULL,
 +                               0, EM_ALTERA_NIOS2, 0, 0);
 +
 +        boot_info_zephyr.bootstrap_pc = entry;
@@ -197,5 +197,5 @@ index 0000000000..a0a201d78f
 +
 +DEFINE_MACHINE("altera_10m50_zephyr", altera_10m50_zephyr_machine_init)
 -- 
-2.20.1
+2.17.1
 
