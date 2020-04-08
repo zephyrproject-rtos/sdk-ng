@@ -1,0 +1,43 @@
+From b5e697475592eaba5cf441eb5dc52ae0d3aa4bf5 Mon Sep 17 00:00:00 2001
+From: Stephanos Ioannidis <root@stephanos.io>
+Date: Thu, 27 Feb 2020 19:46:52 +0900
+Subject: [PATCH 2/4] hw/arm/armv7m: Downgrade CPU reset handler priority
+
+The ARMv7-M CPU reset handler, which loads the initial SP and PC
+register values from the vector table, is currently executed before
+the ROM reset handler (rom_reset), and this causes the devices that
+alias low memory region (e.g. STM32F405 that aliases the flash memory
+located at 0x8000000 to 0x0) to load an invalid reset vector of 0 when
+the kernel image is linked to be loaded at the high memory address.
+
+For instance, it is norm for the STM32F405 firmware ELF image to have
+the text and rodata sections linked at 0x8000000, as this facilitates
+proper image loading by the firmware burning utility, and the processor
+can execute in place from the high flash memory address region as well.
+
+In order to resolve this issue, this commit downgrades the ARMCPU reset
+handler invocation priority level to -1 such that it is always executed
+after the ROM reset handler, which has a priority level of 0.
+
+Signed-off-by: Stephanos Ioannidis <root@stephanos.io>
+---
+ hw/arm/armv7m.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/hw/arm/armv7m.c b/hw/arm/armv7m.c
+index 7531b97ccd..8b7c4b12a6 100644
+--- a/hw/arm/armv7m.c
++++ b/hw/arm/armv7m.c
+@@ -352,7 +352,8 @@ void armv7m_load_kernel(ARMCPU *cpu, const char *kernel_filename, int mem_size)
+      * way A-profile does it. Note that this means that every M profile
+      * board must call this function!
+      */
+-    qemu_register_reset(armv7m_reset, cpu);
++    qemu_register_reset_with_priority(
++        QEMU_RESET_PRIORITY_LEVEL(-1), armv7m_reset, cpu);
+ }
+ 
+ static Property bitband_properties[] = {
+-- 
+2.17.1
+
