@@ -1,0 +1,25 @@
+From 8ab330f5988876fb66ae5cb8772dce5e7f8634ac Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Fri, 10 Apr 2020 10:14:16 -0500
+Subject: [PATCH] gdb: remove restriction on python and static
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ config/debug/gdb.in.cross | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/config/debug/gdb.in.cross b/config/debug/gdb.in.cross
+index e1935488..2ddb343a 100644
+--- a/config/debug/gdb.in.cross
++++ b/config/debug/gdb.in.cross
+@@ -38,7 +38,6 @@ config GDB_CROSS_PYTHON
+     bool
+     prompt "Enable python scripting"
+     depends on GDB_HAS_PYTHON
+-    depends on !GDB_CROSS_STATIC
+     default y if !CROSS_NATIVE && !CANADIAN
+     help
+       Say 'y' if you want to use Python scripting inside gdb.
+-- 
+2.25.2
+
