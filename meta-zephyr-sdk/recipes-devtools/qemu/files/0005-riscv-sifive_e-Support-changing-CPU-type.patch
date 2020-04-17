@@ -1,0 +1,39 @@
+From 6bee5cdeb7ae297a997e23ab671beaaf3b3ebf58 Mon Sep 17 00:00:00 2001
+From: Corey Wharton <coreyw7@fb.com>
+Date: Thu, 12 Mar 2020 15:38:16 -0700
+Subject: [PATCH v2 1/2] riscv: sifive_e: Support changing CPU type
+
+Allows the CPU to be changed from the default via the -cpu command
+line option.
+
+Signed-off-by: Corey Wharton <coreyw7@fb.com>
+Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+Reviewed-by: Alistair Francis <alistair.francis@wdc.com>
+---
+ hw/riscv/sifive_e.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/hw/riscv/sifive_e.c b/hw/riscv/sifive_e.c
+index a254cad489..b0a611adb9 100644
+--- a/hw/riscv/sifive_e.c
++++ b/hw/riscv/sifive_e.c
+@@ -123,7 +123,7 @@ static void riscv_sifive_e_soc_init(Object *obj)
+     object_initialize_child(obj, "cpus", &s->cpus,
+                             sizeof(s->cpus), TYPE_RISCV_HART_ARRAY,
+                             &error_abort, NULL);
+-    object_property_set_str(OBJECT(&s->cpus), SIFIVE_E_CPU, "cpu-type",
++    object_property_set_str(OBJECT(&s->cpus), ms->cpu_type, "cpu-type",
+                             &error_abort);
+     object_property_set_int(OBJECT(&s->cpus), ms->smp.cpus, "num-harts",
+                             &error_abort);
+@@ -220,6 +220,7 @@ static void riscv_sifive_e_machine_init(MachineClass *mc)
+     mc->desc = "RISC-V Board compatible with SiFive E SDK";
+     mc->init = riscv_sifive_e_init;
+     mc->max_cpus = 1;
++    mc->default_cpu_type = SIFIVE_E_CPU;
+ }
+ 
+ DEFINE_MACHINE("sifive_e", riscv_sifive_e_machine_init)
+-- 
+2.21.1
+
