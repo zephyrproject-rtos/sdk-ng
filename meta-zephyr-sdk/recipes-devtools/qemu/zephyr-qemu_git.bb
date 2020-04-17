@@ -13,6 +13,8 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0002-hw-sparc-leon-Fix-compilation-errors.patch \
 	   file://0003-hw-sparc-leon-timer-Call-leon_timer_io_read-for-TIME.patch \
 	   file://0004-hw-sparc-leon-Switch-to-transaction-based-ptimer-API.patch \
+	   file://0005-riscv-sifive_e-Support-changing-CPU-type.patch \
+	   file://0006-target-riscv-Add-a-sifive-e34-cpu-type.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"

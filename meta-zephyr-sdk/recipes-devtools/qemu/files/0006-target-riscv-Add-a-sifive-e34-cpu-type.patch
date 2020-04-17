@@ -1,0 +1,59 @@
+From c9481f6ba0050a53411193b5a49bde6f2c4158b3 Mon Sep 17 00:00:00 2001
+From: Corey Wharton <coreyw7@fb.com>
+Date: Thu, 12 Mar 2020 16:43:02 -0700
+Subject: [PATCH v2 2/2] target/riscv: Add a sifive-e34 cpu type
+
+The sifive-e34 cpu type is the same as the sifive-e31 with the
+single precision floating-point extension enabled.
+
+Signed-off-by: Corey Wharton <coreyw7@fb.com>
+---
+v2: Added missing RVU flag
+
+ target/riscv/cpu.c | 10 ++++++++++
+ target/riscv/cpu.h |  1 +
+ 2 files changed, 11 insertions(+)
+
+diff --git a/target/riscv/cpu.c b/target/riscv/cpu.c
+index c0b7023100..1ae9d085b8 100644
+--- a/target/riscv/cpu.c
++++ b/target/riscv/cpu.c
+@@ -164,6 +164,15 @@ static void rv32imacu_nommu_cpu_init(Object *obj)
+     set_feature(env, RISCV_FEATURE_PMP);
+ }
+ 
++static void rv32imafcu_nommu_cpu_init(Object *obj)
++{
++    CPURISCVState *env = &RISCV_CPU(obj)->env;
++    set_misa(env, RV32 | RVI | RVM | RVA | RVF | RVC | RVU);
++    set_priv_version(env, PRIV_VERSION_1_10_0);
++    set_resetvec(env, DEFAULT_RSTVEC);
++    set_feature(env, RISCV_FEATURE_PMP);
++}
++
+ #elif defined(TARGET_RISCV64)
+ 
+ static void riscv_base64_cpu_init(Object *obj)
+@@ -609,6 +618,7 @@ static const TypeInfo riscv_cpu_type_infos[] = {
+ #if defined(TARGET_RISCV32)
+     DEFINE_CPU(TYPE_RISCV_CPU_BASE32,           riscv_base32_cpu_init),
+     DEFINE_CPU(TYPE_RISCV_CPU_SIFIVE_E31,       rv32imacu_nommu_cpu_init),
++    DEFINE_CPU(TYPE_RISCV_CPU_SIFIVE_E34,       rv32imafcu_nommu_cpu_init),
+     DEFINE_CPU(TYPE_RISCV_CPU_SIFIVE_U34,       rv32gcsu_priv1_10_0_cpu_init),
+     /* Depreacted */
+     DEFINE_CPU(TYPE_RISCV_CPU_RV32IMACU_NOMMU,  rv32imacu_nommu_cpu_init),
+diff --git a/target/riscv/cpu.h b/target/riscv/cpu.h
+index 3dcdf92227..ae5a1d9dce 100644
+--- a/target/riscv/cpu.h
++++ b/target/riscv/cpu.h
+@@ -36,6 +36,7 @@
+ #define TYPE_RISCV_CPU_BASE32           RISCV_CPU_TYPE_NAME("rv32")
+ #define TYPE_RISCV_CPU_BASE64           RISCV_CPU_TYPE_NAME("rv64")
+ #define TYPE_RISCV_CPU_SIFIVE_E31       RISCV_CPU_TYPE_NAME("sifive-e31")
++#define TYPE_RISCV_CPU_SIFIVE_E34       RISCV_CPU_TYPE_NAME("sifive-e34")
+ #define TYPE_RISCV_CPU_SIFIVE_E51       RISCV_CPU_TYPE_NAME("sifive-e51")
+ #define TYPE_RISCV_CPU_SIFIVE_U34       RISCV_CPU_TYPE_NAME("sifive-u34")
+ #define TYPE_RISCV_CPU_SIFIVE_U54       RISCV_CPU_TYPE_NAME("sifive-u54")
+-- 
+2.21.1
+
