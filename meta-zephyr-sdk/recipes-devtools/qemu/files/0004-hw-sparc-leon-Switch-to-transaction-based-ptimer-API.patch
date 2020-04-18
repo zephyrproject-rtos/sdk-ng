@@ -60,11 +60,11 @@ index 8e38a33c62..f2e12d714f 100644
      case TIMER_1_COUNTER_REGISTER:
 +        ptimer_transaction_begin(s->timer1.ptimer);
          ret = ptimer_get_count(s->timer1.ptimer);
-+        ptimer_transaction_commit(s->timer2.ptimer);
++        ptimer_transaction_commit(s->timer1.ptimer);
          break;
  
      case TIMER_2_COUNTER_REGISTER:
-+        ptimer_transaction_begin(s->timer1.ptimer);
++        ptimer_transaction_begin(s->timer2.ptimer);
          ret = ptimer_get_count(s->timer2.ptimer);
 +        ptimer_transaction_commit(s->timer2.ptimer);
          break;
