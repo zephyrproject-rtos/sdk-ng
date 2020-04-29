@@ -139,6 +139,38 @@ do_zephyrrc()
 	fi
 }
 
+do_cmake_package()
+{
+	ZEPHYR_SDK_REGISTRY_DIR=$HOME/.cmake/packages/Zephyr-sdk
+
+	type md5sum
+	if [ $? -eq 0 ]; then
+		reg_file=$ZEPHYR_SDK_REGISTRY_DIR/`echo -n $target_sdk_dir | md5sum | cut -d' ' -f1`
+
+		if [ -e $reg_file ]; then
+			# The install dir is already in CMake package registry so simply return.
+			return
+		fi
+
+		echo "Do you want to register the Zephyr-sdk at location: $target_sdk_dir"
+		echo "  in the CMake package registry (y/n)?"
+
+		while read confirm; do
+			[ "$confirm" = "Y" -o "$confirm" = "y" -o "$confirm" = "n" \
+			-o "$confirm" = "N" ] && break
+			echo "Invalid input \"$confirm\", please input 'y' or 'n': "
+		done
+
+		if [ "$confirm" = "y" -o "$confirm" = "Y" ]; then
+			if [ ! -d $ZEPHYR_SDK_REGISTRY_DIR ]; then
+				mkdir -p $ZEPHYR_SDK_REGISTRY_DIR
+			fi
+			echo "$target_sdk_dir" > $reg_file
+			echo "$target_sdk_dir registered in $reg_file"
+		fi
+	fi
+}
+
 # Read the input "y"
 # $1 is optional, but allows the caller to provide additional text.
 read_confirm () {
@@ -192,7 +224,7 @@ if [ -n "$(echo $target_sdk_dir|grep ' ')" ]; then
 	exit 1
 fi
 
-# Verify that the install forlder is among the default search paths for CMake.
+# Verify that the install folder is among the default search paths for CMake.
 # If not, prompt the user before continue, and create ~/.zephyrrc
 eval sdk_dirname=$(dirname "$target_sdk_dir")
 eval sdk_basename=$(basename "$target_sdk_dir")
@@ -221,6 +253,7 @@ if [    "$sdk_dirname" != "/opt" \
 		echo "SDK installation aborted!"
 		exit 1
 	fi
+	do_cmake_package
 	create_zephyrrc=true
 fi
 
