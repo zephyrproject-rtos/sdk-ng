@@ -15,6 +15,7 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0004-hw-sparc-leon-Switch-to-transaction-based-ptimer-API.patch \
 	   file://0005-riscv-sifive_e-Support-changing-CPU-type.patch \
 	   file://0006-target-riscv-Add-a-sifive-e34-cpu-type.patch \
+           file://0006-Add-support-for-ARCv2-architecture.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"
@@ -200,7 +201,7 @@ inherit autotools pkgconfig
 #--disable-blobs : BIOS needed for x86
 #--disable-fdt: Cannot use if supporting ARM
 
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
+QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu arc-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
