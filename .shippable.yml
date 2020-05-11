@@ -38,6 +38,7 @@ build:
       - ccache -s
       - sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential libtool-bin
       - sudo apt-get install -y libreadline-dev gperf flex bison libncurses5-dev texinfo help2man lzip
+      - sudo apt-get install -y python3.8-dev
       - unset CC
       - ./go.sh ${TARGET}
       - >
