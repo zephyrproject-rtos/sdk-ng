@@ -1,0 +1,49 @@
+From 393a4a0fbaebbfdd8ccec6001a08e73f204b30f0 Mon Sep 17 00:00:00 2001
+From: Daniel Leung <danielcp@gmail.com>
+Date: Tue, 12 May 2020 11:15:51 -0700
+Subject: [PATCH 2/4] Revert "libc: Remove ESP-IDF specific *_VISIBLE macros
+ from xtensa config because we support a generic libc"
+
+This reverts commit b9ceb9ffdb7c5a150649896ba0b055054cd57da3.
+
+Signed-off-by: Daniel Leung <danielcp@gmail.com>
+---
+ newlib/libc/include/sys/features.h | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
+index dd21f9961..1c258bd4b 100644
+--- a/newlib/libc/include/sys/features.h
++++ b/newlib/libc/include/sys/features.h
+@@ -385,7 +385,7 @@ extern "C" {
+ /* POSIX 1003.26-2003 defined device control method */
+ #define _POSIX_26_VERSION			200312L
+ 
+-#endif /* __rtems__ */
++#endif
+ 
+ /* XMK loosely adheres to POSIX -- 1003.1 */
+ #ifdef __XMK__
+@@ -527,13 +527,15 @@ extern "C" {
+ 
+ #endif /* __CYGWIN__ */
+ 
+-/* ESP-specific */
++/* ESP-IDF-specific: enable pthreads support */
+ #ifdef __XTENSA__
+-
+ #define _POSIX_THREADS                          1
+ #define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
+-
+-#endif /* __XTENSA__ */
++#undef __MISC_VISIBLE
++#define __MISC_VISIBLE                          1
++#undef __GNU_VISIBLE
++#define __GNU_VISIBLE                           1
++#endif
+ 
+ #ifdef __cplusplus
+ }
+-- 
+2.26.2
+

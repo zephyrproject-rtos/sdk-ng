@@ -1,0 +1,31 @@
+From 9a96be5655fc5a91ed50e9be290dc53dcce917f8 Mon Sep 17 00:00:00 2001
+From: Daniel Leung <danielcp@gmail.com>
+Date: Tue, 12 May 2020 11:14:19 -0700
+Subject: [PATCH 1/4] Revert "libc: added _POSIX_TIMERS, _POSIX_TIMEOUTS and
+ _POSIX_MONOTONIC_CLOCK for xtensa"
+
+This reverts commit bd33d51398832cc1f9d7a4edfe9e2aba25a34dba.
+
+Signed-off-by: Daniel Leung <danielcp@gmail.com>
+---
+ newlib/libc/include/sys/features.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
+index cf2bb9bba..dd21f9961 100644
+--- a/newlib/libc/include/sys/features.h
++++ b/newlib/libc/include/sys/features.h
+@@ -531,10 +531,6 @@ extern "C" {
+ #ifdef __XTENSA__
+ 
+ #define _POSIX_THREADS                          1
+-#define _POSIX_TIMEOUTS                         1
+-#define _POSIX_TIMERS                           1
+-#define _POSIX_MONOTONIC_CLOCK                  200112L
+-#define _POSIX_CLOCK_SELECTION                  200112L
+ #define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
+ 
+ #endif /* __XTENSA__ */
+-- 
+2.26.2
+

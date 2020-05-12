@@ -1,0 +1,46 @@
+From a25d36be3c32a012f6f774fbd9702b3d51afb37f Mon Sep 17 00:00:00 2001
+From: Daniel Leung <danielcp@gmail.com>
+Date: Tue, 12 May 2020 11:16:38 -0700
+Subject: [PATCH 4/4] Revert "xtensa: enable pthreads support"
+
+This reverts commit 0c671a5d98380b42afaa386d63a33f057cc51d33.
+
+Signed-off-by: Daniel Leung <danielcp@gmail.com>
+---
+ newlib/libc/include/sys/features.h | 6 ------
+ newlib/libc/include/sys/sched.h    | 2 --
+ 2 files changed, 8 deletions(-)
+
+diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
+index 04132cf92..2900b332f 100644
+--- a/newlib/libc/include/sys/features.h
++++ b/newlib/libc/include/sys/features.h
+@@ -527,12 +527,6 @@ extern "C" {
+ 
+ #endif /* __CYGWIN__ */
+ 
+-/* ESP-IDF-specific: enable pthreads support */
+-#ifdef __XTENSA__
+-#define _POSIX_THREADS                          1
+-#define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
+-#endif
+-
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/newlib/libc/include/sys/sched.h b/newlib/libc/include/sys/sched.h
+index 399959685..4adb6e2d6 100644
+--- a/newlib/libc/include/sys/sched.h
++++ b/newlib/libc/include/sys/sched.h
+@@ -60,8 +60,6 @@ struct sched_param {
+ #endif
+ };
+ 
+-int sched_yield( void );
+-
+ #ifdef __cplusplus
+ }
+ #endif
+-- 
+2.26.2
+

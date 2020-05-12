@@ -1,0 +1,30 @@
+From 97ad6b72a42e1ae0131baaca2a15d15d0e27af0d Mon Sep 17 00:00:00 2001
+From: Daniel Leung <danielcp@gmail.com>
+Date: Tue, 12 May 2020 11:16:26 -0700
+Subject: [PATCH 3/4] Revert "Make GNU and some misc funcs visible"
+
+This reverts commit 27a14934c6ea4ed6abfc505f2ab731bf1cf86e15.
+
+Signed-off-by: Daniel Leung <danielcp@gmail.com>
+---
+ newlib/libc/include/sys/features.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
+index 1c258bd4b..04132cf92 100644
+--- a/newlib/libc/include/sys/features.h
++++ b/newlib/libc/include/sys/features.h
+@@ -531,10 +531,6 @@ extern "C" {
+ #ifdef __XTENSA__
+ #define _POSIX_THREADS                          1
+ #define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
+-#undef __MISC_VISIBLE
+-#define __MISC_VISIBLE                          1
+-#undef __GNU_VISIBLE
+-#define __GNU_VISIBLE                           1
+ #endif
+ 
+ #ifdef __cplusplus
+-- 
+2.26.2
+
