@@ -246,14 +246,25 @@ if [    "$sdk_dirname" != "/opt" \
 	-a "$sdk_dirname" != "$HOME/bin" ] ||\
 	[[ "${sdk_basename}" != "zephyr-sdk"* ]]; then
 	echo
-	echo "It is recommended to install Zephyr SDK at one of the following locations:"
-	echo "  ${HOME}/zephyr-sdk[-${SDK_VERSION}]"
-	echo "  ${HOME}/.local/zephyr-sdk[-${SDK_VERSION}]"
-	echo "  ${HOME}/.local/opt/zephyr-sdk[-${SDK_VERSION}]"
-	echo "  ${HOME}/bin/zephyr-sdk[-${SDK_VERSION}]"
-	echo "  /opt/zephyr-sdk[-${SDK_VERSION}]"
-	echo "  /usr/zephyr-sdk[-${SDK_VERSION}]"
-	echo "  /usr/local/zephyr-sdk[-${SDK_VERSION}]"
+	echo "It is recommended to install Zephyr SDK at one of the following locations for automatic discoverability in CMake:"
+
+	if [ ${sdk_dirname:0:4} == "/usr" ]; then
+		echo "  /usr/zephyr-sdk-$SDK_VERSION"
+		echo "  /usr/local/zephyr-sdk-$SDK_VERSION"
+	elif [ ${sdk_dirname:0:4} == "/opt" ]; then
+		echo "  /opt/zephyr-sdk-${SDK_VERSION}"
+	elif [ ${sdk_dirname:0:$((${#HOME}+7))} == "$HOME/.local" ]; then
+		echo "  ${HOME}/.local/zephyr-sdk-${SDK_VERSION}"
+		echo "  ${HOME}/.local/opt/zephyr-sdk-${SDK_VERSION}"
+	elif [ ${sdk_dirname:0:${#HOME}} == "$HOME" ]; then
+		echo "  ${HOME}/zephyr-sdk-${SDK_VERSION}"
+		echo "  ${HOME}/bin/zephyr-sdk-${SDK_VERSION}"
+	else
+		echo "  ${HOME}/zephyr-sdk-${SDK_VERSION}"
+		echo "  /opt/zephyr-sdk-${SDK_VERSION}"
+	fi
+	echo
+	echo Note: The version number \'-$SDK_VERSION\' can be omitted.
 	echo
 
 	read_confirm "installing to ${target_sdk_dir} "
