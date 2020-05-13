@@ -1,0 +1,53 @@
+From c4452bb536f124140832650906a07bea99924617 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Wed, 13 May 2020 12:36:52 -0500
+Subject: [PATCH 2/2] gdb: add option to build a non-python version
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ config/debug/gdb.in.cross      | 8 ++++++++
+ scripts/build/debug/300-gdb.sh | 9 +++++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/config/debug/gdb.in.cross b/config/debug/gdb.in.cross
+index 2ddb343a..1eea06f9 100644
+--- a/config/debug/gdb.in.cross
++++ b/config/debug/gdb.in.cross
+@@ -65,6 +65,14 @@ config GDB_CROSS_PYTHON_BINARY
+       help message in gdb's configure script for the --with-python option
+       for further guidance.
+ 
++config GDB_CROSS_BUILD_NO_PYTHON
++    bool
++    prompt "Build GDB w/o python"
++    depends on GDB_HAS_PYTHON
++    help
++      Build a version of GDB that doesn't support python (in addition to a
++      version that does).  This version will be suffix with "no-py".
++
+ config GDB_CROSS_EXTRA_CONFIG_ARRAY
+     string
+     prompt "Cross-gdb extra config"
+diff --git a/scripts/build/debug/300-gdb.sh b/scripts/build/debug/300-gdb.sh
+index 98d415cb..9b27f654 100644
+--- a/scripts/build/debug/300-gdb.sh
++++ b/scripts/build/debug/300-gdb.sh
+@@ -98,6 +98,15 @@ do_debug_gdb_build()
+ 	do_debug_gdb_build_cross
+     fi
+ 
++    if [ "${CT_GDB_CROSS_BUILD_NO_PYTHON}" = "y" ]; then
++        CT_DoStep INFO "Build gdb (w/o python) ${CT_TARGET}"
++        CT_GDB_CROSS_PYTHON="n"
++        CT_GDB_CROSS_EXTRA_CONFIG_ARRAY+=("--program-prefix=${CT_TARGET}-")
++        CT_GDB_CROSS_EXTRA_CONFIG_ARRAY+=("--program-suffix=-no-py")
++        do_debug_gdb_build_cross
++        CT_GDB_CROSS_PYTHON="y"
++    fi
++
+     if [ "${CT_GDB_NATIVE}" = "y" -o "${CT_GDB_GDBSERVER}" = "y" ]; then
+         local -a native_extra_config
+         local subdir
+-- 
+2.25.4
+
