@@ -1,5 +1,45 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.11.3
+- General:
+  * Added cmake package support to make it easier to find toolchain
+  * Add a -[no]rc argument to install script to allow skipping update
+    query for .zephyrrc
+
+- QEMU:
+  * Add support for ARC
+  * xilinx_qemu: Fix WFI instruction for icount mode
+  * SPARC: fix issue with timer in QEMU machine AT697
+  * Add support for changing CPU type in sifive_e machine.
+
+- GDB:
+  - Added a gdb build that doesn't support python (TARGET-gdb-no-py)
+
+    NOTE: The name of the gdb executable will change in the next major
+    release.  To maintain compatibility with previous 0.11.x we left the
+    TARGET-gdb as the version that supports python.  In 0.12.x we will change
+    it such that TARGET-gdb will NOT support python and thus work everywhere
+    and TARGET-gdb-py will be the version that supports python.
+
+  - Changed python support to build against python3.8.  This is an attempt to
+    have the python support work on a larger number of distributions.
+
+    NOTE: This may require install a python3.8 package on your system if
+    python3.8 is not available.  On fedora systems that can be accomplished by:
+
+    `sudo dnf install python38`
+
+    On ubuntu systems that can be accomplished by:
+
+    `sudo apt get install python3.8-dev`
+
+- OpenOCD:
+  * Pull in a fix for ARC SMP support
+ 
+- GCC:
+  - Fix build issue with CRC32 intrinsics included from arm_acle.h on ARM
+    compiler.
+
 ## Zephyr SDK 0.11.2
 - Fixed issue with setjmp/longjmp not existing on x86 32-bit build
 - Fixed python support on GDB:
