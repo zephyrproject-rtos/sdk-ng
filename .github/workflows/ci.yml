@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.target }} (${{ matrix.host.name }})
+    runs-on: ${{ matrix.host.build }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+        - name: linux-x86_64
+          build: ubuntu-18.04
+        target:
+        - arm
+
+    steps:
+    # Set up build environment (Linux build system)
+    - name: Install dependency packages for Linux
+      if: ${{ matrix.host.build == 'ubuntu-18.04' }}
+      run: |
+        sudo apt-get install bison flex gettext help2man libncurses5-dev
+        sudo apt-get install libtool-bin libtool-doc texinfo
+
+        if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          sudo apt-get install binutils-mingw-w64
+          sudo apt-get install gcc-mingw-w64
+          sudo apt-get install g++-mingw-w64
+        fi
+
+    # Set up build environment (macOS build system)
+    - name: Install dependency packages for macOS
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew install autoconf automake bash binutils gawk gnu-sed help2man
+        brew install ncurses
+
+    - name: Create case sensitive workspace volume for macOS
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        hdiutil create ${HOME}/Workspace.sparseimage -volname Workspace -type SPARSE -size 10g -fs HFSX
+        hdiutil mount ${HOME}/Workspace.sparseimage
+
+    # Check out source code
+    - name: Check out source code
+      uses: actions/checkout@v2
+
+    # Build 
+    - name: Build
+      run: |
+        # remove a few things to free up space
+        sudo rm -rf "/usr/local/share/boost"
+        sudo rm -rf "/usr/local/lib/android"
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        ./go.sh arm
