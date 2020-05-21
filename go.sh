@@ -16,29 +16,6 @@ COMMIT="3f461da11f1f8e9dcfdffef24e1982b5ffd10305"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*)    machine=Cygwin;;
-    MINGW*)     machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
-esac
-
-if [ "$machine" == "Mac" ]; then
-	ImageName=CrossToolNGNew
-	ImageNameExt=${ImageName}.sparseimage
-	if [ ! -e "$ImageNameExt" ]; then
-	diskutil umount force /Volumes/${ImageName} && true
-	rm -f ${ImageNameExt} && true
-	hdiutil create ${ImageName} -volname ${ImageName} -type SPARSE -size 24g -fs HFSX
-	fi
-	if [ ! -d "/Volumes/$ImageName" ]; then
-		hdiutil mount ${ImageNameExt}
-	fi
-	cd /Volumes/$ImageName
-fi
-
 export SDK_NG_HOME=${PWD}
 
 for t in ${TARGETS}; do
