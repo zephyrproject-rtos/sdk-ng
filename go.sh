@@ -7,10 +7,6 @@ if [ -z "$TARGETS" ]; then
 	echo "Please specify target"
 	exit 1
 fi
-if [ "$TARGETS" == "all" ]; then
-	TARGETS=$(ls -1 configs/ | sed 's/.config//')
-	TARGETS=${TARGETS}" tools"
-fi
 
 COMMIT="4f9f79a5cddc39614ee59e8c34e94ab88e9a0028"
 GITDIR=${PWD}
@@ -48,7 +44,6 @@ CT_NG=${SDK_NG_HOME}/bin/ct-ng
 mkdir -p build
 cd build
 export OUTPUT_DIR=`pwd`/output
-mkdir -p ${OUTPUT_DIR}/sources
 for t in ${TARGETS}; do
 	if [ "${t}" = "tools" ]; then
 		# We handled tools above, so skip it here
@@ -57,7 +52,7 @@ for t in ${TARGETS}; do
 		# We handled cmake above, so skip it here
 		continue
 	fi
-	if [ ! -f ${GITDIR}/configs/${t}.config ]; then
+	if [ ! -f ${GITDIR}/crosstool-ng/samples/${t}/crosstool.config ]; then
 		echo "Target configuration does not exist"
 		exit 1
 	fi
@@ -67,20 +62,10 @@ for t in ${TARGETS}; do
 
 	build_toolchain=1
 	if [ -n "${build_toolchain}" ]; then
-		case "${t}" in
-			xtensa_*)
-				cp -a ${SDK_NG_HOME}/overlays .
-				export CT_PREFIX=${OUTPUT_DIR}/xtensa/${t#xtensa_}
-				mkdir -p ${CT_PREFIX}
-				;;
-			*)
-				export CT_PREFIX=${OUTPUT_DIR}
-				;;
-		esac
+		export CT_PREFIX=${OUTPUT_DIR}
 
 		${CT_NG} clean
-		${CT_NG} defconfig DEFCONFIG=${GITDIR}/configs/${t}.config
-		${CT_NG} savedefconfig DEFCONFIG=${t}.config
+		${CT_NG} ${t}
 		${CT_NG} build -j ${JOBS}
 		if [ $? != 0 ]; then
 			exit 1
