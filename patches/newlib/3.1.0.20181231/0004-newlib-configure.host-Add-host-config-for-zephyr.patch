@@ -1,0 +1,40 @@
+From 2599d2e1016beeb8dcfe691940acc334bdc6eb24 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Thu, 21 May 2020 22:55:16 -0500
+Subject: [PATCH] newlib/configure.host: Add host config for zephyr
+
+Add zephyr specific host config so that all arch toolchain variants we
+build for zephyr behave the same way.  (otherwise we end up getting
+-DMISSING_SYSCALL_NAMES set on some arch's like NIOS and x86, but not on
+others).
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ newlib/configure.host | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/newlib/configure.host b/newlib/configure.host
+index 37d2b9b2e..77e855e85 100644
+--- a/newlib/configure.host
++++ b/newlib/configure.host
+@@ -665,6 +665,17 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+   *-*-tirtos*)
+ 	newlib_cflags="${newlib_cflags} -D__DYNAMIC_REENT__ -DMALLOC_PROVIDED"
+ 	;;
++  *-zephyr-*)
++	syscall_dir=syscalls
++	case "${host}" in
++	  arm*-*-*)
++		if [ "x${newlib_may_supply_syscalls}" = "xyes" ] ; then
++		  newlib_cflags="${newlib_cflags} -DARM_RDI_MONITOR"
++		fi
++		;;
++	  *)
++	esac
++	;;
+ # UDI doesn't have exec, so system() should fail the right way
+   a29k-amd-udi)
+ 	newlib_cflags="${newlib_cflags} -DNO_EXEC"
+-- 
+2.25.4
+
