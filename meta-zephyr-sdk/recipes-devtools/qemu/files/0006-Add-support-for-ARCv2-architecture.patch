@@ -1,7 +1,7 @@
-From 0222de93a8a6dc9e98be356ac6df33541675823f Mon Sep 17 00:00:00 2001
+From a8481471a41546962248c8f7cf8f1482d436f682 Mon Sep 17 00:00:00 2001
 From: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
-Date: Fri, 8 May 2020 19:00:55 +0300
-Subject: [PATCH 6/6] Add support for ARCv2 architecture
+Date: Thu, 28 May 2020 18:57:43 +0300
+Subject: [PATCH] Add support for ARCv2 architecture
 
 Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
 ---
@@ -22,7 +22,7 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  hw/arc/boot.h                         |    17 +
  hw/arc/nsim.c                         |    81 +
  hw/arc/pic_cpu.c                      |   100 +
- hw/arc/sample.c                       |    77 +
+ hw/arc/sample.c                       |    75 +
  hw/arc/sim-hs.c                       |   107 +
  include/disas/dis-asm.h               |    10 +-
  include/elf.h                         |     3 +
@@ -33,7 +33,7 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  target/arc/arc-cache.c                |   157 +
  target/arc/arc-cache.h                |    42 +
  target/arc/arc-common.h               |    53 +
- target/arc/arc-decoder.c              |  1530 +++
+ target/arc/arc-decoder.c              |  1523 +++
  target/arc/arc-decoder.h              |   327 +
  target/arc/arc-extra_mapping.h        |    12 +
  target/arc/arc-functions.h            |   218 +
@@ -42,7 +42,7 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  target/arc/arc-regs.c                 |   141 +
  target/arc/arc-regs.def               |   395 +
  target/arc/arc-regs.h                 |   116 +
- target/arc/arc-semfunc.c              |  9031 +++++++++++++++
+ target/arc/arc-semfunc.c              |  9067 +++++++++++++++
  target/arc/arc-semfunc.h              |    61 +
  target/arc/arc-semfunc_mapping.h      |   313 +
  target/arc/arc-tbl.h                  | 19974 ++++++++++++++++++++++++++++++++
@@ -50,25 +50,25 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  target/arc/arc_timer.h                |    10 +
  target/arc/cpu-param.h                |    20 +
  target/arc/cpu-qom.h                  |    53 +
- target/arc/cpu.c                      |   458 +
- target/arc/cpu.h                      |   524 +
+ target/arc/cpu.c                      |   460 +
+ target/arc/cpu.h                      |   533 +
  target/arc/gdbstub.c                  |   425 +
- target/arc/helper.c                   |   283 +
- target/arc/helper.h                   |    46 +
+ target/arc/helper.c                   |   288 +
+ target/arc/helper.h                   |    47 +
  target/arc/internals.h                |    37 +
- target/arc/irq.c                      |   615 +
+ target/arc/irq.c                      |   638 +
  target/arc/irq.h                      |    37 +
- target/arc/mmu.c                      |   756 ++
+ target/arc/mmu.c                      |   758 ++
  target/arc/mmu.h                      |   163 +
  target/arc/mpu.c                      |   654 ++
  target/arc/mpu.h                      |   145 +
- target/arc/op_helper.c                |   738 ++
- target/arc/translate-inst.c           |   457 +
- target/arc/translate-inst.h           |   270 +
- target/arc/translate.c                |   490 +
- target/arc/translate.h                |   184 +
+ target/arc/op_helper.c                |   742 ++
+ target/arc/translate-inst.c           |   489 +
+ target/arc/translate-inst.h           |   286 +
+ target/arc/translate.c                |   479 +
+ target/arc/translate.h                |   186 +
  tests/tcg/Makefile.target             |     3 +
- tests/tcg/arc/Makefile                |   106 +
+ tests/tcg/arc/Makefile                |   109 +
  tests/tcg/arc/check_add.S             |    11 +
  tests/tcg/arc/check_addx.S            |    71 +
  tests/tcg/arc/check_andx.S            |    36 +
@@ -104,7 +104,9 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  tests/tcg/arc/check_lp06.S            |   163 +
  tests/tcg/arc/check_lsrx.S            |    33 +
  tests/tcg/arc/check_mac.S             |   228 +
- tests/tcg/arc/check_manip_mmu.S       |   305 +
+ tests/tcg/arc/check_manip_4_mmu.S     |   159 +
+ tests/tcg/arc/check_manip_5_mmu.S     |   167 +
+ tests/tcg/arc/check_manip_mmu.S       |   565 +
  tests/tcg/arc/check_mmu.S             |    59 +
  tests/tcg/arc/check_mpu.S             |   632 +
  tests/tcg/arc/check_mpyw.S            |    41 +
@@ -132,15 +134,15 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  tests/tcg/arc/check_timerX_freq.S     |    85 +
  tests/tcg/arc/check_xorx.S            |    32 +
  tests/tcg/arc/ivt.S                   |    38 +
- tests/tcg/arc/macros.inc              |   261 +
+ tests/tcg/arc/macros.inc              |   263 +
  tests/tcg/arc/memory.x                |    12 +
- tests/tcg/arc/mmu.inc                 |    96 +
+ tests/tcg/arc/mmu.inc                 |   133 +
  tests/tcg/arc/mpu.inc                 |   263 +
  tests/tcg/arc/tarc.ld                 |    15 +
  tests/tcg/arc/tarc_mmu.ld             |    15 +
  tests/tcg/arc/test_macros.h           |   235 +
  tests/tcg/configure.sh                |     2 +-
- 135 files changed, 47863 insertions(+), 2 deletions(-)
+ 137 files changed, 48603 insertions(+), 2 deletions(-)
  create mode 100644 default-configs/arc-softmmu.mak
  create mode 100644 disas/arc.c
  create mode 100644 gdb-xml/arc-aux-minimal.xml
@@ -232,6 +234,8 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  create mode 100644 tests/tcg/arc/check_lp06.S
  create mode 100644 tests/tcg/arc/check_lsrx.S
  create mode 100644 tests/tcg/arc/check_mac.S
+ create mode 100644 tests/tcg/arc/check_manip_4_mmu.S
+ create mode 100644 tests/tcg/arc/check_manip_5_mmu.S
  create mode 100644 tests/tcg/arc/check_manip_mmu.S
  create mode 100644 tests/tcg/arc/check_mmu.S
  create mode 100644 tests/tcg/arc/check_mpu.S
@@ -269,10 +273,10 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  create mode 100644 tests/tcg/arc/test_macros.h
 
 diff --git a/arch_init.c b/arch_init.c
-index 705d0b94ad..b8cd57bfcc 100644
+index d9eb0ec1dd..a4ee036586 100644
 --- a/arch_init.c
 +++ b/arch_init.c
-@@ -89,6 +89,8 @@ int graphic_depth = 32;
+@@ -91,6 +91,8 @@ int graphic_depth = 32;
  #define QEMU_ARCH QEMU_ARCH_UNICORE32
  #elif defined(TARGET_XTENSA)
  #define QEMU_ARCH QEMU_ARCH_XTENSA
@@ -282,20 +286,20 @@ index 705d0b94ad..b8cd57bfcc 100644
  
  const uint32_t arch_type = QEMU_ARCH;
 diff --git a/configure b/configure
-index 6099be1d84..ad30331790 100755
+index 23b5e93752..9e863a1057 100755
 --- a/configure
 +++ b/configure
-@@ -7636,6 +7636,9 @@ case "$target_name" in
-   alpha)
+@@ -7801,6 +7801,9 @@ case "$target_name" in
      mttcg="yes"
+     TARGET_SYSTBL_ABI=common
    ;;
 +  arc)
 +    gdb_xml_files="arc-core-v2.xml arc-aux-minimal.xml arc-aux-other.xml"
 +  ;;
    arm|armeb)
      TARGET_ARCH=arm
-     bflt="yes"
-@@ -7862,6 +7865,9 @@ for i in $ARCH $TARGET_BASE_ARCH ; do
+     TARGET_SYSTBL_ABI=common,oabi
+@@ -8053,6 +8056,9 @@ for i in $ARCH $TARGET_BASE_ARCH ; do
        disas_config "ARM_A64"
      fi
    ;;
@@ -305,10 +309,10 @@ index 6099be1d84..ad30331790 100755
    arm)
      disas_config "ARM"
      if test -n "${cxx}"; then
-@@ -8001,11 +8007,13 @@ fi
+@@ -8190,11 +8196,13 @@ fi
  # directory and symlink the directory instead.
- DIRS="tests tests/tcg tests/tcg/lm32 tests/libqos tests/qapi-schema tests/qemu-iotests tests/vm"
- DIRS="$DIRS tests/fp tests/qgraph"
+ DIRS="tests tests/tcg tests/tcg/lm32 tests/qapi-schema tests/qtest/libqos"
+ DIRS="$DIRS tests/qtest tests/qemu-iotests tests/vm tests/fp tests/qgraph"
 +DIRS="$DIRS tests/tcg/arc"
  DIRS="$DIRS docs docs/interop fsdev scsi"
  DIRS="$DIRS pc-bios/optionrom pc-bios/s390-ccw"
@@ -1153,7 +1157,7 @@ index 0000000000..28d7766cd9
 +obj-y   = arc_sim.o arc_uart.o sample.o pic_cpu.o boot.o board-hsdk.o sim-hs.o nsim.o
 diff --git a/hw/arc/arc_sim.c b/hw/arc/arc_sim.c
 new file mode 100644
-index 0000000000..bbdf5fe7d2
+index 0000000000..b4823be52e
 --- /dev/null
 +++ b/hw/arc/arc_sim.c
 @@ -0,0 +1,146 @@
@@ -1294,7 +1298,7 @@ index 0000000000..bbdf5fe7d2
 +    mc->desc = "ARCxx simulation";
 +    mc->init = arc_sim_init;
 +    mc->max_cpus = 1;
-+    mc->is_default = 1;
++    mc->is_default = false;
 +    mc->default_cpu_type = ARC_CPU_TYPE_NAME("archs");
 +}
 +
@@ -1305,7 +1309,7 @@ index 0000000000..bbdf5fe7d2
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/hw/arc/arc_uart.c b/hw/arc/arc_uart.c
 new file mode 100644
-index 0000000000..2931eb397b
+index 0000000000..0233583cee
 --- /dev/null
 +++ b/hw/arc/arc_uart.c
 @@ -0,0 +1,244 @@
@@ -1523,7 +1527,7 @@ index 0000000000..2931eb397b
 +    return s->rx_fifo_len < sizeof(s->rx_fifo);
 +}
 +
-+static void uart_event(void *opaque, int event)
++static void uart_event(void *opaque, QEMUChrEvent event)
 +{
 +}
 +
@@ -1555,7 +1559,7 @@ index 0000000000..2931eb397b
 +}
 diff --git a/hw/arc/board-hsdk.c b/hw/arc/board-hsdk.c
 new file mode 100644
-index 0000000000..4e22827220
+index 0000000000..42f8acca2c
 --- /dev/null
 +++ b/hw/arc/board-hsdk.c
 @@ -0,0 +1,107 @@
@@ -1658,7 +1662,7 @@ index 0000000000..4e22827220
 +    mc->desc = "ARC HSDK Emulator";
 +    mc->init = hsdk_init;
 +    mc->max_cpus = 1;
-+    mc->is_default = 1;
++    mc->is_default = false;
 +}
 +
 +DEFINE_MACHINE("hsdk", hsdk_machine_init)
@@ -1668,7 +1672,7 @@ index 0000000000..4e22827220
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/hw/arc/boot.c b/hw/arc/boot.c
 new file mode 100644
-index 0000000000..b2da340715
+index 0000000000..71586630f5
 --- /dev/null
 +++ b/hw/arc/boot.c
 @@ -0,0 +1,87 @@
@@ -1736,7 +1740,7 @@ index 0000000000..b2da340715
 +    }
 +
 +    kernel_size = load_elf(info->kernel_filename, NULL, NULL, NULL,
-+                           &entry, NULL, NULL, ARC_ENDIANNESS_LE,
++                           &entry, NULL, NULL, NULL, ARC_ENDIANNESS_LE,
 +                           cpu->env.family > 2 ? EM_ARC_COMPACT2 : EM_ARC_COMPACT, 1, 0);
 +
 +    if (kernel_size < 0) {
@@ -1784,7 +1788,7 @@ index 0000000000..adf335c32f
 +#endif /* ARC_BOOT_H */
 diff --git a/hw/arc/nsim.c b/hw/arc/nsim.c
 new file mode 100644
-index 0000000000..10bee3265d
+index 0000000000..39fc49492b
 --- /dev/null
 +++ b/hw/arc/nsim.c
 @@ -0,0 +1,81 @@
@@ -1865,7 +1869,7 @@ index 0000000000..10bee3265d
 +    mc->desc = "ARC nSIM";
 +    mc->init = nsim_init;
 +    mc->max_cpus = 1;
-+    mc->is_default = 1;
++    mc->is_default = false;
 +}
 +
 +DEFINE_MACHINE("nsim", nsim_machine_init)
@@ -1977,10 +1981,10 @@ index 0000000000..e2a0925f97
 +}
 diff --git a/hw/arc/sample.c b/hw/arc/sample.c
 new file mode 100644
-index 0000000000..b4618d3347
+index 0000000000..6aa8ae4b72
 --- /dev/null
 +++ b/hw/arc/sample.c
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,75 @@
 +/*
 + * QEMU ARC CPU
 + *
@@ -2019,17 +2023,15 @@ index 0000000000..b4618d3347
 +
 +static void sample_init(MachineState *machine)
 +{
-+    MemoryRegion *mem;
 +    MemoryRegion *ram;
 +
 +    ARCCPU *cpu_arc ATTRIBUTE_UNUSED;
 +
-+    mem = g_new(MemoryRegion, 1);
 +    ram = g_new(MemoryRegion, 1);
 +
 +    cpu_arc = ARC_CPU (cpu_create ("archs-" TYPE_ARC_CPU));
 +
-+    memory_region_allocate_system_memory(mem, NULL, "arc.mem", SIZE_RAM);
++    //memory_region_allocate_system_memory(mem, NULL, "arc.mem", SIZE_RAM);
 +
 +    memory_region_init_ram(ram, NULL, "ram", SIZE_RAM, &error_fatal);
 +    memory_region_add_subregion(get_system_memory(), PHYS_BASE_RAM, ram);
@@ -2054,13 +2056,13 @@ index 0000000000..b4618d3347
 +{
 +    mc->desc = "ARC sample/example board";
 +    mc->init = sample_init;
-+    mc->is_default = 0;
++    mc->is_default = false;
 +}
 +
 +DEFINE_MACHINE("sample", sample_machine_init)
 diff --git a/hw/arc/sim-hs.c b/hw/arc/sim-hs.c
 new file mode 100644
-index 0000000000..699f4e35be
+index 0000000000..7dbf23bd03
 --- /dev/null
 +++ b/hw/arc/sim-hs.c
 @@ -0,0 +1,107 @@
@@ -2163,7 +2165,7 @@ index 0000000000..699f4e35be
 +    mc->desc = "ARC HS Simulator";
 +    mc->init = simhs_init;
 +    mc->max_cpus = 1;
-+    mc->is_default = 1;
++    mc->is_default = true;
 +}
 +
 +DEFINE_MACHINE("simhs", simhs_machine_init)
@@ -2172,7 +2174,7 @@ index 0000000000..699f4e35be
 +/*-*-indent-tabs-mode:nil;tab-width:4;indent-line-function:'insert-tab'-*-*/
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/include/disas/dis-asm.h b/include/disas/dis-asm.h
-index e9c7dd8eb4..154403c452 100644
+index c5f9fa08ab..74391735af 100644
 --- a/include/disas/dis-asm.h
 +++ b/include/disas/dis-asm.h
 @@ -206,7 +206,14 @@ enum bfd_architecture
@@ -2191,16 +2193,16 @@ index e9c7dd8eb4..154403c452 100644
    bfd_arch_m32r,       /* Mitsubishi M32R/D */
  #define bfd_mach_m32r          0  /* backwards compatibility */
    bfd_arch_mn10200,    /* Matsushita MN10200 */
-@@ -433,6 +440,7 @@ int print_insn_little_nios2     (bfd_vma, disassemble_info*);
- int print_insn_xtensa           (bfd_vma, disassemble_info*);
+@@ -441,6 +448,7 @@ int print_insn_xtensa           (bfd_vma, disassemble_info*);
  int print_insn_riscv32          (bfd_vma, disassemble_info*);
  int print_insn_riscv64          (bfd_vma, disassemble_info*);
+ int print_insn_rx(bfd_vma, disassemble_info *);
 +int print_insn_arc              (bfd_vma, disassemble_info*);
  
  #if 0
  /* Fetch the disassembler for a given BFD, if that support is available.  */
 diff --git a/include/elf.h b/include/elf.h
-index 3501e0c8d0..c87a6be2bd 100644
+index 8fbfe60e09..4fd73b2788 100644
 --- a/include/elf.h
 +++ b/include/elf.h
 @@ -199,6 +199,9 @@ typedef struct mips_elf_abiflags_v0 {
@@ -2279,17 +2281,17 @@ index 0000000000..839155db99
 +
 +#endif /* !HW_ARC_CPUDEVS_H */
 diff --git a/include/sysemu/arch_init.h b/include/sysemu/arch_init.h
-index 62c6fe4cf1..049eb5ee29 100644
+index 71a7a285ee..79357e7e2f 100644
 --- a/include/sysemu/arch_init.h
 +++ b/include/sysemu/arch_init.h
-@@ -24,6 +24,7 @@ enum {
-     QEMU_ARCH_NIOS2 = (1 << 17),
+@@ -25,6 +25,7 @@ enum {
      QEMU_ARCH_HPPA = (1 << 18),
      QEMU_ARCH_RISCV = (1 << 19),
-+    QEMU_ARCH_ARC = (1 << 20),
- };
+     QEMU_ARCH_RX = (1 << 20),
++    QEMU_ARCH_ARC = (1 << 21),
  
- extern const uint32_t arch_type;
+     QEMU_ARCH_NONE = (1 << 31),
+ };
 diff --git a/target/arc/Makefile.objs b/target/arc/Makefile.objs
 new file mode 100644
 index 0000000000..aa1665441e
@@ -2600,10 +2602,10 @@ index 0000000000..1dd5f03322
 +#endif
 diff --git a/target/arc/arc-decoder.c b/target/arc/arc-decoder.c
 new file mode 100644
-index 0000000000..8193b8dca4
+index 0000000000..9b494718d3
 --- /dev/null
 +++ b/target/arc/arc-decoder.c
-@@ -0,0 +1,1530 @@
+@@ -0,0 +1,1523 @@
 +/*
 + * Decoder for the ARC.
 + * Copyright (C) 2017 Free Software Foundation, Inc.
@@ -3718,8 +3720,7 @@ index 0000000000..8193b8dca4
 +                             const struct arc_opcode **opcode_p)
 +{
 +    uint16_t buffer[2];
-+    uint16_t delayslot_buffer[2];
-+    uint8_t length, delayslot_length;
++    uint8_t length;
 +    uint64_t insn;
 +
 +    /* Read the first 16 bits, figure it out what kind of instruction it is. */
@@ -3767,14 +3768,8 @@ index 0000000000..8193b8dca4
 +    /* Update context. */
 +    ctx->insn.len = length;
 +    ctx->npc = ctx->cpc + length;
-+    ctx->dpc = ctx->cpc + length;
++    //ctx->dpc = ctx->cpc + length;
 +    ctx->pcl = ctx->cpc & 0xfffffffc;
-+
-+    if (ctx->insn.d == true) {
-+        delayslot_buffer[0] = cpu_lduw_code(ctx->env, ctx->dpc);
-+        delayslot_length = arc_insn_length(delayslot_buffer[0], ctx->env->family);
-+        ctx->npc = ctx->dpc + delayslot_length;
-+    };
 +
 +    return true;
 +}
@@ -3949,12 +3944,12 @@ index 0000000000..8193b8dca4
 +
 +    tcg_gen_movi_tl(cpu_pc, ctx->cpc);
 +    tcg_gen_movi_tl(cpu_eret, ctx->cpc);
-+    if (ctx->ds) {
-+        tcg_gen_movi_tl(cpu_erbta, ctx->dpc);
-+    }
-+    else {
++    //if (ctx->ds) {
++    //    tcg_gen_movi_tl(cpu_erbta, ctx->dpc);
++    //}
++    //else {
 +        tcg_gen_movi_tl(cpu_erbta, ctx->npc);
-+    }
++    //}
 +
 +    gen_helper_raise_exception(cpu_env, tmp0, tmp1, tmp2);
 +
@@ -6594,10 +6589,10 @@ index 0000000000..6fb5765b2f
 +#endif /* ARC_REGS_H */
 diff --git a/target/arc/arc-semfunc.c b/target/arc/arc-semfunc.c
 new file mode 100644
-index 0000000000..f382d439ed
+index 0000000000..b6cd48ce56
 --- /dev/null
 +++ b/target/arc/arc-semfunc.c
-@@ -0,0 +1,9031 @@
+@@ -0,0 +1,9067 @@
 +/*
 + *  QEMU ARC CPU
 + *
@@ -12920,12 +12915,18 @@ index 0000000000..f382d439ed
 +  bta = (getPCL () + @rd);
 +  if((shouldExecuteDelaySlot () == 1))
 +    {
-+      setBLINK (nextInsnAddressAfterDelaySlot ());
++      if(take_branch)
++        {
++          setBLINK (nextInsnAddressAfterDelaySlot ());
++        };
 +      executeDelaySlot (bta, take_branch);
 +    }
 +  else
 +    {
-+      setBLINK (nextInsnAddress ());
++      if(take_branch)
++        {
++          setBLINK (nextInsnAddress ());
++        };
 +    };
 +  if((cc_flag == true))
 +    {
@@ -12939,66 +12940,78 @@ index 0000000000..f382d439ed
 +{
 +  int ret = DISAS_NEXT;
 +  TCGv take_branch = tcg_temp_local_new_i32();
-+  TCGv temp_5 = tcg_temp_local_new_i32();
++  TCGv temp_7 = tcg_temp_local_new_i32();
 +  TCGv cc_flag = tcg_temp_local_new_i32();
 +  TCGv temp_1 = tcg_temp_local_new_i32();
 +  TCGv temp_2 = tcg_temp_local_new_i32();
-+  TCGv temp_7 = tcg_temp_local_new_i32();
-+  TCGv temp_6 = tcg_temp_local_new_i32();
-+  TCGv bta = tcg_temp_local_new_i32();
 +  TCGv temp_9 = tcg_temp_local_new_i32();
 +  TCGv temp_8 = tcg_temp_local_new_i32();
++  TCGv bta = tcg_temp_local_new_i32();
++  TCGv temp_3 = tcg_temp_local_new_i32();
 +  TCGv temp_11 = tcg_temp_local_new_i32();
 +  TCGv temp_10 = tcg_temp_local_new_i32();
-+  TCGv temp_3 = tcg_temp_local_new_i32();
 +  TCGv temp_4 = tcg_temp_local_new_i32();
++  TCGv temp_13 = tcg_temp_local_new_i32();
++  TCGv temp_12 = tcg_temp_local_new_i32();
++  TCGv temp_5 = tcg_temp_local_new_i32();
++  TCGv temp_6 = tcg_temp_local_new_i32();
 +  tcg_gen_mov_i32(take_branch, arc_false);
-+  getCCFlag(temp_5);
-+  tcg_gen_mov_i32(cc_flag, temp_5);
++  getCCFlag(temp_7);
++  tcg_gen_mov_i32(cc_flag, temp_7);
 +  TCGLabel *done_1 = gen_new_label();
 +  tcg_gen_setcond_i32(TCG_COND_EQ, temp_1, cc_flag, arc_true);
 +  tcg_gen_xori_i32(temp_2, temp_1, 1); tcg_gen_andi_i32(temp_2, temp_2, 1);;
 +  tcg_gen_brcond_i32(TCG_COND_EQ, temp_2, arc_true, done_1);;
 +  tcg_gen_mov_i32(take_branch, arc_true);
 +  gen_set_label(done_1);
-+  getPCL(temp_7);
-+  tcg_gen_mov_i32(temp_6, temp_7);
-+  tcg_gen_add_i32(bta, temp_6, rd);
++  getPCL(temp_9);
++  tcg_gen_mov_i32(temp_8, temp_9);
++  tcg_gen_add_i32(bta, temp_8, rd);
 +  if ((shouldExecuteDelaySlot () == 1))
 +    {
-+    nextInsnAddressAfterDelaySlot(temp_9);
-+  tcg_gen_mov_i32(temp_8, temp_9);
-+  setBLINK(temp_8);
++    TCGLabel *done_2 = gen_new_label();
++  tcg_gen_xori_i32(temp_3, take_branch, 1); tcg_gen_andi_i32(temp_3, temp_3, 1);;
++  tcg_gen_brcond_i32(TCG_COND_EQ, temp_3, arc_true, done_2);;
++  nextInsnAddressAfterDelaySlot(temp_11);
++  tcg_gen_mov_i32(temp_10, temp_11);
++  setBLINK(temp_10);
++  gen_set_label(done_2);
 +  executeDelaySlot(bta, take_branch);
 +;
 +    }
 +  else
 +    {
-+    nextInsnAddress(temp_11);
-+  tcg_gen_mov_i32(temp_10, temp_11);
-+  setBLINK(temp_10);
++    TCGLabel *done_3 = gen_new_label();
++  tcg_gen_xori_i32(temp_4, take_branch, 1); tcg_gen_andi_i32(temp_4, temp_4, 1);;
++  tcg_gen_brcond_i32(TCG_COND_EQ, temp_4, arc_true, done_3);;
++  nextInsnAddress(temp_13);
++  tcg_gen_mov_i32(temp_12, temp_13);
++  setBLINK(temp_12);
++  gen_set_label(done_3);
 +;
 +    }
-+  TCGLabel *done_2 = gen_new_label();
-+  tcg_gen_setcond_i32(TCG_COND_EQ, temp_3, cc_flag, arc_true);
-+  tcg_gen_xori_i32(temp_4, temp_3, 1); tcg_gen_andi_i32(temp_4, temp_4, 1);;
-+  tcg_gen_brcond_i32(TCG_COND_EQ, temp_4, arc_true, done_2);;
++  TCGLabel *done_4 = gen_new_label();
++  tcg_gen_setcond_i32(TCG_COND_EQ, temp_5, cc_flag, arc_true);
++  tcg_gen_xori_i32(temp_6, temp_5, 1); tcg_gen_andi_i32(temp_6, temp_6, 1);;
++  tcg_gen_brcond_i32(TCG_COND_EQ, temp_6, arc_true, done_4);;
 +  setPC(bta);
-+  gen_set_label(done_2);
++  gen_set_label(done_4);
 +  tcg_temp_free(take_branch);
-+  tcg_temp_free(temp_5);
++  tcg_temp_free(temp_7);
 +  tcg_temp_free(cc_flag);
 +  tcg_temp_free(temp_1);
 +  tcg_temp_free(temp_2);
-+  tcg_temp_free(temp_7);
-+  tcg_temp_free(temp_6);
-+  tcg_temp_free(bta);
 +  tcg_temp_free(temp_9);
 +  tcg_temp_free(temp_8);
++  tcg_temp_free(bta);
++  tcg_temp_free(temp_3);
 +  tcg_temp_free(temp_11);
 +  tcg_temp_free(temp_10);
-+  tcg_temp_free(temp_3);
 +  tcg_temp_free(temp_4);
++  tcg_temp_free(temp_13);
++  tcg_temp_free(temp_12);
++  tcg_temp_free(temp_5);
++  tcg_temp_free(temp_6);
 +
 +  return ret;
 +}
@@ -13097,12 +13110,18 @@ index 0000000000..f382d439ed
 +  bta = @src;
 +  if((shouldExecuteDelaySlot () == 1))
 +    {
-+      setBLINK (nextInsnAddressAfterDelaySlot ());
++      if(take_branch)
++        {
++          setBLINK (nextInsnAddressAfterDelaySlot ());
++        };
 +      executeDelaySlot (bta, take_branch);
 +    }
 +  else
 +    {
-+      setBLINK (nextInsnAddress ());
++      if(take_branch)
++        {
++          setBLINK (nextInsnAddress ());
++        };
 +    };
 +  if((cc_flag == true))
 +    {
@@ -13116,20 +13135,22 @@ index 0000000000..f382d439ed
 +{
 +  int ret = DISAS_NEXT;
 +  TCGv take_branch = tcg_temp_local_new_i32();
-+  TCGv temp_5 = tcg_temp_local_new_i32();
++  TCGv temp_7 = tcg_temp_local_new_i32();
 +  TCGv cc_flag = tcg_temp_local_new_i32();
 +  TCGv temp_1 = tcg_temp_local_new_i32();
 +  TCGv temp_2 = tcg_temp_local_new_i32();
 +  TCGv bta = tcg_temp_local_new_i32();
-+  TCGv temp_7 = tcg_temp_local_new_i32();
-+  TCGv temp_6 = tcg_temp_local_new_i32();
++  TCGv temp_3 = tcg_temp_local_new_i32();
 +  TCGv temp_9 = tcg_temp_local_new_i32();
 +  TCGv temp_8 = tcg_temp_local_new_i32();
-+  TCGv temp_3 = tcg_temp_local_new_i32();
 +  TCGv temp_4 = tcg_temp_local_new_i32();
++  TCGv temp_11 = tcg_temp_local_new_i32();
++  TCGv temp_10 = tcg_temp_local_new_i32();
++  TCGv temp_5 = tcg_temp_local_new_i32();
++  TCGv temp_6 = tcg_temp_local_new_i32();
 +  tcg_gen_mov_i32(take_branch, arc_false);
-+  getCCFlag(temp_5);
-+  tcg_gen_mov_i32(cc_flag, temp_5);
++  getCCFlag(temp_7);
++  tcg_gen_mov_i32(cc_flag, temp_7);
 +  TCGLabel *done_1 = gen_new_label();
 +  tcg_gen_setcond_i32(TCG_COND_EQ, temp_1, cc_flag, arc_true);
 +  tcg_gen_xori_i32(temp_2, temp_1, 1); tcg_gen_andi_i32(temp_2, temp_2, 1);;
@@ -13139,37 +13160,47 @@ index 0000000000..f382d439ed
 +  tcg_gen_mov_i32(bta, src);
 +  if ((shouldExecuteDelaySlot () == 1))
 +    {
-+    nextInsnAddressAfterDelaySlot(temp_7);
-+  tcg_gen_mov_i32(temp_6, temp_7);
-+  setBLINK(temp_6);
++    TCGLabel *done_2 = gen_new_label();
++  tcg_gen_xori_i32(temp_3, take_branch, 1); tcg_gen_andi_i32(temp_3, temp_3, 1);;
++  tcg_gen_brcond_i32(TCG_COND_EQ, temp_3, arc_true, done_2);;
++  nextInsnAddressAfterDelaySlot(temp_9);
++  tcg_gen_mov_i32(temp_8, temp_9);
++  setBLINK(temp_8);
++  gen_set_label(done_2);
 +  executeDelaySlot(bta, take_branch);
 +;
 +    }
 +  else
 +    {
-+    nextInsnAddress(temp_9);
-+  tcg_gen_mov_i32(temp_8, temp_9);
-+  setBLINK(temp_8);
++    TCGLabel *done_3 = gen_new_label();
++  tcg_gen_xori_i32(temp_4, take_branch, 1); tcg_gen_andi_i32(temp_4, temp_4, 1);;
++  tcg_gen_brcond_i32(TCG_COND_EQ, temp_4, arc_true, done_3);;
++  nextInsnAddress(temp_11);
++  tcg_gen_mov_i32(temp_10, temp_11);
++  setBLINK(temp_10);
++  gen_set_label(done_3);
 +;
 +    }
-+  TCGLabel *done_2 = gen_new_label();
-+  tcg_gen_setcond_i32(TCG_COND_EQ, temp_3, cc_flag, arc_true);
-+  tcg_gen_xori_i32(temp_4, temp_3, 1); tcg_gen_andi_i32(temp_4, temp_4, 1);;
-+  tcg_gen_brcond_i32(TCG_COND_EQ, temp_4, arc_true, done_2);;
++  TCGLabel *done_4 = gen_new_label();
++  tcg_gen_setcond_i32(TCG_COND_EQ, temp_5, cc_flag, arc_true);
++  tcg_gen_xori_i32(temp_6, temp_5, 1); tcg_gen_andi_i32(temp_6, temp_6, 1);;
++  tcg_gen_brcond_i32(TCG_COND_EQ, temp_6, arc_true, done_4);;
 +  setPC(bta);
-+  gen_set_label(done_2);
++  gen_set_label(done_4);
 +  tcg_temp_free(take_branch);
-+  tcg_temp_free(temp_5);
++  tcg_temp_free(temp_7);
 +  tcg_temp_free(cc_flag);
 +  tcg_temp_free(temp_1);
 +  tcg_temp_free(temp_2);
 +  tcg_temp_free(bta);
-+  tcg_temp_free(temp_7);
-+  tcg_temp_free(temp_6);
++  tcg_temp_free(temp_3);
 +  tcg_temp_free(temp_9);
 +  tcg_temp_free(temp_8);
-+  tcg_temp_free(temp_3);
 +  tcg_temp_free(temp_4);
++  tcg_temp_free(temp_11);
++  tcg_temp_free(temp_10);
++  tcg_temp_free(temp_5);
++  tcg_temp_free(temp_6);
 +
 +  return ret;
 +}
@@ -36485,7 +36516,7 @@ index 0000000000..a38548d3db
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/cpu-qom.h b/target/arc/cpu-qom.h
 new file mode 100644
-index 0000000000..84fde6d170
+index 0000000000..f0e4b43989
 --- /dev/null
 +++ b/target/arc/cpu-qom.h
 @@ -0,0 +1,53 @@
@@ -36536,7 +36567,7 @@ index 0000000000..84fde6d170
 +    /*< public >*/
 +
 +    DeviceRealize parent_realize;
-+    void (*parent_reset)(CPUState *cpu);
++    DeviceReset parent_reset;
 +} ARCCPUClass;
 +
 +typedef struct ARCCPU ARCCPU;
@@ -36544,10 +36575,10 @@ index 0000000000..84fde6d170
 +#endif
 diff --git a/target/arc/cpu.c b/target/arc/cpu.c
 new file mode 100644
-index 0000000000..0434e55cd1
+index 0000000000..792a0e4731
 --- /dev/null
 +++ b/target/arc/cpu.c
-@@ -0,0 +1,458 @@
+@@ -0,0 +1,460 @@
 +/*
 + * QEMU ARC CPU
 + *
@@ -36591,7 +36622,7 @@ index 0000000000..0434e55cd1
 +  }
 +};
 +
-+static Property arc_properties[] =
++static Property arc_cpu_properties[] =
 +{
 + DEFINE_PROP_UINT32 ("address-size", ARCCPU, cfg.addr_size, 32),
 + DEFINE_PROP_BOOL ("aps", ARCCPU, cfg.aps_feature, false),
@@ -36692,8 +36723,9 @@ index 0000000000..0434e55cd1
 +  env->pc = tb->pc;
 +}
 +
-+static void arc_cpu_reset(CPUState *s)
++static void arc_cpu_reset(DeviceState *dev)
 +{
++  CPUState *s = CPU(dev);
 +  ARCCPU *cpu = ARC_CPU(s);
 +  ARCCPUClass *arcc = ARC_CPU_GET_CLASS(cpu);
 +  CPUARCState *env = &cpu->env;
@@ -36711,10 +36743,12 @@ index 0000000000..0434e55cd1
 +  arc_resetTIMER(cpu);
 +  arc_resetIRQ(cpu);
 +
-+  arcc->parent_reset(s);
++  arcc->parent_reset(dev);
 +
 +  memset(env->r, 0, sizeof(env->r));
 +  env->lock_lf_var = 0;
++
++  env->stat.is_delay_slot_instruction = 0;
 +}
 +
 +static void arc_cpu_disas_set_info(CPUState *cs, disassemble_info *info)
@@ -36894,8 +36928,7 @@ index 0000000000..0434e55cd1
 +  device_class_set_parent_realize (dc, arc_cpu_realizefn,
 +				   &arcc->parent_realize);
 +
-+  arcc->parent_reset = cc->reset;
-+  cc->reset = arc_cpu_reset;
++  device_class_set_parent_reset(dc, arc_cpu_reset, &arcc->parent_reset);
 +
 +  cc->class_by_name = arc_cpu_class_by_name;
 +
@@ -36911,7 +36944,6 @@ index 0000000000..0434e55cd1
 +#endif
 +  cc->disas_set_info = arc_cpu_disas_set_info;
 +  cc->synchronize_from_tb = arc_cpu_synchronize_from_tb;
-+  dc->props = arc_properties;
 +  cc->gdb_read_register = arc_cpu_gdb_read_register;
 +  cc->gdb_write_register = arc_cpu_gdb_write_register;
 +
@@ -36924,6 +36956,7 @@ index 0000000000..0434e55cd1
 +    cc->tcg_initialize = arc_translate_init;
 +    cc->tlb_fill = arc_cpu_tlb_fill;
 +#endif
++    device_class_set_props(dc, arc_cpu_properties);
 +}
 +
 +static void arc_any_initfn (Object *obj)
@@ -37008,10 +37041,10 @@ index 0000000000..0434e55cd1
 +type_init(arc_cpu_register_types)
 diff --git a/target/arc/cpu.h b/target/arc/cpu.h
 new file mode 100644
-index 0000000000..5cddf67682
+index 0000000000..6653a4f73a
 --- /dev/null
 +++ b/target/arc/cpu.h
-@@ -0,0 +1,524 @@
+@@ -0,0 +1,533 @@
 + /*
 + * QEMU ARC CPU
 + *
@@ -37043,6 +37076,9 @@ index 0000000000..5cddf67682
 +#include "mmu.h"
 +#include "mpu.h"
 +#include "arc-cache.h"
++
++//#define TARGET_INSN_START_EXTRA_WORDS 1
++
 +
 +#define ARC_CPU_TYPE_SUFFIX "-" TYPE_ARC_CPU
 +#define ARC_CPU_TYPE_NAME(model) model ARC_CPU_TYPE_SUFFIX
@@ -37225,7 +37261,8 @@ index 0000000000..5cddf67682
 +    EXCP_DCERROR,
 +    EXCP_MISALIGNED,
 +    EXCP_IRQ,
-+    EXCP_LPEND_REACHED = 9000
++    EXCP_LPEND_REACHED = 9000,
++    EXCP_FAKE
 +};
 +
 +typedef struct status_register
@@ -37247,6 +37284,11 @@ index 0000000000..5cddf67682
 +    uint32_t ADf;
 +    uint32_t USf;
 +    uint32_t IEf;
++
++    /* Reserved bits */
++
++    /* Next instruction is a delayslot instruction */
++    uint32_t is_delay_slot_instruction;
 +} status_t;
 +
 +/* ARC processor timer module.  */
@@ -37510,7 +37552,7 @@ index 0000000000..5cddf67682
 +
 +void arc_cpu_dump_state(CPUState *cs, FILE *f, int flags);
 +hwaddr arc_cpu_get_phys_page_debug(CPUState *cpu, vaddr addr);
-+int arc_cpu_gdb_read_register(CPUState *cpu, uint8_t *buf, int reg);
++int arc_cpu_gdb_read_register(CPUState *cpu, GByteArray *buf, int reg);
 +int arc_cpu_gdb_write_register(CPUState *cpu, uint8_t *buf, int reg);
 +
 +void QEMU_NORETURN arc_raise_exception(CPUARCState *env, int32_t excp_idx);
@@ -37538,7 +37580,7 @@ index 0000000000..5cddf67682
 +#endif /* !defined (CPU_ARC_H) */
 diff --git a/target/arc/gdbstub.c b/target/arc/gdbstub.c
 new file mode 100644
-index 0000000000..0cc1476d1c
+index 0000000000..51fec5b984
 --- /dev/null
 +++ b/target/arc/gdbstub.c
 @@ -0,0 +1,425 @@
@@ -37574,7 +37616,7 @@ index 0000000000..0cc1476d1c
 +#define REG_ADDR(reg, processor_type) arc_aux_reg_address_for((reg), (processor_type))
 +
 +
-+int arc_cpu_gdb_read_register(CPUState *cs, uint8_t *mem_buf, int n)
++int arc_cpu_gdb_read_register(CPUState *cs, GByteArray *mem_buf, int n)
 +{
 +  ARCCPU *cpu = ARC_CPU(cs);
 +  CPUARCState *env = &cpu->env;
@@ -37637,7 +37679,7 @@ index 0000000000..0cc1476d1c
 +
 +
 +static int
-+arc_aux_minimal_gdb_get_reg(CPUARCState *env, uint8_t *mem_buf, int regnum)
++arc_aux_minimal_gdb_get_reg(CPUARCState *env, GByteArray *mem_buf, int regnum)
 +{
 +  /* TODO: processor type must be set according to configuration */
 +  static const int processor = ARC_OPCODE_ARCv2HS;
@@ -37692,7 +37734,7 @@ index 0000000000..0cc1476d1c
 +
 +
 +static int
-+arc_aux_other_gdb_get_reg(CPUARCState *env, uint8_t *mem_buf, int regnum)
++arc_aux_other_gdb_get_reg(CPUARCState *env, GByteArray *mem_buf, int regnum)
 +{
 +  /* TODO: processor type must be set according to configuration */
 +  static const int processor = ARC_OPCODE_ARCv2HS;
@@ -37969,10 +38011,10 @@ index 0000000000..0cc1476d1c
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/helper.c b/target/arc/helper.c
 new file mode 100644
-index 0000000000..b07fd6420a
+index 0000000000..cdfab94638
 --- /dev/null
 +++ b/target/arc/helper.c
-@@ -0,0 +1,283 @@
+@@ -0,0 +1,288 @@
 +/*
 + * QEMU ARC CPU
 + *
@@ -38028,8 +38070,10 @@ index 0000000000..b07fd6420a
 +    const char  *name;
 +
 +    /* NOTE: Special LP_END exception. Immediatelly return code execution to
-+       lp_start. */
-+    if(cs->exception_index == EXCP_LPEND_REACHED) {
++       lp_start. 
++       Now also used for delayslot MissI cases. */
++    if(cs->exception_index == EXCP_LPEND_REACHED
++       || cs->exception_index == EXCP_FAKE) {
 +      env->pc = env->param;
 +      CPU_PCL(env) = env->pc & 0xfffffffe;
 +      return;
@@ -38165,6 +38209,9 @@ index 0000000000..b07fd6420a
 +    qemu_log_mask(CPU_LOG_INT, "[EXCP] isr=0x%x vec=0x%x ecr=0x%08x\n",
 +                  env->pc, offset, env->ecr);
 +
++    /* Make sure that exception code decodes corectly */
++    env->stat.is_delay_slot_instruction = 0;
++
 +    cs->exception_index = -1;
 +}
 +
@@ -38258,10 +38305,10 @@ index 0000000000..b07fd6420a
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/helper.h b/target/arc/helper.h
 new file mode 100644
-index 0000000000..97ae86c7d4
+index 0000000000..872180a180
 --- /dev/null
 +++ b/target/arc/helper.h
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,47 @@
 +/*
 + * QEMU ARC CPU
 + *
@@ -38295,6 +38342,7 @@ index 0000000000..97ae86c7d4
 +DEF_HELPER_1(flush, void, env)
 +DEF_HELPER_4(raise_exception, noreturn, env, i32, i32, i32)
 +DEF_HELPER_2(zol_verify, void, env, i32)
++DEF_HELPER_2(fake_exception, void, env, i32)
 +DEF_HELPER_2(set_status32, void, env, i32)
 +DEF_HELPER_1(get_status32, i32, env)
 +DEF_HELPER_3(carry_add_flag, i32, i32, i32, i32)
@@ -38353,10 +38401,10 @@ index 0000000000..36ef7eb92e
 +#endif
 diff --git a/target/arc/irq.c b/target/arc/irq.c
 new file mode 100644
-index 0000000000..6518c78a03
+index 0000000000..b66beb25dc
 --- /dev/null
 +++ b/target/arc/irq.c
-@@ -0,0 +1,615 @@
+@@ -0,0 +1,638 @@
 +/*
 + * QEMU ARC CPU - IRQ subsystem
 + *
@@ -38561,6 +38609,9 @@ index 0000000000..6518c78a03
 +{
 +  CPUARCState *env = &cpu->env;
 +
++  assert(env->stat.DEf == 0);
++  assert(env->stat.is_delay_slot_instruction == 0);
++
 +  /* Reset RTC state machine -> AUX_RTC_CTRL &= 0x3fffffff */
 +  qemu_log_mask (CPU_LOG_INT,
 +		 "[IRQ] enter firq:%d U:%d AE:%d IE:%d E:%d\n",
@@ -38582,6 +38633,7 @@ index 0000000000..6518c78a03
 +  env->stat.ESf = 0;
 +  env->stat.DZf = 0;
 +  env->stat.DEf = 0;
++  env->stat.is_delay_slot_instruction = 0;
 +  //tlb_flush(cpu);
 +
 +  /* Set .RB to 1 if additional register banks are specified.  */
@@ -38606,6 +38658,9 @@ index 0000000000..6518c78a03
 +static void arc_enter_irq (ARCCPU *cpu, uint32_t vector)
 +{
 +  CPUARCState *env = &cpu->env;
++
++  assert(env->stat.DEf == 0);
++  assert(env->stat.is_delay_slot_instruction == 0);
 +
 +  /* Reset RTC state machine -> AUX_RTC_CTRL &= 0x3fffffff */
 +  qemu_log_mask (CPU_LOG_INT, "[IRQ] enter irq:%d U:%d AE:%d IE:%d E:%d\n",
@@ -38822,6 +38877,8 @@ index 0000000000..6518c78a03
 +    }
 +}
 +
++bool enabled_interrupts = false;
++
 +/* Check if we can interrupt the cpu.  */
 +
 +bool arc_cpu_exec_interrupt (CPUState *cs, int interrupt_request)
@@ -38838,6 +38895,11 @@ index 0000000000..6518c78a03
 +      || (env->stat.IEf == 0)
 +      /* We are not in an exception.  */
 +      || env->stat.AEf
++      /* Disable interrupts to happen after MissI exceptions. */
++      || enabled_interrupts == false
++      /* In a delay slot of branch */
++      || env->stat.is_delay_slot_instruction
++      || env->stat.DEf
 +      || (!(interrupt_request & CPU_INTERRUPT_HARD)))
 +    return false;
 +
@@ -38871,6 +38933,15 @@ index 0000000000..6518c78a03
 +
 +  /* Adjust vector number.  */
 +  vectno += 16;
++
++  //if(env->stat.is_delay_slot_instruction != 0)
++  //{
++  //  printf("\n\nTINO: Exception in delayslot\n");
++  //  printf("  ERET = 0x%08x\n", env->eret);
++  //  printf("  PC = 0x%08x\n", env->pc);
++  //  printf("  vector = %d\n", vectno);
++  //}
++
 +
 +  /* Set the AUX_IRQ_ACT.  */
 +  if ((env->aux_irq_act & 0xffff) == 0)
@@ -39017,10 +39088,10 @@ index 0000000000..88ecaf090e
 +#endif
 diff --git a/target/arc/mmu.c b/target/arc/mmu.c
 new file mode 100644
-index 0000000000..0af35e1505
+index 0000000000..9d57a5c79f
 --- /dev/null
 +++ b/target/arc/mmu.c
-@@ -0,0 +1,756 @@
+@@ -0,0 +1,758 @@
 +/*
 + * QEMU ARC CPU
 + *
@@ -39498,7 +39569,7 @@ index 0000000000..0af35e1505
 +	    /* Match to a shared library. */
 +	    if(match_sasid(tlb, mmu) == false)
 +	      match = false;
-+	  } else if((tlb->pd0 & PD0_ASID_MATCH) != (mmu->pid_asid & PD0_ASID_MATCH)) {
++	  } else if((tlb->pd0 & PD0_PID_MATCH) != (mmu->pid_asid & PD0_PID_MATCH)) {
 +	    /* Match to a process. */
 +	    match = false;
 +	  }
@@ -39618,7 +39689,9 @@ index 0000000000..0af35e1505
 +        int32_t excp_idx, uint8_t excp_cause_code, uint8_t excp_param)
 +{
 +    CPUARCState *env = &(ARC_CPU(cs)->env);
-+    cpu_restore_state(cs, host_pc, true);
++    if(excp_idx != EXCP_TLB_MISS_I)
++      cpu_restore_state(cs, host_pc, true);
++
 +    env->efa = addr;
 +    env->eret = env->pc;
 +    env->erbta = env->bta;
@@ -40759,10 +40832,10 @@ index 0000000000..d2d25f085c
 +#endif /* ARC_MPU_H */
 diff --git a/target/arc/op_helper.c b/target/arc/op_helper.c
 new file mode 100644
-index 0000000000..6db9db825a
+index 0000000000..8ec1e990e3
 --- /dev/null
 +++ b/target/arc/op_helper.c
-@@ -0,0 +1,738 @@
+@@ -0,0 +1,742 @@
 +/*
 + * QEMU ARC CPU
 + *
@@ -41222,6 +41295,10 @@ index 0000000000..6db9db825a
 +      }
 +    }
 +}
++void helper_fake_exception(CPUARCState *env, uint32_t pc)
++{
++  helper_raise_exception(env, (uint32_t) EXCP_LPEND_REACHED, 0, pc);
++}
 +
 +uint32_t helper_get_status32(CPUARCState *env)
 +{
@@ -41503,10 +41580,10 @@ index 0000000000..6db9db825a
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/translate-inst.c b/target/arc/translate-inst.c
 new file mode 100644
-index 0000000000..ef3e688ef0
+index 0000000000..2906ac0a2a
 --- /dev/null
 +++ b/target/arc/translate-inst.c
-@@ -0,0 +1,457 @@
+@@ -0,0 +1,489 @@
 +/*
 + *  QEMU ARC CPU
 + *
@@ -41742,36 +41819,67 @@ index 0000000000..ef3e688ef0
 +    // TODO: Could not find a reson to set this.
 +}
 +
++extern bool enabled_interrupts;
 +void
 +arc2_gen_execute_delayslot(DisasCtxt *ctx, TCGv bta, TCGv take_branch)
 +{
 +    static int in_delay_slot = false;
++
++    assert(ctx->insn.limm_p == 0 && !in_delay_slot);
++
 +    if (ctx->insn.limm_p == 0 && !in_delay_slot) {
 +        in_delay_slot = true;
 +        uint32_t cpc = ctx->cpc;
 +        uint32_t pcl = ctx->pcl;
 +        insn_t insn = ctx->insn;
 +
-+        ctx->cpc = ctx->dpc;
++        ctx->cpc = ctx->npc;
 +        ctx->pcl = ctx->cpc & 0xfffffffc;
 +
 +        ++ctx->ds;
 +
++        TCGLabel *do_not_set_bta_and_de = gen_new_label();
++        tcg_gen_brcondi_i32(TCG_COND_NE, take_branch, 1, do_not_set_bta_and_de);
 +        /*
 +         * in case an exception should be raised during the execution
 +         * of delay slot, bta value is used to set erbta.
 +         */
 +        tcg_gen_mov_tl(cpu_bta, bta);
-+        /* set the pc to the next pc */
-+        tcg_gen_movi_tl(cpu_pc, ctx->dpc);
 +        /* we are in a delay slot */
 +        tcg_gen_mov_tl(cpu_DEf, take_branch);
++        gen_set_label(do_not_set_bta_and_de);
++
++        tcg_gen_movi_tl(cpu_is_delay_slot_instruction, 1);
++
++        /* set the pc to the next pc */
++        tcg_gen_movi_tl(cpu_pc, ctx->npc);
 +        /* necessary for the likely call to restore_state_to_opc() */
-+        tcg_gen_insn_start(ctx->dpc);
++        tcg_gen_insn_start(ctx->npc);
 +
 +        DisasJumpType type = ctx->base.is_jmp;
++        enabled_interrupts = false;
++
++        /* In case we might be in a situation where the delayslot is in a 
++           different MMU page. Make a fake exception to interrupt
++           delayslot execution in the context of the branch.
++           The delayslot will then be re-executed in isolation after the
++           branch code has set bta and DEf status flag. */
++        if((cpc & PAGE_MASK) < 0x80000000
++           && (cpc & PAGE_MASK) != (ctx->cpc & PAGE_MASK)) {
++          in_delay_slot = false;  
++          TCGv dpc = tcg_const_local_i32(ctx->npc);
++          tcg_gen_mov_tl(cpu_pc, dpc);
++          gen_helper_fake_exception(cpu_env, dpc);
++          tcg_temp_free_i32(dpc);
++          return;
++        }
++
 +        decode_opc(ctx->env, ctx);
++        enabled_interrupts = true;
 +        ctx->base.is_jmp = type;
++
++        tcg_gen_movi_tl(cpu_DEf, 0);
++        tcg_gen_movi_tl(cpu_is_delay_slot_instruction, 0);
 +
 +        /* restore the pc back */
 +        tcg_gen_movi_tl(cpu_pc, cpc);
@@ -41787,6 +41895,7 @@ index 0000000000..ef3e688ef0
 +        ctx->pcl = pcl;
 +        ctx->insn = insn;
 +        in_delay_slot = false;
++
 +    }
 +    return;
 +}
@@ -41966,10 +42075,10 @@ index 0000000000..ef3e688ef0
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/translate-inst.h b/target/arc/translate-inst.h
 new file mode 100644
-index 0000000000..dbf6f4dad6
+index 0000000000..9cf08fc20e
 --- /dev/null
 +++ b/target/arc/translate-inst.h
-@@ -0,0 +1,270 @@
+@@ -0,0 +1,286 @@
 +/*
 + * QEMU ARC CPU
 + * Copyright (C) 2016 Michael Rolnik
@@ -42099,17 +42208,33 @@ index 0000000000..dbf6f4dad6
 +#define setZFlag(ELEM)  \
 +    tcg_gen_setcondi_i32(TCG_COND_EQ, cpu_Zf, ELEM, 0);
 +
-+#define nextInsnAddressAfterDelaySlot(R)    tcg_gen_movi_tl(R, ctx->npc);
++#define nextInsnAddressAfterDelaySlot(R) \
++  { \
++    uint16_t delayslot_buffer[2]; \
++    uint8_t delayslot_length; \
++    ctx->env->pc = ctx->cpc; \
++    ctx->env->stat.is_delay_slot_instruction = 1; \
++    delayslot_buffer[0] = cpu_lduw_code(ctx->env, ctx->npc); \
++    delayslot_length = arc_insn_length(delayslot_buffer[0], ctx->env->family); \
++    tcg_gen_movi_tl(R, ctx->npc + delayslot_length); \
++  }
++
++/*
++  TCGLabel *do_not_set_bta = gen_new_label(); \
++  tcg_gen_brcondi_i32(TCG_COND_NE, take_branch, 1, do_not_set_bta); \
++  tcg_gen_mov_tl(cpu_bta, bta); \
++  gen_set_label(do_not_set_bta); \
++*/
 +
 +#define nextInsnAddress(R)  tcg_gen_movi_tl(R, ctx->npc)
 +#define getPCL(R)           tcg_gen_movi_tl(R, ctx->pcl)
 +
 +#define setPC(NEW_PC)                               \
-+    tcg_gen_movi_tl(cpu_DEf, 0);                    \
 +    gen_goto_tb(ctx, 1, NEW_PC);                    \
 +    ret = ret == DISAS_NEXT ? DISAS_NORETURN : ret
 +
-+#define setBLINK(BLINK_ADDR)    tcg_gen_mov_i32(cpu_blink, BLINK_ADDR);
++#define setBLINK(BLINK_ADDR) \
++  tcg_gen_mov_i32(cpu_blink, BLINK_ADDR);
 +
 +#define Carry(R, A)             tcg_gen_shri_tl(R, A, 31);
 +
@@ -42242,10 +42367,10 @@ index 0000000000..dbf6f4dad6
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/translate.c b/target/arc/translate.c
 new file mode 100644
-index 0000000000..4c75fa75b0
+index 0000000000..c1f3609b43
 --- /dev/null
 +++ b/target/arc/translate.c
-@@ -0,0 +1,490 @@
+@@ -0,0 +1,479 @@
 +/*
 + *  QEMU ARC CPU
 + * Copyright (C) 2019 Free Software Foundation, Inc.
@@ -42299,6 +42424,8 @@ index 0000000000..4c75fa75b0
 +TCGv    cpu_Hf;
 +TCGv    cpu_IEf;
 +TCGv    cpu_Ef;
++
++TCGv    cpu_is_delay_slot_instruction;
 +
 +TCGv    cpu_l1_Lf;
 +TCGv    cpu_l1_Zf;
@@ -42442,6 +42569,8 @@ index 0000000000..4c75fa75b0
 +    cpu_IEf = NEW_ARC_REG(stat.IEf);
 +    cpu_Ef  = NEW_ARC_REG(stat.Ef);
 +
++    cpu_is_delay_slot_instruction = NEW_ARC_REG(stat.is_delay_slot_instruction);
++
 +    cpu_l1_Zf = NEW_ARC_REG(stat_l1.Zf);
 +    cpu_l1_Lf = NEW_ARC_REG(stat_l1.Lf);
 +    cpu_l1_Nf = NEW_ARC_REG(stat_l1.Nf);
@@ -42553,10 +42682,13 @@ index 0000000000..4c75fa75b0
 +    return true;
 +}
 +
++extern bool enabled_interrupts;
 +
 +void decode_opc(CPUARCState *env, DisasContext *ctx)
 +{
 +    ctx->env = env;
++
++    enabled_interrupts = false;
 +
 +    const struct arc_opcode *opcode = NULL;
 +    if (!read_and_decode_context(ctx, &opcode)) {
@@ -42569,40 +42701,13 @@ index 0000000000..4c75fa75b0
 +    TCGv npc = tcg_const_local_i32(ctx->npc);
 +    gen_helper_zol_verify(cpu_env, npc);
 +    tcg_temp_free(npc);
-+    //TCGv should_jump_lp_start = tcg_temp_local_new_i32();
-+    //TCGv lp_start_bak = tcg_temp_local_new_i32();
-+    //TCGv zero = tcg_const_local_i32(0);
 +
-+    ///* START: Hardware loop control code. */
-+    //TCGLabel *not_lp_end = gen_new_label();
-+    //TCGLabel *not_count_eq_1 = gen_new_label();
-+    //tcg_gen_movi_tl(should_jump_lp_start, 0);
-+    //tcg_gen_brcondi_i32(TCG_COND_NE, cpu_lpe, ctx->cpc, not_lp_end);
-+    //  tcg_gen_brcondi_i32(TCG_COND_EQ, cpu_lpc, 1, not_count_eq_1);
-+    //    tcg_gen_movi_tl(should_jump_lp_start, 1);
-+    //    tcg_gen_mov_tl(lp_start_bak, cpu_lps);
-+    //  gen_set_label(not_count_eq_1);
-+    //  tcg_gen_subi_tl(cpu_lpc, cpu_lpc, 1);
-+    //gen_set_label(not_lp_end);
-+    ///* END: Hardware loop control code. */
-+
-+    //TCGLabel *do_not_jump = gen_new_label();
-+    //tcg_gen_brcondi_i32(TCG_COND_NE, should_jump_lp_start, 1, do_not_jump);
-+    //  /* NOTE: Trigger the LPE exception */
-+    //  TCGv tmp0 = tcg_temp_local_new_i32();
-+    //  tcg_gen_movi_tl (tmp0, EXCP_LPEND_REACHED);
-+    //  gen_helper_raise_exception(cpu_env, tmp0, zero, cpu_lps);
-+    //  tcg_temp_free(tmp0);
-+    //gen_set_label(do_not_jump);
-+
-+    //tcg_temp_free(should_jump_lp_start);
-+    //tcg_temp_free(lp_start_bak);
-+    //tcg_temp_free(zero);
-+
++    enabled_interrupts = true;
 +}
 +
 +static void arc_tr_translate_insn(DisasContextBase *dcbase, CPUState *cpu)
 +{
++    bool in_a_delayslot_instruction = false;
 +    DisasContext *dc = container_of(dcbase, DisasContext, base);
 +    CPUARCState *env = cpu->env_ptr;
 +
@@ -42610,20 +42715,29 @@ index 0000000000..4c75fa75b0
 +    dc->zero = tcg_const_local_i32(0);
 +    dc->one  = tcg_const_local_i32(1);
 +
++    if(env->stat.is_delay_slot_instruction == 1) {
++        in_a_delayslot_instruction = true;
++    }
++
 +    dc->cpc = dc->base.pc_next;
 +    decode_opc(env, dc);
 +
 +    dc->base.pc_next = dc->npc;
 +    tcg_gen_movi_tl(cpu_npc, dc->npc);
 +
-+    if(env->stat.DEf == 1) {
-+      dc->base.is_jmp = DISAS_BRANCH_IN_DELAYSLOT;
-+      env->stat.DEf = 0;
++    if(in_a_delayslot_instruction == true) {
++      dc->base.is_jmp = DISAS_NORETURN;
++
++      /* Post execution delayslot logic. */
++      TCGLabel *DEf_not_set_label1 = gen_new_label();
++      tcg_gen_brcondi_i32(TCG_COND_NE, cpu_DEf, 1, DEf_not_set_label1);
++      tcg_gen_movi_tl(cpu_DEf, 0);
++      gen_goto_tb(dc, 1, cpu_bta);
++      gen_set_label(DEf_not_set_label1);
++      env->stat.is_delay_slot_instruction = 0;
 +    }
 +
-+    if(dc->base.is_jmp == DISAS_BRANCH_IN_DELAYSLOT) {
-+        gen_goto_tb(dc, 0, cpu_bta);
-+    } else if(dc->base.is_jmp == DISAS_NORETURN) {
++    if(dc->base.is_jmp == DISAS_NORETURN) {
 +        gen_gotoi_tb(dc, 0, dc->npc);
 +    }
 +    else if(dc->base.is_jmp == DISAS_NEXT) {
@@ -42738,10 +42852,10 @@ index 0000000000..4c75fa75b0
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/target/arc/translate.h b/target/arc/translate.h
 new file mode 100644
-index 0000000000..442a7fdcef
+index 0000000000..01989ec53a
 --- /dev/null
 +++ b/target/arc/translate.h
-@@ -0,0 +1,184 @@
+@@ -0,0 +1,186 @@
 +/*
 + *  QEMU ARC CPU
 + *
@@ -42773,7 +42887,7 @@ index 0000000000..442a7fdcef
 +#include "cpu.h"
 +#include "exec/exec-all.h"
 +#include "disas/disas.h"
-+#include "tcg-op.h"
++#include "tcg/tcg-op.h"
 +#include "exec/cpu_ldst.h"
 +
 +#include "exec/helper-proto.h"
@@ -42840,6 +42954,8 @@ index 0000000000..442a7fdcef
 +extern TCGv     cpu_IEf;
 +extern TCGv     cpu_Hf;
 +extern TCGv     cpu_Ef;
++
++extern TCGv    cpu_is_delay_slot_instruction;
 +
 +extern TCGv     cpu_l1_Lf;
 +extern TCGv     cpu_l1_Zf;
@@ -42927,7 +43043,7 @@ index 0000000000..442a7fdcef
 +/*-*-indent-tabs-mode:nil;tab-width:4;indent-line-function:'insert-tab'-*-*/
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/tests/tcg/Makefile.target b/tests/tcg/Makefile.target
-index 3c7421a356..6840754425 100644
+index b3cff3cad1..b2e41ed9ba 100644
 --- a/tests/tcg/Makefile.target
 +++ b/tests/tcg/Makefile.target
 @@ -180,4 +180,7 @@ gdb-%: %
@@ -42940,10 +43056,10 @@ index 3c7421a356..6840754425 100644
  # There is no clean target, the calling make just rm's the tests build dir
 diff --git a/tests/tcg/arc/Makefile b/tests/tcg/arc/Makefile
 new file mode 100644
-index 0000000000..a9f6c5e703
+index 0000000000..85dac5b8ce
 --- /dev/null
 +++ b/tests/tcg/arc/Makefile
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,109 @@
 +-include ../../../config-host.mak
 +
 +CROSS = arc-elf32-
@@ -43016,6 +43132,9 @@ index 0000000000..a9f6c5e703
 +TESTCASES += check_prefetch.tst
 +TESTCASES += check_mac.tst
 +TESTCASES += check_ldaw_mmu.tst
++TESTCASES += check_manip_4_mmu.tst
++TESTCASES += check_manip_5_mmu.tst
++TESTCASES += check_manip_10_mmu.tst
 +TESTCASES += check_manip_mmu.tst
 +TESTCASES += check_rtie_user.tst
 +TESTCASES += check_rtc.tst
@@ -45892,12 +46011,350 @@ index 0000000000..7e172457ab
 +
 +;;;;;;;;;;;;;;;;;;; Finished ;;;;;;;;;;;;;;;;;;;;;;;;;;
 +end
+diff --git a/tests/tcg/arc/check_manip_4_mmu.S b/tests/tcg/arc/check_manip_4_mmu.S
+new file mode 100644
+index 0000000000..ed3c3b26b5
+--- /dev/null
++++ b/tests/tcg/arc/check_manip_4_mmu.S
+@@ -0,0 +1,159 @@
++; check_manip_4_mmu.S
++;
++; Tests for MMU: manipulate MMU table in exception routines.
++; If the test fails, check the end of this file for how to troubleshoot.
++; The running code for this test needs to be in address range >= 0x8000_0000.
++
++  .include "macros.inc"
++  .include "mmu.inc"
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;;; Bunch of constants ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++  .equ INT_VECT_ADDRESS, 0x80000000 ; physical address for IVT
++  .equ STATUS32_AD_BIT , 19         ; Alignment Disable bit
++  ; courtesy of macros.inc and mmu.inc
++  .extern REG_IVT_BASE
++  .extern PAGE_NUMBER_MSK
++  .extern REG_PD0_GLOBAL
++  .extern REG_PD0_VALID
++  .extern REG_PD1_KRNL_W
++
++;;;;;;;;;;;;;;;;;;;;;;;;; Exception related code ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++; Handler of the day.
++  .align 4
++handler : .word 0x0
++
++; An exception handler routine that merely jumps to whatever address
++; it was told to by the test. See set_except_handler macro. This
++; requires ivt.S file to be compiled and linked.
++  .align 4
++  .global EV_TLBMissI
++  .global EV_TLBMissD
++  .global EV_ProtV
++  .type   EV_TLBMissI, @function
++  .type   EV_TLBMissD, @function
++  .type   EV_ProtV, @function
++EV_TLBMissI:
++EV_TLBMissD:
++EV_ProtV:
++  ld  r11, [handler]
++  j   [r11]
++
++; macro:      set_except_handler
++; regs used:  r11
++;
++; This macro writes the provided ADDR to a temporary place holder
++; that later the exception handler routine will jump to.
++.macro set_except_handler   addr
++  mov  r11, \addr
++  st   r11, [handler]
++.endm
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Tests ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++; Let the tests begin
++  start
++  ; use physicall address range for handling exceptions (ivt)
++  mov   r0, INT_VECT_ADDRESS
++  sr    r0, [REG_IVT_BASE]
++; Test case 4
++; Straddle a "branch" and its "delay slot" on two consecutive pages.
++; The first virtual page has an entry in TLB, but the second one (which
++; the delay slot is on) does not. We want to see when fetching the delay
++; slot causes a TLBMissI, things will go back smoothly.
++;
++; first page with TLB entry
++; ,-----.
++; | ... |
++; | nop |
++; | b.d |  branch instruction as the last instruction of the page
++; `-----'
++; ,-----.
++; | dly |  delay instruction on the next page
++; | ... | 
++; |     |
++; `-----'
++; second page without TLB entry
++  .equ T4_VIRT_ADDR, 0x00402000      ; virtual page address
++  .equ T4_PHYS_ADDR, 0x90008000      ; physical page address
++  .equ T4_ADDR_OFS,  0x00001FF8      ; the offset in the page
++  .equ T4_PD0, ((T4_VIRT_ADDR+T4_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD0_GLOBAL | REG_PD0_VALID)
++  .equ T4_PD1, ((T4_PHYS_ADDR+T4_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD1_KRNL_R | REG_PD1_KRNL_E)
++  .equ T4_size, test_4_embedded_code_end - test_4_embedded_code_start
++
++  prep_test_case
++  ; Copy the embedded code into physical page
++  xor_s   r3, r3, r3
++  mov     r0, @test_4_embedded_code_start
++  mov     r1, @T4_PHYS_ADDR+T4_ADDR_OFS
++test_4_copy:
++  ldb.ab  r2, [r0, 1]
++  stb.ab  r2, [r1, 1]
++  add_s   r3, r3, 1
++  cmp     r3, T4_size
++  blt     @test_4_copy
++  ; Add MMU 
++  set_except_handler @test_4_except_handler
++  mmu_tlb_insert T4_PD0, T4_PD1
++  mmu_enable
++  mov     r0, 0x80000000    ; will be used by the code to be executed
++  mov     r1, T4_VIRT_ADDR+T4_ADDR_OFS  ; jump to the copied code
++  j       [r1]
++  ; Have embedded code word-aligned at a place where it will be put.
++  .align 4
++test_4_embedded_code_start:
++  nop
++  b.d     @test_4_virt_finish
++  ld      r1, [r0]
++  nop
++  j       @fail
++  nop
++test_4_virt_finish:
++  j       @test_4_end
++test_4_embedded_code_end:
++; Exception routine that will add entry for the second page
++test_4_except_handler:
++  prep_test_case_address
++  lr      r9, [ecr]
++  cmp     r9, 0x40000                ; TLBMissI?
++  bne     @fail
++  prep_test_case_address
++  lr      r9, [eret]
++  cmp     r9, @T4_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  prep_test_case_address
++  lr      r9, [efa]
++  cmp     r9, @T4_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  prep_test_case_address
++  lr      r9, [bta]
++  cmp     r9, @T4_VIRT_ADDR+T4_ADDR_OFS+T4_size-8    ; BTA correct?
++  jne     @fail
++  prep_test_case_address
++  lr      r9, [erbta]
++  cmp     r9, @T4_VIRT_ADDR+T4_ADDR_OFS+T4_size-8    ; ERBTA correct?
++  jne     @fail
++  mmu_tlb_insert T4_PD0+0x2000, T4_PD1+0x2000
++  rtie
++test_4_end:
++   ; Fall through
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Reporting ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++valhalla:
++  print "[PASS]"
++  b @1f
++
++; If a test fails, it jumps here. Although, for the sake of uniformity,
++; the printed output does not say much about which test case failed,
++; one can uncomment the print_number line below or set a breakpoint
++; here to check the R0 register for the test case number.
++fail:
++  ld r0, [test_nr]
++  print "[FAIL "
++  print_number_hex r0
++  print "]"
++1:
++  print " MMU: manipulate MMU table in exception routines\n"
++  end
+diff --git a/tests/tcg/arc/check_manip_5_mmu.S b/tests/tcg/arc/check_manip_5_mmu.S
+new file mode 100644
+index 0000000000..c75ee56ac8
+--- /dev/null
++++ b/tests/tcg/arc/check_manip_5_mmu.S
+@@ -0,0 +1,167 @@
++; check_manip_5_mmu.S
++;
++; Tests for MMU: manipulate MMU table in exception routines.
++; If the test fails, check the end of this file for how to troubleshoot.
++; The running code for this test needs to be in address range >= 0x8000_0000.
++
++  .include "macros.inc"
++  .include "mmu.inc"
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;;; Bunch of constants ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++  .equ INT_VECT_ADDRESS, 0x80000000 ; physical address for IVT
++  .equ STATUS32_AD_BIT , 19         ; Alignment Disable bit
++  ; courtesy of macros.inc and mmu.inc
++  .extern REG_IVT_BASE
++  .extern PAGE_NUMBER_MSK
++  .extern REG_PD0_GLOBAL
++  .extern REG_PD0_VALID
++  .extern REG_PD1_KRNL_W
++
++;;;;;;;;;;;;;;;;;;;;;;;;; Exception related code ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++; Handler of the day.
++  .align 4
++handler : .word 0x0
++
++; An exception handler routine that merely jumps to whatever address
++; it was told to by the test. See set_except_handler macro. This
++; requires ivt.S file to be compiled and linked.
++  .align 4
++  .global EV_TLBMissI
++  .global EV_TLBMissD
++  .global EV_ProtV
++  .type   EV_TLBMissI, @function
++  .type   EV_TLBMissD, @function
++  .type   EV_ProtV, @function
++EV_TLBMissI:
++EV_TLBMissD:
++EV_ProtV:
++  ld  r11, [handler]
++  j   [r11]
++
++; macro:      set_except_handler
++; regs used:  r11
++;
++; This macro writes the provided ADDR to a temporary place holder
++; that later the exception handler routine will jump to.
++.macro set_except_handler   addr
++  mov  r11, \addr
++  st   r11, [handler]
++.endm
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Tests ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++; Let the tests begin
++  start
++  ; use physicall address range for handling exceptions (ivt)
++  mov   r0, INT_VECT_ADDRESS
++  sr    r0, [REG_IVT_BASE]
++
++; Test case 5
++; Like previous test but with a "branch and link". This is even trickier.
++; BL needs to decode the delay instruction to know its length. It uses
++; this information to determine what value should "BLINK" register hold.
++; Below is the pertinent semantic:
++;
++;   delay_insn_addr = bl_insn_addr + bl_insn_len
++;   delay_insn_len  = decode(delay_insn_addr)
++; BLINK = bl_insn_addr + bl_insn_len + delay_insn_len
++;
++; If the "delay slot" instruction is on a missing page, a TLBMissI is
++; raised during "decode(delay_insn_addr)". This all happens while the
++; "BL" instruction is being handled (and not the delay slot):
++;
++; ecr   = 0x40000 (TLBMissI)
++; eret  = bl_insn_addr   --> for previous test, this is delay_insn_addr
++; efa   = delay_insn_addr
++; blink = old value (not updated)
++  .equ T5_VIRT_ADDR, 0x00602000      ; virtual page address
++  .equ T5_PHYS_ADDR, 0xA0008000      ; physical page address
++  .equ T5_ADDR_OFS,  0x00001FF8      ; the offset in the page
++  .equ T5_PD0, ((T5_VIRT_ADDR+T5_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD0_GLOBAL | REG_PD0_VALID)
++  .equ T5_PD1, ((T5_PHYS_ADDR+T5_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD1_KRNL_R | REG_PD1_KRNL_E)
++  .equ T5_size, test_5_embedded_code_end - test_5_embedded_code_start
++
++  prep_test_case
++  prep_test_case
++  ; Copy the embedded code into physical page
++  xor_s   r3, r3, r3
++  mov     r0, @test_5_embedded_code_start
++  mov     r1, @T5_PHYS_ADDR+T5_ADDR_OFS
++test_5_copy:
++  ldb.ab  r2, [r0, 1]
++  stb.ab  r2, [r1, 1]
++  add_s   r3, r3, 1
++  cmp     r3, T5_size
++  blt     @test_5_copy
++  ; Add MMU 
++  set_except_handler @test_5_except_handler
++  mmu_tlb_insert T5_PD0, T5_PD1
++  mmu_enable
++  lr      r4, [bta]         ; remember the old bta value
++  mov     r0, 0x80000000    ; will be used by the code to be executed
++  mov     r1, T5_VIRT_ADDR+T5_ADDR_OFS  ; jump to the copied code
++  j       [r1]
++  ; Have embedded code word-aligned at a place where it will be put.
++  .align 4
++test_5_embedded_code_start:
++  nop
++  bl.d     @test_5_virt_finish
++  ld      r1, [r0]
++  nop
++  j       @fail
++  nop
++test_5_virt_finish:
++  j       @test_5_end
++test_5_embedded_code_end:
++; Exception routine that will add entry for the second page
++test_5_except_handler:
++  prep_test_case_address
++  lr      r9, [ecr]
++  print_number_hex r9
++  cmp     r9, 0x40000                ; TLBMissI?
++  bne     @fail
++  prep_test_case_address
++  lr      r9, [eret]
++  print_number_hex r9
++  cmp     r9, @T5_VIRT_ADDR+0x2000-4 ; Beginning of second page?
++  jne     @fail
++  prep_test_case_address
++  lr      r9, [efa]
++  print_number_hex r9
++  cmp     r9, @T5_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  prep_test_case_address
++  lr      r9, [bta]
++  print_number_hex r9
++  cmp     r9, r4                     ; BTA not updated? (still old?)
++  jne     @fail
++  prep_test_case_address
++  lr      r9, [erbta]
++  cmp     r9, r4                     ; ERBTA same as not updated BTA?
++  jne     @fail
++  mmu_tlb_insert T5_PD0+0x2000, T5_PD1+0x2000
++  rtie
++test_5_end:
++   ; Fall through
++
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Reporting ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++valhalla:
++  print "[PASS]"
++  b @1f
++
++; If a test fails, it jumps here. Although, for the sake of uniformity,
++; the printed output does not say much about which test case failed,
++; one can uncomment the print_number line below or set a breakpoint
++; here to check the R0 register for the test case number.
++fail:
++  ld r0, [test_nr]
++  print "[FAIL "
++  print_number_hex r0
++  print "]"
++1:
++  print " MMU: manipulate MMU table in exception routines\n"
++  end
 diff --git a/tests/tcg/arc/check_manip_mmu.S b/tests/tcg/arc/check_manip_mmu.S
 new file mode 100644
-index 0000000000..4ec0401200
+index 0000000000..3530fb5d37
 --- /dev/null
 +++ b/tests/tcg/arc/check_manip_mmu.S
-@@ -0,0 +1,305 @@
+@@ -0,0 +1,565 @@
 +; check_manip_mmu.S
 +;
 +; Tests for MMU: manipulate MMU table in exception routines.
@@ -45918,37 +46375,6 @@ index 0000000000..4ec0401200
 +  .extern REG_PD0_VALID
 +  .extern REG_PD1_KRNL_W
 +
-+;;;;;;;;;;;;;;;;;;;;;;;;;;; Test checking routines ;;;;;;;;;;;;;;;;;;;;;;;;;;
-+
-+; Test case counter
-+.data
-+test_nr:
-+  .word 0x0
-+
-+; Increment the test counter
-+.macro prep_test_case
-+  ld    r13, [test_nr]
-+  add_s r13, r13, 1       ; increase test case counter
-+  st    r13, [test_nr]
-+  mmu_disable
-+  set_except_handler 0x0
-+  enable_alignment
-+.endm
-+
-+; Disable alignment so there will be no Misaligned exception
-+.macro disable_alignment
-+  lr    r11, [status32]
-+  bset  r11, r11, STATUS32_AD_BIT
-+  flag  r11
-+.endm
-+
-+; Enable alignment again.
-+.macro enable_alignment
-+  lr    r11, [status32]
-+  bclr  r11, r11, STATUS32_AD_BIT
-+  flag  r11
-+.endm
-+
 +;;;;;;;;;;;;;;;;;;;;;;;;; Exception related code ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 +
 +; Handler of the day.
@@ -45959,19 +46385,25 @@ index 0000000000..4ec0401200
 +; it was told to by the test. See set_except_handler macro. This
 +; requires ivt.S file to be compiled and linked.
 +  .align 4
++  .global EV_TLBMissI
 +  .global EV_TLBMissD
 +  .global EV_ProtV
++  .global instruction_error
++  .type   EV_TLBMissI, @function
 +  .type   EV_TLBMissD, @function
 +  .type   EV_ProtV, @function
++  .type   instruction_error, @function
++EV_TLBMissI:
 +EV_TLBMissD:
 +EV_ProtV:
++instruction_error:
 +  ld  r11, [handler]
 +  j   [r11]
 +
 +; macro:      set_except_handler
 +; regs used:  r11
 +;
-+; This macro writes the provided ADDR to a temporary place holder
++; This macro writes the provided ADDR to a temporary place 
 +; that later the exception handler routine will jump to.
 +.macro set_except_handler   addr
 +  mov  r11, \addr
@@ -46034,7 +46466,7 @@ index 0000000000..4ec0401200
 +  cmp     r2, 1               ; TLBMissD while loading?
 +  bne     @1f
 +  lr      r11, [ecr]
-+  cmp     r11, 0x50100        ; TLBMissD during a load?
++  cmp     r11, TLB_MISS_D_READ; TLBMissD during a load?
 +  bne     @fail
 +  lr      r11, [eret]
 +  cmp     r11, @test_1_ld     ; instruction causing the exception
@@ -46179,12 +46611,296 @@ index 0000000000..4ec0401200
 +  cmp     r11, @test_3_ld
 +  jne     @fail
 +  lr      r11, [efa]
-+  cmp     r11, T3_VIRT_ADDR_2
++  cmp     r11, @T3_VIRT_ADDR_2
 +  jne     @fail
 +  mmu_tlb_insert T3_PD0_ENT2, T3_PD1_ENT2
 +  rtie
 +test_3_end:
 +  ; Fall through
++
++; Test case 4
++; Straddle a "branch" and its "delay slot" on two consecutive pages.
++; The first virtual page has an entry in TLB, but the second one (which
++; the delay slot is on) does not. We want to see when fetching the delay
++; slot causes a TLBMissI, things will go back smoothly.
++;
++; first page with TLB entry
++; ,-----.
++; | ... |
++; | nop |
++; | b.d |  branch instruction as the last instruction of the page
++; `-----'
++; ,-----.
++; | dly |  delay instruction on the next page
++; | ... | 
++; |     |
++; `-----'
++; second page without TLB entry
++  .equ T4_VIRT_ADDR, 0x00402000      ; virtual page address
++  .equ T4_PHYS_ADDR, 0x90008000      ; physical page address
++  .equ T4_ADDR_OFS,  0x00001FF8      ; the offset in the page
++  .equ T4_PD0, ((T4_VIRT_ADDR+T4_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD0_GLOBAL | REG_PD0_VALID)
++  .equ T4_PD1, ((T4_PHYS_ADDR+T4_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD1_KRNL_R | REG_PD1_KRNL_E)
++  .equ T4_size, test_4_embedded_code_end - test_4_embedded_code_start
++
++  prep_test_case
++  ; Copy the embedded code into physical page
++  xor_s   r3, r3, r3
++  mov     r0, @test_4_embedded_code_start
++  mov     r1, @T4_PHYS_ADDR+T4_ADDR_OFS
++test_4_copy:
++  ldb.ab  r2, [r0, 1]
++  stb.ab  r2, [r1, 1]
++  add_s   r3, r3, 1
++  cmp     r3, T4_size
++  blt     @test_4_copy
++  ; Add MMU 
++  set_except_handler @test_4_except_handler
++  mmu_tlb_insert T4_PD0, T4_PD1
++  mmu_enable
++  mov     r1, T4_VIRT_ADDR+T4_ADDR_OFS  ; jump to the copied code
++  j       [r1]
++  ; Have embedded code word-aligned at a place where it will be put.
++  .align 4
++test_4_embedded_code_start:
++  nop
++  b.d     @test_4_virt_finish
++  add     r1, r0, r0
++  nop
++  j       @fail
++  nop
++test_4_virt_finish:
++  j       @test_4_end
++test_4_embedded_code_end:
++; Exception routine that will add entry for the second page
++test_4_except_handler:
++  lr      r11, [ecr]
++  cmp     r11, TLB_MISS_I
++  bne     @fail
++  lr      r11, [eret]
++  cmp     r11, @T4_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  lr      r11, [efa]
++  cmp     r11, @T4_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  lr      r11, [bta]
++  cmp     r11, @T4_VIRT_ADDR+T4_ADDR_OFS+T4_size-8    ; BTA correct?
++  jne     @fail
++  lr      r11, [erbta]
++  cmp     r11, @T4_VIRT_ADDR+T4_ADDR_OFS+T4_size-8    ; ERBTA correct?
++  jne     @fail
++  mmu_tlb_insert T4_PD0+0x2000, T4_PD1+0x2000
++  rtie
++test_4_end:
++   ; Fall through
++
++; Test case 5
++; Like previous test but with a "branch and link". This is even trickier.
++; BL needs to decode the delay instruction to know its length. It uses
++; this information to determine what value should "BLINK" register hold.
++; Below is the pertinent semantic:
++;
++;   delay_insn_addr = bl_insn_addr + bl_insn_len
++;   delay_insn_len  = decode(delay_insn_addr)
++; BLINK = bl_insn_addr + bl_insn_len + delay_insn_len
++;
++; If the "delay slot" instruction is on a missing page, a TLBMissI is
++; raised during "decode(delay_insn_addr)". This all happens while the
++; "BL" instruction is being handled (and not the delay slot):
++;
++; ecr   = 0x40000 (TLBMissI)
++; eret  = bl_insn_addr   --> for previous test, this is delay_insn_addr
++; efa   = delay_insn_addr
++; bta   = old value (not updated)
++; blink = old value (not updated)
++  .equ T5_VIRT_ADDR, 0x00602000      ; virtual page address
++  .equ T5_PHYS_ADDR, 0xA0008000      ; physical page address
++  .equ T5_ADDR_OFS,  0x00001FF8      ; the offset in the page
++  .equ T5_PD0, ((T5_VIRT_ADDR+T5_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD0_GLOBAL | REG_PD0_VALID)
++  .equ T5_PD1, ((T5_PHYS_ADDR+T5_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD1_KRNL_R | REG_PD1_KRNL_E)
++  .equ T5_size, test_5_embedded_code_end - test_5_embedded_code_start
++
++  prep_test_case
++  ; Copy the embedded code into physical page
++  xor_s   r3, r3, r3
++  mov     r0, @test_5_embedded_code_start
++  mov     r1, @T5_PHYS_ADDR+T5_ADDR_OFS
++test_5_copy:
++  ldb.ab  r2, [r0, 1]
++  stb.ab  r2, [r1, 1]
++  add_s   r3, r3, 1
++  cmp     r3, T5_size
++  blt     @test_5_copy
++  ; Add MMU 
++  set_except_handler @test_5_except_handler
++  mmu_tlb_insert T5_PD0, T5_PD1
++  mmu_enable
++  lr      r4, [bta]         ; remember the old bta value
++  mov     r5, blink         ; remember the old blink value
++  mov     r1, T5_VIRT_ADDR+T5_ADDR_OFS  ; jump to the copied code
++  j       [r1]
++  ; Have embedded code word-aligned at a place where it will be put.
++  .align 4
++test_5_embedded_code_start:
++  nop
++  bl.d    @test_5_virt_finish
++  add     r1, r0, r0
++  nop
++  j       @fail
++  nop
++test_5_virt_finish:
++  j       @test_5_end
++test_5_embedded_code_end:
++; Exception routine that will add entry for the second page
++test_5_except_handler:
++  lr      r11, [ecr]
++  cmp     r11, TLB_MISS_I
++  bne     @fail
++  lr      r11, [eret]
++  cmp     r11, @T5_VIRT_ADDR+0x2000-4 ; Last instruction of the first page (bl)?
++  jne     @fail
++  lr      r11, [efa]
++  cmp     r11, @T5_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  lr      r11, [bta]
++  cmp     r11, r4                     ; BTA not updated? (still old?)
++  jne     @fail
++  lr      r11, [erbta]
++  cmp     r11, r4                     ; ERBTA same as not-updated-BTA?
++  mov     r11, blink
++  cmp     r11, r5                     ; BLINK not updated? (still old?)
++  jne     @fail
++  mmu_tlb_insert T5_PD0+0x2000, T5_PD1+0x2000
++  rtie
++test_5_end:
++   ; Fall through
++
++; Test case 6: BLINK register must be updated immediately after "BL".
++  prep_test_case
++  bl.d    @test_6_branch_taken
++  mov     r0, blink
++test_6_after_delay_slot:
++  b       @fail
++  .align 4
++test_6_branch_taken:
++  mov     r1, @test_6_after_delay_slot
++  cmp     r0, r1
++  bne     @fail
++
++; Test case 7: BTA register must be updated immediately after "BL".
++  prep_test_case
++  bl.d    @test_7_branch_taken
++  lr      r0, [bta]
++  b       @fail
++  .align 4
++test_7_branch_taken:
++  mov     r1, @test_7_branch_taken
++  cmp     r0, r1
++  bne     @fail
++
++;; Test case 8: Exceptions other than TLBMissI for the delay slot of BL
++;; In this case, such exceptions are deep in decoding pipeline and should
++;; cause a normal exception like any other instructions, where ERET is
++;; pointing to the delay slot and not the BL instruction, like the previous
++;; tests.
++;  prep_test_case
++;  set_except_handler @test_8_except_handler
++;  bl.d    @test_8_end
++;test_8_delay_slot:
++;  lr      r0, [blink]              ; InstructionError
++;  b       @fail
++;; Exception routine that will add entry for the second page
++;test_8_except_handler:
++;  lr      r11, [ecr]
++;  cmp     r11, ILLEGAL_INSTRUCTION
++;  bne     @fail
++;  lr      r11, [eret]
++;  cmp     r11, @test_8_delay_slot
++;  jne     @fail
++;  lr      r11, [efa]
++;  cmp     r11, @test_8_delay_slot
++;  jne     @fail
++;  lr      r11, [erbta]
++;  cmp     r11, @test_8_end
++;  jne     @fail
++;  lr      r11, [bta]
++;  cmp     r11, @test_8_end
++;  jne     @fail
++;  sr      r11, [eret]             ; Get out of delay slot by jumping to BTA
++;  lr      r11, [erstatus]
++;  bclr    r11, r11, 6             ; Clear delay slot execution flag
++;  sr      r11, [erstatus]
++;  rtie
++;  b       @fail
++;  .align 4
++;test_8_end:
++;  ; Fall through
++
++; Test case 9
++; Like test case 5, but the CC is false here. Although, there is no need
++; for the calculation of BLINK and the _early_ decode of delay slot
++; instruction, still TLBMissI exception for the delay slot instruction
++; happens during the execution of "BLne.D". This is how the hardware
++; works.
++; ecr   = 0x40000 (TLBMissI)
++; eret  = bl_insn_addr
++; efa   = delay_insn_addr
++; bta   = old value (not updated)
++; blink = old value (not updated)
++  .equ T9_VIRT_ADDR, 0x00606000      ; virtual page address
++  .equ T9_PHYS_ADDR, 0xA000A000      ; physical page address
++  .equ T9_ADDR_OFS,  0x00001FF4      ; the offset in the page
++  .equ T9_PD0, ((T9_VIRT_ADDR+T9_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD0_GLOBAL | REG_PD0_VALID)
++  .equ T9_PD1, ((T9_PHYS_ADDR+T9_ADDR_OFS & PAGE_NUMBER_MSK) | REG_PD1_KRNL_R | REG_PD1_KRNL_E)
++  .equ T9_size, test_9_embedded_code_end - test_9_embedded_code_start
++
++  prep_test_case
++  ; Copy the embedded code into physical page
++  xor_s   r3, r3, r3
++  mov     r0, @test_9_embedded_code_start
++  mov     r1, @T9_PHYS_ADDR+T9_ADDR_OFS
++test_9_copy:
++  ldb.ab  r2, [r0, 1]
++  stb.ab  r2, [r1, 1]
++  add_s   r3, r3, 1
++  cmp     r3, T9_size
++  blt     @test_9_copy
++  ; Add MMU 
++  set_except_handler @test_9_except_handler
++  mmu_tlb_insert T9_PD0, T9_PD1
++  mmu_enable
++  lr      r4, [bta]                     ; remember the old bta value
++  mov     r1, T9_VIRT_ADDR+T9_ADDR_OFS  ; jump to the copied code
++  j       [r1]
++  ; Have embedded code word-aligned at a place where it will be put.
++  .align 4
++test_9_embedded_code_start:
++  add.f   0, 0, 0
++  blne.d  @fail
++  add     r0, r0, r0
++  j       @test_9_end
++test_9_embedded_code_end:
++; Exception routine that will add entry for the second page
++test_9_except_handler:
++  lr      r11, [ecr]
++  cmp     r11, TLB_MISS_I
++  bne     @fail
++  lr      r11, [eret]
++  cmp     r11, @T9_VIRT_ADDR+0x2000-4 ; Last instruction of the first page (blne.d)?
++  jne     @fail
++  lr      r11, [efa]
++  cmp     r11, @T9_VIRT_ADDR+0x2000   ; Beginning of second page?
++  jne     @fail
++  lr      r11, [bta]
++  cmp     r11, r4                     ; BTA not updated? (still old?)
++  jne     @fail
++  lr      r11, [erbta]
++  cmp     r11, r4                     ; ERBTA same as not updated BTA?
++  jne     @fail
++  mmu_tlb_insert T9_PD0+0x2000, T9_PD1+0x2000
++  rtie
++test_9_end:
++   ; Fall through
 +
 +;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Reporting ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 +
@@ -46192,6 +46908,7 @@ index 0000000000..4ec0401200
 +  print "[PASS]"
 +  b @1f
 +
++.align 4
 +; If a test fails, it jumps here. Although, for the sake of uniformity,
 +; the printed output does not say much about which test case failed,
 +; one can uncomment the print_number line below or set a breakpoint
@@ -48062,10 +48779,10 @@ index 0000000000..39af256ed8
 +  end
 diff --git a/tests/tcg/arc/macros.inc b/tests/tcg/arc/macros.inc
 new file mode 100644
-index 0000000000..1230c5b614
+index 0000000000..36b2e722f6
 --- /dev/null
 +++ b/tests/tcg/arc/macros.inc
-@@ -0,0 +1,261 @@
+@@ -0,0 +1,263 @@
 +.equ MAX_TESTNAME_LEN, 32
 +.macro test_name name
 +    .data
@@ -48256,6 +48973,8 @@ index 0000000000..1230c5b614
 +.equ ILLEGAL_INSTRUCTION         , 0x00020000
 +.equ ILLEGAL_INSTRUCTION_SEQUENCE, 0x00020100
 +.equ MACHINE_CHECK               , 0x00030000
++.equ TLB_MISS_I                  , 0x00040000
++.equ TLB_MISS_D_READ             , 0x00050100
 +.equ PRIVILEGE_VIOLATION         , 0x00070000
 +.equ SOFTWARE_INTERRUPT          , 0x00080000
 +.equ MISALIGNED_DATA_ACCESS      , 0x000D0000
@@ -48347,10 +49066,10 @@ index 0000000000..53772484fc
 +PROVIDE (__end_heap = (0xFFFF) );
 diff --git a/tests/tcg/arc/mmu.inc b/tests/tcg/arc/mmu.inc
 new file mode 100644
-index 0000000000..11153ce649
+index 0000000000..be3c1b3fdd
 --- /dev/null
 +++ b/tests/tcg/arc/mmu.inc
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,133 @@
 +
 +; auxilary registers
 +.equ REG_PD0     , 0x460  ; TLBPD0
@@ -48447,6 +49166,43 @@ index 0000000000..11153ce649
 +  sr  r11, [REG_TLB_CMD]
 +.endm
 +; vim: set syntax=asm ts=2 sw=2 et:
++
++;;;;;;;;;;;;;;;;;;;;;;;;;;; Test checking routines ;;;;;;;;;;;;;;;;;;;;;;;;;;
++
++; Test case counter
++.data
++test_nr:
++  .word 0x0
++
++; Increment the test counter
++.macro prep_test_case
++  ld    r13, [test_nr]
++  add_s r13, r13, 1       ; increase test case counter
++  st    r13, [test_nr]
++  mmu_disable
++  set_except_handler 0x0
++  enable_alignment
++.endm
++
++; Increment the test counter
++.macro prep_test_case_address
++  st    pcl, [test_nr]
++.endm
++
++; Disable alignment so there will be no Misaligned exception
++.macro disable_alignment
++  lr    r11, [status32]
++  bset  r11, r11, STATUS32_AD_BIT
++  flag  r11
++.endm
++
++; Enable alignment again.
++.macro enable_alignment
++  lr    r11, [status32]
++  bclr  r11, r11, STATUS32_AD_BIT
++  flag  r11
++.endm
++
 diff --git a/tests/tcg/arc/mpu.inc b/tests/tcg/arc/mpu.inc
 new file mode 100644
 index 0000000000..1824ef264b
@@ -49000,10 +49756,10 @@ index 0000000000..c3fe345511
 +        st      r2, [0x90000000]`\
 +        b       1b`
 diff --git a/tests/tcg/configure.sh b/tests/tcg/configure.sh
-index 6c4a471aea..35a9dcc90a 100755
+index eaaaff6233..92f9134ae8 100755
 --- a/tests/tcg/configure.sh
 +++ b/tests/tcg/configure.sh
-@@ -83,7 +83,7 @@ for target in $target_list; do
+@@ -85,7 +85,7 @@ for target in $target_list; do
      xtensa|xtensaeb)
        arches=xtensa
        ;;
