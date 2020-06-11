@@ -1,4 +1,4 @@
-# Zephyr SDK with Crosstool NG
+   # Zephyr SDK with Crosstool NG
 
 This project is to replace the previous Yocto based SDK with a new framework for
 building the Zephyr SDK using [crosstool-ng](https://crosstool-ng.github.io/).
