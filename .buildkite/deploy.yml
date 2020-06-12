@@ -1,0 +1,35 @@
+steps:
+  - command:
+      - sudo apt-get install -y makeself p7zip-full cpio tree curl
+      - sudo pip3 install setuptools
+      - sudo pip3 install awscli
+      - >
+        if [ "${BUILDKITE_PULL_REQUEST}" != "false" ]; then
+           sed -i "s/$$/-pr-${BUILDKITE_PULL_REQUEST}/" VERSION;
+        fi
+      - release=$(cat VERSION)
+      - echo "Release - [$${release}] $${release}"
+
+      - >
+        if [ -n "${BUILDKITE_TAG}" ]; then
+           if [ "${BUILDKITE_TAG}" != $${release} ]; then
+              echo "Need to fix VERSION file.  Tag ${BUILDKITE_TAG} doesn't match $${release}"
+              #exit 1
+           fi
+           export S3_PUB_PATH="s3://builds.zephyrproject.org/sdk/${BUILDKITE_TAG}/"
+        elif [ "${BUILDKITE_PULL_REQUEST}" != "false" ]; then
+           export S3_PUB_PATH="s3://builds.zephyrproject.org/zephyrproject-rtos/sdk-ng/${BUILDKITE_PULL_REQUEST}/"        
+        fi
+      - echo "S3_PUB_PATH - [$${S3_PUB_PATH}]"
+      - mkdir -p scripts/toolchains
+      - cd scripts/toolchains
+      - buildkite-agent artifact download *.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - buildkite-agent artifact download *.sh . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - chmod a+x *.sh     
+      - cd ..
+      - tree -H '.' -L 1 --noreport --charset utf-8 toolchains > index.html
+      - ./make_zephyr_sdk.sh
+      - ls -F
+      - sdk_filename=$(ls -1 zephyr-sdk*)
+      - toolchain_files=$(ls -1 zephyr-toolchain-*)
+      - hosttools_filename=$(ls -1 toolchains/*hosttools*)
