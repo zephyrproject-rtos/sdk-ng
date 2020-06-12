@@ -28,7 +28,7 @@ steps:
          buildkite-agent artifact upload cmake.tar.bz2;
       else
          touch $${TARGET}.tar.bz2;
-         buildkite-agent artifact upload $${TARGET}.tar.bz2;         
+         buildkite-agent artifact upload $${TARGET}.tar.bz2;
       fi
     parallelism: 16
     env:
