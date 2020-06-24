@@ -146,9 +146,11 @@ create_toolchain()
 		mkdir -p toolchains/${arch}
 		ln toolchains/${file_gcc_arch} toolchains/${arch}
 		ln toolchains/${file_hosttools} toolchains/${arch}
+		ln toolchains/${file_cmake} toolchains/${arch}
 
 		setup_hdr $setup $toolchain_name
 		setup_arch $setup $arch
+	        setup_cmake $setup
 		setup_host $setup
 		setup_ftr_toolchain $setup
 
@@ -158,6 +160,7 @@ create_toolchain()
 		rm $setup
 		rm toolchains/${arch}/${file_gcc_arch}
 		rm toolchains/${arch}/${file_hosttools}
+		rm toolchains/${arch}/${file_cmake}
 		rmdir toolchains/${arch}
 	fi
 }
