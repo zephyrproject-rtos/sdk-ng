@@ -1,5 +1,14 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.11.4
+- General:
+  * Fixed issue with cmake files not being installed in arch specific
+    toolchan packages
+
+- newlib:
+  * Fix setting of -DMISSING_SYSCALL_NAMES consistent on all builds
+  * Set march=pentium for 32-bit x86 build
+
 ## Zephyr SDK 0.11.3
 - General:
   * Added cmake package support to make it easier to find toolchain
