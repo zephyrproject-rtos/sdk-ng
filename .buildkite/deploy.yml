@@ -1,8 +1,5 @@
 steps:
   - command:
-      - sudo apt-get install -y makeself p7zip-full cpio tree curl
-      - sudo pip3 install setuptools
-      - sudo pip3 install awscli
       - >
         if [ "${BUILDKITE_PULL_REQUEST}" != "false" ]; then
            sed -i "s/$$/-pr-${BUILDKITE_PULL_REQUEST}/" VERSION;
@@ -33,3 +30,66 @@ steps:
       - sdk_filename=$(ls -1 zephyr-sdk*)
       - toolchain_files=$(ls -1 zephyr-toolchain-*)
       - hosttools_filename=$(ls -1 toolchains/*hosttools*)
+      - >
+        if [ -n "${BUILDKITE_TAG}" ]; then
+              # Define variables.
+              GH_API="https://api.github.com"
+              GH_REPO="$$GH_API/repos/zephyrproject-rtos/sdk-ng"
+              GH_TAGS="$$GH_REPO/releases/tags/$BUILDKITE_TAG"
+              AUTH="Authorization: token $$GH_TOKEN"
+
+              # Validate token.
+              curl -o /dev/null -sH "$$AUTH" $$GH_REPO || { echo "Error - Invalid repo, token or network issue!";  exit 1; }
+
+              # Read asset tags.
+              response=$(curl -sH "$$AUTH" $$GH_TAGS)
+              # Get ID of the asset based on given filename.
+              eval $(echo "$$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')
+              [ "$$id" ] || { echo "Error: Failed to get release id for tag: $$tag"; echo "$$response" | awk 'length($$0)<100' >&2; exit 1; }
+
+              # Upload asset
+              echo "Uploading asset $${sdk_filename}... "
+              # Construct url
+              GH_ASSET="https://uploads.github.com/repos/zephyrproject-rtos/sdk-ng/releases/$$id/assets?name=\"$(basename $$sdk_filename)\""
+              echo $${GH_ASSET}
+              curl --data-binary @"$${sdk_filename}" -H "$$AUTH" -H "Content-Type: application/octet-stream" $${GH_ASSET};
+              echo
+
+              # Upload asset
+              echo "Uploading asset $${hosttools_filename}... "
+              # Construct url
+              GH_ASSET="https://uploads.github.com/repos/zephyrproject-rtos/sdk-ng/releases/$$id/assets?name=\"$(basename $$hosttools_filename)\""
+              echo $${GH_ASSET}
+              curl --data-binary @"$${hosttools_filename}" -H "$$AUTH" -H "Content-Type: application/octet-stream" $${GH_ASSET};
+              echo
+
+              for toolchain in $$toolchain_files; do
+                # Upload asset
+                echo "Uploading asset $${toolchain}... "
+                # Construct url
+                GH_ASSET="https://uploads.github.com/repos/zephyrproject-rtos/sdk-ng/releases/$$id/assets?name=\"$(basename $$toolchain)\""
+                echo $${GH_ASSET}
+                curl --data-binary @"$${toolchain}" -H "$$AUTH" -H "Content-Type: application/octet-stream" $${GH_ASSET};
+                echo
+              done
+        fi
+
+      - >
+        if [ $${S3_PUB_PATH} ]; then
+           echo "Uploading to S3"
+           aws s3 cp $${sdk_filename} $${S3_PUB_PATH}
+           aws s3 cp $${hosttools_filename} $${S3_PUB_PATH}
+           for toolchain in $${toolchain_files}; do
+              aws s3 cp $${toolchain} $${S3_PUB_PATH}
+           done
+        fi
+
+    plugins:
+      - docker#v3.5.0:
+          image: "zephyrprojectrtos/sdk-build"
+          propagate-environment: true
+          user: buildkite-agent
+          environment:
+          - "GH_TOKEN"
+    agents:
+    - "queue=sdk-ng-x86"
