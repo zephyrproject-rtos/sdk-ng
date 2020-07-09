@@ -43,7 +43,7 @@ steps:
 
   - wait
 
-  - trigger: "sdk-deploy"
+  - trigger: "sdk-ng-deploy"
     if: build.tag != null || build.pull_request.id != null
     build:
       message: "${BUILDKITE_MESSAGE}"
