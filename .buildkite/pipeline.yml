@@ -19,15 +19,25 @@ steps:
          14) TARGET="xtensa_intel_s1000";;
          15) TARGET="cmake";;
       esac
+    - ./go.sh $${TARGET}
     - >
       if [ $${TARGET} = "tools" ]; then
-         touch zephyr-sdk-x86_64-hosttools-standalone-0.9.sh;
          buildkite-agent artifact upload zephyr-sdk-x86_64-hosttools-standalone-0.9.sh;
       elif [ $${TARGET} = "cmake" ]; then
-         touch cmake.tar.bz2;
          buildkite-agent artifact upload cmake.tar.bz2;
       else
-         touch $${TARGET}.tar.bz2;
+         cd build/output
+         case "$${TARGET}" in
+           xtensa_*)
+             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.tar.bz2 xtensa/$${TARGET#xtensa_}/*-zephyr-*;
+             buildkite-agent artifact upload xtensa/$${TARGET#xtensa_}/*-zephyr-*/build.log.bz2
+             ;;
+           *)
+             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.tar.bz2 *-zephyr-*;
+             buildkite-agent artifact upload *-zephyr-*/build.log.bz2
+             ;;
+         esac
+         cd ../..
          buildkite-agent artifact upload $${TARGET}.tar.bz2;         
       fi
     parallelism: 16
