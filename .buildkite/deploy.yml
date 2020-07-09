@@ -1,8 +1,6 @@
 steps:
   - command:
-      - sudo apt-get install -y makeself p7zip-full cpio tree curl
-      - sudo pip3 install setuptools
-      - sudo pip3 install awscli
+      - export
       - >
         if [ "${BUILDKITE_PULL_REQUEST}" != "false" ]; then
            sed -i "s/$$/-pr-${BUILDKITE_PULL_REQUEST}/" VERSION;
