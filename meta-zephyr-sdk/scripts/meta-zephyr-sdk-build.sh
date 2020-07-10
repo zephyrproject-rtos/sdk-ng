@@ -79,7 +79,7 @@ newbuild()
 	echo "BBFILES ?= \"\"" >> $bblayers
 	echo "BBLAYERS ?= \" \\" >> $bblayers
 	echo "  $META_POKY_SOURCE/meta \\" >> $bblayers
-	echo "  $META_POKY_SOURCE/meta-yocto \\" >> $bblayers
+	echo "  $META_POKY_SOURCE/meta-poky \\" >> $bblayers
 	echo "  $META_POKY_SOURCE/meta-yocto-bsp \\" >> $bblayers
 	echo "  $META_ZEPHYR_SDK_SOURCE \\" >> $bblayers
 	echo "  \" " >> $bblayers
