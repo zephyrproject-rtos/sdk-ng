@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 
-POKY_KNOWN_COMMIT=${POKY_COMMIT:-"dc8508f609974cc99606b9042bfa7f870ce80228"}
+POKY_KNOWN_COMMIT=${POKY_COMMIT:-"febbe2944c0c4a04b85fa98fdc261186115954d8"}
 META_ZEPHYR_SDK_SOURCE=${SDK_SOURCE:-"meta-zephyr-sdk"}
 META_POKY_SOURCE=${POKY_SOURCE:-"poky"}
 META_ZEPHYR_SDK_SOURCE=$(readlink -f $META_ZEPHYR_SDK_SOURCE)
@@ -37,12 +37,3 @@ fi
 # Checkout the commit known to build...
 cd $META_POKY_SOURCE
 git checkout $POKY_KNOWN_COMMIT
-
-# Patch poky with meta-zephyr-sdk patches
-if [ -d $META_ZEPHYR_SDK_SOURCE/patches ] ; then
-	echo "Patching poky in: $PWD"
-	for i in $META_ZEPHYR_SDK_SOURCE/patches/*.patch;
-	do
-	    patch -s -p1 < $i;
-	done
-fi
