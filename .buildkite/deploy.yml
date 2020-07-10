@@ -86,7 +86,7 @@ steps:
 
     plugins:
       - docker#v3.5.0:
-          image: "zephyrprojectrtos/sdk-build"
+          image: "zephyrprojectrtos/sdk-build:v1.0.0"
           propagate-environment: true
           user: buildkite-agent
           environment:
