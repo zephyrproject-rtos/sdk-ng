@@ -12,7 +12,7 @@ if [ "$TARGETS" == "all" ]; then
 	TARGETS=${TARGETS}" tools"
 fi
 
-COMMIT="3f461da11f1f8e9dcfdffef24e1982b5ffd10305"
+COMMIT="ffd4073cae4221c33070e3990a304b834947da63"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
@@ -52,7 +52,7 @@ for t in ${TARGETS}; do
 done
 
 if [ ! -d "crosstool-ng" ]; then
-	git clone https://github.com/crosstool-ng/crosstool-ng.git
+	git clone https://github.com/zephyrproject-rtos/crosstool-ng.git
 	echo "Patching tree"
 	pushd crosstool-ng
 	git checkout ${COMMIT}
