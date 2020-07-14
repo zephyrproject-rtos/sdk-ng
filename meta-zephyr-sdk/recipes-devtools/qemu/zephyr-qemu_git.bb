@@ -16,6 +16,7 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0005-riscv-sifive_e-Support-changing-CPU-type.patch \
 	   file://0006-target-riscv-Add-a-sifive-e34-cpu-type.patch \
            file://0006-Add-support-for-ARCv2-architecture.patch \
+	   file://0007-ARC-Fix-icount-support.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"
