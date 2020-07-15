@@ -1,6 +1,5 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc zephyr-seabios"
-DEPENDS_append_class-nativesdk = " nativesdk-zephyr-seabios"
+DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
 LICENSE = "GPLv2"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
@@ -8,6 +7,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 
 SRCREV = "fdd76fecdde1ad444ff4deb7f1c4f7e4a1ef97d6"
 SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
+	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
+	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
 	   file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
 	   file://0001-hw-sparc-Add-leon-at697-machine.patch \
 	   file://0002-hw-sparc-leon-Fix-compilation-errors.patch \
@@ -19,6 +20,9 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0007-ARC-Fix-icount-support.patch \
 	   file://0008-os_find_datadir-search-as-in-version-4.2.patch \
 "
+
+SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
+SRC_URI[bios-256k.sha256sum] = "19133167cc0bfb2a9e8ce9567efcd013a4ab80d2f3522ac66df0c23c68c18984"
 
 BBCLASSEXTEND = "native nativesdk"
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
@@ -212,15 +216,13 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
   "
 
 copy_seabios() {
-    cp ${STAGING_DIR}/usr/share/firmware/bios.bin ${S}/pc-bios/bios.bin
-    cp ${STAGING_DIR}/usr/share/firmware/bios-256k.bin ${S}/pc-bios/bios-256k.bin
+    cp ${WORKDIR}/bios-128k.bin ${S}/pc-bios/bios.bin
+    cp ${WORKDIR}/bios-256k.bin ${S}/pc-bios/bios-256k.bin
 }
 
 do_unpack_append() {
     bb.build.exec_func('copy_seabios', d)
 }
-
-do_unpack[depends] = "zephyr-seabios:do_populate_sysroot"
 
 do_configure() {
     ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
