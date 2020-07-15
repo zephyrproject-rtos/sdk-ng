@@ -9,6 +9,11 @@ SANITY_TESTED_DISTROS = " \
 DISTRO = "zephyr-sdk"
 DISTRO_CODENAME = "zephyr-sdk"
 DISTRO_NAME = "Zephyr Yocto Toolchain"
+DISTRO_FEATURES = ""
+DISTRO_FEATURES_NATIVE = ""
+DISTRO_FEATURES_BACKFILL = ""
+DISTRO_FEATURES_NATIVESDK = ""
+
 MAINTAINER = "Intel Yocto team"
 
 SSTATE_DIR ?= "${TOPDIR}/../zephyr-cache/sstate-cache"
