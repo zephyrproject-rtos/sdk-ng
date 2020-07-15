@@ -1,6 +1,6 @@
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
-DEPENDS = "libusb-compat hidapi"
+DEPENDS = "libusb-compat hidapi libftdi"
 RDEPENDS_${PN} = "libusb1 hidapi"
 
 # The various arc files are based on the commit e781e73a39bc5c845b73dc96b751d867278a7583
