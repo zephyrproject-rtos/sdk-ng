@@ -1,8 +1,7 @@
 DESCRIPTION = "Standalone tarball containing various host SDK packages for Zephyr development."
 SUMMARY = "Standalone tarball for running Zephyr SDK builds on all systems"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690 \
-                    file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
+LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 
 TOOLCHAIN_TARGET_TASK ?= ""
 
@@ -34,7 +33,7 @@ create_sdk_files_append () {
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/var
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/sbin
 
-	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${MULTIMACH_HOST_SYS}
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${MULTIMACH_TARGET_SYS}
 
 	# Generate new sdk-environment-setup stub file
 	script=${1:-${SDK_OUTPUT}/${SDKPATH}/environment-setup-${SDK_SYS}}
