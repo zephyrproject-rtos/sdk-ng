@@ -11,7 +11,7 @@ steps:
         if [ -n "${BUILDKITE_TAG}" ]; then
            if [ "${BUILDKITE_TAG}" != $${release} ]; then
               echo "Need to fix VERSION file.  Tag ${BUILDKITE_TAG} doesn't match $${release}"
-              #exit 1
+              exit 1
            fi
            export S3_PUB_PATH="s3://builds.zephyrproject.org/sdk/${BUILDKITE_TAG}/"
         elif [ "${BUILDKITE_PULL_REQUEST}" != "false" ]; then
