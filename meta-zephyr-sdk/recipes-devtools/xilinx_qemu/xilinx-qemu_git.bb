@@ -200,6 +200,8 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
   --disable-tpm  --disable-numa --disable-glusterfs --disable-blobs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
+  --disable-kvm --disable-sheepdog --disable-parallels --disable-replication \
+  --disable-live-block-migration --disable-dmg \
   "
 
 # NOTE: Once --prefix is set, QEMU configure script automatically figures out adequate sysconfdir,
