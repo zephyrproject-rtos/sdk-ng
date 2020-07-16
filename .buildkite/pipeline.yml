@@ -45,7 +45,7 @@ steps:
       BUILDKITE_CLEAN_CHECKOUT: "true"
     plugins:
       - docker#v3.5.0:
-          image: "zephyrprojectrtos/sdk-build:v1.0.0"
+          image: "zephyrprojectrtos/sdk-build:v1.0.1"
           propagate-environment: true
           user: buildkite-agent
     agents:
