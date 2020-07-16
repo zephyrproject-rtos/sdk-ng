@@ -27,6 +27,14 @@ create_sdk_files_append () {
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/environment-setup-*
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/version-*
 
+	# Remove unused qemu firmware binaries
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/edk2*
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/skiboot.lid
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/openbios-*
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/ppc_rom.bin
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/slof.bin
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/hppa-firmware.img
+
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/readline
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/glib-2.0
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/etc
