@@ -17,6 +17,7 @@ GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
 unameOut="$(uname -s)"
+unameMachine="$(uname -m)"
 case "${unameOut}" in
     Linux*)     machine=Linux;;
     Darwin*)    machine=Mac;;
@@ -45,7 +46,7 @@ for t in ${TARGETS}; do
 	if [ "${t}" = "tools" ]; then
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
-		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-x86_64-hosttools-standalone-0.9.sh .
+		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-${unameMachine}-hosttools-standalone-0.9.sh .
 	elif [ "${t}" = "cmake" ]; then
 		tar -jcvf ${t}.tar.bz2 -C ${SDK_NG_HOME} cmake;
 	fi

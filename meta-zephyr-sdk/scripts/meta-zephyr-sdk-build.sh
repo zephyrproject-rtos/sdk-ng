@@ -27,6 +27,8 @@ TOOLCHAINS="${META_ZEPHYR_SDK_SOURCE}/scripts/toolchains"
 META_DOWNLOADS=${META_DOWNLOADS:-"$META_POKY_SOURCE/downloads"}
 META_SSTATE=${SSTATE_LOCATION:-"$META_POKY_SOURCE/sstate"}
 
+MACHINE=$(uname -m)
+
 if [ ! -d $META_ZEPHYR_SDK_SOURCE ] ; then
 	echo "ERROR: could not find $META_ZEPHYR_SDK_SOURCE"
 	exit 1
@@ -88,7 +90,7 @@ newbuild()
 	localconf=conf/local.conf
 	setconf_var "SSTATE_DIR" "$META_SSTATE" $localconf
 	setconf_var "DL_DIR" "$META_DOWNLOADS" $localconf
-	setconf_var "SDKMACHINE" "x86_64" $localconf
+	setconf_var "SDKMACHINE" "$MACHINE" $localconf
 	setconf_var "DISTRO" "zephyr-sdk" $localconf
 }
 
@@ -96,7 +98,12 @@ newbuild()
 if [ "$1" = "tools" ]; then
 header "Building Zephyr host tools..."
 newbuild build-zephyr-tools  > /dev/null
-setconf_var "MACHINE" "qemux86" $localconf
+	if [ "$MACHINE" = "aarch64" ]; then
+		POKY_MACHINE=qemuarm64
+	else
+		POKY_MACHINE=qemux86
+	fi
+setconf_var "MACHINE" "$POKY_MACHINE" $localconf
 rm -f ./tmp/deploy/sdk/*.sh
 bitbake hosttools-tarball -c clean  > /dev/null
 bitbake hosttools-tarball
