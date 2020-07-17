@@ -1,5 +1,12 @@
 # Notes / Changes in various releases
 
+- Move CI to buildkite
+- Update qemu to 5.0
+- Update yocto to 3.1.1
+- Update bossa to 1.9.1+
+- qemu: Add icount for ARC
+- Removed HAL from xtensa builds as HAL module should now be used.
+
 ## Zephyr SDK 0.11.4
 - General:
   * Fixed issue with cmake files not being installed in arch specific
@@ -65,4 +72,3 @@
 - Added support for Intel BDW and BDW Audio DSP xtensa toolchains.
 - Added support for NXP IMX8 and IMX8M Audio DSP xtensa toolchains.
 - Updated xtensa targets to GDB 8.3.1
-- Removed HAL from xtensa builds as HAL module should now be used.
