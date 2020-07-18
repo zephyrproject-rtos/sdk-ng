@@ -3,6 +3,7 @@ target_sdk_dir=""
 post_install_cleanup=1
 confirm=0
 rc_confirm=""
+cmake_confirm=""
 
 usage () {
   cat << EOF
@@ -21,6 +22,9 @@ Options:
 
   -[no]rc
         Whether to create/update the ~/.zerphyrc file (prompt if not given)
+
+  -[no]cmake
+        Whether to install Zephyr-sdk CMake module (prompt if not given)
 
 EOF
 }
@@ -69,12 +73,21 @@ while [ "$1" != "" ]; do
 			if [ -z "$rc_confirm" ]; then
 			  rc_confirm="y"
 			fi
+			if [ -z "$cmake_confirm" ]; then
+			  cmake_confirm="y"
+			fi
 			;;
 		-rc )
 			rc_confirm="y";
 			;;
 		-norc )
 			rc_confirm="n";
+			;;
+		-cmake )
+			cmake_confirm="y"
+			;;
+		-nocmake )
+			cmake_confirm="n"
 			;;
 		* )
 			echo "Error: Invalid argument \"$1\""
@@ -158,8 +171,11 @@ do_cmake_package()
 			return
 		fi
 
-		query "registering Zephyr-sdk CMake module with path $target_sdk_dir "
-		if [ "$answer" = "y" ]; then
+		if [ -z "$cmake_confirm" ]; then
+			prompt "registering Zephyr-sdk CMake module with path $target_sdk_dir "
+			cmake_confirm=$answer
+		fi
+		if [ "$cmake_confirm" = "y" ]; then
 			if [ ! -d $ZEPHYR_SDK_REGISTRY_DIR ]; then
 				mkdir -p $ZEPHYR_SDK_REGISTRY_DIR
 			fi
