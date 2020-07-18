@@ -163,15 +163,7 @@ do_cmake_package()
 			return
 		fi
 
-		echo "Do you want to register the Zephyr-sdk at location: $target_sdk_dir"
-		echo "  in the CMake package registry (y/n)?"
-
-		while read confirm; do
-			[ "$confirm" = "Y" -o "$confirm" = "y" -o "$confirm" = "n" \
-			-o "$confirm" = "N" ] && break
-			echo "Invalid input \"$confirm\", please input 'y' or 'n': "
-		done
-
+		read_confirm "registering Zephyr-sdk CMake module with path $target_sdk_dir "
 		if [ "$confirm" = "y" -o "$confirm" = "Y" ]; then
 			if [ ! -d $ZEPHYR_SDK_REGISTRY_DIR ]; then
 				mkdir -p $ZEPHYR_SDK_REGISTRY_DIR
