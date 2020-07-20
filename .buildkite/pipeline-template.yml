@@ -1,5 +1,7 @@
 steps:
-  - command:
+  - label: "$MACHINE"
+    key: "$MACHINE"
+    command:
     - >
       case "$${BUILDKITE_PARALLEL_JOB}" in
          0)  TARGET="arm";;
@@ -24,21 +26,21 @@ steps:
       if [ $${TARGET} = "tools" ]; then
          buildkite-agent artifact upload zephyr-sdk-$MACHINE-hosttools-standalone-0.9.sh;
       elif [ $${TARGET} = "cmake" ]; then
-         buildkite-agent artifact upload cmake.tar.bz2;
+         buildkite-agent artifact upload cmake.$MACHINE.tar.bz2;
       else
          cd build/output
          case "$${TARGET}" in
            xtensa_*)
-             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.tar.bz2 xtensa/$${TARGET#xtensa_}/*-zephyr-*;
+             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$MACHINE.tar.bz2 xtensa/$${TARGET#xtensa_}/*-zephyr-*;
              buildkite-agent artifact upload xtensa/$${TARGET#xtensa_}/*-zephyr-*/build.log.bz2
              ;;
            *)
-             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.tar.bz2 *-zephyr-*;
+             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$MACHINE.tar.bz2 *-zephyr-*;
              buildkite-agent artifact upload *-zephyr-*/build.log.bz2
              ;;
          esac
          cd ../..
-         buildkite-agent artifact upload $${TARGET}.tar.bz2;         
+         buildkite-agent artifact upload $${TARGET}.$MACHINE.tar.bz2;
       fi
     parallelism: 16
     env:
@@ -54,9 +56,8 @@ steps:
     agents:
     - "queue=sdk-ng-$MACHINE"
 
-  - wait
-
   - trigger: "sdk-ng-deploy"
+    depends_on: "$MACHINE"
     if: build.tag != null || build.pull_request.id != null
     build:
       message: "${BUILDKITE_MESSAGE}"
@@ -67,3 +68,4 @@ steps:
         BUILDKITE_PULL_REQUEST_BASE_BRANCH: "${BUILDKITE_PULL_REQUEST_BASE_BRANCH}"
         BUILDKITE_PULL_REQUEST_REPO: "${BUILDKITE_PULL_REQUEST_REPO}"
         BUILDKITE_TAG: "${BUILDKITE_TAG}"
+        MACHINE: "$MACHINE"
