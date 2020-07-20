@@ -56,7 +56,7 @@ steps:
     agents:
     - "queue=sdk-ng-$MACHINE"
 
-  - trigger: "sdk-ng-deploy"
+  - trigger: "sdk-deploy-test"
     depends_on: "$MACHINE"
     if: build.tag != null || build.pull_request.id != null
     build:
