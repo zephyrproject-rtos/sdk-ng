@@ -48,7 +48,7 @@ for t in ${TARGETS}; do
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
 		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-${unameMachine}-hosttools-standalone-0.9.sh .
 	elif [ "${t}" = "cmake" ]; then
-		tar -jcvf ${t}.tar.bz2 -C ${SDK_NG_HOME} cmake;
+		tar -jcvf ${t}.${unameMachine}.tar.bz2 -C ${SDK_NG_HOME} cmake;
 	fi
 done
 
