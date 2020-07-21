@@ -20,12 +20,13 @@ steps:
       - echo "S3_PUB_PATH - [$${S3_PUB_PATH}]"
       - mkdir -p scripts/toolchains
       - cd scripts/toolchains
-      - buildkite-agent artifact download *.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
-      - buildkite-agent artifact download *.sh . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - buildkite-agent artifact download *.$${MACHINE}.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - buildkite-agent artifact download zephyr-sdk-$${MACHINE}-*.sh . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - buildkite-agent artifact download cmake.$${MACHINE}.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
       - chmod a+x *.sh     
       - cd ..
       - tree -H '.' -L 1 --noreport --charset utf-8 toolchains > index.html
-      - ./make_zephyr_sdk.sh
+      - ./make_zephyr_sdk.sh $${MACHINE}
       - ls -F
       - sdk_filename=$(ls -1 zephyr-sdk*)
       - toolchain_files=$(ls -1 zephyr-toolchain-*)
@@ -92,4 +93,4 @@ steps:
           environment:
           - "GH_TOKEN"
     agents:
-    - "queue=sdk-ng-x86"
+    - "queue=sdk-ng-x86_64"
