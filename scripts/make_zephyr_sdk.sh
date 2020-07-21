@@ -37,8 +37,8 @@ parse_toolchain_name()
     local num
     local filename
 
-    if [ -f toolchains/$arch.tar.bz2 ]; then
-	filename="$arch.tar.bz2"
+    if [ -f toolchains/$arch.${machine}.tar.bz2 ]; then
+	filename="$arch.${machine}.tar.bz2"
     else
         num=$(ls toolchains | grep $arch | wc -l)
         if [ "$num" -gt "1" ]; then
