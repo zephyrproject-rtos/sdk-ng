@@ -19,6 +19,10 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
            file://0006-Add-support-for-ARCv2-architecture.patch \
 	   file://0007-ARC-Fix-icount-support.patch \
 	   file://0008-os_find_datadir-search-as-in-version-4.2.patch \
+	   file://0001-hw-core-Support-device-reset-handler-priority.patch \
+	   file://0002-hw-arm-armv7m-Downgrade-CPU-reset-handler-priority.patch \
+	   file://0003-hw-arm-stm32f405-Add-preliminary-RCC-emulation-suppo.patch \
+	   file://0004-hw-arm-stm32f405-Add-preliminary-flash-interface-emu.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"

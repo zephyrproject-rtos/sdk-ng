@@ -1,0 +1,117 @@
+From dc1ced201cdadfa9e58df14fdc2a812f60393653 Mon Sep 17 00:00:00 2001
+From: Stephanos Ioannidis <root@stephanos.io>
+Date: Thu, 27 Feb 2020 19:25:57 +0900
+Subject: [PATCH 1/4] hw/core: Support device reset handler priority
+
+The device reset handler invocation order is currently dependent on
+the order of handler registration, and this is less than ideal because
+there may exist dependencies among the handlers that require them to
+be invoked in a specific order.
+
+This commit adds the `priority` field to the reset entry struct and
+introduces the `qemu_register_reset_with_priority` function that
+implements descending-order insertion into the reset handler list based
+on the priority value, in order to allow the reset handler invocation
+order to be specified by the caller.
+
+Signed-off-by: Stephanos Ioannidis <root@stephanos.io>
+---
+ hw/core/reset.c        | 32 ++++++++++++++++++++++++++++++--
+ include/sysemu/reset.h | 24 ++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+), 2 deletions(-)
+
+diff --git a/hw/core/reset.c b/hw/core/reset.c
+index 9c477f2bf5..74f3677d96 100644
+--- a/hw/core/reset.c
++++ b/hw/core/reset.c
+@@ -31,6 +31,7 @@
+ 
+ typedef struct QEMUResetEntry {
+     QTAILQ_ENTRY(QEMUResetEntry) entry;
++    uint16_t priority;
+     QEMUResetHandler *func;
+     void *opaque;
+ } QEMUResetEntry;
+@@ -38,13 +39,40 @@ typedef struct QEMUResetEntry {
+ static QTAILQ_HEAD(, QEMUResetEntry) reset_handlers =
+     QTAILQ_HEAD_INITIALIZER(reset_handlers);
+ 
+-void qemu_register_reset(QEMUResetHandler *func, void *opaque)
++void qemu_register_reset_with_priority(uint16_t priority,
++    QEMUResetHandler *func, void *opaque)
+ {
++    /* Initialise reset entry */
+     QEMUResetEntry *re = g_malloc0(sizeof(QEMUResetEntry));
+ 
++    re->priority = priority;
+     re->func = func;
+     re->opaque = opaque;
+-    QTAILQ_INSERT_TAIL(&reset_handlers, re, entry);
++
++    /* Insert sorted by priority into the reset entry list */
++    if (QTAILQ_EMPTY(&reset_handlers) ||
++        QTAILQ_LAST(&reset_handlers)->priority >= priority)
++    {
++        QTAILQ_INSERT_TAIL(&reset_handlers, re, entry);
++    }
++    else
++    {
++        QEMUResetEntry *cur = QTAILQ_LAST(&reset_handlers);
++
++        while (QTAILQ_PREV(cur, entry) != NULL &&
++               QTAILQ_PREV(cur, entry)->priority < priority)
++        {
++            cur = QTAILQ_PREV(cur, entry);
++        }
++
++        QTAILQ_INSERT_BEFORE(cur, re, entry);
++    }
++}
++
++void qemu_register_reset(QEMUResetHandler *func, void *opaque)
++{
++    qemu_register_reset_with_priority(
++        QEMU_RESET_PRIORITY_DEFAULT, func, opaque);
+ }
+ 
+ void qemu_unregister_reset(QEMUResetHandler *func, void *opaque)
+diff --git a/include/sysemu/reset.h b/include/sysemu/reset.h
+index 0b0d6d7598..39a0fe55f0 100644
+--- a/include/sysemu/reset.h
++++ b/include/sysemu/reset.h
+@@ -1,8 +1,32 @@
+ #ifndef QEMU_SYSEMU_RESET_H
+ #define QEMU_SYSEMU_RESET_H
+ 
++/*
++ * The device reset handlers are executed in descending order of their priority
++ * values (i.e. the reset handler with the greatest numerical priority value
++ * will be executed first).
++ */
++#define QEMU_RESET_PRIORITY_DEFAULT     (0x8000)
++
++/*
++ * The priority level can range from -8 to +7, where the reset handler with the
++ * highest priority level is executed first.
++ */
++#define QEMU_RESET_PRIORITY_LEVEL(l) \
++    (QEMU_RESET_PRIORITY_DEFAULT + (l * 0x1000))
++
++/*
++ * Each priority level may be further divided into a maximum of 4096 sub-levels
++ * (0 to 4095).
++ */
++#define QEMU_RESET_PRIORITY_SUBLEVEL(l, s) \
++    (QEMU_RESET_PRIORITY_DEFAULT + (l * 0x1000) + s)
++
+ typedef void QEMUResetHandler(void *opaque);
+ 
++void qemu_register_reset_with_priority(uint16_t priority,
++    QEMUResetHandler *func, void *opaque);
++
+ void qemu_register_reset(QEMUResetHandler *func, void *opaque);
+ void qemu_unregister_reset(QEMUResetHandler *func, void *opaque);
+ void qemu_devices_reset(void);
+-- 
+2.17.1
+
