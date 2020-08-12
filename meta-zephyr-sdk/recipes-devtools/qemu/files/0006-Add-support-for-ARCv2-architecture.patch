@@ -1,11 +1,10 @@
-From a8481471a41546962248c8f7cf8f1482d436f682 Mon Sep 17 00:00:00 2001
+From cc3102603202ee21081f46c0d8d439edea8695f2 Mon Sep 17 00:00:00 2001
 From: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
 Date: Thu, 28 May 2020 18:57:43 +0300
-Subject: [PATCH] Add support for ARCv2 architecture
+Subject: [PATCH 6/9] Add support for ARCv2 architecture
 
 Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
 ---
- arch_init.c                           |     2 +
  configure                             |     8 +
  default-configs/arc-softmmu.mak       |     5 +
  disas.c                               |     2 +
@@ -29,23 +28,24 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  include/hw/arc/arc_uart.h             |    43 +
  include/hw/arc/cpudevs.h              |    10 +
  include/sysemu/arch_init.h            |     1 +
+ softmmu/arch_init.c                   |     2 +
  target/arc/Makefile.objs              |    32 +
  target/arc/arc-cache.c                |   157 +
  target/arc/arc-cache.h                |    42 +
  target/arc/arc-common.h               |    53 +
- target/arc/arc-decoder.c              |  1523 +++
+ target/arc/arc-decoder.c              |  1523 ++
  target/arc/arc-decoder.h              |   327 +
  target/arc/arc-extra_mapping.h        |    12 +
  target/arc/arc-functions.h            |   218 +
- target/arc/arc-fxi.h                  |   662 ++
+ target/arc/arc-fxi.h                  |   662 +
  target/arc/arc-regs-detail.def        |   539 +
  target/arc/arc-regs.c                 |   141 +
  target/arc/arc-regs.def               |   395 +
  target/arc/arc-regs.h                 |   116 +
- target/arc/arc-semfunc.c              |  9067 +++++++++++++++
+ target/arc/arc-semfunc.c              |  9067 +++++++++++
  target/arc/arc-semfunc.h              |    61 +
  target/arc/arc-semfunc_mapping.h      |   313 +
- target/arc/arc-tbl.h                  | 19974 ++++++++++++++++++++++++++++++++
+ target/arc/arc-tbl.h                  | 19974 ++++++++++++++++++++++++
  target/arc/arc_timer.c                |   440 +
  target/arc/arc_timer.h                |    10 +
  target/arc/cpu-param.h                |    20 +
@@ -58,11 +58,11 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  target/arc/internals.h                |    37 +
  target/arc/irq.c                      |   638 +
  target/arc/irq.h                      |    37 +
- target/arc/mmu.c                      |   758 ++
+ target/arc/mmu.c                      |   758 +
  target/arc/mmu.h                      |   163 +
- target/arc/mpu.c                      |   654 ++
+ target/arc/mpu.c                      |   654 +
  target/arc/mpu.h                      |   145 +
- target/arc/op_helper.c                |   742 ++
+ target/arc/op_helper.c                |   742 +
  target/arc/translate-inst.c           |   489 +
  target/arc/translate-inst.h           |   286 +
  target/arc/translate.c                |   479 +
@@ -88,7 +88,7 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  tests/tcg/arc/check_brnex.S           |    26 +
  tests/tcg/arc/check_bta.S             |   294 +
  tests/tcg/arc/check_carry.S           |    15 +
- tests/tcg/arc/check_enter_leave.S     |   713 ++
+ tests/tcg/arc/check_enter_leave.S     |   713 +
  tests/tcg/arc/check_excp.S            |    18 +
  tests/tcg/arc/check_excp_1.c          |    16 +
  tests/tcg/arc/check_excp_jumpdl_mmu.S |    44 +
@@ -272,24 +272,11 @@ Signed-off-by: ARC QEMU developers <linux-snps-arc@lists.infradead.org>
  create mode 100644 tests/tcg/arc/tarc_mmu.ld
  create mode 100644 tests/tcg/arc/test_macros.h
 
-diff --git a/arch_init.c b/arch_init.c
-index d9eb0ec1dd..a4ee036586 100644
---- a/arch_init.c
-+++ b/arch_init.c
-@@ -91,6 +91,8 @@ int graphic_depth = 32;
- #define QEMU_ARCH QEMU_ARCH_UNICORE32
- #elif defined(TARGET_XTENSA)
- #define QEMU_ARCH QEMU_ARCH_XTENSA
-+#elif defined(TARGET_ARC)
-+#define QEMU_ARCH QEMU_ARCH_ARC
- #endif
- 
- const uint32_t arch_type = QEMU_ARCH;
 diff --git a/configure b/configure
-index 23b5e93752..9e863a1057 100755
+index 2acc4d1465..0d0cf0d9a6 100755
 --- a/configure
 +++ b/configure
-@@ -7801,6 +7801,9 @@ case "$target_name" in
+@@ -8128,6 +8128,9 @@ case "$target_name" in
      mttcg="yes"
      TARGET_SYSTBL_ABI=common
    ;;
@@ -299,7 +286,7 @@ index 23b5e93752..9e863a1057 100755
    arm|armeb)
      TARGET_ARCH=arm
      TARGET_SYSTBL_ABI=common,oabi
-@@ -8053,6 +8056,9 @@ for i in $ARCH $TARGET_BASE_ARCH ; do
+@@ -8384,6 +8387,9 @@ for i in $ARCH $TARGET_BASE_ARCH ; do
        disas_config "ARM_A64"
      fi
    ;;
@@ -309,14 +296,14 @@ index 23b5e93752..9e863a1057 100755
    arm)
      disas_config "ARM"
      if test -n "${cxx}"; then
-@@ -8190,11 +8196,13 @@ fi
+@@ -8528,11 +8534,13 @@ fi
  # directory and symlink the directory instead.
  DIRS="tests tests/tcg tests/tcg/lm32 tests/qapi-schema tests/qtest/libqos"
  DIRS="$DIRS tests/qtest tests/qemu-iotests tests/vm tests/fp tests/qgraph"
 +DIRS="$DIRS tests/tcg/arc"
  DIRS="$DIRS docs docs/interop fsdev scsi"
  DIRS="$DIRS pc-bios/optionrom pc-bios/s390-ccw"
- DIRS="$DIRS roms/seabios roms/vgabios"
+ DIRS="$DIRS roms/seabios"
  LINKS="Makefile"
  LINKS="$LINKS tests/tcg/lm32/Makefile po/Makefile"
 +LINKS="$LINKS tests/tcg/arc/Makefile"
@@ -335,10 +322,10 @@ index 0000000000..4300a90c93
 +CONFIG_SERIAL=y
 +CONFIG_OPENCORES_ETH=y
 diff --git a/disas.c b/disas.c
-index 3937da6157..8685fcc257 100644
+index c1397d3933..41aabbca63 100644
 --- a/disas.c
 +++ b/disas.c
-@@ -662,6 +662,8 @@ void disas(FILE *out, void *code, unsigned long size)
+@@ -671,6 +671,8 @@ void disas(FILE *out, void *code, unsigned long size, const char *note)
      print_insn = print_insn_s390;
  #elif defined(__hppa__)
      print_insn = print_insn_hppa;
@@ -346,7 +333,7 @@ index 3937da6157..8685fcc257 100644
 +    print_insn = print_insn_arc;
  #endif
  
-     if (s.info.cap_arch >= 0 && cap_disas_host(&s.info, code, size)) {
+     if (s.info.cap_arch >= 0 && cap_disas_host(&s.info, code, size, note)) {
 diff --git a/disas/Makefile.objs b/disas/Makefile.objs
 index 3c1cdce026..0d8146e673 100644
 --- a/disas/Makefile.objs
@@ -2174,7 +2161,7 @@ index 0000000000..7dbf23bd03
 +/*-*-indent-tabs-mode:nil;tab-width:4;indent-line-function:'insert-tab'-*-*/
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/include/disas/dis-asm.h b/include/disas/dis-asm.h
-index c5f9fa08ab..74391735af 100644
+index 9856bf7921..621164c510 100644
 --- a/include/disas/dis-asm.h
 +++ b/include/disas/dis-asm.h
 @@ -206,7 +206,14 @@ enum bfd_architecture
@@ -2193,7 +2180,7 @@ index c5f9fa08ab..74391735af 100644
    bfd_arch_m32r,       /* Mitsubishi M32R/D */
  #define bfd_mach_m32r          0  /* backwards compatibility */
    bfd_arch_mn10200,    /* Matsushita MN10200 */
-@@ -441,6 +448,7 @@ int print_insn_xtensa           (bfd_vma, disassemble_info*);
+@@ -460,6 +467,7 @@ int print_insn_xtensa           (bfd_vma, disassemble_info*);
  int print_insn_riscv32          (bfd_vma, disassemble_info*);
  int print_insn_riscv64          (bfd_vma, disassemble_info*);
  int print_insn_rx(bfd_vma, disassemble_info *);
@@ -2202,10 +2189,10 @@ index c5f9fa08ab..74391735af 100644
  #if 0
  /* Fetch the disassembler for a given BFD, if that support is available.  */
 diff --git a/include/elf.h b/include/elf.h
-index 8fbfe60e09..4fd73b2788 100644
+index 5b06b55f28..b998412bef 100644
 --- a/include/elf.h
 +++ b/include/elf.h
-@@ -199,6 +199,9 @@ typedef struct mips_elf_abiflags_v0 {
+@@ -201,6 +201,9 @@ typedef struct mips_elf_abiflags_v0 {
  
  #define EM_TILEGX   191 /* TILE-Gx */
  
@@ -2281,17 +2268,30 @@ index 0000000000..839155db99
 +
 +#endif /* !HW_ARC_CPUDEVS_H */
 diff --git a/include/sysemu/arch_init.h b/include/sysemu/arch_init.h
-index 71a7a285ee..79357e7e2f 100644
+index 54f069d491..5fbedebcb0 100644
 --- a/include/sysemu/arch_init.h
 +++ b/include/sysemu/arch_init.h
-@@ -25,6 +25,7 @@ enum {
-     QEMU_ARCH_HPPA = (1 << 18),
+@@ -26,6 +26,7 @@ enum {
      QEMU_ARCH_RISCV = (1 << 19),
      QEMU_ARCH_RX = (1 << 20),
-+    QEMU_ARCH_ARC = (1 << 21),
+     QEMU_ARCH_AVR = (1 << 21),
++    QEMU_ARCH_ARC = (1 << 22),
  
      QEMU_ARCH_NONE = (1 << 31),
  };
+diff --git a/softmmu/arch_init.c b/softmmu/arch_init.c
+index 7fd5c09b2b..27faed5edd 100644
+--- a/softmmu/arch_init.c
++++ b/softmmu/arch_init.c
+@@ -92,6 +92,8 @@ int graphic_depth = 32;
+ #define QEMU_ARCH QEMU_ARCH_XTENSA
+ #elif defined(TARGET_AVR)
+ #define QEMU_ARCH QEMU_ARCH_AVR
++#elif defined(TARGET_ARC)
++#define QEMU_ARCH QEMU_ARCH_ARC
+ #endif
+ 
+ const uint32_t arch_type = QEMU_ARCH;
 diff --git a/target/arc/Makefile.objs b/target/arc/Makefile.objs
 new file mode 100644
 index 0000000000..aa1665441e
@@ -43043,10 +43043,10 @@ index 0000000000..01989ec53a
 +/*-*-indent-tabs-mode:nil;tab-width:4;indent-line-function:'insert-tab'-*-*/
 +/* vim: set ts=4 sw=4 et: */
 diff --git a/tests/tcg/Makefile.target b/tests/tcg/Makefile.target
-index b3cff3cad1..b2e41ed9ba 100644
+index 4b2b696fce..e0c3933f40 100644
 --- a/tests/tcg/Makefile.target
 +++ b/tests/tcg/Makefile.target
-@@ -180,4 +180,7 @@ gdb-%: %
+@@ -182,4 +182,7 @@ gdb-%: %
  .PHONY: run
  run: $(RUN_TESTS)
  
@@ -49756,10 +49756,10 @@ index 0000000000..c3fe345511
 +        st      r2, [0x90000000]`\
 +        b       1b`
 diff --git a/tests/tcg/configure.sh b/tests/tcg/configure.sh
-index eaaaff6233..92f9134ae8 100755
+index 102578caa5..14d1c2906f 100755
 --- a/tests/tcg/configure.sh
 +++ b/tests/tcg/configure.sh
-@@ -85,7 +85,7 @@ for target in $target_list; do
+@@ -94,7 +94,7 @@ for target in $target_list; do
      xtensa|xtensaeb)
        arches=xtensa
        ;;
@@ -49769,5 +49769,5 @@ index eaaaff6233..92f9134ae8 100755
        ;;
      *)
 -- 
-2.16.2
+2.25.4
 

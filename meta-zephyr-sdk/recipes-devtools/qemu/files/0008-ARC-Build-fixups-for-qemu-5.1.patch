@@ -1,0 +1,44 @@
+From 18b23327cd5853f3a15d863fc7ca06afb866ae8a Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Wed, 12 Aug 2020 08:37:55 -0500
+Subject: [PATCH 8/9] ARC: Build fixups for qemu-5.1
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ hw/arc/arc_sim.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/hw/arc/arc_sim.c b/hw/arc/arc_sim.c
+index b4823be52e..5c37fbfcb7 100644
+--- a/hw/arc/arc_sim.c
++++ b/hw/arc/arc_sim.c
+@@ -39,9 +39,9 @@ static void arc_sim_net_init(MemoryRegion *address_space,
+     DeviceState *dev;
+     SysBusDevice *s;
+ 
+-    dev = qdev_create(NULL, "open_eth");
++    dev = qdev_new("open_eth");
+     qdev_set_nic_properties(dev, nd);
+-    qdev_init_nofail(dev);
++    sysbus_realize_and_unref(SYS_BUS_DEVICE(dev), &error_fatal);
+ 
+     s = SYS_BUS_DEVICE(dev);
+     sysbus_connect_irq(s, 0, irq);
+@@ -97,11 +97,11 @@ static void arc_sim_init(MachineState *machine)
+         }
+ 
+         /* Set the initial CPU properties.  */
+-        object_property_set_uint (OBJECT (cpu), 1000000, "freq_hz",
++        object_property_set_uint (OBJECT (cpu), "freq_hz", 1000000,
+                                   &error_fatal);
+-        object_property_set_bool (OBJECT (cpu), true, "rtc-opt",
++        object_property_set_bool (OBJECT (cpu), "rtc-opt", true,
+                                   &error_fatal);
+-        object_property_set_bool(OBJECT (cpu), true, "realized", &error_fatal);
++        object_property_set_bool(OBJECT (cpu), "realized", true, &error_fatal);
+ 
+         /* Initialize internal devices.  */
+         cpu_arc_pic_init(cpu);
+-- 
+2.25.4
+
