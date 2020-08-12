@@ -1,7 +1,7 @@
-From e15e39df22e05e46fa6290b7159f58af2018cb4b Mon Sep 17 00:00:00 2001
+From 761c13e2bc6c6a065766227bf93a477a130dc59b Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Thu, 5 Sep 2019 11:06:56 +0900
-Subject: [PATCH 2/4] hw/sparc/leon: Fix compilation errors
+Subject: [PATCH 3/9] hw/sparc/leon: Fix compilation errors
 
 The previous commit, taken from AdaCore repository as is for future
 reference, depends on other commit in the AdaCore repository and fails
@@ -87,5 +87,5 @@ index 316bd70288..cab394ba4b 100644
      if (kernel_filename != NULL) {
          long     kernel_size;
 -- 
-2.17.1
+2.25.4
 

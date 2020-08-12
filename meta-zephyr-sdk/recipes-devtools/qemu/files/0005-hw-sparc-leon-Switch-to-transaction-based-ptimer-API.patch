@@ -1,7 +1,7 @@
-From 462345d42cb9bdb7b33bdf47bae42e0708ba79c4 Mon Sep 17 00:00:00 2001
+From 7ba9af98896dce92972257a4f2f98fa074bacd45 Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Mon, 9 Dec 2019 11:56:20 +0900
-Subject: [PATCH 4/4] hw/sparc/leon: Switch to transaction-based ptimer API
+Subject: [PATCH 5/9] hw/sparc/leon: Switch to transaction-based ptimer API
 
 Switch the leon code away from old ptimers to the new
 transaction-based ptimer API.  This requires adding begin/commit calls
@@ -15,7 +15,7 @@ Signed-off-by: Yasushi SHOJI <y-shoji@ispace-inc.com>
  1 file changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
-index d2dc8e55c8..57ec9c1b1a 100644
+index d2dc8e55c8..384dde035b 100644
 --- a/hw/sparc/leon.c
 +++ b/hw/sparc/leon.c
 @@ -156,7 +156,6 @@ typedef struct LeonUartState {
@@ -99,5 +99,5 @@ index d2dc8e55c8..57ec9c1b1a 100644
  
  static uint64_t leon_io_read(void *opaque, hwaddr addr,
 -- 
-2.17.1
+2.25.4
 
