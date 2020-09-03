@@ -1,0 +1,139 @@
+From 4e3005622e4493be9f85d215f214bd2f229333ce Mon Sep 17 00:00:00 2001
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Thu, 3 Sep 2020 15:44:25 +0100
+Subject: [PATCH] hw/arm/mps2: New board model mps2-386
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Implement a model of the MPS2 with the AN386 firmware. This is
+essentially identical to the AN385 firmware, but it has a
+Cortex-M4 rather than a Cortex-M3.
+
+Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+---
+ hw/arm/mps2.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/hw/arm/mps2.c b/hw/arm/mps2.c
+index 9f12934ca8..559b297e78 100644
+--- a/hw/arm/mps2.c
++++ b/hw/arm/mps2.c
+@@ -15,6 +15,7 @@
+  * as seen by the guest depend significantly on the FPGA image.
+  * We model the following FPGA images:
+  *  "mps2-an385" -- Cortex-M3 as documented in ARM Application Note AN385
++ *  "mps2-an386" -- Cortex-M4 as documented in ARM Application Note AN386
+  *  "mps2-an511" -- Cortex-M3 'DesignStart' as documented in AN511
+  *
+  * Links to the TRM for the board itself and to the various Application
+@@ -47,6 +48,7 @@
+ 
+ typedef enum MPS2FPGAType {
+     FPGA_AN385,
++    FPGA_AN386,
+     FPGA_AN511,
+ } MPS2FPGAType;
+ 
+@@ -79,6 +81,7 @@ typedef struct {
+ 
+ #define TYPE_MPS2_MACHINE "mps2"
+ #define TYPE_MPS2_AN385_MACHINE MACHINE_TYPE_NAME("mps2-an385")
++#define TYPE_MPS2_AN386_MACHINE MACHINE_TYPE_NAME("mps2-an386")
+ #define TYPE_MPS2_AN511_MACHINE MACHINE_TYPE_NAME("mps2-an511")
+ 
+ #define MPS2_MACHINE(obj)                                       \
+@@ -142,7 +145,7 @@ static void mps2_common_init(MachineState *machine)
+      *
+      * Common to both boards:
+      *  0x21000000..0x21ffffff : PSRAM (16MB)
+-     * AN385 only:
++     * AN385/AN386 only:
+      *  0x00000000 .. 0x003fffff : ZBT SSRAM1
+      *  0x00400000 .. 0x007fffff : mirror of ZBT SSRAM1
+      *  0x20000000 .. 0x203fffff : ZBT SSRAM 2&3
+@@ -157,7 +160,7 @@ static void mps2_common_init(MachineState *machine)
+      *  0x20000000 .. 0x2001ffff : SRAM
+      *  0x20400000 .. 0x207fffff : ZBT SSRAM 2&3
+      *
+-     * The AN385 has a feature where the lowest 16K can be mapped
++     * The AN385/AN386 has a feature where the lowest 16K can be mapped
+      * either to the bottom of the ZBT SSRAM1 or to the block RAM.
+      * This is of no use for QEMU so we don't implement it (as if
+      * zbt_boot_ctrl is always zero).
+@@ -166,6 +169,7 @@ static void mps2_common_init(MachineState *machine)
+ 
+     switch (mmc->fpga_type) {
+     case FPGA_AN385:
++    case FPGA_AN386:
+         make_ram(&mms->ssram1, "mps.ssram1", 0x0, 0x400000);
+         make_ram_alias(&mms->ssram1_m, "mps.ssram1_m", &mms->ssram1, 0x400000);
+         make_ram(&mms->ssram23, "mps.ssram23", 0x20000000, 0x400000);
+@@ -193,6 +197,7 @@ static void mps2_common_init(MachineState *machine)
+     armv7m = DEVICE(&mms->armv7m);
+     switch (mmc->fpga_type) {
+     case FPGA_AN385:
++    case FPGA_AN386:
+         qdev_prop_set_uint32(armv7m, "num-irq", 32);
+         break;
+     case FPGA_AN511:
+@@ -229,6 +234,7 @@ static void mps2_common_init(MachineState *machine)
+ 
+     switch (mmc->fpga_type) {
+     case FPGA_AN385:
++    case FPGA_AN386:
+     {
+         /* The overflow IRQs for UARTs 0, 1 and 2 are ORed together.
+          * Overflow for UARTs 4 and 5 doesn't trigger any interrupt.
+@@ -380,7 +386,7 @@ static void mps2_common_init(MachineState *machine)
+      */
+     lan9118_init(&nd_table[0], 0x40200000,
+                  qdev_get_gpio_in(armv7m,
+-                                  mmc->fpga_type == FPGA_AN385 ? 13 : 47));
++                                  mmc->fpga_type == FPGA_AN511 ? 47 : 13));
+ 
+     system_clock_scale = NANOSECONDS_PER_SECOND / SYSCLK_FRQ;
+ 
+@@ -409,6 +415,17 @@ static void mps2_an385_class_init(ObjectClass *oc, void *data)
+     mmc->scc_id = 0x41043850;
+ }
+ 
++static void mps2_an386_class_init(ObjectClass *oc, void *data)
++{
++    MachineClass *mc = MACHINE_CLASS(oc);
++    MPS2MachineClass *mmc = MPS2_MACHINE_CLASS(oc);
++
++    mc->desc = "ARM MPS2 with AN386 FPGA image for Cortex-M4";
++    mmc->fpga_type = FPGA_AN386;
++    mc->default_cpu_type = ARM_CPU_TYPE_NAME("cortex-m4");
++    mmc->scc_id = 0x41043860;
++}
++
+ static void mps2_an511_class_init(ObjectClass *oc, void *data)
+ {
+     MachineClass *mc = MACHINE_CLASS(oc);
+@@ -435,6 +452,12 @@ static const TypeInfo mps2_an385_info = {
+     .class_init = mps2_an385_class_init,
+ };
+ 
++static const TypeInfo mps2_an386_info = {
++    .name = TYPE_MPS2_AN386_MACHINE,
++    .parent = TYPE_MPS2_MACHINE,
++    .class_init = mps2_an386_class_init,
++};
++
+ static const TypeInfo mps2_an511_info = {
+     .name = TYPE_MPS2_AN511_MACHINE,
+     .parent = TYPE_MPS2_MACHINE,
+@@ -445,6 +468,7 @@ static void mps2_machine_init(void)
+ {
+     type_register_static(&mps2_info);
+     type_register_static(&mps2_an385_info);
++    type_register_static(&mps2_an386_info);
+     type_register_static(&mps2_an511_info);
+ }
+ 
+-- 
+2.25.4
+

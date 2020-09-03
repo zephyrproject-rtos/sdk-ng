@@ -18,6 +18,7 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
            file://0007-ARC-Fix-icount-support.patch \
            file://0008-ARC-Build-fixups-for-qemu-5.1.patch \
            file://0009-os_find_datadir-search-as-in-version-4.2.patch \
+           file://0010-hw-arm-mps2-New-board-model-mps2-386.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
