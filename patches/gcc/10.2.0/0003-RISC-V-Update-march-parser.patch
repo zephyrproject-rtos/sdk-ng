@@ -1,0 +1,164 @@
+From 758ed83225cb7034f8a0331852ac8cdcc9d49b70 Mon Sep 17 00:00:00 2001
+From: Kito Cheng <kito.cheng@sifive.com>
+Date: Fri, 10 Apr 2020 17:20:18 +0800
+Subject: [PATCH 03/14] RISC-V: Update march parser
+
+ - The arch string rule has changed in latest spec, it introduced new
+   multi-letter extension prefix with 'h' and 'z', and drop `sx`. also
+   adjust parsing order for 's' and 'x'.
+
+gcc/ChangeLog
+
+	* riscv-common.c (parse_sv_or_non_std_ext): Rename to
+	parse_multiletter_ext.
+	(parse_multiletter_ext): Add parsing `h` and `z`, drop `sx`,
+	adjust parsing order for 's' and 'x'.
+
+gcc/testsuite/ChangeLog
+
+	* gcc.target/riscv/arch-3.c: Adjust option.
+	* gcc.target/riscv/arch-5.c: New.
+	* gcc.target/riscv/attribute-9.c: Adjust option and test
+	condition.
+---
+ gcc/common/config/riscv/riscv-common.c       | 40 ++++++++++----------
+ gcc/testsuite/gcc.target/riscv/arch-3.c      |  2 +-
+ gcc/testsuite/gcc.target/riscv/arch-5.c      |  5 +++
+ gcc/testsuite/gcc.target/riscv/attribute-9.c |  4 +-
+ 4 files changed, 28 insertions(+), 23 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/riscv/arch-5.c
+
+diff --git a/gcc/common/config/riscv/riscv-common.c b/gcc/common/config/riscv/riscv-common.c
+index d2ef83b1971..a2e8d7003cc 100644
+--- a/gcc/common/config/riscv/riscv-common.c
++++ b/gcc/common/config/riscv/riscv-common.c
+@@ -70,8 +70,8 @@ private:
+ 
+   const char *parse_std_ext (const char *);
+ 
+-  const char *parse_sv_or_non_std_ext (const char *, const char *,
+-				       const char *);
++  const char *parse_multiletter_ext (const char *, const char *,
++				     const char *);
+ 
+ public:
+   ~riscv_subset_list ();
+@@ -357,7 +357,7 @@ riscv_subset_list::parse_std_ext (const char *p)
+     {
+       char subset[2] = {0, 0};
+ 
+-      if (*p == 'x' || *p == 's')
++      if (*p == 'x' || *p == 's' || *p == 'h' || *p == 'z')
+ 	break;
+ 
+       if (*p == '_')
+@@ -399,20 +399,20 @@ riscv_subset_list::parse_std_ext (const char *p)
+   return p;
+ }
+ 
+-/* Parsing function for non-standard and supervisor extensions.
++/* Parsing function for multi-letter extensions.
+ 
+    Return Value:
+      Points to the end of extensions.
+ 
+    Arguments:
+      `p`: Current parsing position.
+-     `ext_type`: What kind of extensions, 'x', 's' or 'sx'.
++     `ext_type`: What kind of extensions, 's', 'h', 'z' or 'x'.
+      `ext_type_str`: Full name for kind of extension.  */
+ 
+ const char *
+-riscv_subset_list::parse_sv_or_non_std_ext (const char *p,
+-					    const char *ext_type,
+-					    const char *ext_type_str)
++riscv_subset_list::parse_multiletter_ext (const char *p,
++					  const char *ext_type,
++					  const char *ext_type_str)
+ {
+   unsigned major_version = 0;
+   unsigned minor_version = 0;
+@@ -429,11 +429,6 @@ riscv_subset_list::parse_sv_or_non_std_ext (const char *p,
+       if (strncmp (p, ext_type, ext_type_len) != 0)
+ 	break;
+ 
+-      /* It's non-standard supervisor extension if it prefix with sx.  */
+-      if ((ext_type[0] == 's') && (ext_type_len == 1)
+-	  && (*(p + 1) == 'x'))
+-	break;
+-
+       char *subset = xstrdup (p);
+       char *q = subset;
+       const char *end_of_version;
+@@ -494,21 +489,26 @@ riscv_subset_list::parse (const char *arch, location_t loc)
+   if (p == NULL)
+     goto fail;
+ 
+-  /* Parsing non-standard extension.  */
+-  p = subset_list->parse_sv_or_non_std_ext (p, "x", "non-standard extension");
++  /* Parsing supervisor extension.  */
++  p = subset_list->parse_multiletter_ext (p, "s", "supervisor extension");
+ 
+   if (p == NULL)
+     goto fail;
+ 
+-  /* Parsing supervisor extension.  */
+-  p = subset_list->parse_sv_or_non_std_ext (p, "s", "supervisor extension");
++  /* Parsing hypervisor extension.  */
++  p = subset_list->parse_multiletter_ext (p, "h", "hypervisor extension");
+ 
+   if (p == NULL)
+     goto fail;
+ 
+-  /* Parsing non-standard supervisor extension.  */
+-  p = subset_list->parse_sv_or_non_std_ext
+-    (p, "sx", "non-standard supervisor extension");
++  /* Parsing sub-extensions.  */
++  p = subset_list->parse_multiletter_ext (p, "z", "sub-extension");
++
++  if (p == NULL)
++    goto fail;
++
++  /* Parsing non-standard extension.  */
++  p = subset_list->parse_multiletter_ext (p, "x", "non-standard extension");
+ 
+   if (p == NULL)
+     goto fail;
+diff --git a/gcc/testsuite/gcc.target/riscv/arch-3.c b/gcc/testsuite/gcc.target/riscv/arch-3.c
+index 6aaa0a650fa..124699405c5 100644
+--- a/gcc/testsuite/gcc.target/riscv/arch-3.c
++++ b/gcc/testsuite/gcc.target/riscv/arch-3.c
+@@ -1,5 +1,5 @@
+ /* { dg-do compile } */
+-/* { dg-options "-O -march=rv32ixbar_sabc_sxfoo -mabi=ilp32" } */
++/* { dg-options "-O -march=rv32isabc_xbar -mabi=ilp32" } */
+ int foo()
+ {
+ }
+diff --git a/gcc/testsuite/gcc.target/riscv/arch-5.c b/gcc/testsuite/gcc.target/riscv/arch-5.c
+new file mode 100644
+index 00000000000..b0a1bd445fe
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/riscv/arch-5.c
+@@ -0,0 +1,5 @@
++/* { dg-do compile } */
++/* { dg-options "-O -march=rv32isabc_hghi_zfoo_xbar -mabi=ilp32" } */
++int foo()
++{
++}
+diff --git a/gcc/testsuite/gcc.target/riscv/attribute-9.c b/gcc/testsuite/gcc.target/riscv/attribute-9.c
+index 670944a1cbe..bc4db0eb647 100644
+--- a/gcc/testsuite/gcc.target/riscv/attribute-9.c
++++ b/gcc/testsuite/gcc.target/riscv/attribute-9.c
+@@ -1,6 +1,6 @@
+ /* { dg-do compile } */
+-/* { dg-options "-O -mriscv-attribute -march=rv32i2p0xbar_sabc_sxfoo -mabi=ilp32e" } */
++/* { dg-options "-O -mriscv-attribute -march=rv32i2p0sabc_xbar -mabi=ilp32e" } */
+ int foo()
+ {
+ }
+-/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_xbar2p0_sabc2p0_sxfoo2p0\"" } } */
++/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_sabc2p0_xbar2p0\"" } } */
+-- 
+2.25.4
+

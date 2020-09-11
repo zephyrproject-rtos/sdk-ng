@@ -1,7 +1,7 @@
-From 5759afd8587af5665bceaab2ff276f5850f4c759 Mon Sep 17 00:00:00 2001
+From 4d367ee9643b723d36c9663a40b6d333e8de3699 Mon Sep 17 00:00:00 2001
 From: Anas Nashif <anas.nashif@intel.com>
 Date: Wed, 7 Aug 2019 05:23:08 -0500
-Subject: [PATCH 14/14] nios2: add multilib support
+Subject: [PATCH 11/14] nios2: add multilib support
 
 Signed-off-by: Anas Nashif <anas.nashif@intel.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Anas Nashif <anas.nashif@intel.com>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/gcc/config/nios2/t-nios2 b/gcc/config/nios2/t-nios2
-index 20e08b41841..20c32aa3e18 100644
+index cfee4f82003..63b7499cb13 100644
 --- a/gcc/config/nios2/t-nios2
 +++ b/gcc/config/nios2/t-nios2
 @@ -18,9 +18,9 @@
@@ -26,5 +26,5 @@ index 20e08b41841..20c32aa3e18 100644
  # MULTILIB_OPTIONS += mel/meb
  # MULTILIB_DIRNAMES += le be
 -- 
-2.20.1
+2.25.4
 
