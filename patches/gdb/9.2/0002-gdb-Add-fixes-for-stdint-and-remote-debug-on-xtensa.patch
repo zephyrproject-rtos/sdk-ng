@@ -1,0 +1,56 @@
+From a34f7002c31bb7a908873a6fc65f9aa113859974 Mon Sep 17 00:00:00 2001
+From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Date: Fri, 11 Sep 2020 16:20:52 -0500
+Subject: [PATCH 2/2] gdb: Add fixes for stdint and remote debug on xtensa.
+
+Take both stdint and remote debug fixes from SOF.
+
+Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+---
+ gdb/arch/xtensa.h |  2 ++
+ gdb/remote.c      | 16 +++++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/gdb/arch/xtensa.h b/gdb/arch/xtensa.h
+index 12e26e7693..5555d62200 100644
+--- a/gdb/arch/xtensa.h
++++ b/gdb/arch/xtensa.h
+@@ -20,6 +20,8 @@
+ #ifndef ARCH_XTENSA_H
+ #define ARCH_XTENSA_H
+ 
++#include <stdint.h>
++
+ /* Xtensa ELF core file register set representation ('.reg' section).
+    Copied from target-side ELF header <xtensa/elf.h>.  */
+ 
+diff --git a/gdb/remote.c b/gdb/remote.c
+index a84aefe1a4..4acaf922d6 100644
+--- a/gdb/remote.c
++++ b/gdb/remote.c
+@@ -7980,11 +7980,17 @@ remote_target::process_g_packet (struct regcache *regcache)
+   buf_len = strlen (rs->buf.data ());
+ 
+   /* Further sanity checks, with knowledge of the architecture.  */
+-  if (buf_len > 2 * rsa->sizeof_g_packet)
+-    error (_("Remote 'g' packet reply is too long (expected %ld bytes, got %d "
+-	     "bytes): %s"),
+-	   rsa->sizeof_g_packet, buf_len / 2,
+-	   rs->buf.data ());
++   if(buf_len > 2 * rsa->sizeof_g_packet) {
++        rsa->sizeof_g_packet = buf_len;
++        for(i = 0; i < gdbarch_num_regs(gdbarch); i++){
++            if(rsa->regs[i].pnum == -1)
++               continue;
++            if(rsa->regs[i].offset >= rsa->sizeof_g_packet)
++               rsa->regs[i].in_g_packet = 0;
++            else
++               rsa->regs[i].in_g_packet = 1;
++        }
++  }
+ 
+   /* Save the size of the packet sent to us by the target.  It is used
+      as a heuristic when determining the max size of packets that the
+-- 
+2.25.4
+

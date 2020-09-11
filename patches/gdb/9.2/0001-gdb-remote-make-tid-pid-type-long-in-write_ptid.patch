@@ -1,0 +1,53 @@
+From 3b0695d880afaf9ced0b91a8e3dd7b60c82b637f Mon Sep 17 00:00:00 2001
+From: Evgeniy Didin <didin@synopsys.com>
+Date: Thu, 7 Nov 2019 08:58:58 +0300
+Subject: [PATCH 1/2] gdb/remote: make tid/pid type long in write_ptid
+
+In Zephyr RTOS the k_thread_create function returns
+thread ID which is actually pointer to k_thread structure.
+If the memory addressing starts from 0x80000000, passing such
+big values to write_ptid() leads to overflow of "int tid" variable
+and thread ID becomes negative.
+So lets make tid/pid variables type "long", this will prevent overflow
+and should not break any logic.
+
+Signed-off-by: Evgeniy Didin <didin@synopsys.com>
+---
+ gdb/remote.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/gdb/remote.c b/gdb/remote.c
+index 4df5c0aef8..a84aefe1a4 100644
+--- a/gdb/remote.c
++++ b/gdb/remote.c
+@@ -2921,22 +2921,22 @@ static int remote_newthread_step (threadref *ref, void *context);
+ char *
+ remote_target::write_ptid (char *buf, const char *endbuf, ptid_t ptid)
+ {
+-  int pid, tid;
++  long pid, tid;
+   struct remote_state *rs = get_remote_state ();
+ 
+   if (remote_multi_process_p (rs))
+     {
+       pid = ptid.pid ();
+       if (pid < 0)
+-	buf += xsnprintf (buf, endbuf - buf, "p-%x.", -pid);
++	buf += xsnprintf (buf, endbuf - buf, "p-%lx.", -pid);
+       else
+-	buf += xsnprintf (buf, endbuf - buf, "p%x.", pid);
++	buf += xsnprintf (buf, endbuf - buf, "p%lx.", pid);
+     }
+   tid = ptid.lwp ();
+   if (tid < 0)
+-    buf += xsnprintf (buf, endbuf - buf, "-%x", -tid);
++    buf += xsnprintf (buf, endbuf - buf, "-%lx", -tid);
+   else
+-    buf += xsnprintf (buf, endbuf - buf, "%x", tid);
++    buf += xsnprintf (buf, endbuf - buf, "%lx", tid);
+ 
+   return buf;
+ }
+-- 
+2.25.4
+
