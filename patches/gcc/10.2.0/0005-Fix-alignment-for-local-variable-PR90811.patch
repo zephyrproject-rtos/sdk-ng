@@ -1,0 +1,167 @@
+From e5c1c182674947c49afbc4b2e5f463ac5cf09a8c Mon Sep 17 00:00:00 2001
+From: Kito Cheng <kito.cheng@sifive.com>
+Date: Tue, 14 Apr 2020 14:53:19 +0800
+Subject: [PATCH 05/14] Fix alignment for local variable [PR90811]
+
+ - The alignment for local variable was adjust during estimate_stack_frame_size,
+   however it seems wrong spot to adjust that, expand phase will adjust that
+   but it little too late to some gimple optimization, which rely on certain
+   target hooks need to check alignment, forwprop is an example for
+   that, result of simplify_builtin_call rely on the alignment on some
+   target like ARM or RISC-V.
+
+ - Exclude static local var and hard register var in the process of
+   alignment adjustment.
+
+ - This patch fix gfortran.dg/pr45636.f90 for arm and riscv.
+
+ - Regression test on riscv32/riscv64 and x86_64-linux-gnu, no new fail
+   introduced.
+
+gcc/ChangeLog
+
+	PR target/90811
+	* Makefile.in (OBJS): Add adjust-alignment.o.
+	* adjust-alignment.c (pass_data_adjust_alignment): New.
+	(pass_adjust_alignment): New.
+	(pass_adjust_alignment::execute): New.
+	(make_pass_adjust_alignment): New.
+	* tree-pass.h (make_pass_adjust_alignment): New.
+	* passes.def: Add pass_adjust_alignment.
+---
+ gcc/Makefile.in        |  1 +
+ gcc/adjust-alignment.c | 84 ++++++++++++++++++++++++++++++++++++++++++
+ gcc/passes.def         |  1 +
+ gcc/tree-pass.h        |  1 +
+ 4 files changed, 87 insertions(+)
+ create mode 100644 gcc/adjust-alignment.c
+
+diff --git a/gcc/Makefile.in b/gcc/Makefile.in
+index 5d05e8e0dc8..bcaed1531e2 100644
+--- a/gcc/Makefile.in
++++ b/gcc/Makefile.in
+@@ -1263,6 +1263,7 @@ OBJS = \
+ 	insn-recog.o \
+ 	insn-enums.o \
+ 	ggc-page.o \
++	adjust-alignment.o \
+ 	alias.o \
+ 	alloc-pool.o \
+ 	auto-inc-dec.o \
+diff --git a/gcc/adjust-alignment.c b/gcc/adjust-alignment.c
+new file mode 100644
+index 00000000000..40cfd188928
+--- /dev/null
++++ b/gcc/adjust-alignment.c
+@@ -0,0 +1,84 @@
++/* Adjust alignment for local variable.
++   Copyright (C) 2020 Free Software Foundation, Inc.
++   Contributed by Kito Cheng <kito.cheng@sifive.com>
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify it under
++the terms of the GNU General Public License as published by the Free
++Software Foundation; either version 3, or (at your option) any later
++version.
++
++GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++WARRANTY; without even the implied warranty of MERCHANTABILITY or
++FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING3.  If not see
++<http://www.gnu.org/licenses/>.  */
++
++#include "config.h"
++#include "system.h"
++#include "coretypes.h"
++#include "backend.h"
++#include "target.h"
++#include "tree.h"
++#include "tree-pass.h"
++#include "tm_p.h"
++
++namespace {
++
++const pass_data pass_data_adjust_alignment =
++{
++  GIMPLE_PASS, /* type */
++  "adjust_alignment", /* name */
++  OPTGROUP_NONE, /* optinfo_flags */
++  TV_NONE, /* tv_id */
++  0, /* properties_required */
++  0, /* properties_provided */
++  0, /* properties_destroyed */
++  0, /* todo_flags_start */
++  0, /* todo_flags_finish */
++};
++
++class pass_adjust_alignment : public gimple_opt_pass
++{
++public:
++  pass_adjust_alignment (gcc::context *ctxt)
++    : gimple_opt_pass (pass_data_adjust_alignment, ctxt)
++  {}
++
++  virtual unsigned int execute (function *);
++}; // class pass_adjust_alignment
++
++} // anon namespace
++
++/* Entry point to adjust_alignment pass.  */
++unsigned int
++pass_adjust_alignment::execute (function *fun)
++{
++  size_t i;
++  tree var;
++
++  FOR_EACH_LOCAL_DECL (fun, i, var)
++    {
++      /* Don't adjust aligment for static local var and hard register var.  */
++      if (is_global_var (var) || DECL_HARD_REGISTER (var))
++	continue;
++
++      unsigned align = LOCAL_DECL_ALIGNMENT (var);
++
++      /* Make sure alignment only increase.  */
++      gcc_assert (align >= DECL_ALIGN (var));
++
++      SET_DECL_ALIGN (var, align);
++    }
++  return 0;
++}
++
++gimple_opt_pass *
++make_pass_adjust_alignment (gcc::context *ctxt)
++{
++  return new pass_adjust_alignment (ctxt);
++}
+diff --git a/gcc/passes.def b/gcc/passes.def
+index 2bf2cb78fc5..92cbe587a8a 100644
+--- a/gcc/passes.def
++++ b/gcc/passes.def
+@@ -183,6 +183,7 @@ along with GCC; see the file COPYING3.  If not see
+   NEXT_PASS (pass_oacc_device_lower);
+   NEXT_PASS (pass_omp_device_lower);
+   NEXT_PASS (pass_omp_target_link);
++  NEXT_PASS (pass_adjust_alignment);
+   NEXT_PASS (pass_all_optimizations);
+   PUSH_INSERT_PASSES_WITHIN (pass_all_optimizations)
+       NEXT_PASS (pass_remove_cgraph_callee_edges);
+diff --git a/gcc/tree-pass.h b/gcc/tree-pass.h
+index a1207a20a3c..576b3f67434 100644
+--- a/gcc/tree-pass.h
++++ b/gcc/tree-pass.h
+@@ -480,6 +480,7 @@ extern gimple_opt_pass *make_pass_sprintf_length (gcc::context *ctxt);
+ extern gimple_opt_pass *make_pass_walloca (gcc::context *ctxt);
+ extern gimple_opt_pass *make_pass_coroutine_lower_builtins (gcc::context *ctxt);
+ extern gimple_opt_pass *make_pass_coroutine_early_expand_ifns (gcc::context *ctxt);
++extern gimple_opt_pass *make_pass_adjust_alignment (gcc::context *ctxt);
+ 
+ /* IPA Passes */
+ extern simple_ipa_opt_pass *make_pass_ipa_lower_emutls (gcc::context *ctxt);
+-- 
+2.25.4
+

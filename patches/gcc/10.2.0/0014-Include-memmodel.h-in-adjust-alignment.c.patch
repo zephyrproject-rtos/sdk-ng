@@ -1,0 +1,39 @@
+From ff0d04e3807394b57dd9d2394f0a06a3fb8a3d4e Mon Sep 17 00:00:00 2001
+From: Rainer Orth <ro@CeBiTec.Uni-Bielefeld.DE>
+Date: Thu, 21 May 2020 17:02:18 +0200
+Subject: [PATCH 14/14] Include memmodel.h in adjust-alignment.c
+
+Commit dfa4fcdba374ed44d4aa1a22b2738f3f5c5b37af broke SPARC bootstrap:
+
+In file included from ./tm_p.h:4,
+                 from /vol/gcc/src/hg/master/local/gcc/adjust-alignment.c:28:
+/vol/gcc/src/hg/master/local/gcc/config/sparc/sparc-protos.h:45:47: error: use of enum 'memmodel' without previous declaration
+ extern void sparc_emit_membar_for_model (enum memmodel, int, int);
+                                               ^~~~~~~~
+
+Fixed by including memmodel.h.  Bootstrapped on sparc-sun-solaris2.11
+and i386-pc-solaris2.11.
+
+2020-05-21  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	gcc/
+	* adjust-alignment.c: Include memmodel.h.
+---
+ gcc/adjust-alignment.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gcc/adjust-alignment.c b/gcc/adjust-alignment.c
+index 40cfd188928..9b797386bf8 100644
+--- a/gcc/adjust-alignment.c
++++ b/gcc/adjust-alignment.c
+@@ -25,6 +25,7 @@ along with GCC; see the file COPYING3.  If not see
+ #include "target.h"
+ #include "tree.h"
+ #include "tree-pass.h"
++#include "memmodel.h"
+ #include "tm_p.h"
+ 
+ namespace {
+-- 
+2.25.4
+
