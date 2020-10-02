@@ -1,5 +1,38 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.12.0
+
+- General:
+  * Updated to using buildkite for CI
+  * Updated yocto 3.1.1
+  * Build aarch64 (arm64) linux host toolchains.
+  * Moved to using a zephyr fork of crosstool-ng
+  * Update bossa to 1.9.1+
+  * cmake: Set HOST_TOOLS_HOME based on OS_PLATFORM
+
+- QEMU:
+  * Updated to QEMU 5.1.0
+  * Added icount support for ARC
+
+- OpenOCD:
+  * Updated to 20200928 snapshot
+
+- newlib:
+  * Updated to version 3.3
+  * Updated xtensa to version 3.3 (in sync with all arch's)
+
+- binutils:
+  * updated to version 2.35.1
+
+- gcc:
+  * Updated to version 10.2.0
+
+- gdb:
+  * Updated to version 9.2
+
+- xtensa:
+  * remove HAL from SDK build
+
 ## Zephyr SDK 0.11.4
 - General:
   * Fixed issue with cmake files not being installed in arch specific
