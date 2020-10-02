@@ -10,6 +10,7 @@ way, apply patches where needed.
 Currently we build the following toolchains:
 - i586
 - nios2
+- arc
 - arm
 - arm64
 - riscv64
