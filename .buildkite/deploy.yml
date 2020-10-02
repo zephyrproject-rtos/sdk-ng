@@ -9,7 +9,7 @@ steps:
 
       - >
         if [ -n "${BUILDKITE_TAG}" ]; then
-           if [ "${BUILDKITE_TAG}" != $${release} ]; then
+           if [ "${BUILDKITE_TAG}" != v"$${release}" ]; then
               echo "Need to fix VERSION file.  Tag ${BUILDKITE_TAG} doesn't match $${release}"
               exit 1
            fi
