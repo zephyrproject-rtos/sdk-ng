@@ -7,7 +7,7 @@
   * Updated yocto 3.1.1
   * Build aarch64 (arm64) linux host toolchains.
   * Moved to using a zephyr fork of crosstool-ng
-  * Update bossa to 1.9.1+
+  * Update bossa to 1.9.1+ + SAM4L support
   * cmake: Set HOST_TOOLS_HOME based on OS_PLATFORM
 
 - QEMU:
