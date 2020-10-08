@@ -1,0 +1,47 @@
+From 53f8401866fa33329ee850596af1c5c3caa1c116 Mon Sep 17 00:00:00 2001
+From: Gerson Fernando Budke <nandojve@gmail.com>
+Date: Sun, 27 Sep 2020 11:53:46 -0300
+Subject: [PATCH 4/4] CalwFlash: Add NVIC reset command
+
+The SAM4L doesn't have an user interface to access the reset
+controller.  Add Cortex-M4 NVIC reset instructions to allow
+use of parameter -R.
+
+Signed-off-by: Gerson Fernando Budke <nandojve@gmail.com>
+---
+ src/CalwFlash.cpp | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/CalwFlash.cpp b/src/CalwFlash.cpp
+index db1d684..3e54d22 100644
+--- a/src/CalwFlash.cpp
++++ b/src/CalwFlash.cpp
+@@ -58,6 +58,16 @@
+ #define CALW_FCMD_HSEN  0x10
+ #define CALW_FCMD_HSDIS 0x11
+ 
++                                 /* SCS_BASE  + SCB offset + AIRCR offset) */
++#define NVIC_SCB_AIRCR            (0xE000E000UL + 0x0D00UL + 0x00CUL)
++#define SCB_AIRCR_VECTKEY         0x5FAUL
++#define SCB_AIRCR_VECTKEY_Pos     16U
++#define SCB_AIRCR_SYSRESETREQ_Pos 2U
++#define SCB_AIRCR_SYSRESETREQ_Msk (1UL << SCB_AIRCR_SYSRESETREQ_Pos)
++#define SCB_AIRCR_RESET_CPU_VAL   ((SCB_AIRCR_VECTKEY << \
++                                    SCB_AIRCR_VECTKEY_Pos) | \
++                                  SCB_AIRCR_SYSRESETREQ_Msk)
++
+ CalwFlash::CalwFlash(Samba& samba,
+                      const std::string& name,
+                      uint32_t addr,
+@@ -156,6 +166,8 @@ void
+ CalwFlash::resetCPU(void)
+ {
+     printf("Reset CPU\n");
++
++    _samba.writeWord(NVIC_SCB_AIRCR, SCB_AIRCR_RESET_CPU_VAL);
+ }
+ 
+ void
+-- 
+2.25.4
+

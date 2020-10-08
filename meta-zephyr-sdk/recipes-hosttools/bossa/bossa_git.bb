@@ -15,6 +15,10 @@ PR = "r0"
 SRCREV = "3532de82efd28fadbabc2b258d84dddf14298107"
 SRC_URI = "git://github.com/shumatech/BOSSA.git;protocol=https \
 	   file://0001-Wait-for-EEFC-flash-to-complete-operations-before-re.patch \
+	   file://0001-Flash.h-Add-flash-override-samba-error.patch \
+	   file://0002-CalwFlash-Add-SAM4L-Flashcalw-controller.patch \
+	   file://0003-Device-Introduce-support-to-SAM4L-SoC-family.patch \
+	   file://0004-CalwFlash-Add-NVIC-reset-command.patch \
 "
 
 S = "${WORKDIR}/git"

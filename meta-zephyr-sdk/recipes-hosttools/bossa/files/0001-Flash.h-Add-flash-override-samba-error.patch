@@ -1,0 +1,36 @@
+From a7c015a628daa1b628f70b7eaf9485f7cbafcf9d Mon Sep 17 00:00:00 2001
+From: Gerson Fernando Budke <nandojve@gmail.com>
+Date: Sat, 26 Sep 2020 18:25:53 -0300
+Subject: [PATCH 1/4] Flash.h: Add flash override samba error
+
+When a device have bootloader on flash, user can set a offset that may
+try erase and/or override the bootloader.  Add an exception to abort on
+any of that conditions.
+
+Signed-off-by: Gerson Fernando Budke <nandojve@gmail.com>
+---
+ src/Flash.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/Flash.h b/src/Flash.h
+index 5d3a37b..b396a16 100644
+--- a/src/Flash.h
++++ b/src/Flash.h
+@@ -88,6 +88,14 @@ public:
+ 
+ };
+ 
++class FlashOverrideSambaError : public std::exception
++{
++public:
++    FlashOverrideSambaError() : exception() {};
++    const char* what() const throw() { return "SAM-BA bootloader shouldn't be erased. Check flash start address."; }
++
++};
++
+ template<class T>
+ class FlashOption
+ {
+-- 
+2.25.4
+
