@@ -13,6 +13,7 @@
 - QEMU:
   * Updated to QEMU 5.1.0
   * Added icount support for ARC
+  * Backport RISC-V PMP fixes from upstream qemu
 
 - OpenOCD:
   * Updated to 20200928 snapshot
