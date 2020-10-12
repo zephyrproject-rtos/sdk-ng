@@ -144,7 +144,7 @@ do_zephyrrc()
 	echo "     export ZEPHYR_SDK_INSTALL_DIR=$target_sdk_dir"
 	echo
 	if [ -z "$rc_confirm" ]; then
-		prompt "creating/updating $HOME/.zephyrrc with environment variables setup for you "
+		prompt "create/update $HOME/.zephyrrc with environment variables setup for you "
 		rc_confirm=$answer
 	fi
 	if [ "$rc_confirm" = "y" ]; then
@@ -172,7 +172,7 @@ do_cmake_package()
 		fi
 
 		if [ -z "$cmake_confirm" ]; then
-			prompt "registering Zephyr-sdk CMake module with path $target_sdk_dir "
+			prompt "register Zephyr-sdk CMake module with path $target_sdk_dir "
 			cmake_confirm=$answer
 		fi
 		if [ "$cmake_confirm" = "y" ]; then
@@ -188,7 +188,7 @@ do_cmake_package()
 # Read the input "y"
 # $1 is optional, but allows the caller to provide additional text.
 prompt () {
-	echo "Do you want to continue $1(y/n)? "
+	echo "Do you want to $1(y/n)? "
 	while read answer; do
 		if [ "$answer" = "Y" -o "$answer" = "y" ]; then
 			answer="y"
