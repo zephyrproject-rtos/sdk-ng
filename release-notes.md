@@ -9,6 +9,7 @@
   * Moved to using a zephyr fork of crosstool-ng
   * Update bossa to 1.9.1+ + SAM4L support
   * cmake: Set HOST_TOOLS_HOME based on OS_PLATFORM
+  * tweaks to installer script
 
 - QEMU:
   * Updated to QEMU 5.1.0
