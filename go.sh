@@ -32,7 +32,7 @@ if [ "$machine" == "Mac" ]; then
 	if [ ! -e "$ImageNameExt" ]; then
 	diskutil umount force /Volumes/${ImageName} && true
 	rm -f ${ImageNameExt} && true
-	hdiutil create ${ImageName} -volname ${ImageName} -type SPARSE -size 24g -fs HFSX
+	hdiutil create ${ImageName} -volname ${ImageName} -type SPARSE -size 64g -fs HFSX
 	fi
 	if [ ! -d "/Volumes/$ImageName" ]; then
 		hdiutil mount ${ImageNameExt}
