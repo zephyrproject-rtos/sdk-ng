@@ -22,12 +22,14 @@
 - newlib:
   * Updated to version 3.3
   * Updated xtensa to version 3.3 (in sync with all arch's)
+  * Change default builds to be built with -O2
 
 - binutils:
   * updated to version 2.35.1
 
 - gcc:
   * Updated to version 10.2.0
+  * Fix bug in libgcc builds w/regards to ARM cmse support
 
 - gdb:
   * Updated to version 9.2
