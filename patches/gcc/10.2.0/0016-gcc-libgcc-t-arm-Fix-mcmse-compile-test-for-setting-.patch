@@ -1,0 +1,30 @@
+From 019443b8643c570185bdbf8e7908965a6e26da34 Mon Sep 17 00:00:00 2001
+From: Kumar Gala <kumar.gala@linaro.org>
+Date: Tue, 1 Dec 2020 15:35:25 -0600
+Subject: [PATCH] gcc: libgcc: t-arm: Fix -mcmse compile test for setting
+ CMSE_OPTS
+
+We need to use $$? to get the exit code because of how expansion
+works in make.
+
+Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
+---
+ libgcc/config/arm/t-arm | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libgcc/config/arm/t-arm b/libgcc/config/arm/t-arm
+index 364f40ebe7f..3625a2590be 100644
+--- a/libgcc/config/arm/t-arm
++++ b/libgcc/config/arm/t-arm
+@@ -4,7 +4,7 @@ LIB1ASMFUNCS = _thumb1_case_sqi _thumb1_case_uqi _thumb1_case_shi \
+ 
+ HAVE_CMSE:=$(findstring __ARM_FEATURE_CMSE,$(shell $(gcc_compile_bare) -dM -E - </dev/null))
+ HAVE_V81M:=$(findstring armv8.1-m.main,$(gcc_compile_bare))
+-ifeq ($(shell $(gcc_compile_bare) -E -mcmse - </dev/null >/dev/null 2>/dev/null; echo $?),0)
++ifeq ($(shell $(gcc_compile_bare) -E -mcmse - </dev/null >/dev/null 2>/dev/null; echo $$?),0)
+ CMSE_OPTS:=-mcmse
+ endif
+ 
+-- 
+2.28.0
+
