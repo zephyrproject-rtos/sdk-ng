@@ -37,6 +37,7 @@ if [ "$machine" == "Mac" ]; then
 	if [ ! -d "/Volumes/$ImageName" ]; then
 		hdiutil mount ${ImageNameExt}
 	fi
+	cp -a patches /Volumes/$ImageName
 	cd /Volumes/$ImageName
 fi
 
