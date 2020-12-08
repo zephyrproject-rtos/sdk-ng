@@ -12,7 +12,7 @@ if [ "$TARGETS" == "all" ]; then
 	TARGETS=${TARGETS}" tools"
 fi
 
-COMMIT="c57e8cc25fde8dc904a390adafafe9092a3f0d18"
+COMMIT="d7da3a9c7f0f3a90bb4c71b91aea6cbc2471a541"
 GITDIR=${PWD}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
