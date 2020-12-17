@@ -17,7 +17,7 @@
   * Backport RISC-V PMP fixes from upstream qemu
 
 - OpenOCD:
-  * Updated to 20200928 snapshot
+  * Updated to 20201109 snapshot [e44539d66c8929679321704768125df9ba7d5f67]
 
 - newlib:
   * Updated to version 3.3
