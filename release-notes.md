@@ -1,5 +1,11 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.12.1
+
+- General:
+  * Re-enable MIPS toolchain target
+  * Fix version number in cmake/zephyr/Kconfig
+
 ## Zephyr SDK 0.12.0
 
 - General:
