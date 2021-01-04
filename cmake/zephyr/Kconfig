@@ -6,3 +6,11 @@
 config TOOLCHAIN_ZEPHYR_0_12
 	def_bool y
 	select HAS_NEWLIB_LIBC_NANO if (ARC || (ARM && !ARM64) || RISCV)
+
+config TOOLCHAIN_SUPPORTS_SOFT_FLOAT
+	bool
+	default y if X86 || !X86_64
+	help
+	  Hidden option to indicate whether the toolchain supports software
+	  floating point operations that can be enabled via "-msoft-float"
+	  compiler flag.
