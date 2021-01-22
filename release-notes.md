@@ -1,5 +1,10 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.12.2
+
+- binutils:
+  * Enable x86_64-pep target for EFI binary support
+
 ## Zephyr SDK 0.12.1
 
 - General:
