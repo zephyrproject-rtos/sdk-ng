@@ -1,0 +1,587 @@
+From 71ff858808b99e612b98644c94a447460164f809 Mon Sep 17 00:00:00 2001
+From: Christophe Lyon <christophe.lyon@linaro.org>
+Date: Mon, 5 Oct 2020 13:11:07 +0000
+Subject: [PATCH 35/49] arm: [MVE[ Add vqdmlashq intrinsics (PR target/96914)
+
+This patch adds:
+vqdmlashq_m_n_s16
+vqdmlashq_m_n_s32
+vqdmlashq_m_n_s8
+vqdmlashq_n_s16
+vqdmlashq_n_s32
+vqdmlashq_n_s8
+
+2020-10-08  Christophe Lyon  <christophe.lyon@linaro.org>
+
+	gcc/
+	PR target/96914
+	* config/arm/arm_mve.h (vqdmlashq, vqdmlashq_m): Define.
+	* config/arm/arm_mve_builtins.def (vqdmlashq_n_s)
+	(vqdmlashq_m_n_s,): New.
+	* config/arm/unspecs.md (VQDMLASHQ_N_S, VQDMLASHQ_M_N_S): New
+	unspecs.
+	* config/arm/iterators.md (VQDMLASHQ_N_S, VQDMLASHQ_M_N_S): New
+	attributes.
+	(VQDMLASHQ_N): New iterator.
+	* config/arm/mve.md (mve_vqdmlashq_n_, mve_vqdmlashq_m_n_s): New
+	patterns.
+
+	gcc/testsuite/
+	PR target/96914
+	* gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s16.c: New test.
+	* gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s32.c: New test.
+	* gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s8.c: New test.
+	* gcc.target/arm/mve/intrinsics/vqdmlashq_n_s16.c: New test.
+	* gcc.target/arm/mve/intrinsics/vqdmlashq_n_s32.c: New test.
+	* gcc.target/arm/mve/intrinsics/vqdmlashq_n_s8.c: New test.
+
+(cherry picked from commit afb198ee3729c29c8e681aedc656f55f4afe4053)
+---
+ gcc/config/arm/arm_mve.h                      | 116 ++++++++++++++++++
+ gcc/config/arm/arm_mve_builtins.def           |   2 +
+ gcc/config/arm/iterators.md                   |   3 +
+ gcc/config/arm/mve.md                         |  33 +++++
+ gcc/config/arm/unspecs.md                     |   2 +
+ .../arm/mve/intrinsics/vqdmlashq_m_n_s16.c    |  23 ++++
+ .../arm/mve/intrinsics/vqdmlashq_m_n_s32.c    |  23 ++++
+ .../arm/mve/intrinsics/vqdmlashq_m_n_s8.c     |  23 ++++
+ .../arm/mve/intrinsics/vqdmlashq_n_s16.c      |  21 ++++
+ .../arm/mve/intrinsics/vqdmlashq_n_s32.c      |  21 ++++
+ .../arm/mve/intrinsics/vqdmlashq_n_s8.c       |  21 ++++
+ 11 files changed, 288 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s16.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s32.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s8.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s16.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s32.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s8.c
+
+diff --git a/gcc/config/arm/arm_mve.h b/gcc/config/arm/arm_mve.h
+index 02dd216cb60..424a5ae8462 100644
+--- a/gcc/config/arm/arm_mve.h
++++ b/gcc/config/arm/arm_mve.h
+@@ -141,6 +141,7 @@
+ #define vrev64q_m(__inactive, __a, __p) __arm_vrev64q_m(__inactive, __a, __p)
+ #define vqrdmlashq(__a, __b, __c) __arm_vqrdmlashq(__a, __b, __c)
+ #define vqrdmlahq(__a, __b, __c) __arm_vqrdmlahq(__a, __b, __c)
++#define vqdmlashq(__a, __b, __c) __arm_vqdmlashq(__a, __b, __c)
+ #define vqdmlahq(__a, __b, __c) __arm_vqdmlahq(__a, __b, __c)
+ #define vmvnq_m(__inactive, __a, __p) __arm_vmvnq_m(__inactive, __a, __p)
+ #define vmlasq(__a, __b, __c) __arm_vmlasq(__a, __b, __c)
+@@ -260,6 +261,7 @@
+ #define vorrq_m(__inactive, __a, __b, __p) __arm_vorrq_m(__inactive, __a, __b, __p)
+ #define vqaddq_m(__inactive, __a, __b, __p) __arm_vqaddq_m(__inactive, __a, __b, __p)
+ #define vqdmladhq_m(__inactive, __a, __b, __p) __arm_vqdmladhq_m(__inactive, __a, __b, __p)
++#define vqdmlashq_m(__a, __b, __c, __p) __arm_vqdmlashq_m(__a, __b, __c, __p)
+ #define vqdmladhxq_m(__inactive, __a, __b, __p) __arm_vqdmladhxq_m(__inactive, __a, __b, __p)
+ #define vqdmlahq_m(__a, __b, __c, __p) __arm_vqdmlahq_m(__a, __b, __c, __p)
+ #define vqdmlsdhq_m(__inactive, __a, __b, __p) __arm_vqdmlsdhq_m(__inactive, __a, __b, __p)
+@@ -1306,6 +1308,7 @@
+ #define vqdmlsdhxq_s8(__inactive, __a, __b) __arm_vqdmlsdhxq_s8(__inactive, __a, __b)
+ #define vqdmlsdhq_s8(__inactive, __a, __b) __arm_vqdmlsdhq_s8(__inactive, __a, __b)
+ #define vqdmlahq_n_s8(__a, __b, __c) __arm_vqdmlahq_n_s8(__a, __b, __c)
++#define vqdmlashq_n_s8(__a, __b, __c) __arm_vqdmlashq_n_s8(__a, __b, __c)
+ #define vqdmladhxq_s8(__inactive, __a, __b) __arm_vqdmladhxq_s8(__inactive, __a, __b)
+ #define vqdmladhq_s8(__inactive, __a, __b) __arm_vqdmladhq_s8(__inactive, __a, __b)
+ #define vmlsdavaxq_s8(__a, __b, __c) __arm_vmlsdavaxq_s8(__a, __b, __c)
+@@ -1390,6 +1393,7 @@
+ #define vqrdmladhq_s16(__inactive, __a, __b) __arm_vqrdmladhq_s16(__inactive, __a, __b)
+ #define vqdmlsdhxq_s16(__inactive, __a, __b) __arm_vqdmlsdhxq_s16(__inactive, __a, __b)
+ #define vqdmlsdhq_s16(__inactive, __a, __b) __arm_vqdmlsdhq_s16(__inactive, __a, __b)
++#define vqdmlashq_n_s16(__a, __b, __c) __arm_vqdmlashq_n_s16(__a, __b, __c)
+ #define vqdmlahq_n_s16(__a, __b, __c) __arm_vqdmlahq_n_s16(__a, __b, __c)
+ #define vqdmladhxq_s16(__inactive, __a, __b) __arm_vqdmladhxq_s16(__inactive, __a, __b)
+ #define vqdmladhq_s16(__inactive, __a, __b) __arm_vqdmladhq_s16(__inactive, __a, __b)
+@@ -1475,6 +1479,7 @@
+ #define vqrdmladhq_s32(__inactive, __a, __b) __arm_vqrdmladhq_s32(__inactive, __a, __b)
+ #define vqdmlsdhxq_s32(__inactive, __a, __b) __arm_vqdmlsdhxq_s32(__inactive, __a, __b)
+ #define vqdmlsdhq_s32(__inactive, __a, __b) __arm_vqdmlsdhq_s32(__inactive, __a, __b)
++#define vqdmlashq_n_s32(__a, __b, __c) __arm_vqdmlashq_n_s32(__a, __b, __c)
+ #define vqdmlahq_n_s32(__a, __b, __c) __arm_vqdmlahq_n_s32(__a, __b, __c)
+ #define vqdmladhxq_s32(__inactive, __a, __b) __arm_vqdmladhxq_s32(__inactive, __a, __b)
+ #define vqdmladhq_s32(__inactive, __a, __b) __arm_vqdmladhq_s32(__inactive, __a, __b)
+@@ -1901,6 +1906,9 @@
+ #define vqdmladhxq_m_s8(__inactive, __a, __b, __p) __arm_vqdmladhxq_m_s8(__inactive, __a, __b, __p)
+ #define vqdmladhxq_m_s32(__inactive, __a, __b, __p) __arm_vqdmladhxq_m_s32(__inactive, __a, __b, __p)
+ #define vqdmladhxq_m_s16(__inactive, __a, __b, __p) __arm_vqdmladhxq_m_s16(__inactive, __a, __b, __p)
++#define vqdmlashq_m_n_s8(__a, __b, __c, __p) __arm_vqdmlashq_m_n_s8(__a, __b, __c, __p)
++#define vqdmlashq_m_n_s32(__a, __b, __c, __p) __arm_vqdmlashq_m_n_s32(__a, __b, __c, __p)
++#define vqdmlashq_m_n_s16(__a, __b, __c, __p) __arm_vqdmlashq_m_n_s16(__a, __b, __c, __p)
+ #define vqdmlahq_m_n_s8(__a, __b, __c, __p) __arm_vqdmlahq_m_n_s8(__a, __b, __c, __p)
+ #define vqdmlahq_m_n_s32(__a, __b, __c, __p) __arm_vqdmlahq_m_n_s32(__a, __b, __c, __p)
+ #define vqdmlahq_m_n_s16(__a, __b, __c, __p) __arm_vqdmlahq_m_n_s16(__a, __b, __c, __p)
+@@ -7422,6 +7430,13 @@ __arm_vqrdmlashq_n_s8 (int8x16_t __a, int8x16_t __b, int8_t __c)
+   return __builtin_mve_vqrdmlashq_n_sv16qi (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline int8x16_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_n_s8 (int8x16_t __a, int8x16_t __b, int8_t __c)
++{
++  return __builtin_mve_vqdmlashq_n_sv16qi (__a, __b, __c);
++}
++
+ __extension__ extern __inline int8x16_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlahq_n_s8 (int8x16_t __a, int8x16_t __b, int8_t __c)
+@@ -8017,6 +8032,13 @@ __arm_vqrdmlashq_n_s16 (int16x8_t __a, int16x8_t __b, int16_t __c)
+   return __builtin_mve_vqrdmlashq_n_sv8hi (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline int16x8_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_n_s16 (int16x8_t __a, int16x8_t __b, int16_t __c)
++{
++  return __builtin_mve_vqdmlashq_n_sv8hi (__a, __b, __c);
++}
++
+ __extension__ extern __inline int16x8_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlahq_n_s16 (int16x8_t __a, int16x8_t __b, int16_t __c)
+@@ -8612,6 +8634,13 @@ __arm_vqrdmlashq_n_s32 (int32x4_t __a, int32x4_t __b, int32_t __c)
+   return __builtin_mve_vqrdmlashq_n_sv4si (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline int32x4_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_n_s32 (int32x4_t __a, int32x4_t __b, int32_t __c)
++{
++  return __builtin_mve_vqdmlashq_n_sv4si (__a, __b, __c);
++}
++
+ __extension__ extern __inline int32x4_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlahq_n_s32 (int32x4_t __a, int32x4_t __b, int32_t __c)
+@@ -11139,6 +11168,27 @@ __arm_vqrdmlashq_m_n_s16 (int16x8_t __a, int16x8_t __b, int16_t __c, mve_pred16_
+   return __builtin_mve_vqrdmlashq_m_n_sv8hi (__a, __b, __c, __p);
+ }
+ 
++__extension__ extern __inline int8x16_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_m_n_s8 (int8x16_t __a, int8x16_t __b, int8_t __c, mve_pred16_t __p)
++{
++  return __builtin_mve_vqdmlashq_m_n_sv16qi (__a, __b, __c, __p);
++}
++
++__extension__ extern __inline int16x8_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_m_n_s16 (int16x8_t __a, int16x8_t __b, int16_t __c, mve_pred16_t __p)
++{
++  return __builtin_mve_vqdmlashq_m_n_sv8hi (__a, __b, __c, __p);
++}
++
++__extension__ extern __inline int32x4_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_m_n_s32 (int32x4_t __a, int32x4_t __b, int32_t __c, mve_pred16_t __p)
++{
++  return __builtin_mve_vqdmlashq_m_n_sv4si (__a, __b, __c, __p);
++}
++
+ __extension__ extern __inline int8x16_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlsdhq_m_s8 (int8x16_t __inactive, int8x16_t __a, int8x16_t __b, mve_pred16_t __p)
+@@ -24192,6 +24242,13 @@ __arm_vqrdmlashq (int8x16_t __a, int8x16_t __b, int8_t __c)
+  return __arm_vqrdmlashq_n_s8 (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline int8x16_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq (int8x16_t __a, int8x16_t __b, int8_t __c)
++{
++ return __arm_vqdmlashq_n_s8 (__a, __b, __c);
++}
++
+ __extension__ extern __inline int8x16_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlahq (int8x16_t __a, int8x16_t __b, int8_t __c)
+@@ -24787,6 +24844,13 @@ __arm_vqrdmlashq (int16x8_t __a, int16x8_t __b, int16_t __c)
+  return __arm_vqrdmlashq_n_s16 (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline int16x8_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq (int16x8_t __a, int16x8_t __b, int16_t __c)
++{
++ return __arm_vqdmlashq_n_s16 (__a, __b, __c);
++}
++
+ __extension__ extern __inline int16x8_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlahq (int16x8_t __a, int16x8_t __b, int16_t __c)
+@@ -25382,6 +25446,13 @@ __arm_vqrdmlashq (int32x4_t __a, int32x4_t __b, int32_t __c)
+  return __arm_vqrdmlashq_n_s32 (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline int32x4_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq (int32x4_t __a, int32x4_t __b, int32_t __c)
++{
++ return __arm_vqdmlashq_n_s32 (__a, __b, __c);
++}
++
+ __extension__ extern __inline int32x4_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlahq (int32x4_t __a, int32x4_t __b, int32_t __c)
+@@ -27909,6 +27980,27 @@ __arm_vqrdmlashq_m (int16x8_t __a, int16x8_t __b, int16_t __c, mve_pred16_t __p)
+  return __arm_vqrdmlashq_m_n_s16 (__a, __b, __c, __p);
+ }
+ 
++__extension__ extern __inline int8x16_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_m (int8x16_t __a, int8x16_t __b, int8_t __c, mve_pred16_t __p)
++{
++ return __arm_vqdmlashq_m_n_s8 (__a, __b, __c, __p);
++}
++
++__extension__ extern __inline int16x8_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_m (int16x8_t __a, int16x8_t __b, int16_t __c, mve_pred16_t __p)
++{
++ return __arm_vqdmlashq_m_n_s16 (__a, __b, __c, __p);
++}
++
++__extension__ extern __inline int32x4_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vqdmlashq_m (int32x4_t __a, int32x4_t __b, int32_t __c, mve_pred16_t __p)
++{
++ return __arm_vqdmlashq_m_n_s32 (__a, __b, __c, __p);
++}
++
+ __extension__ extern __inline int8x16_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vqrdmlsdhq_m (int8x16_t __inactive, int8x16_t __a, int8x16_t __b, mve_pred16_t __p)
+@@ -36780,6 +36872,14 @@ extern void *__ARM_undef;
+   int (*)[__ARM_mve_type_uint16x8_t][__ARM_mve_type_uint16x8_t][__ARM_mve_type_int_n]: __arm_vqrdmlashq_n_u16 (__ARM_mve_coerce(__p0, uint16x8_t), __ARM_mve_coerce(__p1, uint16x8_t), __ARM_mve_coerce(__p2, uint16_t)), \
+   int (*)[__ARM_mve_type_uint32x4_t][__ARM_mve_type_uint32x4_t][__ARM_mve_type_int_n]: __arm_vqrdmlashq_n_u32 (__ARM_mve_coerce(__p0, uint32x4_t), __ARM_mve_coerce(__p1, uint32x4_t), __ARM_mve_coerce(__p2, uint32_t)));})
+ 
++#define __arm_vqdmlashq(p0,p1,p2) ({ __typeof(p0) __p0 = (p0); \
++  __typeof(p1) __p1 = (p1); \
++  __typeof(p2) __p2 = (p2); \
++  _Generic( (int (*)[__ARM_mve_typeid(__p0)][__ARM_mve_typeid(__p1)][__ARM_mve_typeid(__p2)])0, \
++  int (*)[__ARM_mve_type_int8x16_t][__ARM_mve_type_int8x16_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_n_s8 (__ARM_mve_coerce(__p0, int8x16_t), __ARM_mve_coerce(__p1, int8x16_t), __ARM_mve_coerce(__p2, int8_t)), \
++  int (*)[__ARM_mve_type_int16x8_t][__ARM_mve_type_int16x8_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_n_s16 (__ARM_mve_coerce(__p0, int16x8_t), __ARM_mve_coerce(__p1, int16x8_t), __ARM_mve_coerce(__p2, int16_t)), \
++	    int (*)[__ARM_mve_type_int32x4_t][__ARM_mve_type_int32x4_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_n_s32 (__ARM_mve_coerce(__p0, int32x4_t), __ARM_mve_coerce(__p1, int32x4_t), __ARM_mve_coerce(__p2, int32_t)));})
++
+ #define __arm_vqrdmlahq(p0,p1,p2) ({ __typeof(p0) __p0 = (p0); \
+   __typeof(p1) __p1 = (p1); \
+   __typeof(p2) __p2 = (p2); \
+@@ -39252,6 +39352,14 @@ extern void *__ARM_undef;
+   int (*)[__ARM_mve_type_uint16x8_t][__ARM_mve_type_uint16x8_t][__ARM_mve_type_int_n]: __arm_vqrdmlashq_n_u16 (__ARM_mve_coerce(__p0, uint16x8_t), __ARM_mve_coerce(__p1, uint16x8_t), __ARM_mve_coerce(__p2, uint16_t)), \
+   int (*)[__ARM_mve_type_uint32x4_t][__ARM_mve_type_uint32x4_t][__ARM_mve_type_int_n]: __arm_vqrdmlashq_n_u32 (__ARM_mve_coerce(__p0, uint32x4_t), __ARM_mve_coerce(__p1, uint32x4_t), __ARM_mve_coerce(__p2, uint32_t)));})
+ 
++#define __arm_vqdmlashq(p0,p1,p2) ({ __typeof(p0) __p0 = (p0); \
++  __typeof(p1) __p1 = (p1); \
++  __typeof(p2) __p2 = (p2); \
++  _Generic( (int (*)[__ARM_mve_typeid(__p0)][__ARM_mve_typeid(__p1)][__ARM_mve_typeid(__p2)])0, \
++  int (*)[__ARM_mve_type_int8x16_t][__ARM_mve_type_int8x16_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_n_s8 (__ARM_mve_coerce(__p0, int8x16_t), __ARM_mve_coerce(__p1, int8x16_t), __ARM_mve_coerce(__p2, int8_t)), \
++  int (*)[__ARM_mve_type_int16x8_t][__ARM_mve_type_int16x8_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_n_s16 (__ARM_mve_coerce(__p0, int16x8_t), __ARM_mve_coerce(__p1, int16x8_t), __ARM_mve_coerce(__p2, int16_t)), \
++  int (*)[__ARM_mve_type_int32x4_t][__ARM_mve_type_int32x4_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_n_s32 (__ARM_mve_coerce(__p0, int32x4_t), __ARM_mve_coerce(__p1, int32x4_t), __ARM_mve_coerce(__p2, int32_t)));})
++
+ #define __arm_vqrdmlahq(p0,p1,p2) ({ __typeof(p0) __p0 = (p0); \
+   __typeof(p1) __p1 = (p1); \
+   __typeof(p2) __p2 = (p2); \
+@@ -40793,6 +40901,14 @@ extern void *__ARM_undef;
+   int (*)[__ARM_mve_type_int16x8_t][__ARM_mve_type_int16x8_t][__ARM_mve_type_int_n]: __arm_vqrdmlashq_m_n_s16 (__ARM_mve_coerce(__p0, int16x8_t), __ARM_mve_coerce(__p1, int16x8_t), __ARM_mve_coerce(__p2, int16_t), p3), \
+   int (*)[__ARM_mve_type_int32x4_t][__ARM_mve_type_int32x4_t][__ARM_mve_type_int_n]: __arm_vqrdmlashq_m_n_s32 (__ARM_mve_coerce(__p0, int32x4_t), __ARM_mve_coerce(__p1, int32x4_t), __ARM_mve_coerce(__p2, int32_t), p3));})
+ 
++#define __arm_vqdmlashq_m(p0,p1,p2,p3) ({ __typeof(p0) __p0 = (p0); \
++  __typeof(p1) __p1 = (p1); \
++  __typeof(p2) __p2 = (p2); \
++  _Generic( (int (*)[__ARM_mve_typeid(__p0)][__ARM_mve_typeid(__p1)][__ARM_mve_typeid(__p2)])0, \
++  int (*)[__ARM_mve_type_int8x16_t][__ARM_mve_type_int8x16_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_m_n_s8 (__ARM_mve_coerce(__p0, int8x16_t), __ARM_mve_coerce(__p1, int8x16_t), __ARM_mve_coerce(__p2, int8_t), p3), \
++  int (*)[__ARM_mve_type_int16x8_t][__ARM_mve_type_int16x8_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_m_n_s16 (__ARM_mve_coerce(__p0, int16x8_t), __ARM_mve_coerce(__p1, int16x8_t), __ARM_mve_coerce(__p2, int16_t), p3), \
++  int (*)[__ARM_mve_type_int32x4_t][__ARM_mve_type_int32x4_t][__ARM_mve_type_int_n]: __arm_vqdmlashq_m_n_s32 (__ARM_mve_coerce(__p0, int32x4_t), __ARM_mve_coerce(__p1, int32x4_t), __ARM_mve_coerce(__p2, int32_t), p3));})
++
+ #define __arm_vqrshlq_m(p0,p1,p2,p3) ({ __typeof(p0) __p0 = (p0); \
+   __typeof(p1) __p1 = (p1); \
+   __typeof(p2) __p2 = (p2); \
+diff --git a/gcc/config/arm/arm_mve_builtins.def b/gcc/config/arm/arm_mve_builtins.def
+index 55d426fbd14..c0ec53b7406 100644
+--- a/gcc/config/arm/arm_mve_builtins.def
++++ b/gcc/config/arm/arm_mve_builtins.def
+@@ -384,6 +384,7 @@ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqrdmladhq_s, v16qi, v8hi, v4si)
+ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqdmlsdhxq_s, v16qi, v8hi, v4si)
+ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqdmlsdhq_s, v16qi, v8hi, v4si)
+ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqdmlahq_n_s, v16qi, v8hi, v4si)
++VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqdmlashq_n_s, v16qi, v8hi, v4si)
+ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqdmladhxq_s, v16qi, v8hi, v4si)
+ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vqdmladhq_s, v16qi, v8hi, v4si)
+ VAR3 (TERNOP_NONE_NONE_NONE_NONE, vmlsdavaxq_s, v16qi, v8hi, v4si)
+@@ -574,6 +575,7 @@ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmulhq_m_n_s, v16qi, v8hi, v4si)
+ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmlsdhxq_m_s, v16qi, v8hi, v4si)
+ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmlsdhq_m_s, v16qi, v8hi, v4si)
+ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmlahq_m_n_s, v16qi, v8hi, v4si)
++VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmlashq_m_n_s, v16qi, v8hi, v4si)
+ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmladhxq_m_s, v16qi, v8hi, v4si)
+ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqdmladhq_m_s, v16qi, v8hi, v4si)
+ VAR3 (QUADOP_NONE_NONE_NONE_NONE_UNONE, vqaddq_m_s, v16qi, v8hi, v4si)
+diff --git a/gcc/config/arm/iterators.md b/gcc/config/arm/iterators.md
+index 1063d34096c..16e949575d5 100644
+--- a/gcc/config/arm/iterators.md
++++ b/gcc/config/arm/iterators.md
+@@ -1293,6 +1293,7 @@
+ 		       (VMLAQ_N_U "u") (VMLASQ_N_S "s") (VMLASQ_N_U "u")
+ 		       (VMVNQ_M_S "s") (VMVNQ_M_U "u") (VPSELQ_S "s")
+ 		       (VPSELQ_U "u") (VQDMLAHQ_N_S "s") (VQDMLAHQ_N_U "u")
++		       (VQDMLASHQ_N_S "s")
+ 		       (VQRDMLAHQ_N_S "s") (VQRDMLAHQ_N_U "u")
+ 		       (VQRDMLASHQ_N_S "s") (VQRDMLASHQ_N_U "u")
+ 		       (VQRSHLQ_M_N_S "s") (VQRSHLQ_M_N_U "u")
+@@ -1334,6 +1335,7 @@
+ 		       (VMULQ_M_S "s") (VQSHLQ_M_N_U "u") (VSLIQ_M_N_U "u")
+ 		       (VMLADAVAQ_P_S "s") (VQRSHLQ_M_U "u")
+ 		       (VMULLBQ_INT_M_U "u") (VSHLQ_M_N_U "u") (VQSUBQ_M_U "u")
++		       (VQDMLASHQ_M_N_S "s")
+ 		       (VQRDMLASHQ_M_N_U "u") (VRSHRQ_M_N_S "s")
+ 		       (VORNQ_M_S "s") (VCADDQ_ROT270_M_S "s") (VRHADDQ_M_U "u")
+ 		       (VRSHRQ_M_N_U "u") (VMLASQ_M_N_U "u") (VHSUBQ_M_U "u")
+@@ -1585,6 +1587,7 @@
+ (define_int_iterator VMVNQ_M [VMVNQ_M_S VMVNQ_M_U])
+ (define_int_iterator VPSELQ [VPSELQ_S VPSELQ_U])
+ (define_int_iterator VQDMLAHQ_N [VQDMLAHQ_N_S VQDMLAHQ_N_U])
++(define_int_iterator VQDMLASHQ_N [VQDMLASHQ_N_S])
+ (define_int_iterator VQRDMLAHQ_N [VQRDMLAHQ_N_S VQRDMLAHQ_N_U])
+ (define_int_iterator VQRDMLASHQ_N [VQRDMLASHQ_N_S VQRDMLASHQ_N_U])
+ (define_int_iterator VQRSHLQ_M_N [VQRSHLQ_M_N_S VQRSHLQ_M_N_U])
+diff --git a/gcc/config/arm/mve.md b/gcc/config/arm/mve.md
+index 357718c12d9..bef46ddb5f5 100644
+--- a/gcc/config/arm/mve.md
++++ b/gcc/config/arm/mve.md
+@@ -3677,6 +3677,22 @@
+   [(set_attr "type" "mve_move")
+ ])
+ 
++;;
++;; [vqdmlashq_n_s])
++;;
++(define_insn "mve_vqdmlashq_n_<supf><mode>"
++  [
++   (set (match_operand:MVE_2 0 "s_register_operand" "=w")
++	(unspec:MVE_2 [(match_operand:MVE_2 1 "s_register_operand" "0")
++		       (match_operand:MVE_2 2 "s_register_operand" "w")
++		       (match_operand:<V_elem> 3 "s_register_operand" "r")]
++	 VQDMLASHQ_N))
++  ]
++  "TARGET_HAVE_MVE"
++  "vqdmlash.s%#<V_sz_elem>\t%q0, %q2, %3"
++  [(set_attr "type" "mve_move")
++])
++
+ ;;
+ ;; [vqnegq_m_s])
+ ;;
+@@ -5903,6 +5919,23 @@
+   [(set_attr "type" "mve_move")
+    (set_attr "length""8")])
+ 
++;;
++;; [vqdmlashq_m_n_s])
++;;
++(define_insn "mve_vqdmlashq_m_n_s<mode>"
++  [
++   (set (match_operand:MVE_2 0 "s_register_operand" "=w")
++	(unspec:MVE_2 [(match_operand:MVE_2 1 "s_register_operand" "0")
++		       (match_operand:MVE_2 2 "s_register_operand" "w")
++		       (match_operand:<V_elem> 3 "s_register_operand" "r")
++		       (match_operand:HI 4 "vpr_register_operand" "Up")]
++	 VQDMLASHQ_M_N_S))
++  ]
++  "TARGET_HAVE_MVE"
++  "vpst\;vqdmlasht.s%#<V_sz_elem>\t%q0, %q2, %3"
++  [(set_attr "type" "mve_move")
++   (set_attr "length""8")])
++
+ ;;
+ ;; [vqrdmlahq_m_n_s])
+ ;;
+diff --git a/gcc/config/arm/unspecs.md b/gcc/config/arm/unspecs.md
+index 5268cc1cfd4..c8c06568d65 100644
+--- a/gcc/config/arm/unspecs.md
++++ b/gcc/config/arm/unspecs.md
+@@ -876,6 +876,7 @@
+   VQABSQ_M_S
+   VQDMLAHQ_N_S
+   VQDMLAHQ_N_U
++  VQDMLASHQ_N_S
+   VQNEGQ_M_S
+   VQRDMLADHQ_S
+   VQRDMLADHXQ_S
+@@ -1068,6 +1069,7 @@
+   VRHADDQ_M_S
+   VMULQ_M_S
+   VMULQ_M_U
++  VQDMLASHQ_M_N_S
+   VQRDMLASHQ_M_N_S
+   VRSHLQ_M_S
+   VRSHLQ_M_U
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s16.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s16.c
+new file mode 100644
+index 00000000000..7c2e5cf89dd
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s16.c
+@@ -0,0 +1,23 @@
++/* { dg-require-effective-target arm_v8_1m_mve_ok } */
++/* { dg-add-options arm_v8_1m_mve } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++int16x8_t
++foo (int16x8_t a, int16x8_t b, int16_t c, mve_pred16_t p)
++{
++  return vqdmlashq_m_n_s16 (a, b, c, p);
++}
++
++/* { dg-final { scan-assembler "vpst" } } */
++/* { dg-final { scan-assembler "vqdmlasht.s16"  }  } */
++
++int16x8_t
++foo1 (int16x8_t a, int16x8_t b, int16_t c, mve_pred16_t p)
++{
++  return vqdmlashq_m (a, b, c, p);
++}
++
++/* { dg-final { scan-assembler "vpst" } } */
++/* { dg-final { scan-assembler "vqdmlasht.s16"  }  } */
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s32.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s32.c
+new file mode 100644
+index 00000000000..cea9d9b683f
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s32.c
+@@ -0,0 +1,23 @@
++/* { dg-require-effective-target arm_v8_1m_mve_ok } */
++/* { dg-add-options arm_v8_1m_mve } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++int32x4_t
++foo (int32x4_t a, int32x4_t b, int32_t c, mve_pred16_t p)
++{
++  return vqdmlashq_m_n_s32 (a, b, c, p);
++}
++
++/* { dg-final { scan-assembler "vpst" } } */
++/* { dg-final { scan-assembler "vqdmlasht.s32"  }  } */
++
++int32x4_t
++foo1 (int32x4_t a, int32x4_t b, int32_t c, mve_pred16_t p)
++{
++  return vqdmlashq_m (a, b, c, p);
++}
++
++/* { dg-final { scan-assembler "vpst" } } */
++/* { dg-final { scan-assembler "vqdmlasht.s32"  }  } */
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s8.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s8.c
+new file mode 100644
+index 00000000000..83ee258876a
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_m_n_s8.c
+@@ -0,0 +1,23 @@
++/* { dg-require-effective-target arm_v8_1m_mve_ok } */
++/* { dg-add-options arm_v8_1m_mve } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++int8x16_t
++foo (int8x16_t a, int8x16_t b, int8_t c, mve_pred16_t p)
++{
++  return vqdmlashq_m_n_s8 (a, b, c, p);
++}
++
++/* { dg-final { scan-assembler "vpst" } } */
++/* { dg-final { scan-assembler "vqdmlasht.s8"  }  } */
++
++int8x16_t
++foo1 (int8x16_t a, int8x16_t b, int8_t c, mve_pred16_t p)
++{
++  return vqdmlashq_m (a, b, c, p);
++}
++
++/* { dg-final { scan-assembler "vpst" } } */
++/* { dg-final { scan-assembler "vqdmlasht.s8"  }  } */
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s16.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s16.c
+new file mode 100644
+index 00000000000..c71a61c54f6
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s16.c
+@@ -0,0 +1,21 @@
++/* { dg-require-effective-target arm_v8_1m_mve_ok } */
++/* { dg-add-options arm_v8_1m_mve } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++int16x8_t
++foo (int16x8_t a, int16x8_t b, int16_t c)
++{
++  return vqdmlashq_n_s16 (a, b, c);
++}
++
++/* { dg-final { scan-assembler "vqdmlash.s16"  }  } */
++
++int16x8_t
++foo1 (int16x8_t a, int16x8_t b, int16_t c)
++{
++  return vqdmlashq (a, b, c);
++}
++
++/* { dg-final { scan-assembler "vqdmlash.s16"  }  } */
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s32.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s32.c
+new file mode 100644
+index 00000000000..61f6c6671cc
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s32.c
+@@ -0,0 +1,21 @@
++/* { dg-require-effective-target arm_v8_1m_mve_ok } */
++/* { dg-add-options arm_v8_1m_mve } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++int32x4_t
++foo (int32x4_t a, int32x4_t b, int32_t c)
++{
++  return vqdmlashq_n_s32 (a, b, c);
++}
++
++/* { dg-final { scan-assembler "vqdmlash.s32"  }  } */
++
++int32x4_t
++foo1 (int32x4_t a, int32x4_t b, int32_t c)
++{
++  return vqdmlashq (a, b, c);
++}
++
++/* { dg-final { scan-assembler "vqdmlash.s32"  }  } */
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s8.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s8.c
+new file mode 100644
+index 00000000000..a07892863c1
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vqdmlashq_n_s8.c
+@@ -0,0 +1,21 @@
++/* { dg-require-effective-target arm_v8_1m_mve_ok } */
++/* { dg-add-options arm_v8_1m_mve } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++int8x16_t
++foo (int8x16_t a, int8x16_t b, int8_t c)
++{
++  return vqdmlashq_n_s8 (a, b, c);
++}
++
++/* { dg-final { scan-assembler "vqdmlash.s8"  }  } */
++
++int8x16_t
++foo1 (int8x16_t a, int8x16_t b, int8_t c)
++{
++  return vqdmlashq (a, b, c);
++}
++
++/* { dg-final { scan-assembler "vqdmlash.s8"  }  } */
+-- 
+2.29.2
+

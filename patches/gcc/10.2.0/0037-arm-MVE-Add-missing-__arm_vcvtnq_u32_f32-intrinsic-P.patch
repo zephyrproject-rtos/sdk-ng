@@ -1,0 +1,77 @@
+From a4360833afa550cd880d9fd587b9e0ef32f00839 Mon Sep 17 00:00:00 2001
+From: Christophe Lyon <christophe.lyon@linaro.org>
+Date: Mon, 5 Oct 2020 09:52:59 +0000
+Subject: [PATCH 37/49] arm: [MVE] Add missing __arm_vcvtnq_u32_f32 intrinsic
+ (PR 96914)
+
+__arm_vcvtnq_u32_f32 was missing from arm_mve.h, although the s32_f32 and
+[su]16_f16 versions were present.
+
+This patch adds the missing version and testcase, which are
+cut-and-paste from the other versions.
+
+2020-10-08  Christophe Lyon  <christophe.lyon@linaro.org>
+
+	gcc/
+	PR target/96914
+	* config/arm/arm_mve.h (__arm_vcvtnq_u32_f32): New.
+
+	gcc/testsuite/
+	PR target/96914
+	* gcc.target/arm/mve/intrinsics/vcvtnq_u32_f32.c: New test.
+
+(cherry picked from commit 5a448362da6133c3b16ffdb0c795b657af7fa5a4)
+---
+ gcc/config/arm/arm_mve.h                            |  8 ++++++++
+ .../gcc.target/arm/mve/intrinsics/vcvtnq_u32_f32.c  | 13 +++++++++++++
+ 2 files changed, 21 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.target/arm/mve/intrinsics/vcvtnq_u32_f32.c
+
+diff --git a/gcc/config/arm/arm_mve.h b/gcc/config/arm/arm_mve.h
+index f0de29477ab..6c0d1e2e634 100644
+--- a/gcc/config/arm/arm_mve.h
++++ b/gcc/config/arm/arm_mve.h
+@@ -645,6 +645,7 @@
+ #define vcvtpq_u16_f16(__a) __arm_vcvtpq_u16_f16(__a)
+ #define vcvtpq_u32_f32(__a) __arm_vcvtpq_u32_f32(__a)
+ #define vcvtnq_u16_f16(__a) __arm_vcvtnq_u16_f16(__a)
++#define vcvtnq_u32_f32(__a) __arm_vcvtnq_u32_f32(__a)
+ #define vcvtmq_u16_f16(__a) __arm_vcvtmq_u16_f16(__a)
+ #define vcvtmq_u32_f32(__a) __arm_vcvtmq_u32_f32(__a)
+ #define vcvtaq_u16_f16(__a) __arm_vcvtaq_u16_f16(__a)
+@@ -16966,6 +16967,13 @@ __arm_vcvtnq_u16_f16 (float16x8_t __a)
+   return __builtin_mve_vcvtnq_uv8hi (__a);
+ }
+ 
++__extension__ extern __inline uint32x4_t
++__attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
++__arm_vcvtnq_u32_f32 (float32x4_t __a)
++{
++  return __builtin_mve_vcvtnq_uv4si (__a);
++}
++
+ __extension__ extern __inline uint16x8_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vcvtmq_u16_f16 (float16x8_t __a)
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/vcvtnq_u32_f32.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vcvtnq_u32_f32.c
+new file mode 100644
+index 00000000000..b6d5eb90493
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/vcvtnq_u32_f32.c
+@@ -0,0 +1,13 @@
++/* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
++/* { dg-add-options arm_v8_1m_mve_fp } */
++/* { dg-additional-options "-O2" } */
++
++#include "arm_mve.h"
++
++uint32x4_t
++foo (float32x4_t a)
++{
++  return vcvtnq_u32_f32 (a);
++}
++
++/* { dg-final { scan-assembler "vcvtn.u32.f32"  }  } */
+-- 
+2.29.2
+

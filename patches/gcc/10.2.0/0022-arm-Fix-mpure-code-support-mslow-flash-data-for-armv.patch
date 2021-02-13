@@ -1,0 +1,163 @@
+From 54d4a5e7e6acf424cecc944101b36becd85242eb Mon Sep 17 00:00:00 2001
+From: Christophe Lyon <christophe.lyon@linaro.org>
+Date: Wed, 19 Aug 2020 09:02:21 +0000
+Subject: [PATCH 22/49] arm: Fix -mpure-code support/-mslow-flash-data for
+ armv8-m.base [PR94538]
+
+armv8-m.base (cortex-m23) has the movt instruction, so we need to
+disable the define_split to generate a constant in this case,
+otherwise we get incorrect insn constraints as described in PR94538.
+
+We also need to fix the pure-code alternative for thumb1_movsi_insn
+because the assembler complains with instructions like
+movs r0, #:upper8_15:1234
+(Internal error in md_apply_fix)
+We now generate movs r0, 4 instead.
+
+2020-08-24  Christophe Lyon  <christophe.lyon@linaro.org>
+
+	PR target/94538
+	gcc/
+	* config/arm/thumb1.md: Disable set-constant splitter when
+	TARGET_HAVE_MOVT.
+	(thumb1_movsi_insn): Fix -mpure-code
+	alternative.
+
+	PR target/94538
+	gcc/testsuite/
+	* gcc.target/arm/pure-code/pr94538-1.c: New test.
+	* gcc.target/arm/pure-code/pr94538-2.c: New test.
+
+(cherry picked from commit 259d072067997ab8f55afcf735c91b6740fd0425)
+---
+ gcc/config/arm/thumb1.md                      | 66 +++++++++++++++----
+ .../gcc.target/arm/pure-code/pr94538-1.c      | 13 ++++
+ .../gcc.target/arm/pure-code/pr94538-2.c      | 12 ++++
+ 3 files changed, 79 insertions(+), 12 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/arm/pure-code/pr94538-1.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/pure-code/pr94538-2.c
+
+diff --git a/gcc/config/arm/thumb1.md b/gcc/config/arm/thumb1.md
+index 0ff819090d9..f0129db2c3e 100644
+--- a/gcc/config/arm/thumb1.md
++++ b/gcc/config/arm/thumb1.md
+@@ -70,6 +70,7 @@
+   "TARGET_THUMB1
+    && arm_disable_literal_pool
+    && GET_CODE (operands[1]) == CONST_INT
++   && !TARGET_HAVE_MOVT
+    && !satisfies_constraint_I (operands[1])"
+   [(clobber (const_int 0))]
+   "
+@@ -696,18 +697,59 @@
+   "TARGET_THUMB1
+    && (   register_operand (operands[0], SImode)
+        || register_operand (operands[1], SImode))"
+-  "@
+-   movs	%0, %1
+-   movs	%0, %1
+-   movw	%0, %1
+-   #
+-   #
+-   ldmia\\t%1, {%0}
+-   stmia\\t%0, {%1}
+-   movs\\t%0, #:upper8_15:%1; lsls\\t%0, #8; adds\\t%0, #:upper0_7:%1; lsls\\t%0, #8; adds\\t%0, #:lower8_15:%1; lsls\\t%0, #8; adds\\t%0, #:lower0_7:%1
+-   ldr\\t%0, %1
+-   str\\t%1, %0
+-   mov\\t%0, %1"
++{
++  switch (which_alternative)
++    {
++      default:
++      case 0: return "movs\t%0, %1";
++      case 1: return "movs\t%0, %1";
++      case 2: return "movw\t%0, %1";
++      case 3: return "#";
++      case 4: return "#";
++      case 5: return "ldmia\t%1, {%0}";
++      case 6: return "stmia\t%0, {%1}";
++      case 7:
++      /* pure-code alternative: build the constant byte by byte,
++	 instead of loading it from a constant pool.  */
++	{
++	  int i;
++	  HOST_WIDE_INT op1 = INTVAL (operands[1]);
++	  bool mov_done_p = false;
++	  rtx ops[2];
++	  ops[0] = operands[0];
++
++	  /* Emit upper 3 bytes if needed.  */
++	  for (i = 0; i < 3; i++)
++	    {
++	       int byte = (op1 >> (8 * (3 - i))) & 0xff;
++
++	      if (byte)
++		{
++		  ops[1] = GEN_INT (byte);
++		  if (mov_done_p)
++		    output_asm_insn ("adds\t%0, %1", ops);
++		  else
++		    output_asm_insn ("movs\t%0, %1", ops);
++		  mov_done_p = true;
++		}
++
++	      if (mov_done_p)
++		output_asm_insn ("lsls\t%0, #8", ops);
++	    }
++
++	  /* Emit lower byte if needed.  */
++	  ops[1] = GEN_INT (op1 & 0xff);
++	  if (!mov_done_p)
++	    output_asm_insn ("movs\t%0, %1", ops);
++	  else if (op1 & 0xff)
++	    output_asm_insn ("adds\t%0, %1", ops);
++	  return "";
++	}
++      case 8: return "ldr\t%0, %1";
++      case 9: return "str\t%1, %0";
++      case 10: return "mov\t%0, %1";
++    }
++}
+   [(set_attr "length" "2,2,4,4,4,2,2,14,2,2,2")
+    (set_attr "type" "mov_reg,mov_imm,mov_imm,multiple,multiple,load_4,store_4,alu_sreg,load_4,store_4,mov_reg")
+    (set_attr "pool_range" "*,*,*,*,*,*,*, *,1018,*,*")
+diff --git a/gcc/testsuite/gcc.target/arm/pure-code/pr94538-1.c b/gcc/testsuite/gcc.target/arm/pure-code/pr94538-1.c
+new file mode 100644
+index 00000000000..31061d5d445
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/pure-code/pr94538-1.c
+@@ -0,0 +1,13 @@
++/* { dg-do compile } */
++/* { dg-skip-if "skip override" { *-*-* } { "-mfloat-abi=hard" } { "" } } */
++/* { dg-options "-mpure-code -mcpu=cortex-m23 -march=armv8-m.base -mthumb -mfloat-abi=soft" } */
++
++typedef int __attribute__ ((__vector_size__ (16))) V;
++
++V v;
++
++void
++foo (void)
++{
++  v += (V){4095};
++}
+diff --git a/gcc/testsuite/gcc.target/arm/pure-code/pr94538-2.c b/gcc/testsuite/gcc.target/arm/pure-code/pr94538-2.c
+new file mode 100644
+index 00000000000..c1789da6780
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/pure-code/pr94538-2.c
+@@ -0,0 +1,12 @@
++/* { dg-do compile } */
++/* { dg-options "-mpure-code" } */
++
++typedef int __attribute__ ((__vector_size__ (16))) V;
++
++V v;
++
++void
++foo (void)
++{
++  v += (V){4095};
++}
+-- 
+2.29.2
+

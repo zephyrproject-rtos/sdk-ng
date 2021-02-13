@@ -1,0 +1,48 @@
+From a2eb01ef646b1c8d950abf23abde8d6de200c865 Mon Sep 17 00:00:00 2001
+From: Tamar Christina <tamar.christina@arm.com>
+Date: Fri, 17 Jul 2020 13:12:00 +0100
+Subject: [PATCH 20/49] Arm: Add GCC_CPUINFO override
+
+This adds an in intentionally undocumented environment variable
+GCC_CPUINFO which can be used to test -mcpu=native.
+
+Tests using these are added later on.
+
+gcc/ChangeLog:
+
+	* config/arm/driver-arm.c (host_detect_local_cpu): Add GCC_CPUINFO.
+
+(cherry picked from commit 34a6c43487caf3a2a0ec9c7c79c526d116abc8b9)
+---
+ gcc/config/arm/driver-arm.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/config/arm/driver-arm.c b/gcc/config/arm/driver-arm.c
+index 254e5ba53a6..85058f257c9 100644
+--- a/gcc/config/arm/driver-arm.c
++++ b/gcc/config/arm/driver-arm.c
+@@ -61,6 +61,7 @@ host_detect_local_cpu (int argc, const char **argv)
+   FILE *f = NULL;
+   bool arch;
+   const struct vendor_cpu *cpu_table = NULL;
++  char *fcpu_info = NULL;
+ 
+   if (argc < 1)
+     goto not_found;
+@@ -69,7 +70,12 @@ host_detect_local_cpu (int argc, const char **argv)
+   if (!arch && strcmp (argv[0], "cpu") != 0 && strcmp (argv[0], "tune"))
+     goto not_found;
+ 
+-  f = fopen ("/proc/cpuinfo", "r");
++  fcpu_info = getenv ("GCC_CPUINFO");
++  if (fcpu_info)
++    f = fopen (fcpu_info, "r");
++  else
++    f = fopen ("/proc/cpuinfo", "r");
++
+   if (f == NULL)
+     goto not_found;
+ 
+-- 
+2.29.2
+

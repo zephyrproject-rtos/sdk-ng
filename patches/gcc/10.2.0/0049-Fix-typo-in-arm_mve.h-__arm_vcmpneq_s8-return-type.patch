@@ -1,0 +1,31 @@
+From 5051482e3fc65e8a591995f38f44aef0eb547752 Mon Sep 17 00:00:00 2001
+From: Christophe Lyon <christophe.lyon@linaro.org>
+Date: Tue, 19 Jan 2021 10:31:48 +0000
+Subject: [PATCH 49/49] Fix typo in arm_mve.h __arm_vcmpneq_s8 return type
+
+Like all vcmp intrinsics, __arm_vcmpneq_s8 should return a mve_pred16_t.
+
+2021-01-21  Christophe Lyon  <christophe.lyon@linaro.org>
+
+	gcc/
+	* config/arm/arm_mve.h (__arm_vcmpneq_s8): Fix return type.
+---
+ gcc/config/arm/arm_mve.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gcc/config/arm/arm_mve.h b/gcc/config/arm/arm_mve.h
+index 6c0d1e2e634..449219e90fc 100644
+--- a/gcc/config/arm/arm_mve.h
++++ b/gcc/config/arm/arm_mve.h
+@@ -3670,7 +3670,7 @@ __arm_vaddlvq_p_u32 (uint32x4_t __a, mve_pred16_t __p)
+   return __builtin_mve_vaddlvq_p_uv4si (__a, __p);
+ }
+ 
+-__extension__ extern __inline int32_t
++__extension__ extern __inline mve_pred16_t
+ __attribute__ ((__always_inline__, __gnu_inline__, __artificial__))
+ __arm_vcmpneq_s8 (int8x16_t __a, int8x16_t __b)
+ {
+-- 
+2.29.2
+
