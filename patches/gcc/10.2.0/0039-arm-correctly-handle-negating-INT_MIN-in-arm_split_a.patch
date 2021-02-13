@@ -1,0 +1,62 @@
+From 04c1b77487661e18b27b01314036915b75f4b708 Mon Sep 17 00:00:00 2001
+From: Richard Earnshaw <rearnsha@arm.com>
+Date: Tue, 24 Nov 2020 16:21:17 +0000
+Subject: [PATCH 39/49] arm: correctly handle negating INT_MIN in
+ arm_split_atomic_op [PR97534]
+
+arm_split_atomic_op handles subtracting a constant by converting it
+into addition of the negated constant.  But if the type of the operand
+is int and the constant is -1 we currently end up generating invalid
+RTL which can lead to an abort later on.
+
+The problem is that in a HOST_WIDE_INT, INT_MIN is represented as
+0xffffffff80000000 and the negation of this is 0x0000000080000000, but
+that's not a valid constant for use in SImode operations.
+
+The fix is straight-forward which is to use gen_int_mode rather than
+simply GEN_INT.  This knows how to correctly sign-extend the negated
+constant when this is needed.
+
+gcc/
+	PR target/97534
+	* config/arm/arm.c (arm_split_atomic_op): Use gen_int_mode when
+	negating a const_int.
+gcc/testsuite
+	* gcc.dg/pr97534.c: New test.
+---
+ gcc/config/arm/arm.c           | 2 +-
+ gcc/testsuite/gcc.dg/pr97534.c | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/testsuite/gcc.dg/pr97534.c
+
+diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
+index 52153b354ed..81375434d34 100644
+--- a/gcc/config/arm/arm.c
++++ b/gcc/config/arm/arm.c
+@@ -30586,7 +30586,7 @@ arm_split_atomic_op (enum rtx_code code, rtx old_out, rtx new_out, rtx mem,
+     case MINUS:
+       if (CONST_INT_P (value))
+ 	{
+-	  value = GEN_INT (-INTVAL (value));
++	  value = gen_int_mode (-INTVAL (value), wmode);
+ 	  code = PLUS;
+ 	}
+       /* FALLTHRU */
+diff --git a/gcc/testsuite/gcc.dg/pr97534.c b/gcc/testsuite/gcc.dg/pr97534.c
+new file mode 100644
+index 00000000000..b363a322aa5
+--- /dev/null
++++ b/gcc/testsuite/gcc.dg/pr97534.c
+@@ -0,0 +1,9 @@
++/* PR target/97534 - ICE in decompose on arm*-*-*.  */
++/* { dg-do compile } */
++/* { dg-options "-std=c11 -O2 -g" } */
++
++int f (int a)
++{
++  int b;
++  __atomic_fetch_sub(&b, (int)(-__INT_MAX__ - 1), (int)0);
++}
+-- 
+2.29.2
+

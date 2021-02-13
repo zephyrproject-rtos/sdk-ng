@@ -1,0 +1,120 @@
+From aeec8f3b0dea6e2305bb143c49db32cf3b0f008f Mon Sep 17 00:00:00 2001
+From: Andrea Corallo <andrea.corallo@arm.com>
+Date: Thu, 29 Oct 2020 13:56:17 +0100
+Subject: [PATCH 45/49] arm: Add vld1_bf16 + vld1q_bf16 intrinsics
+
+gcc/ChangeLog
+
+2020-10-29  Andrea Corallo  <andrea.corallo@arm.com>
+
+	* config/arm/arm-builtins.c (VAR14): Define macro.
+	* config/arm/arm_neon_builtins.def: Touch for:
+	__builtin_neon_vld1v4bf, __builtin_neon_vld1v8bf.
+	* config/arm/arm_neon.h (vld1_bf16, vld1q_bf16): Add intrinsics.
+
+gcc/testsuite/ChangeLog
+
+2020-10-29  Andrea Corallo  <andrea.corallo@arm.com>
+
+	* gcc.target/arm/simd/vld1_bf16_1.c: New test.
+---
+ gcc/config/arm/arm-builtins.c                 |  3 ++
+ gcc/config/arm/arm_neon.h                     | 14 +++++++++
+ gcc/config/arm/arm_neon_builtins.def          |  5 ++--
+ .../gcc.target/arm/simd/vld1_bf16_1.c         | 29 +++++++++++++++++++
+ 4 files changed, 49 insertions(+), 2 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/arm/simd/vld1_bf16_1.c
+
+diff --git a/gcc/config/arm/arm-builtins.c b/gcc/config/arm/arm-builtins.c
+index 4716771d7e4..73650637e5e 100644
+--- a/gcc/config/arm/arm-builtins.c
++++ b/gcc/config/arm/arm-builtins.c
+@@ -946,6 +946,9 @@ typedef struct {
+ #define VAR13(T, N, A, B, C, D, E, F, G, H, I, J, K, L, M) \
+   VAR12 (T, N, A, B, C, D, E, F, G, H, I, J, K, L) \
+   VAR1 (T, N, M)
++#define VAR14(T, N, A, B, C, D, E, F, G, H, I, J, K, L, M, O) \
++  VAR13 (T, N, A, B, C, D, E, F, G, H, I, J, K, L, M) \
++  VAR1 (T, N, O)
+ 
+ /* The builtin data can be found in arm_neon_builtins.def, arm_vfp_builtins.def
+    and arm_acle_builtins.def.  The entries in arm_neon_builtins.def require
+diff --git a/gcc/config/arm/arm_neon.h b/gcc/config/arm/arm_neon.h
+index 432d77fb272..b77175eaa3e 100644
+--- a/gcc/config/arm/arm_neon.h
++++ b/gcc/config/arm/arm_neon.h
+@@ -19557,6 +19557,20 @@ vst4q_bf16 (bfloat16_t * __ptr, bfloat16x8x4_t __val)
+   return __builtin_neon_vst4v8bf (__ptr, __bu.__o);
+ }
+ 
++__extension__ extern __inline bfloat16x4_t
++__attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
++vld1_bf16 (bfloat16_t const * __ptr)
++{
++  return __builtin_neon_vld1v4bf (__ptr);
++}
++
++__extension__ extern __inline bfloat16x8_t
++__attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
++vld1q_bf16 (const bfloat16_t * __ptr)
++{
++  return __builtin_neon_vld1v8bf (__ptr);
++}
++
+ __extension__ extern __inline bfloat16x4x2_t
+ __attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
+ vld2_bf16 (bfloat16_t const * __ptr)
+diff --git a/gcc/config/arm/arm_neon_builtins.def b/gcc/config/arm/arm_neon_builtins.def
+index 7a5dae0c4c0..07eda44cc58 100644
+--- a/gcc/config/arm/arm_neon_builtins.def
++++ b/gcc/config/arm/arm_neon_builtins.def
+@@ -310,8 +310,9 @@ VAR1 (TERNOP, vtbx1, v8qi)
+ VAR1 (TERNOP, vtbx2, v8qi)
+ VAR1 (TERNOP, vtbx3, v8qi)
+ VAR1 (TERNOP, vtbx4, v8qi)
+-VAR12 (LOAD1, vld1,
+-        v8qi, v4hi, v4hf, v2si, v2sf, di, v16qi, v8hi, v8hf, v4si, v4sf, v2di)
++VAR14 (LOAD1, vld1,
++        v8qi, v4hi, v4hf, v2si, v2sf, di, v16qi, v8hi, v8hf, v4si, v4sf, v2di,
++        v4bf, v8bf)
+ VAR12 (LOAD1LANE, vld1_lane,
+ 	v8qi, v4hi, v2si, v2sf, di, v16qi, v8hi, v4si, v4sf, v2di, v4bf, v8bf)
+ VAR10 (LOAD1, vld1_dup,
+diff --git a/gcc/testsuite/gcc.target/arm/simd/vld1_bf16_1.c b/gcc/testsuite/gcc.target/arm/simd/vld1_bf16_1.c
+new file mode 100644
+index 00000000000..b6b00dc03c2
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/simd/vld1_bf16_1.c
+@@ -0,0 +1,29 @@
++/* { dg-do assemble } */
++/* { dg-require-effective-target arm_v8_2a_bf16_neon_ok } */
++/* { dg-add-options arm_v8_2a_bf16_neon } */
++/* { dg-additional-options "-save-temps -O2 -mfloat-abi=hard" }  */
++/* { dg-final { check-function-bodies "**" "" } } */
++
++#include "arm_neon.h"
++
++/*
++**test_vld1_bf16:
++**	vld1.16	{d0}, \[r0\]
++**	bx	lr
++*/
++bfloat16x4_t
++test_vld1_bf16 (bfloat16_t const *p)
++{
++  return vld1_bf16 (p);
++}
++
++/*
++**test_vld1q_bf16:
++**	vld1.16	{d0-d1}, \[r0\]
++**	bx	lr
++*/
++bfloat16x8_t
++test_vld1q_bf16 (bfloat16_t const *p)
++{
++  return vld1q_bf16 (p);
++}
+-- 
+2.29.2
+

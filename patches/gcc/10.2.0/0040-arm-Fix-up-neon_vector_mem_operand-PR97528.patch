@@ -1,0 +1,88 @@
+From 5256a18952f0eaea887e48610d9b817077de7797 Mon Sep 17 00:00:00 2001
+From: Jakub Jelinek <jakub@redhat.com>
+Date: Fri, 20 Nov 2020 12:26:58 +0100
+Subject: [PATCH 40/49] arm: Fix up neon_vector_mem_operand [PR97528]
+
+The documentation for POST_MODIFY says:
+   Currently, the compiler can only handle second operands of the
+   form (plus (reg) (reg)) and (plus (reg) (const_int)), where
+   the first operand of the PLUS has to be the same register as
+   the first operand of the *_MODIFY.
+The following testcase ICEs, because combine just attempts to simplify
+things and ends up with
+(post_modify (reg1) (plus (mult (reg2) (const_int 4)) (reg1))
+but the target predicates accept it, because they only verify
+that POST_MODIFY's second operand is PLUS and the second operand
+of the PLUS is a REG.
+
+The following patch fixes this by performing further verification that
+the POST_MODIFY is in the form it should be.
+
+2020-11-20  Jakub Jelinek  <jakub@redhat.com>
+
+	PR target/97528
+	* config/arm/arm.c (neon_vector_mem_operand): For POST_MODIFY, require
+	first POST_MODIFY operand is a REG and is equal to the first operand
+	of PLUS.
+
+	* gcc.target/arm/pr97528.c: New test.
+
+(cherry picked from commit 410b8f6f41920dad200cd709f9f3de8b840a995c)
+---
+ gcc/config/arm/arm.c                   |  4 +++-
+ gcc/testsuite/gcc.target/arm/pr97528.c | 28 ++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/testsuite/gcc.target/arm/pr97528.c
+
+diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
+index 81375434d34..7d8df705bf0 100644
+--- a/gcc/config/arm/arm.c
++++ b/gcc/config/arm/arm.c
+@@ -13429,7 +13429,9 @@ neon_vector_mem_operand (rtx op, int type, bool strict)
+   /* Allow post-increment by register for VLDn */
+   if (type == 2 && GET_CODE (ind) == POST_MODIFY
+       && GET_CODE (XEXP (ind, 1)) == PLUS
+-      && REG_P (XEXP (XEXP (ind, 1), 1)))
++      && REG_P (XEXP (XEXP (ind, 1), 1))
++      && REG_P (XEXP (ind, 0))
++      && rtx_equal_p (XEXP (ind, 0), XEXP (XEXP (ind, 1), 0)))
+      return true;
+ 
+   /* Match:
+diff --git a/gcc/testsuite/gcc.target/arm/pr97528.c b/gcc/testsuite/gcc.target/arm/pr97528.c
+new file mode 100644
+index 00000000000..6cc59f2158c
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/pr97528.c
+@@ -0,0 +1,28 @@
++/* PR target/97528 */
++/* { dg-do compile } */
++/* { dg-require-effective-target arm_neon_ok } */
++/* { dg-options "-O1" }  */
++/* { dg-add-options arm_neon } */
++
++#include <arm_neon.h>
++
++typedef __simd64_int16_t T;
++typedef __simd64_uint16_t U;
++unsigned short c;
++int d;
++U e;
++
++void
++foo (void)
++{
++  unsigned short *dst = &c;
++  int g = d, b = 4;
++  U dc = e;
++  for (int h = 0; h < b; h++)
++    {
++      unsigned short *i = dst;
++      U j = dc;
++      vst1_s16 ((int16_t *) i, (T) j);
++      dst += g;
++    }
++}
+-- 
+2.29.2
+

@@ -1,0 +1,77 @@
+From 65995ec08dc32a6de77bf10a465e553564731c68 Mon Sep 17 00:00:00 2001
+From: Alex Coplan <alex.coplan@arm.com>
+Date: Wed, 30 Sep 2020 09:02:47 +0100
+Subject: [PATCH 32/49] arm: Fix ICEs in no-literal-pool.c on MVE [PR97251]
+
+This patch fixes ICEs when compiling
+gcc/testsuite/gcc.target/arm/pure-code/no-literal-pool.c with
+-mfp16-format=ieee -mfloat-abi=hard -march=armv8.1-m.main+mve
+-mpure-code.
+
+The existing conditions in the movsf/movdf expanders (as well as the
+no_literal_pool patterns) were too restrictive, requiring
+TARGET_HARD_FLOAT instead of TARGET_VFP_BASE, which caused unrecognised
+insns when compiling this testcase with integer MVE and -mpure-code.
+
+gcc/ChangeLog:
+
+	PR target/97251
+	* config/arm/arm.md (movsf): Relax TARGET_HARD_FLOAT to
+	TARGET_VFP_BASE.
+	(movdf): Likewise.
+	* config/arm/vfp.md (no_literal_pool_df_immediate): Likewise.
+	(no_literal_pool_sf_immediate): Likewise.
+
+(cherry picked from commit f63023fafbbc13545fef67e6b32a55b48a945fcf)
+---
+ gcc/config/arm/arm.md | 4 ++--
+ gcc/config/arm/vfp.md | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/gcc/config/arm/arm.md b/gcc/config/arm/arm.md
+index 2f0dbdc6e17..69028cd8398 100644
+--- a/gcc/config/arm/arm.md
++++ b/gcc/config/arm/arm.md
+@@ -7357,7 +7357,7 @@
+   if (arm_disable_literal_pool
+       && (REG_P (operands[0]) || SUBREG_P (operands[0]))
+       && CONST_DOUBLE_P (operands[1])
+-      && TARGET_HARD_FLOAT
++      && TARGET_VFP_BASE
+       && !vfp3_const_double_rtx (operands[1]))
+     {
+       rtx clobreg = gen_reg_rtx (SFmode);
+@@ -7454,7 +7454,7 @@
+   if (arm_disable_literal_pool
+       && (REG_P (operands[0]) || SUBREG_P (operands[0]))
+       && CONSTANT_P (operands[1])
+-      && TARGET_HARD_FLOAT
++      && TARGET_VFP_BASE
+       && !arm_const_double_rtx (operands[1])
+       && !(TARGET_VFP_DOUBLE && vfp3_const_double_rtx (operands[1])))
+     {
+diff --git a/gcc/config/arm/vfp.md b/gcc/config/arm/vfp.md
+index 72707c17929..e6c287c1a85 100644
+--- a/gcc/config/arm/vfp.md
++++ b/gcc/config/arm/vfp.md
+@@ -2125,7 +2125,7 @@
+ 	(match_operand:DF 1 "const_double_operand" "F"))
+    (clobber (match_operand:DF 2 "s_register_operand" "=r"))]
+   "arm_disable_literal_pool
+-   && TARGET_HARD_FLOAT
++   && TARGET_VFP_BASE
+    && !arm_const_double_rtx (operands[1])
+    && !(TARGET_VFP_DOUBLE && vfp3_const_double_rtx (operands[1]))"
+   "#"
+@@ -2151,7 +2151,7 @@
+ 	(match_operand:SF 1 "const_double_operand" "E"))
+    (clobber (match_operand:SF 2 "s_register_operand" "=r"))]
+   "arm_disable_literal_pool
+-   && TARGET_HARD_FLOAT
++   && TARGET_VFP_BASE
+    && !vfp3_const_double_rtx (operands[1])"
+   "#"
+   ""
+-- 
+2.29.2
+

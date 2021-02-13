@@ -1,0 +1,148 @@
+From 9fd3d4286ea3e85bf4c37c9926d4cfa69432aeee Mon Sep 17 00:00:00 2001
+From: Andrea Corallo <andrea.corallo@arm.com>
+Date: Fri, 23 Oct 2020 14:21:56 +0200
+Subject: [PATCH 44/49] arm: Add vst1_lane_bf16 + vstq_lane_bf16 intrinsics
+
+gcc/ChangeLog
+
+2020-10-23  Andrea Corallo  <andrea.corallo@arm.com>
+
+	* config/arm/arm_neon.h (vst1_lane_bf16, vst1q_lane_bf16): Add
+	intrinsics.
+	* config/arm/arm_neon_builtins.def (STORE1LANE): Add v4bf, v8bf.
+
+gcc/testsuite/ChangeLog
+
+2020-10-23  Andrea Corallo  <andrea.corallo@arm.com>
+
+	* gcc.target/arm/simd/vst1_lane_bf16_1.c: New testcase.
+	* gcc.target/arm/simd/vstq1_lane_bf16_indices_1.c: Likewise.
+	* gcc.target/arm/simd/vst1_lane_bf16_indices_1.c: Likewise.
+---
+ gcc/config/arm/arm_neon.h                     | 14 ++++++++++++
+ gcc/config/arm/arm_neon_builtins.def          |  4 ++--
+ .../gcc.target/arm/simd/vst1_lane_bf16_1.c    | 22 +++++++++++++++++++
+ .../arm/simd/vst1_lane_bf16_indices_1.c       | 17 ++++++++++++++
+ .../arm/simd/vstq1_lane_bf16_indices_1.c      | 17 ++++++++++++++
+ 5 files changed, 72 insertions(+), 2 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_1.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_indices_1.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/simd/vstq1_lane_bf16_indices_1.c
+
+diff --git a/gcc/config/arm/arm_neon.h b/gcc/config/arm/arm_neon.h
+index fcd8020425e..432d77fb272 100644
+--- a/gcc/config/arm/arm_neon.h
++++ b/gcc/config/arm/arm_neon.h
+@@ -19679,6 +19679,20 @@ vld1q_lane_bf16 (const bfloat16_t * __a, bfloat16x8_t __b, const int __c)
+   return __builtin_neon_vld1_lanev8bf (__a, __b, __c);
+ }
+ 
++__extension__ extern __inline void
++__attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
++vst1_lane_bf16 (bfloat16_t * __a, bfloat16x4_t __b, const int __c)
++{
++  __builtin_neon_vst1_lanev4bf (__a, __b, __c);
++}
++
++__extension__ extern __inline void
++__attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
++vst1q_lane_bf16 (bfloat16_t * __a, bfloat16x8_t __b, const int __c)
++{
++  __builtin_neon_vst1_lanev8bf (__a, __b, __c);
++}
++
+ #pragma GCC pop_options
+ 
+ #ifdef __cplusplus
+diff --git a/gcc/config/arm/arm_neon_builtins.def b/gcc/config/arm/arm_neon_builtins.def
+index d0617a4695d..7a5dae0c4c0 100644
+--- a/gcc/config/arm/arm_neon_builtins.def
++++ b/gcc/config/arm/arm_neon_builtins.def
+@@ -318,8 +318,8 @@ VAR10 (LOAD1, vld1_dup,
+ 	v8qi, v4hi, v2si, v2sf, di, v16qi, v8hi, v4si, v4sf, v2di)
+ VAR12 (STORE1, vst1,
+ 	v8qi, v4hi, v4hf, v2si, v2sf, di, v16qi, v8hi, v8hf, v4si, v4sf, v2di)
+-VAR12 (STORE1LANE, vst1_lane,
+-	v8qi, v4hi, v4hf, v2si, v2sf, di, v16qi, v8hi, v8hf, v4si, v4sf, v2di)
++VAR14 (STORE1LANE, vst1_lane,
++       v8qi, v4hi, v4hf, v2si, v2sf, di, v16qi, v8hi, v8hf, v4si, v4sf, v2di, v4bf, v8bf)
+ VAR13 (LOAD1, vld2,
+ 	v8qi, v4hi, v4hf, v2si, v2sf, di, v16qi, v8hi, v8hf, v4si, v4sf, v4bf, v8bf)
+ VAR9 (LOAD1LANE, vld2_lane,
+diff --git a/gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_1.c b/gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_1.c
+new file mode 100644
+index 00000000000..8564b8fa062
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_1.c
+@@ -0,0 +1,22 @@
++/* { dg-do assemble } */
++/* { dg-require-effective-target arm_v8_2a_bf16_neon_ok } */
++/* { dg-require-effective-target arm_hard_ok } */
++/* { dg-add-options arm_v8_2a_bf16_neon } */
++/* { dg-additional-options "-O3 --save-temps -mfloat-abi=hard" } */
++
++#include "arm_neon.h"
++
++void
++test_vst1_lane_bf16 (bfloat16_t *a, bfloat16x4_t b)
++{
++  vst1_lane_bf16 (a, b, 1);
++}
++
++void
++test_vst1q_lane_bf16 (bfloat16_t *a, bfloat16x8_t b)
++{
++  vst1q_lane_bf16 (a, b, 2);
++}
++
++/* { dg-final { scan-assembler "vst1.16\t{d0\\\[1\\\]}, \\\[r0\\\]" } } */
++/* { dg-final { scan-assembler "vst1.16\t{d0\\\[2\\\]}, \\\[r0\\\]" } } */
+diff --git a/gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_indices_1.c b/gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_indices_1.c
+new file mode 100644
+index 00000000000..1bd68718d10
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/simd/vst1_lane_bf16_indices_1.c
+@@ -0,0 +1,17 @@
++/* { dg-do assemble } */
++/* { dg-require-effective-target arm_v8_2a_bf16_neon_ok } */
++/* { dg-require-effective-target arm_hard_ok } */
++/* { dg-add-options arm_v8_2a_bf16_neon } */
++/* { dg-additional-options "-mfloat-abi=hard" } */
++
++#include "arm_neon.h"
++
++void
++test_vst1_lane_bf16 (bfloat16_t *a, bfloat16x4_t b)
++{
++  vst1_lane_bf16 (a, b, -1);
++  vst1_lane_bf16 (a, b, 4);
++}
++
++/* { dg-error "lane -1 out of range 0 - 3" "" { target *-*-* } 0 } */
++/* { dg-error "lane 4 out of range 0 - 3" "" { target *-*-* } 0 } */
+diff --git a/gcc/testsuite/gcc.target/arm/simd/vstq1_lane_bf16_indices_1.c b/gcc/testsuite/gcc.target/arm/simd/vstq1_lane_bf16_indices_1.c
+new file mode 100644
+index 00000000000..f18a4792a14
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/simd/vstq1_lane_bf16_indices_1.c
+@@ -0,0 +1,17 @@
++/* { dg-do assemble } */
++/* { dg-require-effective-target arm_v8_2a_bf16_neon_ok } */
++/* { dg-require-effective-target arm_hard_ok } */
++/* { dg-add-options arm_v8_2a_bf16_neon } */
++/* { dg-additional-options "-mfloat-abi=hard" } */
++
++#include "arm_neon.h"
++
++void
++test_vstq1_lane_bf16 (bfloat16_t *a, bfloat16x8_t b)
++{
++  vst1q_lane_bf16 (a, b, -1);
++  vst1q_lane_bf16 (a, b, 8);
++}
++
++/* { dg-error "lane -1 out of range 0 - 7" "" { target *-*-* } 0 } */
++/* { dg-error "lane 8 out of range 0 - 7" "" { target *-*-* } 0 } */
+-- 
+2.29.2
+
