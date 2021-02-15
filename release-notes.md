@@ -1,5 +1,11 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.12.3
+
+- gcc:
+  * Backport patches from releases/gcc-10 branch for ARM.  Mainly
+    to pickup fixes for Cortex-M55/ARM-v8.1m support
+
 ## Zephyr SDK 0.12.2
 
 - binutils:
