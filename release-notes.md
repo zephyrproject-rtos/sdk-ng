@@ -2,6 +2,11 @@
 
 ## Zephyr SDK 0.12.3
 
+- cmake:
+  * Update for future arm/arm64 split
+
+## Zephyr SDK 0.12.3
+
 - gcc:
   * Backport patches from releases/gcc-10 branch for ARM.  Mainly
     to pickup fixes for Cortex-M55/ARM-v8.1m support
