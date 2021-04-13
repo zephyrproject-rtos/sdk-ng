@@ -1,0 +1,91 @@
+From fb227dfc09dbaf347c982072203f625dde24c1d1 Mon Sep 17 00:00:00 2001
+From: Yasushi SHOJI <y-shoji@ispace-inc.com>
+Date: Thu, 5 Sep 2019 11:06:56 +0900
+Subject: [PATCH 06/10] hw/sparc/leon: Fix compilation errors
+
+The previous commit, taken from AdaCore repository as is for future
+reference, depends on other commit in the AdaCore repository and fails
+to build.  This commit is to port it to the vanilla QEmu.
+
+What it does is 4 folds:
+
+- Remove AdaCore specific headers and function calls.
+- Add necessarily headers to build.
+- Use env_cpu instead of CPU() as per
+  29a0af618ddd21f55df5753c3e16b0625f534b3c.
+- Update for intctl_ack API change introduced by
+  7922703623a989b59ce7f7b57a3c8ebe5c0f6b53.
+
+Signed-off-by: Yasushi SHOJI <y-shoji@ispace-inc.com>
+---
+ hw/sparc/leon.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
+index 316bd70288..cab394ba4b 100644
+--- a/hw/sparc/leon.c
++++ b/hw/sparc/leon.c
+@@ -22,12 +22,16 @@
+  * THE SOFTWARE.
+  */
+ #include "qemu/osdep.h"
++#include "qemu-common.h"
+ #include "qapi/error.h"
+ #include "cpu.h"
+ #include "hw/hw.h"
++#include "hw/irq.h"
+ #include "qemu/timer.h"
+ #include "chardev/char.h"
++#include "chardev/char-fe.h"
+ #include "sysemu/sysemu.h"
++#include "sysemu/reset.h"
+ #include "hw/boards.h"
+ #include "hw/loader.h"
+ #include "elf.h"
+@@ -35,8 +39,6 @@
+ #include "hw/ptimer.h"
+ #include "exec/memory.h"
+ #include "exec/address-spaces.h"
+-#include "hw/adacore/gnat-bus.h"
+-#include "hw/adacore/hostfs.h"
+ 
+ /* Default system clock.  */
+ #define CPU_CLK (50 * 1000 * 1000)
+@@ -220,7 +222,7 @@ static void leon_check_irqs(struct LeonIntState *s)
+     uint32_t       level0 = 0;
+     uint32_t       level1 = 0;
+     CPUSPARCState *env    = s->env;
+-    CPUState      *cs     = CPU(sparc_env_get_cpu(env));
++    CPUState      *cs     = env_cpu(env);
+ 
+     pend = (s->pending | s->force) & (s->lvl_mask & 0xfffe);
+ 
+@@ -260,9 +262,9 @@ static void leon_check_irqs(struct LeonIntState *s)
+     }
+ }
+ 
+-static void leon2_intctl_ack(CPUSPARCState *env, int intno)
++static void leon2_intctl_ack(CPUSPARCState *env, void *irq_manager, int intno)
+ {
+-    struct LeonIntState *intctl = env->irq_manager;
++    struct LeonIntState *intctl = (struct LeonIntState *)irq_manager;
+     uint32_t mask;
+     uint32_t state = 0;
+ 
+@@ -839,13 +841,6 @@ static void at697_hw_init(MachineState *machine)
+         leon_uart_init(serial_hd(1), &s->uart2, cpu_irqs[2]);
+     }
+ 
+-    /* HostFS */
+-    hostfs_create(0x80001000, get_system_memory());
+-
+-    /* Initialize the GnatBus Master */
+-    gnatbus_master_init(cpu_irqs, MAX_PILS);
+-    gnatbus_device_init();
+-
+     /* Can directly load an application. */
+     if (kernel_filename != NULL) {
+         long     kernel_size;
+-- 
+2.30.2
+
