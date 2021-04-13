@@ -1,0 +1,47 @@
+From 5d266778f1d36d200cf07e15d82a885d398ce1a9 Mon Sep 17 00:00:00 2001
+From: Yasushi SHOJI <y-shoji@ispace-inc.com>
+Date: Fri, 17 May 2019 21:42:30 +0900
+Subject: [PATCH 07/10] hw/sparc/leon: timer: Call leon_timer_io_read() for
+ TIMER_1_COUNTER_REGISTER
+
+Accessing timer1 counter register (offset 0x40) always returned 0
+because the address range check for leon_timer_io_read() was
+insufficient.  Add TIMER_1_COUNTER_REGISTER at the case statement.
+
+We don't need to add TIMER_1_COUNTER_REGISTER for
+leon_timer_io_write() because timer1 counter register isn't
+writable. But, this commit also changes the range check for
+leon_timer_io_write() as well for consistency.  The given address is
+checked in leon_timer_io_write() again, thus the change is effectively
+no-op for non-writable registers.
+
+Signed-off-by: Yasushi SHOJI <y-shoji@ispace-inc.com>
+---
+ hw/sparc/leon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/hw/sparc/leon.c b/hw/sparc/leon.c
+index cab394ba4b..d2dc8e55c8 100644
+--- a/hw/sparc/leon.c
++++ b/hw/sparc/leon.c
+@@ -616,7 +616,7 @@ static uint64_t leon_io_read(void *opaque, hwaddr addr,
+         ret = s->uart2.status;
+         break;
+ 
+-    case TIMER_1_RELOAD_REGISTER ... PRESCALER_RELOAD_REGISTER:
++    case TIMER_1_COUNTER_REGISTER ... PRESCALER_RELOAD_REGISTER:
+         ret = leon_timer_io_read(s, addr);
+         break;
+ 
+@@ -713,7 +713,7 @@ static void leon_io_write(void *opaque, hwaddr addr,
+     }
+     break;
+ 
+-    case TIMER_1_RELOAD_REGISTER ... PRESCALER_RELOAD_REGISTER:
++    case TIMER_1_COUNTER_REGISTER ... PRESCALER_RELOAD_REGISTER:
+         leon_timer_io_write(s, addr, value);
+         break;
+ 
+-- 
+2.30.2
+
