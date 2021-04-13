@@ -5,21 +5,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "d0ed6a69d399ae193959225cdeaa9382746c91cc"
-SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
+SRCREV = "5f41564d19d9d16148fef612c73e0dd6dfc50a57"
+SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;branch=zephyr-6-devel \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
-           file://0001-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
-           file://0002-hw-sparc-Add-leon-at697-machine.patch \
-           file://0003-hw-sparc-leon-Fix-compilation-errors.patch \
-           file://0004-hw-sparc-leon-timer-Call-leon_timer_io_read-for-TIME.patch \
-           file://0005-hw-sparc-leon-Switch-to-transaction-based-ptimer-API.patch \
-           file://0006-Add-support-for-ARCv2-architecture.patch \
-           file://0007-ARC-Fix-icount-support.patch \
-           file://0008-ARC-Build-fixups-for-qemu-5.1.patch \
-           file://0009-os_find_datadir-search-as-in-version-4.2.patch \
-	   file://0010-target-riscv-Fix-the-translation-of-physical-address.patch \
-	   file://0011-target-riscv-Change-the-TLB-page-size-depends-on-PMP.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
@@ -208,7 +197,7 @@ inherit autotools pkgconfig
 #--disable-blobs : BIOS needed for x86
 #--disable-fdt: Cannot use if supporting ARM
 
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu arc-softmmu"
+QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
