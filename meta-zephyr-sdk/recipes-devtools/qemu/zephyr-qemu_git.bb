@@ -1,5 +1,5 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
+DEPENDS = "glib-2.0 zlib pixman gnutls dtc ninja-native meson-native"
 LICENSE = "GPLv2"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
@@ -9,6 +9,7 @@ SRCREV = "5f41564d19d9d16148fef612c73e0dd6dfc50a57"
 SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;branch=zephyr-6-devel \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
+	   file://cross.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
@@ -218,7 +219,8 @@ do_unpack_append() {
 
 do_configure() {
     ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
-        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir}
+        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir} \
+	--meson=meson
 }
 
 do_install_append() {
