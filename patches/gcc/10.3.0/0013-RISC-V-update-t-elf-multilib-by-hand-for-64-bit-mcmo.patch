@@ -1,7 +1,7 @@
-From 5f92c19158bfbbda386ed1a34d2cd49d1036fc16 Mon Sep 17 00:00:00 2001
+From 377f3cfee77c4edc24bb3e4b784593ad7da1b982 Mon Sep 17 00:00:00 2001
 From: Kumar Gala <kumar.gala@linaro.org>
 Date: Wed, 7 Aug 2019 09:22:01 -0500
-Subject: [PATCH] RISC-V: update t-elf-multilib by hand for 64-bit
+Subject: [PATCH 13/17] RISC-V: update t-elf-multilib by hand for 64-bit
  mcmodel=medany
 
 Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
@@ -33,5 +33,5 @@ index 19f9434616c..06cf4de5f7f 100644
  march.rv32im/mabi.ilp32=march.rv32imc/mabi.ilp32 \
  march.rv32imafc/mabi.ilp32f=march.rv32imafdc/mabi.ilp32f \
 -- 
-2.25.4
+2.30.2
 

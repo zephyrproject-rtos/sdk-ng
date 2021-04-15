@@ -1,7 +1,7 @@
-From c478e50e023e909c22494bc6ffad33a080cedf2b Mon Sep 17 00:00:00 2001
+From 350e46c21944b6d305bc690383cdf33f1baf7177 Mon Sep 17 00:00:00 2001
 From: Kito Cheng <kito.cheng@sifive.com>
 Date: Mon, 11 May 2020 17:51:03 +0800
-Subject: [PATCH 01/14] testsuite: Require gnu-tm support for pr94856.C
+Subject: [PATCH 01/17] testsuite: Require gnu-tm support for pr94856.C
 
 ---
  gcc/testsuite/g++.dg/ipa/pr94856.C | 1 +
@@ -19,5 +19,5 @@ index 5315c52d80e..40f3a167e29 100644
  class a {
  public:
 -- 
-2.25.4
+2.30.2
 

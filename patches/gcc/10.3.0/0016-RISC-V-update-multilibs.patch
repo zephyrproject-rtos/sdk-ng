@@ -1,7 +1,7 @@
-From cadc173e08dae25cf37c90eb8bf8b2bdcc118119 Mon Sep 17 00:00:00 2001
+From 4726fc52c1043ed04cb81ab1a9ad421c75686f1b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Martin=20=C3=85berg?= <martin.aberg@gaisler.com>
 Date: Tue, 15 Dec 2020 08:40:21 +0100
-Subject: [PATCH] RISC-V: update multilibs
+Subject: [PATCH 16/17] RISC-V: update multilibs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -28,10 +28,10 @@ Signed-off-by: Martin Åberg <martin.aberg@gaisler.com>
  create mode 100644 gcc/config/riscv/t-zephyr
 
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 96a17f7eacb..431015c682a 100644
+index b3f1eb8e815..4b330facf6a 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -2445,6 +2445,9 @@ riscv*-*-linux*)
+@@ -2489,6 +2489,9 @@ riscv*-*-linux*)
  riscv*-*-elf* | riscv*-*-rtems*)
  	tm_file="elfos.h newlib-stdint.h ${tm_file} riscv/elf.h"
  	case ${target} in
@@ -86,5 +86,5 @@ index 00000000000..2dead4d3b2a
 +march.rv64imafdc/mabi.lp64d=march.rv64gc/mabi.lp64d \
 +march.rv64imafd/mabi.lp64d=march.rv64g/mabi.lp64d
 -- 
-2.11.0
+2.30.2
 

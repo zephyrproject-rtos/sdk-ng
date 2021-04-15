@@ -1,7 +1,7 @@
-From 06da957e22a58166c53d645987dbbecdd60dafdb Mon Sep 17 00:00:00 2001
+From 7e64863a21360027928950932a63c36b325b490f Mon Sep 17 00:00:00 2001
 From: Kito Cheng <kito.cheng@sifive.com>
 Date: Mon, 29 Jun 2020 17:52:42 +0800
-Subject: [PATCH 09/14] RISC-V: Preserve arch version info during normalizing
+Subject: [PATCH 08/17] RISC-V: Preserve arch version info during normalizing
  arch string
 
 - Arch version should preserved if user explicitly specified the version.
@@ -289,5 +289,5 @@ index 00000000000..1e860013293
 +}
 +/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_f3p0_d2p0\"" } } */
 -- 
-2.25.4
+2.30.2
 

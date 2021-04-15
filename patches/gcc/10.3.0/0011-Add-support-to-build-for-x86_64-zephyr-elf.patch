@@ -1,7 +1,7 @@
-From 570b2aa30993986af0be32af68549e9548b4c757 Mon Sep 17 00:00:00 2001
+From 875aec1e771a6edfc3c66f5b7e16ab68fd27c100 Mon Sep 17 00:00:00 2001
 From: Daniel Leung <daniel.leung@intel.com>
 Date: Fri, 11 Oct 2019 16:36:17 -0700
-Subject: [PATCH 12/14] Add support to build for x86_64-zephyr-elf
+Subject: [PATCH 11/17] Add support to build for x86_64-zephyr-elf
 
 This adds the necessary bits to build for x86_64-zephyr-elf with
 multilib support (m32 and m64), following the x86_64-*-linux*
@@ -79,10 +79,10 @@ index cf1b34358c9..5781777c390 100644
      dnl Always pass -arch ppc to assembler.
      gcc_cv_as_flags="-arch ppc"
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 7de2dfc1394..d527b1bb222 100644
+index 27b5ebc732e..07c7a6472ed 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1868,6 +1868,11 @@ i[34567]86-*-elfiamcu)
+@@ -1899,6 +1899,11 @@ i[34567]86-*-elfiamcu)
  i[34567]86-*-elf*)
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
  	;;
@@ -184,7 +184,7 @@ index 00000000000..dba11cdf283
 +
 +#define MULTILIB_DEFAULTS { "m64" }
 diff --git a/gcc/configure b/gcc/configure
-index 5ff930cfdcc..5da6a8ee3c7 100755
+index fcb1c4a3c88..c23a569ed83 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -7593,6 +7593,7 @@ else
@@ -195,7 +195,7 @@ index 5ff930cfdcc..5da6a8ee3c7 100755
      i?86*-*-elfiamcu | i?86*-*-gnu* | x86_64*-*-gnu* | \
      i?86*-*-mingw* | x86_64*-*-mingw* | \
      i?86*-*-cygwin* | x86_64*-*-cygwin*)
-@@ -14769,7 +14770,7 @@ ia64-*-hpux*)
+@@ -14774,7 +14775,7 @@ ia64-*-hpux*)
    rm -rf conftest*
    ;;
  
@@ -204,7 +204,7 @@ index 5ff930cfdcc..5da6a8ee3c7 100755
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
-@@ -14784,7 +14785,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+@@ -14789,7 +14790,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
  	  x86_64-*kfreebsd*-gnu)
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
@@ -213,7 +213,7 @@ index 5ff930cfdcc..5da6a8ee3c7 100755
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
-@@ -14813,7 +14814,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+@@ -14818,7 +14819,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
  	  x86_64-*kfreebsd*-gnu)
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
@@ -222,7 +222,7 @@ index 5ff930cfdcc..5da6a8ee3c7 100755
  	    LD="${LD-ld} -m elf_x86_64"
  	    ;;
  	  powerpcle-*linux*)
-@@ -23049,6 +23050,15 @@ else
+@@ -23056,6 +23057,15 @@ else
    x86_64-*-linux*)
          gcc_cv_as_flags=--64
      ;;
@@ -239,7 +239,7 @@ index 5ff930cfdcc..5da6a8ee3c7 100755
          gcc_cv_as_flags="-arch ppc"
      ;;
 diff --git a/libatomic/configure b/libatomic/configure
-index 3e2f2ff4f20..9a7973ddc9b 100755
+index 6e706e90636..b42ac57af31 100755
 --- a/libatomic/configure
 +++ b/libatomic/configure
 @@ -6869,7 +6869,7 @@ ia64-*-hpux*)
@@ -270,7 +270,7 @@ index 3e2f2ff4f20..9a7973ddc9b 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libbacktrace/configure b/libbacktrace/configure
-index 28b9593342a..fa625e8b638 100755
+index 6a0dd7602fe..1e7c0e8c81c 100755
 --- a/libbacktrace/configure
 +++ b/libbacktrace/configure
 @@ -7248,7 +7248,7 @@ ia64-*-hpux*)
@@ -301,10 +301,10 @@ index 28b9593342a..fa625e8b638 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libcc1/configure b/libcc1/configure
-index 006e1f2f933..d6dc48d5c47 100755
+index 00e839fa479..fbeddee3c67 100755
 --- a/libcc1/configure
 +++ b/libcc1/configure
-@@ -6530,7 +6530,7 @@ ia64-*-hpux*)
+@@ -6532,7 +6532,7 @@ ia64-*-hpux*)
    rm -rf conftest*
    ;;
  
@@ -313,7 +313,7 @@ index 006e1f2f933..d6dc48d5c47 100755
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
-@@ -6545,7 +6545,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+@@ -6547,7 +6547,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
  	  x86_64-*kfreebsd*-gnu)
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
@@ -322,7 +322,7 @@ index 006e1f2f933..d6dc48d5c47 100755
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
-@@ -6574,7 +6574,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+@@ -6576,7 +6576,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
  	  x86_64-*kfreebsd*-gnu)
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
@@ -344,7 +344,7 @@ index 14c103a0718..7dc4ceba6fc 100755
      i?86*-*-mingw* | x86_64*-*-mingw* | \
      i?86*-*-cygwin* | x86_64*-*-cygwin*)
 diff --git a/libffi/configure b/libffi/configure
-index f0051505d10..5ffe8344cbb 100755
+index b32e109f030..6dacab469fb 100755
 --- a/libffi/configure
 +++ b/libffi/configure
 @@ -7042,7 +7042,7 @@ ia64-*-hpux*)
@@ -408,7 +408,7 @@ index 26bf75789e0..a06d82b44d0 100755
      i?86*-*-mingw* | x86_64*-*-mingw* | \
      i?86*-*-cygwin* | x86_64*-*-cygwin*)
 diff --git a/libgfortran/configure b/libgfortran/configure
-index b4cf854ddb3..bdc46b2285d 100755
+index 1b4a8b10609..fd7e8e46485 100755
 --- a/libgfortran/configure
 +++ b/libgfortran/configure
 @@ -8437,7 +8437,7 @@ ia64-*-hpux*)
@@ -439,7 +439,7 @@ index b4cf854ddb3..bdc46b2285d 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libgomp/configure b/libgomp/configure
-index d8d98f182d4..0f7869780af 100755
+index 5240f7e9d39..fde1228b8bb 100755
 --- a/libgomp/configure
 +++ b/libgomp/configure
 @@ -6914,7 +6914,7 @@ ia64-*-hpux*)
@@ -470,7 +470,7 @@ index d8d98f182d4..0f7869780af 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libhsail-rt/configure b/libhsail-rt/configure
-index 49d529c8f5f..33a429c0dff 100755
+index 33e61484333..570de99b002 100755
 --- a/libhsail-rt/configure
 +++ b/libhsail-rt/configure
 @@ -6722,7 +6722,7 @@ ia64-*-hpux*)
@@ -501,7 +501,7 @@ index 49d529c8f5f..33a429c0dff 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libitm/configure b/libitm/configure
-index 97db1bc8845..520c24e09a0 100755
+index ea31a1d5cdd..416fb27d091 100755
 --- a/libitm/configure
 +++ b/libitm/configure
 @@ -7545,7 +7545,7 @@ ia64-*-hpux*)
@@ -532,7 +532,7 @@ index 97db1bc8845..520c24e09a0 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libphobos/configure b/libphobos/configure
-index e461c7442b2..639664fad12 100755
+index 29595b938f6..9dc80c310e1 100755
 --- a/libphobos/configure
 +++ b/libphobos/configure
 @@ -7397,7 +7397,7 @@ ia64-*-hpux*)
@@ -563,7 +563,7 @@ index e461c7442b2..639664fad12 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libquadmath/configure b/libquadmath/configure
-index 7b45eb7e805..d5eb6f2c2e7 100755
+index b5b212c0639..1b991447f3b 100755
 --- a/libquadmath/configure
 +++ b/libquadmath/configure
 @@ -6530,7 +6530,7 @@ ia64-*-hpux*)
@@ -594,7 +594,7 @@ index 7b45eb7e805..d5eb6f2c2e7 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libsanitizer/configure b/libsanitizer/configure
-index 0c56bdf2d7d..c0c56d85b41 100755
+index ed0c15e37fc..3b5fe9674b9 100755
 --- a/libsanitizer/configure
 +++ b/libsanitizer/configure
 @@ -8111,7 +8111,7 @@ ia64-*-hpux*)
@@ -625,7 +625,7 @@ index 0c56bdf2d7d..c0c56d85b41 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libssp/configure b/libssp/configure
-index dd3b41da0f6..2a597e1f706 100755
+index db527f47519..0f977211e9c 100755
 --- a/libssp/configure
 +++ b/libssp/configure
 @@ -6712,7 +6712,7 @@ ia64-*-hpux*)
@@ -656,7 +656,7 @@ index dd3b41da0f6..2a597e1f706 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index f33b6a50519..63d52528676 100755
+index c1dcd556e28..8fddd5b682a 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
 @@ -7647,7 +7647,7 @@ ia64-*-hpux*)
@@ -707,10 +707,10 @@ index 898db37d9a2..ff1cd38b04d 100644
      case "${host_cpu}" in
        i[567]86)
 diff --git a/libtool.m4 b/libtool.m4
-index e194e899fcf..67bd3c3157e 100644
+index 00206549f54..d7f8ea4aacc 100644
 --- a/libtool.m4
 +++ b/libtool.m4
-@@ -1220,7 +1220,7 @@ ia64-*-hpux*)
+@@ -1222,7 +1222,7 @@ ia64-*-hpux*)
    rm -rf conftest*
    ;;
  
@@ -719,7 +719,7 @@ index e194e899fcf..67bd3c3157e 100644
  s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
    # Find out which ABI we are using.
    echo 'int i;' > conftest.$ac_ext
-@@ -1231,7 +1231,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+@@ -1233,7 +1233,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
  	  x86_64-*kfreebsd*-gnu)
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
@@ -728,7 +728,7 @@ index e194e899fcf..67bd3c3157e 100644
  	    case `/usr/bin/file conftest.o` in
  	      *x86-64*)
  		LD="${LD-ld} -m elf32_x86_64"
-@@ -1260,7 +1260,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+@@ -1262,7 +1262,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
  	  x86_64-*kfreebsd*-gnu)
  	    LD="${LD-ld} -m elf_x86_64_fbsd"
  	    ;;
@@ -738,7 +738,7 @@ index e194e899fcf..67bd3c3157e 100644
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/libvtv/configure b/libvtv/configure
-index fc969525da0..f210a2fa115 100755
+index 4de60cf5e50..f3e12497373 100755
 --- a/libvtv/configure
 +++ b/libvtv/configure
 @@ -8012,7 +8012,7 @@ ia64-*-hpux*)
@@ -800,7 +800,7 @@ index 36c6ecc5875..1e0cdd9be3b 100755
  	    ;;
  	  powerpcle-*linux*)
 diff --git a/zlib/configure b/zlib/configure
-index 484a4938f4a..a6b5c35c945 100755
+index 46a35918ddb..9f866f93df5 100755
 --- a/zlib/configure
 +++ b/zlib/configure
 @@ -6101,7 +6101,7 @@ ia64-*-hpux*)
@@ -831,5 +831,5 @@ index 484a4938f4a..a6b5c35c945 100755
  	    ;;
  	  powerpcle-*linux*)
 -- 
-2.25.4
+2.30.2
 

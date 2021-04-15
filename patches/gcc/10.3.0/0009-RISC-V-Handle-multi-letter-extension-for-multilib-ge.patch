@@ -1,7 +1,7 @@
-From d8859b51cdc09c887eb5f6763d13fece22f4d3df Mon Sep 17 00:00:00 2001
+From 31efb57c66a5c44d63463dda4ceb06ee9ea4cf1c Mon Sep 17 00:00:00 2001
 From: Kito Cheng <kito.cheng@sifive.com>
 Date: Thu, 18 Jun 2020 11:37:01 +0800
-Subject: [PATCH 10/14] RISC-V: Handle multi-letter extension for
+Subject: [PATCH 09/17] RISC-V: Handle multi-letter extension for
  multilib-generator
 
  - The order of multi-lib config could be wrong if multi-ltter are
@@ -93,5 +93,5 @@ index b9194e6d3cc..8f4df183db2 100755
    for alt in alts[1:]:
      arches[alt] = 1
 -- 
-2.25.4
+2.30.2
 

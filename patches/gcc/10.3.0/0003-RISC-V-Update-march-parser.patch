@@ -1,7 +1,7 @@
-From 758ed83225cb7034f8a0331852ac8cdcc9d49b70 Mon Sep 17 00:00:00 2001
+From d9b8f1a20c166e03e64acbb4bf3a1733241a1590 Mon Sep 17 00:00:00 2001
 From: Kito Cheng <kito.cheng@sifive.com>
 Date: Fri, 10 Apr 2020 17:20:18 +0800
-Subject: [PATCH 03/14] RISC-V: Update march parser
+Subject: [PATCH 03/17] RISC-V: Update march parser
 
  - The arch string rule has changed in latest spec, it introduced new
    multi-letter extension prefix with 'h' and 'z', and drop `sx`. also
@@ -160,5 +160,5 @@ index 670944a1cbe..bc4db0eb647 100644
 -/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_xbar2p0_sabc2p0_sxfoo2p0\"" } } */
 +/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_sabc2p0_xbar2p0\"" } } */
 -- 
-2.25.4
+2.30.2
 
