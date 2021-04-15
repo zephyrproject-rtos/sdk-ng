@@ -1,7 +1,7 @@
-From 4d367ee9643b723d36c9663a40b6d333e8de3699 Mon Sep 17 00:00:00 2001
+From 31fcf3bc76285ff5389b71842d8456ae14ac6312 Mon Sep 17 00:00:00 2001
 From: Anas Nashif <anas.nashif@intel.com>
 Date: Wed, 7 Aug 2019 05:23:08 -0500
-Subject: [PATCH 11/14] nios2: add multilib support
+Subject: [PATCH 10/17] nios2: add multilib support
 
 Signed-off-by: Anas Nashif <anas.nashif@intel.com>
 ---
@@ -26,5 +26,5 @@ index cfee4f82003..63b7499cb13 100644
  # MULTILIB_OPTIONS += mel/meb
  # MULTILIB_DIRNAMES += le be
 -- 
-2.25.4
+2.30.2
 

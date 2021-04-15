@@ -1,7 +1,7 @@
-From 90d7266d3241cd5e1bd707274c4aff9093b43221 Mon Sep 17 00:00:00 2001
+From 1fda724ff8b4ed569f2d2a420856acab800ad021 Mon Sep 17 00:00:00 2001
 From: Kumar Gala <kumar.gala@linaro.org>
 Date: Mon, 18 Feb 2019 10:53:49 -0600
-Subject: [PATCH 13/14] Enable soft-fp on i586
+Subject: [PATCH 12/17] Enable soft-fp on i586
 
 This is a porting of the patches in meta-zephyr-sdk to gcc-8.2.0
 
@@ -30,10 +30,10 @@ Signed-off-by: Kumar Gala <kumar.gala@linaro.org>
  create mode 100644 libgcc/config/i386/32/t-zephyr
 
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index d527b1bb222..1bb239c99ba 100644
+index 07c7a6472ed..c36e8292ed2 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1865,6 +1865,10 @@ x86_64-*-darwin*)
+@@ -1896,6 +1896,10 @@ x86_64-*-darwin*)
  i[34567]86-*-elfiamcu)
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/iamcu.h"
  	;;
@@ -104,5 +104,5 @@ index 00000000000..7595cdeed84
 @@ -0,0 +1 @@
 +HOST_LIBGCC2_CFLAGS += -mlong-double-80
 -- 
-2.25.4
+2.30.2
 

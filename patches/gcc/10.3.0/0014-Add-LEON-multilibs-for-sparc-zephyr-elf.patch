@@ -1,7 +1,7 @@
-From 4beadbc1abc6a2943b541124d391ceb26a1042c4 Mon Sep 17 00:00:00 2001
+From 9c28995ed8ecf5f7d8e943c04fefa1a8e8747de0 Mon Sep 17 00:00:00 2001
 From: Martin Aberg <maberg@gaisler.com>
 Date: Wed, 18 Nov 2020 13:18:59 +0100
-Subject: [PATCH] Add LEON multilibs for sparc-zephyr-elf
+Subject: [PATCH 14/17] Add LEON multilibs for sparc-zephyr-elf
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -12,15 +12,15 @@ targets.
 Signed-off-by: Martin Åberg <martin.aberg@gaisler.com>
 ---
  gcc/config.gcc            |  3 +++
- gcc/config/sparc/t-zephyr | 55 +++++++++++++++++++++++++++++++++++++++++++++++
+ gcc/config/sparc/t-zephyr | 55 +++++++++++++++++++++++++++++++++++++++
  2 files changed, 58 insertions(+)
  create mode 100644 gcc/config/sparc/t-zephyr
 
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 6a349965c0af..96a17f7eacbd 100644
+index c36e8292ed2..b3f1eb8e815 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -3273,6 +3273,9 @@ sh-wrs-vxworks)
+@@ -3331,6 +3331,9 @@ sh-wrs-vxworks)
  sparc-*-elf*)
  	tm_file="${tm_file} dbxelf.h elfos.h newlib-stdint.h sparc/sysv4.h sparc/sp-elf.h"
  	case ${target} in
@@ -32,7 +32,7 @@ index 6a349965c0af..96a17f7eacbd 100644
  		;;
 diff --git a/gcc/config/sparc/t-zephyr b/gcc/config/sparc/t-zephyr
 new file mode 100644
-index 000000000000..baaff2f0b77d
+index 00000000000..baaff2f0b77
 --- /dev/null
 +++ b/gcc/config/sparc/t-zephyr
 @@ -0,0 +1,55 @@
@@ -92,5 +92,5 @@ index 000000000000..baaff2f0b77d
 +MULTILIB_REQUIRED += mcpu=leon3v7/mflat
 +MULTILIB_REQUIRED += mcpu=leon3v7/msoft-float/mflat
 -- 
-2.11.0
+2.30.2
 

@@ -1,7 +1,7 @@
-From acb6066ca02d1ad516f9d1df3f2217a68f681117 Mon Sep 17 00:00:00 2001
+From 87477ae9940cf13b136f9744726218c1c7bd58dc Mon Sep 17 00:00:00 2001
 From: Kito Cheng <kito.cheng@sifive.com>
 Date: Fri, 19 Jun 2020 16:59:52 +0800
-Subject: [PATCH 08/14] RISC-V: Normalize arch string in driver time
+Subject: [PATCH 07/17] RISC-V: Normalize arch string in driver time
 
  - Normalize arch string would help the multi-lib handling, e.g. rv64gc and
    rv64g_c are both valid and same arch, but latter one would confuse
@@ -16,7 +16,7 @@ gcc/ChangeLog:
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/config/riscv/riscv.h b/gcc/config/riscv/riscv.h
-index cbcd5749bed..9f67d82e74e 100644
+index db2549264a8..aa457f86c6c 100644
 --- a/gcc/config/riscv/riscv.h
 +++ b/gcc/config/riscv/riscv.h
 @@ -64,10 +64,14 @@ extern const char *riscv_expand_arch (int argc, const char **argv);
@@ -36,5 +36,5 @@ index cbcd5749bed..9f67d82e74e 100644
  
  #define LOCAL_LABEL_PREFIX	"."
 -- 
-2.25.4
+2.30.2
 

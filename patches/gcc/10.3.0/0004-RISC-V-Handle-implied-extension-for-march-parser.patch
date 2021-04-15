@@ -1,7 +1,7 @@
-From bd2e1cdccabb9e49dda40f6dd3ed15451a9a0ce3 Mon Sep 17 00:00:00 2001
+From 60c90753dbd17948f34694ed9f9c57ab9bc3ae53 Mon Sep 17 00:00:00 2001
 From: Kito Cheng <kito.cheng@sifive.com>
 Date: Fri, 10 Apr 2020 17:20:19 +0800
-Subject: [PATCH 04/14] RISC-V: Handle implied extension for -march parser.
+Subject: [PATCH 04/17] RISC-V: Handle implied extension for -march parser.
 
   - Implied rule are introduced into latest RISC-V ISA spec.
 
@@ -217,7 +217,7 @@ index e150b303c34..358224af898 100644
  extern bool riscv_hard_regno_rename_ok (unsigned, unsigned);
  
 diff --git a/gcc/config/riscv/riscv.h b/gcc/config/riscv/riscv.h
-index e6209ede9d6..cbcd5749bed 100644
+index 91b66de7921..db2549264a8 100644
 --- a/gcc/config/riscv/riscv.h
 +++ b/gcc/config/riscv/riscv.h
 @@ -40,6 +40,11 @@ along with GCC; see the file COPYING3.  If not see
@@ -277,5 +277,5 @@ index 00000000000..df27fc3234d
 +}
 +/* { dg-final { scan-assembler ".attribute arch, \"rv32i2p0_f2p0_d2p0\"" } } */
 -- 
-2.25.4
+2.30.2
 

@@ -1,7 +1,7 @@
-From eaca05d0ed15aa196ab4f2fef9a89a6059c1cffb Mon Sep 17 00:00:00 2001
+From f716985ba057d6e4d346e3bca1738d9d2dc5266f Mon Sep 17 00:00:00 2001
 From: Craig Blackmore <craig.blackmore@embecosm.com>
 Date: Tue, 12 May 2020 14:41:08 -0700
-Subject: [PATCH 02/14] RISC-V: Add shorten_memrefs pass.
+Subject: [PATCH 02/17] RISC-V: Add shorten_memrefs pass.
 
 	gcc/
 	* config.gcc:  Add riscv-shorten-memrefs.o to extra_objs for riscv.
@@ -79,7 +79,7 @@ Subject: [PATCH 02/14] RISC-V: Add shorten_memrefs pass.
  create mode 100644 gcc/testsuite/gcc.target/riscv/shorten-memrefs-7.c
 
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 09a38c5645c..7de2dfc1394 100644
+index 1e707bcb254..27b5ebc732e 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
 @@ -525,7 +525,7 @@ pru-*-*)
@@ -335,7 +335,7 @@ index 00000000000..3686005fe2e
 +  return new pass_shorten_memrefs (ctxt);
 +}
 diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
-index 86785d0f351..fe63d8e751e 100644
+index 2718abb2004..198c5a1ca23 100644
 --- a/gcc/config/riscv/riscv.c
 +++ b/gcc/config/riscv/riscv.c
 @@ -55,6 +55,7 @@ along with GCC; see the file COPYING3.  If not see
@@ -461,7 +461,7 @@ index 86785d0f351..fe63d8e751e 100644
    return riscv_address_insns (addr, mode, false);
  }
  
-@@ -4697,6 +4774,7 @@ riscv_option_override (void)
+@@ -4700,6 +4777,7 @@ riscv_option_override (void)
      error ("%<-mriscv-attribute%> RISC-V ELF attribute requires GNU as 2.32"
  	   " [%<-mriscv-attribute%>]");
  #endif
@@ -469,7 +469,7 @@ index 86785d0f351..fe63d8e751e 100644
  }
  
  /* Implement TARGET_CONDITIONAL_REGISTER_USAGE.  */
-@@ -4736,9 +4814,9 @@ riscv_conditional_register_usage (void)
+@@ -4739,9 +4817,9 @@ riscv_conditional_register_usage (void)
  static int
  riscv_register_priority (int regno)
  {
@@ -482,7 +482,7 @@ index 86785d0f351..fe63d8e751e 100644
      return 1;
  
    return 0;
-@@ -5155,6 +5233,19 @@ riscv_gpr_save_operation_p (rtx op)
+@@ -5158,6 +5236,19 @@ riscv_gpr_save_operation_p (rtx op)
    return true;
  }
  
@@ -502,7 +502,7 @@ index 86785d0f351..fe63d8e751e 100644
  /* Initialize the GCC target structure.  */
  #undef TARGET_ASM_ALIGNED_HI_OP
  #define TARGET_ASM_ALIGNED_HI_OP "\t.half\t"
-@@ -5335,6 +5426,9 @@ riscv_gpr_save_operation_p (rtx op)
+@@ -5338,6 +5429,9 @@ riscv_gpr_save_operation_p (rtx op)
  #undef TARGET_MACHINE_DEPENDENT_REORG
  #define TARGET_MACHINE_DEPENDENT_REORG riscv_reorg
  
@@ -513,10 +513,10 @@ index 86785d0f351..fe63d8e751e 100644
  
  #include "gt-riscv.h"
 diff --git a/gcc/config/riscv/riscv.h b/gcc/config/riscv/riscv.h
-index 567c23380fe..e6209ede9d6 100644
+index 765d6cf9689..91b66de7921 100644
 --- a/gcc/config/riscv/riscv.h
 +++ b/gcc/config/riscv/riscv.h
-@@ -920,6 +920,7 @@ extern unsigned riscv_stack_boundary;
+@@ -924,6 +924,7 @@ extern unsigned riscv_stack_boundary;
  #define SHIFT_RS1 15
  #define SHIFT_IMM 20
  #define IMM_BITS 12
@@ -524,7 +524,7 @@ index 567c23380fe..e6209ede9d6 100644
  #define C_SxSP_BITS 6
  
  #define IMM_REACH (1LL << IMM_BITS)
-@@ -929,6 +930,10 @@ extern unsigned riscv_stack_boundary;
+@@ -933,6 +934,10 @@ extern unsigned riscv_stack_boundary;
  #define SWSP_REACH (4LL << C_SxSP_BITS)
  #define SDSP_REACH (8LL << C_SxSP_BITS)
  
@@ -566,10 +566,10 @@ index 5ecb3c160a6..4820fb35d31 100644
 +
 +PASSES_EXTRA += $(srcdir)/config/riscv/riscv-passes.def
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index a2794a67d1e..fca79e699e2 100644
+index eabeec944e7..91d5f6d8f6b 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -1129,6 +1129,7 @@ See RS/6000 and PowerPC Options.
+@@ -1131,6 +1131,7 @@ See RS/6000 and PowerPC Options.
  -mpreferred-stack-boundary=@var{num} @gol
  -msmall-data-limit=@var{N-bytes} @gol
  -msave-restore  -mno-save-restore @gol
@@ -577,7 +577,7 @@ index a2794a67d1e..fca79e699e2 100644
  -mstrict-align  -mno-strict-align @gol
  -mcmodel=medlow  -mcmodel=medany @gol
  -mexplicit-relocs  -mno-explicit-relocs @gol
-@@ -25349,6 +25350,15 @@ Do or don't use smaller but slower prologue and epilogue code that uses
+@@ -25394,6 +25395,15 @@ Do or don't use smaller but slower prologue and epilogue code that uses
  library function calls.  The default is to use fast inline prologues and
  epilogues.
  
@@ -594,7 +594,7 @@ index a2794a67d1e..fca79e699e2 100644
  @itemx -mno-strict-align
  @opindex mstrict-align
 diff --git a/gcc/doc/tm.texi b/gcc/doc/tm.texi
-index 64e7b003a48..ae14d07a202 100644
+index fcb7245e95c..e0765bf8e9a 100644
 --- a/gcc/doc/tm.texi
 +++ b/gcc/doc/tm.texi
 @@ -6967,6 +6967,13 @@ candidate as a replacement for the if-convertible sequence described in
@@ -612,7 +612,7 @@ index 64e7b003a48..ae14d07a202 100644
  This predicate controls the use of the eager delay slot filler to disallow
  speculatively executed instructions being placed in delay slots.  Targets
 diff --git a/gcc/doc/tm.texi.in b/gcc/doc/tm.texi.in
-index e31cdb251b5..3be984bbd5c 100644
+index c17209daa51..3a7b472b510 100644
 --- a/gcc/doc/tm.texi.in
 +++ b/gcc/doc/tm.texi.in
 @@ -4697,6 +4697,8 @@ Define this macro if a non-short-circuit operation produced by
@@ -639,10 +639,10 @@ index 331af5ffdb3..1bc75074e5d 100644
       do not want to call one of the change address variants that take
       an offset even though we know the offset in many cases.  These
 diff --git a/gcc/target.def b/gcc/target.def
-index 62e3d625a7f..a2a122041bd 100644
+index f5a6d507e91..0e68b12df0c 100644
 --- a/gcc/target.def
 +++ b/gcc/target.def
-@@ -3847,6 +3847,17 @@ candidate as a replacement for the if-convertible sequence described in\n\
+@@ -3861,6 +3861,17 @@ candidate as a replacement for the if-convertible sequence described in\n\
  bool, (rtx_insn *seq, struct noce_if_info *if_info),
  default_noce_conversion_profitable_p)
  
@@ -1019,5 +1019,5 @@ index 00000000000..a5833fd356d
 +
 +/* { dg-final { scan-assembler-not "addi" } } */
 -- 
-2.25.4
+2.30.2
 
