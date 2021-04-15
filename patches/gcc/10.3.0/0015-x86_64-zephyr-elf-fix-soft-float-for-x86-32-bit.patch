@@ -1,7 +1,7 @@
-From df5ca42adff42aff861d4af132c87a3b6aaaf21c Mon Sep 17 00:00:00 2001
+From f1429b385ca511a231b8d27113a7cba2be08be56 Mon Sep 17 00:00:00 2001
 From: Daniel Leung <daniel.leung@intel.com>
 Date: Thu, 10 Dec 2020 10:31:19 -0800
-Subject: [PATCH 17/17] x86_64-zephyr-elf: fix soft float for x86 32-bit
+Subject: [PATCH 15/17] x86_64-zephyr-elf: fix soft float for x86 32-bit
 
 This fixes soft-float build for x86 32-bit (-m32 -msoft-float)
 under x86_64-zephyr-elf multilib build. This now actually
@@ -15,7 +15,7 @@ Signed-off-by: Daniel Leung <daniel.leung@intel.com>
  create mode 100644 libgcc/config/i386/64/t-softfp
 
 diff --git a/libgcc/config.host b/libgcc/config.host
-index 54ae74350..f76f23943 100644
+index 80565161f25..7b0a629c372 100644
 --- a/libgcc/config.host
 +++ b/libgcc/config.host
 @@ -704,7 +704,7 @@ i[34567]86-*-elf*)
@@ -43,12 +43,12 @@ index 54ae74350..f76f23943 100644
  	;;
 diff --git a/libgcc/config/i386/64/t-softfp b/libgcc/config/i386/64/t-softfp
 new file mode 100644
-index 000000000..f35d6161b
+index 00000000000..f35d6161b64
 --- /dev/null
 +++ b/libgcc/config/i386/64/t-softfp
 @@ -0,0 +1,2 @@
 +softfp_wrap_start := '\#ifndef __x86_64__'
 +softfp_wrap_end := '\#endif'
 -- 
-2.29.2
+2.30.2
 

@@ -1,7 +1,7 @@
-From 95a8d3ca287a8d7cdf3dd07e9866ace6fbec745c Mon Sep 17 00:00:00 2001
+From 3b7b4983d9a9d11a3b4399d64006268f541dbc13 Mon Sep 17 00:00:00 2001
 From: Jim Wilson <jimw@sifive.com>
 Date: Tue, 2 Jun 2020 11:19:39 -0700
-Subject: [PATCH 07/14] RISC-V: Make __divdi3 handle div by zero same as
+Subject: [PATCH 06/17] RISC-V: Make __divdi3 handle div by zero same as
  hardware.
 
 The ISA manual specifies that divide by zero always returns -1 as the result.
@@ -37,5 +37,5 @@ index 151f8e273ac..17234324c1e 100644
  .L12:
    move  t0, ra
 -- 
-2.25.4
+2.30.2
 
