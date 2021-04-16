@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.12.3
+## Zephyr SDK 0.12.4
 
 - cmake:
   * Update for future arm/arm64 split
