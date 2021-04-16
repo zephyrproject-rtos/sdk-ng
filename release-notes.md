@@ -1,5 +1,19 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.12.5
+
+- gcc:
+  * Update to gcc 10.3 release
+
+- crosstool-ng:
+  * sync with upstream.  Upstream now supports newlib-nano so we drop
+    our Zephyr specific updates.  This also pulls in gcc-10.3 and
+    initial support for ARC64.
+
+- yocto:
+  * Update to yocto 3.2.3 baseline.  This is in prep to support building
+    qemu-6.0.0
+
 ## Zephyr SDK 0.12.4
 
 - cmake:
