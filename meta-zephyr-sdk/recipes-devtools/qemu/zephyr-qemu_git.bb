@@ -10,6 +10,7 @@ SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;branch=zephyr-6-devel \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
 	   file://cross.patch \
+	   file://0001-Add-ARC-support.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
@@ -198,7 +199,7 @@ inherit autotools pkgconfig
 #--disable-blobs : BIOS needed for x86
 #--disable-fdt: Cannot use if supporting ARM
 
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
+QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu arc-softmmu arc64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
