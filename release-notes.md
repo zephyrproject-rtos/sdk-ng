@@ -2,6 +2,12 @@
 
 ## Zephyr SDK 0.12.5
 
+- qemu:
+  * Updated to QEMU 6.0.0-rc4
+  * Added arc64 support.  NOTE: this update ARC support replaces
+    the machine (-M simhs) with (-M virt).  This change will require
+    updates to boards/arc/qemu_arc/board.cmake in Zephyr to match.
+
 - gcc:
   * Update to gcc 10.3 release
 
