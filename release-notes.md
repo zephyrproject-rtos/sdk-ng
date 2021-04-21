@@ -2,6 +2,9 @@
 
 ## Zephyr SDK 0.12.5
 
+- binutils:
+  * Update to binutils 2.36.1 in prep for ARC64 support
+
 - qemu:
   * Updated to QEMU 6.0.0-rc4
   * Added arc64 support.  NOTE: this update ARC support replaces
