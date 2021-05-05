@@ -21,6 +21,7 @@ steps:
          14) TARGET="xtensa_intel_s1000";;
          15) TARGET="mips";;
          16) TARGET="cmake";;
+         17) TARGET="arc64";;
       esac
     - ./go.sh $${TARGET}
     - >
@@ -43,7 +44,7 @@ steps:
          cd ../..
          buildkite-agent artifact upload $${TARGET}.$MACHINE.tar.bz2;
       fi
-    parallelism: 17
+    parallelism: 18
     env:
       BUILDKITE_CLEAN_CHECKOUT: "true"
     retry:
