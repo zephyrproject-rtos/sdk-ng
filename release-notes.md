@@ -1,15 +1,26 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.12.5
+## Zephyr SDK 0.13.0-alpha-1
+
+- general:
+  * Added support for ARC64.  NOTE: GDB isn't currently supported
+    for ARC64.
 
 - qemu:
-  * Updated to QEMU 6.0.0-rc4
+  * Updated to QEMU 6.0.0
   * Added arc64 support.  NOTE: this update ARC support replaces
     the machine (-M simhs) with (-M virt).  This change will require
     updates to boards/arc/qemu_arc/board.cmake in Zephyr to match.
 
 - gcc:
   * Update to gcc 10.3 release
+  * Added support for ARC64
+
+- binutils:
+  * Updated to add support for ARC64
+
+- newlib:
+  * Updated to add support for ARC64
 
 - crosstool-ng:
   * sync with upstream.  Upstream now supports newlib-nano so we drop
