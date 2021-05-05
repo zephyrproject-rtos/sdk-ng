@@ -21,7 +21,7 @@ fi
 root_dir=$(dirname $0)/..
 sdk_version=$(cat $root_dir/VERSION)
 machine=$1
-arch_list="arm arm64 arc nios2 riscv64 sparc mips x86_64 xtensa_sample_controller \
+arch_list="arm arm64 arc arc64 nios2 riscv64 sparc mips x86_64 xtensa_sample_controller \
            xtensa_intel_apl_adsp xtensa_intel_s1000 xtensa_intel_bdw_adsp \
 	   xtensa_intel_byt_adsp xtensa_nxp_imx_adsp xtensa_nxp_imx8m_adsp"
 
@@ -192,6 +192,7 @@ create_sdk()
 parse_toolchain_name file_gcc_arm arm
 parse_toolchain_name file_gcc_arm64 arm64
 parse_toolchain_name file_gcc_arc arc
+parse_toolchain_name file_gcc_arc64 arc64
 parse_toolchain_name file_gcc_nios2 nios2
 parse_toolchain_name file_gcc_riscv64 riscv64
 parse_toolchain_name file_gcc_sparc sparc
