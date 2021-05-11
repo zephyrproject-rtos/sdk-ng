@@ -1,7 +1,7 @@
-From e955eabb3289dd3584a997a0671dda44f0a5ecb0 Mon Sep 17 00:00:00 2001
+From fb9a3921040b1115db534f88a74997bffe3204be Mon Sep 17 00:00:00 2001
 From: Kumar Gala <kumar.gala@linaro.org>
 Date: Thu, 25 Mar 2021 18:59:10 -0500
-Subject: [PATCH 09/10] hw/sparc/leon: Fix compilation errors with qemu 6
+Subject: [PATCH 09/16] hw/sparc/leon: Fix compilation errors with qemu 6
  changes
 
 Make updates to build due to upstream changes in qemu 6.0.0

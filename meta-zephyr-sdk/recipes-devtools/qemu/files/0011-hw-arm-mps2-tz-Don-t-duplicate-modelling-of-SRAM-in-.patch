@@ -1,0 +1,49 @@
+From 78ec7edffef0c0265c80d47b7716a11cf4376b32 Mon Sep 17 00:00:00 2001
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 10 May 2021 20:08:39 +0100
+Subject: [PATCH 11/16] hw/arm/mps2-tz: Don't duplicate modelling of SRAM in
+ AN524
+
+The SRAM at 0x2000_0000 is part of the SSE-200 itself, and we model
+it that way in hw/arm/armsse.c (along with the associated MPCs).  We
+incorrectly also added an entry to the RAMInfo array for the AN524 in
+hw/arm/mps2-tz.c, which was pointless because the CPU would never see
+it.  Delete it.
+
+The bug had no guest-visible effect because devices in the SSE-200
+take priority over those in the board model (armsse.c maps
+s->board_memory at priority -2).
+
+Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
+---
+ hw/arm/mps2-tz.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/hw/arm/mps2-tz.c b/hw/arm/mps2-tz.c
+index 70aa31a7f6..77ff83acb0 100644
+--- a/hw/arm/mps2-tz.c
++++ b/hw/arm/mps2-tz.c
+@@ -243,19 +243,13 @@ static const RAMInfo an524_raminfo[] = { {
+         .size = 512 * KiB,
+         .mpc = 0,
+         .mrindex = 0,
+-    }, {
+-        .name = "sram",
+-        .base = 0x20000000,
+-        .size = 32 * 4 * KiB,
+-        .mpc = -1,
+-        .mrindex = 1,
+     }, {
+         /* We don't model QSPI flash yet; for now expose it as simple ROM */
+         .name = "QSPI",
+         .base = 0x28000000,
+         .size = 8 * MiB,
+         .mpc = 1,
+-        .mrindex = 2,
++        .mrindex = 1,
+         .flags = IS_ROM,
+     }, {
+         .name = "DDR",
+-- 
+2.30.2
+

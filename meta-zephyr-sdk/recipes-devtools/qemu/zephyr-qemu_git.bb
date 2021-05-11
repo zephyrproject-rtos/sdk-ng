@@ -20,6 +20,12 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0008-hw-sparc-leon-Switch-to-transaction-based-ptimer-API.patch \
 	   file://0009-hw-sparc-leon-Fix-compilation-errors-with-qemu-6-cha.patch \
 	   file://0010-Add-ARC-support.patch \
+	   file://0011-hw-arm-mps2-tz-Don-t-duplicate-modelling-of-SRAM-in-.patch \
+	   file://0012-hw-arm-mps2-tz-Make-SRAM_ADDR_WIDTH-board-specific.patch \
+	   file://0013-hw-arm-armsse.c-Correct-modelling-of-SSE-300-interna.patch \
+	   file://0014-hw-arm-armsse-Convert-armsse_realize-to-use-ERRP_GUA.patch \
+	   file://0015-hw-arm-mps2-tz-Allow-board-to-specify-a-boot-RAM-siz.patch \
+	   file://0016-hw-arm-Model-TCMs-in-the-SSE-300-not-the-AN547.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"

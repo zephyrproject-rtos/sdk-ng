@@ -1,7 +1,7 @@
-From 5f4dc79eaffbf7acb14a72443e81ee42b683a923 Mon Sep 17 00:00:00 2001
+From d7e0be4e797c79198728a4b4d2dd6e7e7160bebf Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Wed, 9 Mar 2016 12:22:16 +0100
-Subject: [PATCH 05/10] hw/sparc: Add leon (at697) machine
+Subject: [PATCH 05/16] hw/sparc: Add leon (at697) machine
 
 This commit add LEON2 support.  It is taken from AdaCore Qemu
 repository at https://github.com/adacore/qemu.

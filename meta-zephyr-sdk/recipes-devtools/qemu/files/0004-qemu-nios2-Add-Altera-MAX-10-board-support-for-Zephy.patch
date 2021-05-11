@@ -1,7 +1,7 @@
-From 6f6b4209a4912f968685cddc19cc4906e2f61095 Mon Sep 17 00:00:00 2001
+From 28b2a8f91060dcf14bcfb9d60caa5caf399623a9 Mon Sep 17 00:00:00 2001
 From: Kumar Gala <kumar.gala@linaro.org>
 Date: Thu, 25 Mar 2021 18:24:50 -0500
-Subject: [PATCH 04/10] qemu/nios2: Add Altera MAX 10 board support for Zephyr
+Subject: [PATCH 04/16] qemu/nios2: Add Altera MAX 10 board support for Zephyr
  OS
 
 Exisitng 10m50_devboard is not supporting qemu-niso2 on Zephyr OS

@@ -1,0 +1,128 @@
+From a0591b384231665cd4a671981f740e6f26f93a94 Mon Sep 17 00:00:00 2001
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 10 May 2021 20:08:44 +0100
+Subject: [PATCH 16/16] hw/arm: Model TCMs in the SSE-300, not the AN547
+
+The SSE-300 has an ITCM at 0x0000_0000 and a DTCM at 0x2000_0000.
+Currently we model these in the AN547 board, but this is conceptually
+wrong, because they are a part of the SSE-300 itself. Move the
+modelling of the TCMs out of mps2-tz.c into sse300.c.
+
+This has no guest-visible effects.
+
+Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
+---
+ hw/arm/armsse.c         | 19 +++++++++++++++++++
+ hw/arm/mps2-tz.c        | 12 ------------
+ include/hw/arm/armsse.h |  2 ++
+ 3 files changed, 21 insertions(+), 12 deletions(-)
+
+diff --git a/hw/arm/armsse.c b/hw/arm/armsse.c
+index be5aa1f113..a1456cb0f4 100644
+--- a/hw/arm/armsse.c
++++ b/hw/arm/armsse.c
+@@ -13,6 +13,7 @@
+ #include "qemu/log.h"
+ #include "qemu/module.h"
+ #include "qemu/bitops.h"
++#include "qemu/units.h"
+ #include "qapi/error.h"
+ #include "trace.h"
+ #include "hw/sysbus.h"
+@@ -70,6 +71,7 @@ struct ARMSSEInfo {
+     bool has_cpuid;
+     bool has_cpu_pwrctrl;
+     bool has_sse_counter;
++    bool has_tcms;
+     Property *props;
+     const ARMSSEDeviceInfo *devinfo;
+     const bool *irq_is_common;
+@@ -516,6 +518,7 @@ static const ARMSSEInfo armsse_variants[] = {
+         .has_cpuid = false,
+         .has_cpu_pwrctrl = false,
+         .has_sse_counter = false,
++        .has_tcms = false,
+         .props = iotkit_properties,
+         .devinfo = iotkit_devices,
+         .irq_is_common = sse200_irq_is_common,
+@@ -536,6 +539,7 @@ static const ARMSSEInfo armsse_variants[] = {
+         .has_cpuid = true,
+         .has_cpu_pwrctrl = false,
+         .has_sse_counter = false,
++        .has_tcms = false,
+         .props = sse200_properties,
+         .devinfo = sse200_devices,
+         .irq_is_common = sse200_irq_is_common,
+@@ -556,6 +560,7 @@ static const ARMSSEInfo armsse_variants[] = {
+         .has_cpuid = true,
+         .has_cpu_pwrctrl = true,
+         .has_sse_counter = true,
++        .has_tcms = true,
+         .props = sse300_properties,
+         .devinfo = sse300_devices,
+         .irq_is_common = sse300_irq_is_common,
+@@ -1214,6 +1219,20 @@ static void armsse_realize(DeviceState *dev, Error **errp)
+                                     sysbus_mmio_get_region(sbd, 1));
+     }
+ 
++    if (info->has_tcms) {
++        /* The SSE-300 has an ITCM at 0x0000_0000 and a DTCM at 0x2000_0000 */
++        memory_region_init_ram(&s->itcm, NULL, "sse300-itcm", 512 * KiB, errp);
++        if (*errp) {
++            return;
++        }
++        memory_region_init_ram(&s->dtcm, NULL, "sse300-dtcm", 512 * KiB, errp);
++        if (*errp) {
++            return;
++        }
++        memory_region_add_subregion(&s->container, 0x00000000, &s->itcm);
++        memory_region_add_subregion(&s->container, 0x20000000, &s->dtcm);
++    }
++
+     /* Devices behind APB PPC0:
+      *   0x40000000: timer0
+      *   0x40001000: timer1
+diff --git a/hw/arm/mps2-tz.c b/hw/arm/mps2-tz.c
+index 8d921afec1..e23830f4b7 100644
+--- a/hw/arm/mps2-tz.c
++++ b/hw/arm/mps2-tz.c
+@@ -265,23 +265,11 @@ static const RAMInfo an524_raminfo[] = { {
+ };
+ 
+ static const RAMInfo an547_raminfo[] = { {
+-        .name = "itcm",
+-        .base = 0x00000000,
+-        .size = 512 * KiB,
+-        .mpc = -1,
+-        .mrindex = 0,
+-    }, {
+         .name = "sram",
+         .base = 0x01000000,
+         .size = 2 * MiB,
+         .mpc = 0,
+         .mrindex = 1,
+-    }, {
+-        .name = "dtcm",
+-        .base = 0x20000000,
+-        .size = 4 * 128 * KiB,
+-        .mpc = -1,
+-        .mrindex = 2,
+     }, {
+         .name = "sram 2",
+         .base = 0x21000000,
+diff --git a/include/hw/arm/armsse.h b/include/hw/arm/armsse.h
+index 36592be62c..9648e7a419 100644
+--- a/include/hw/arm/armsse.h
++++ b/include/hw/arm/armsse.h
+@@ -198,6 +198,8 @@ struct ARMSSE {
+     MemoryRegion alias2;
+     MemoryRegion alias3[SSE_MAX_CPUS];
+     MemoryRegion sram[MAX_SRAM_BANKS];
++    MemoryRegion itcm;
++    MemoryRegion dtcm;
+ 
+     qemu_irq *exp_irqs[SSE_MAX_CPUS];
+     qemu_irq ppc0_irq;
+-- 
+2.30.2
+

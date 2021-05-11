@@ -1,0 +1,70 @@
+From d18f61482ab637263731f3296e47ad5ea8256447 Mon Sep 17 00:00:00 2001
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 10 May 2021 20:08:40 +0100
+Subject: [PATCH 12/16] hw/arm/mps2-tz: Make SRAM_ADDR_WIDTH board-specific
+
+The AN547 sets the SRAM_ADDR_WIDTH for the SSE-300 to 21;
+since this is not the default value for the SSE-300, model this
+in mps2-tz.c as a per-board value.
+
+Reported-by: Devaraj Ranganna <devaraj.ranganna@linaro.org>
+Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
+---
+ hw/arm/mps2-tz.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/hw/arm/mps2-tz.c b/hw/arm/mps2-tz.c
+index 77ff83acb0..f2595b1c7f 100644
+--- a/hw/arm/mps2-tz.c
++++ b/hw/arm/mps2-tz.c
+@@ -123,6 +123,7 @@ struct MPS2TZMachineClass {
+     int numirq; /* Number of external interrupts */
+     int uart_overflow_irq; /* number of the combined UART overflow IRQ */
+     uint32_t init_svtor; /* init-svtor setting for SSE */
++    uint32_t sram_addr_width; /* SRAM_ADDR_WIDTH setting for SSE */
+     const RAMInfo *raminfo;
+     const char *armsse_type;
+ };
+@@ -806,6 +807,7 @@ static void mps2tz_common_init(MachineState *machine)
+                              OBJECT(system_memory), &error_abort);
+     qdev_prop_set_uint32(iotkitdev, "EXP_NUMIRQ", mmc->numirq);
+     qdev_prop_set_uint32(iotkitdev, "init-svtor", mmc->init_svtor);
++    qdev_prop_set_uint32(iotkitdev, "SRAM_ADDR_WIDTH", mmc->sram_addr_width);
+     qdev_connect_clock_in(iotkitdev, "MAINCLK", mms->sysclk);
+     qdev_connect_clock_in(iotkitdev, "S32KCLK", mms->s32kclk);
+     sysbus_realize(SYS_BUS_DEVICE(&mms->iotkit), &error_fatal);
+@@ -1263,6 +1265,7 @@ static void mps2tz_an505_class_init(ObjectClass *oc, void *data)
+     mmc->numirq = 92;
+     mmc->uart_overflow_irq = 47;
+     mmc->init_svtor = 0x10000000;
++    mmc->sram_addr_width = 15;
+     mmc->raminfo = an505_raminfo;
+     mmc->armsse_type = TYPE_IOTKIT;
+     mps2tz_set_default_ram_info(mmc);
+@@ -1290,6 +1293,7 @@ static void mps2tz_an521_class_init(ObjectClass *oc, void *data)
+     mmc->numirq = 92;
+     mmc->uart_overflow_irq = 47;
+     mmc->init_svtor = 0x10000000;
++    mmc->sram_addr_width = 15;
+     mmc->raminfo = an505_raminfo; /* AN521 is the same as AN505 here */
+     mmc->armsse_type = TYPE_SSE200;
+     mps2tz_set_default_ram_info(mmc);
+@@ -1317,6 +1321,7 @@ static void mps3tz_an524_class_init(ObjectClass *oc, void *data)
+     mmc->numirq = 95;
+     mmc->uart_overflow_irq = 47;
+     mmc->init_svtor = 0x10000000;
++    mmc->sram_addr_width = 15;
+     mmc->raminfo = an524_raminfo;
+     mmc->armsse_type = TYPE_SSE200;
+     mps2tz_set_default_ram_info(mmc);
+@@ -1349,6 +1354,7 @@ static void mps3tz_an547_class_init(ObjectClass *oc, void *data)
+     mmc->numirq = 96;
+     mmc->uart_overflow_irq = 48;
+     mmc->init_svtor = 0x00000000;
++    mmc->sram_addr_width = 21;
+     mmc->raminfo = an547_raminfo;
+     mmc->armsse_type = TYPE_SSE300;
+     mps2tz_set_default_ram_info(mmc);
+-- 
+2.30.2
+
