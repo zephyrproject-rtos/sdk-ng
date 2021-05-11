@@ -1,7 +1,7 @@
-From e7e98396465486ba1dba055c54fb9ee258a159d1 Mon Sep 17 00:00:00 2001
+From 4455b24e9b396bcf3bcf90ccf7453af28aff5a82 Mon Sep 17 00:00:00 2001
 From: Peter Maydell <peter.maydell@linaro.org>
 Date: Mon, 12 Apr 2021 14:43:15 +0100
-Subject: [PATCH 01/10] hw/misc/mps2-scc: Add "QEMU interface" comment
+Subject: [PATCH 01/16] hw/misc/mps2-scc: Add "QEMU interface" comment
 
 The MPS2 SCC device doesn't have any documentation of its properties;
 add a "QEMU interface" format comment describing them.

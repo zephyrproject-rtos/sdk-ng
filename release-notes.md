@@ -1,5 +1,9 @@
 # Notes / Changes in various releases
 
+- qemu:
+  * Pull in fixes from upstream for:
+    hw/arm: Fix modelling of SSE-300 TCMs and SRAM
+
 ## Zephyr SDK 0.13.0-alpha-1
 
 - general:

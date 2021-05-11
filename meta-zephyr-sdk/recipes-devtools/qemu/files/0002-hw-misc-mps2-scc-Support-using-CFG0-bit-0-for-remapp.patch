@@ -1,8 +1,11 @@
-From 91b5b1545419eb1954421b9c25e90f6475a8f521 Mon Sep 17 00:00:00 2001
+From 6c88579eb30dc6e81bca150ba6be00547cc37185 Mon Sep 17 00:00:00 2001
 From: Peter Maydell <peter.maydell@linaro.org>
-Date: Mon, 12 Apr 2021 14:43:16 +0100
-Subject: [PATCH 02/10] hw/misc/mps2-scc: Support using CFG0 bit 0 for
+Date: Tue, 4 May 2021 13:09:11 +0100
+Subject: [PATCH 02/16] hw/misc/mps2-scc: Support using CFG0 bit 0 for
  remapping
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 On some boards, SCC config register CFG0 bit 0 controls whether
 parts of the board memory map are remapped. Support this with:
@@ -13,6 +16,8 @@ parts of the board memory map are remapped. Support this with:
 
 Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
 Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+Message-id: 20210504120912.23094-3-peter.maydell@linaro.org
 ---
  hw/misc/mps2-scc.c         | 13 ++++++++++---
  include/hw/misc/mps2-scc.h |  9 +++++++++

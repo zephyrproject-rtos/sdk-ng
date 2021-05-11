@@ -1,7 +1,7 @@
-From 5d266778f1d36d200cf07e15d82a885d398ce1a9 Mon Sep 17 00:00:00 2001
+From bdd73723d04fa722c56659e0bd2ed44a1ce4c108 Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Fri, 17 May 2019 21:42:30 +0900
-Subject: [PATCH 07/10] hw/sparc/leon: timer: Call leon_timer_io_read() for
+Subject: [PATCH 07/16] hw/sparc/leon: timer: Call leon_timer_io_read() for
  TIMER_1_COUNTER_REGISTER
 
 Accessing timer1 counter register (offset 0x40) always returned 0

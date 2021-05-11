@@ -1,7 +1,7 @@
-From b1143ad203d22cbe2ab1af20b7f2ee3ae7451dbb Mon Sep 17 00:00:00 2001
+From a64a2a59b1637d1d06b1286802f756241f6e5546 Mon Sep 17 00:00:00 2001
 From: Yasushi SHOJI <y-shoji@ispace-inc.com>
 Date: Mon, 9 Dec 2019 11:56:20 +0900
-Subject: [PATCH 08/10] hw/sparc/leon: Switch to transaction-based ptimer API
+Subject: [PATCH 08/16] hw/sparc/leon: Switch to transaction-based ptimer API
 
 Switch the leon code away from old ptimers to the new
 transaction-based ptimer API.  This requires adding begin/commit calls
