@@ -4,6 +4,9 @@
   * Pull in fixes from upstream for:
     hw/arm: Fix modelling of SSE-300 TCMs and SRAM
 
+- newlib:
+  * Added multithreading support
+
 ## Zephyr SDK 0.13.0-alpha-1
 
 - general:
