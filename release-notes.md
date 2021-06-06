@@ -7,6 +7,9 @@
 - newlib:
   * Added multithreading support
 
+- gcc:
+  * Removed libgcc transactional memory clone registry support
+
 ## Zephyr SDK 0.13.0-alpha-1
 
 - general:
