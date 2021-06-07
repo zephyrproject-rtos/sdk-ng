@@ -9,6 +9,9 @@
 
 - gcc:
   * Removed libgcc transactional memory clone registry support
+  * Fixed incorrect build specs for libstdc++ nano variant. The libstdc++ nano
+    variant, which is used with newlib-nano, is now built with
+    `-fno-exceptions` to reduce compiled binary size.
 
 ## Zephyr SDK 0.13.0-alpha-1
 
