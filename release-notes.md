@@ -1,5 +1,7 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.13.0-rc1
+
 - openocd:
   * Update to upstream 20210630 snapshot
 
