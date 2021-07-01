@@ -1,5 +1,8 @@
 # Notes / Changes in various releases
 
+- openocd:
+  * Update to upstream 20210630 snapshot
+
 - qemu:
   * Pull in fixes from upstream for:
     hw/arm: Fix modelling of SSE-300 TCMs and SRAM

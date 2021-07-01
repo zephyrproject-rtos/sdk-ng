@@ -1,5 +1,5 @@
 LICENSE = "GPLv2"
-LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
+LIC_FILES_CHKSUM = "file://LICENSES/preferred/GPL-2.0;md5=71ce3767d42ca42cd575f91c56eefe79"
 DEPENDS = "libusb-compat hidapi libftdi"
 RDEPENDS_${PN} = "libusb1 hidapi"
 
@@ -9,7 +9,7 @@ RDEPENDS_${PN} = "libusb1 hidapi"
 SRC_URI = " \
 	git://github.com/zephyrproject-rtos/openocd.git;protocol=https;nobranch=1 \
 	"
-SRCREV = "f79c902686f3ae500f3426dc2e552fdec80796d1"
+SRCREV = "7036ed509aa7297262eb7b91062e849bedcfed39"
 
 S = "${WORKDIR}/git"
 
