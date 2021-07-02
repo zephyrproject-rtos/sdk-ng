@@ -5,6 +5,9 @@
 - openocd:
   * Update to upstream 20210630 snapshot
 
+- binutils:
+  * Update to binutils 2.36.1 in prep for ARC64 support
+
 - qemu:
   * Pull in fixes from upstream for:
     hw/arm: Fix modelling of SSE-300 TCMs and SRAM
