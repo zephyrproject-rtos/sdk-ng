@@ -19,9 +19,10 @@ steps:
          12) TARGET="xtensa_nxp_imx_adsp";;
          13) TARGET="xtensa_nxp_imx8m_adsp";;
          14) TARGET="xtensa_intel_s1000";;
-         15) TARGET="mips";;
-         16) TARGET="cmake";;
-         17) TARGET="arc64";;
+         15) TARGET="xtensa_esp32";;
+         16) TARGET="mips";;
+         17) TARGET="cmake";;
+         18) TARGET="arc64";;
       esac
     - ./go.sh $${TARGET}
     - >
