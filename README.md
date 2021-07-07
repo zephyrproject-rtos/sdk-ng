@@ -18,7 +18,7 @@ Currently we build the following toolchains:
 - sparc
 - mips
 - xtensa (sample_controller, intel_apl_adsp, intel_s1000, intel_bdw_adsp,
-intel_byt_adsp, nxp_imx_adsp, nxp_imx8m_adsp)
+intel_byt_adsp, nxp_imx_adsp, nxp_imx8m_adsp, esp32)
 
 To build for any of the above, run:
 
