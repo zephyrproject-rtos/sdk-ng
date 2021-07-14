@@ -33,13 +33,13 @@ verify_os () {
 case "$(uname -s)" in
 
    Darwin)
-     echo 'OS X is not supported!'
-     exit 1
+     MD5=md5
+     os=macos
      ;;
 
-   # Linux, the only supported OS
-
    Linux)
+     MD5=md5sum
+     os=linux
      #echo 'Linux'
      ;;
 
@@ -162,9 +162,9 @@ do_cmake_package()
 {
 	ZEPHYR_SDK_REGISTRY_DIR=$HOME/.cmake/packages/Zephyr-sdk
 
-	type md5sum
+	type $MD5
 	if [ $? -eq 0 ]; then
-		reg_file=$ZEPHYR_SDK_REGISTRY_DIR/`echo -n $target_sdk_dir | md5sum | cut -d' ' -f1`
+		reg_file=$ZEPHYR_SDK_REGISTRY_DIR/`echo -n $target_sdk_dir | $MD5 | cut -d' ' -f1`
 
 		if [ -e $reg_file ]; then
 			# The install dir is already in CMake package registry so simply return.
@@ -240,7 +240,7 @@ fi
 eval target_sdk_dir=$(echo "$target_sdk_dir"|sed 's/ /\\ /g')
 if [ -d "$target_sdk_dir" ]; then
 	target_sdk_dir=$(cd "$target_sdk_dir"; pwd)
-else
+elif [ $os = "linux" ]; then
 	target_sdk_dir=$(readlink -m "$target_sdk_dir")
 fi
 
