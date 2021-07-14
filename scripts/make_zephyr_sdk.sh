@@ -21,11 +21,25 @@ fi
 root_dir=$(dirname $0)/..
 sdk_version=$(cat $root_dir/VERSION)
 machine=$1
+
+case "$(uname -s)" in
+   Darwin)
+     os=macos
+     ;;
+   Linux)
+     os=linux
+     ;;
+   *)
+     echo 'Unsupported OS'
+     exit 1
+     ;;
+esac
+
 arch_list="arm arm64 arc arc64 nios2 riscv64 sparc mips x86_64 xtensa_sample_controller \
            xtensa_intel_apl_adsp xtensa_intel_s1000 xtensa_intel_bdw_adsp \
 	   xtensa_intel_byt_adsp xtensa_nxp_imx_adsp xtensa_nxp_imx8m_adsp"
 
-echo "Creating ${product_name}-${sdk_version}-${machine}-linux-setup.run"
+echo "Creating ${product_name}-${sdk_version}-${machine}-${os}-setup.run"
 
 # Create ./setup.sh
 
@@ -104,6 +118,10 @@ setup_host()
 {
 	local setup=$1
 
+	if [ $os = "macos" ]; then
+		return
+	fi
+
 	echo "./$file_hosttools -y -d \$target_sdk_dir > /dev/null &" >> $setup
 	echo "spinner \$! \"Installing additional host tools...\"" >> $setup
 	echo "[ \$? -ne 0 ] && echo \"Error(s) encountered during installation.\" && exit 1" >>$setup
@@ -143,7 +161,7 @@ create_toolchain()
 {
 	local arch=$1
 	local setup=toolchains/${arch}/setup.sh
-	local toolchain_name=zephyr-toolchain-${arch}-${sdk_version}-${machine}-linux-setup.run
+	local toolchain_name=zephyr-toolchain-${arch}-${sdk_version}-${machine}-${os}-setup.run
 
 	var_file_arch=file_gcc_${arch}
 	file_gcc_arch=${!var_file_arch}
@@ -174,7 +192,7 @@ create_toolchain()
 create_sdk()
 {
 	local setup=toolchains/setup.sh
-	local toolchain_name=${product_name}-${sdk_version}-${machine}-linux-setup.run
+	local toolchain_name=${product_name}-${sdk_version}-${machine}-${os}-setup.run
 
 	setup_hdr $setup $toolchain_name
 	for arch in $arch_list; do
@@ -208,8 +226,8 @@ parse_toolchain_name file_gcc_xtensa_intel_s1000 xtensa_intel_s1000
 parse_toolchain_name file_hosttools hosttools
 parse_toolchain_name file_cmake cmake
 
-# Host tools are non-optional
-if  [ -z "$file_hosttools" ]; then
+# Host tools are non-optional on Linux
+if [ -z "$file_hosttools" -a $os = "linux" ]; then
   echo "Error: Missing host tools!"
   exit 1
 fi
