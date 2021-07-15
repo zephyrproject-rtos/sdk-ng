@@ -38,6 +38,7 @@ if [ "$machine" == "Mac" ]; then
 		hdiutil mount ${ImageNameExt}
 	fi
 	cp -a patches /Volumes/$ImageName
+	cp -a patches-arc64 /Volumes/$ImageName
 	cp -a overlays /Volumes/$ImageName
 	cd /Volumes/$ImageName
 fi
