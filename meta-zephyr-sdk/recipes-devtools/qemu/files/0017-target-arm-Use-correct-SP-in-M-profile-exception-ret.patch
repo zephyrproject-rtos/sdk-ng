@@ -1,0 +1,55 @@
+From 74dc54a4de3347f8048866c635fd0c1cc0740ed4 Mon Sep 17 00:00:00 2001
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Thu, 20 May 2021 14:09:05 +0100
+Subject: [PATCH 17/17] target/arm: Use correct SP in M-profile exception
+ return
+
+When an M-profile CPU is restoring registers from the stack on
+exception return, the stack pointer to use is determined based on
+bits in the magic exception return type value.  We were not getting
+this logic entirely correct.
+
+Whether we use one of the Secure stack pointers or one of the
+Non-Secure stack pointers depends on the EXCRET.S bit.  However,
+whether we use the MSP or the PSP then depends on the SPSEL bit in
+either the CONTROL_S or CONTROL_NS register.  We were incorrectly
+selecting MSP vs PSP based on the EXCRET.SPSEL bit.
+
+(In the pseudocode this is in the PopStack() function, which calls
+LookUpSp_with_security_mode() which in turn looks at the relevant
+CONTROL.SPSEL bit.)
+
+The buggy behaviour wasn't noticeable in most cases, because we write
+EXCRET.SPSEL to the CONTROL.SPSEL bit for the S/NS register selected
+by EXCRET.ES, so we only do the wrong thing when EXCRET.S and
+EXCRET.ES are different.  This will happen when secure code takes a
+secure exception, which then tail-chains to a non-secure exception
+which finally returns to the original secure code.
+
+Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
+Message-id: 20210520130905.2049-1-peter.maydell@linaro.org
+---
+ target/arm/m_helper.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/target/arm/m_helper.c b/target/arm/m_helper.c
+index d63ae465e1..eda74e5545 100644
+--- a/target/arm/m_helper.c
++++ b/target/arm/m_helper.c
+@@ -1597,10 +1597,11 @@ static void do_v7m_exception_exit(ARMCPU *cpu)
+          * We use this limited C variable scope so we don't accidentally
+          * use 'frame_sp_p' after we do something that makes it invalid.
+          */
++        bool spsel = env->v7m.control[return_to_secure] & R_V7M_CONTROL_SPSEL_MASK;
+         uint32_t *frame_sp_p = get_v7m_sp_ptr(env,
+                                               return_to_secure,
+                                               !return_to_handler,
+-                                              return_to_sp_process);
++                                              spsel);
+         uint32_t frameptr = *frame_sp_p;
+         bool pop_ok = true;
+         ARMMMUIdx mmu_idx;
+-- 
+2.31.1
+
