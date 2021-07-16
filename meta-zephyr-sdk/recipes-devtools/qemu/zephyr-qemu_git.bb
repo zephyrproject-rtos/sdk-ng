@@ -26,6 +26,7 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0014-hw-arm-armsse-Convert-armsse_realize-to-use-ERRP_GUA.patch \
 	   file://0015-hw-arm-mps2-tz-Allow-board-to-specify-a-boot-RAM-siz.patch \
 	   file://0016-hw-arm-Model-TCMs-in-the-SSE-300-not-the-AN547.patch \
+	   file://0017-target-arm-Use-correct-SP-in-M-profile-exception-ret.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
