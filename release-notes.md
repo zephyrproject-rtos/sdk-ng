@@ -1,5 +1,18 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.13.0-rc2
+
+- qemu:
+  * Pull in fix from upstream for TFM:
+    target/arm: Use correct SP in M-profile exception
+
+- crostool-ng:
+  * Fix stripping of newlib-nano libs
+
+- general:
+  * Various fixes for building/packaging on MacOS
+  * Added GitHub CI workflow to build MacOS x86_64 packages
+
 ## Zephyr SDK 0.13.0-rc1
 
 - openocd:
