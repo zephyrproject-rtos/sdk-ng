@@ -1,5 +1,9 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.13.0-rc3
+
+- Re-release -rc2 as -rc3, forgot to update VERSION file.
+
 ## Zephyr SDK 0.13.0-rc2
 
 - qemu:
