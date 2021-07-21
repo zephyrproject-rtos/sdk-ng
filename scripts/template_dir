@@ -123,10 +123,16 @@ do_cleanup()
 	cd $target_sdk_dir
 	if [ $post_install_cleanup = "1" ]; then
 		#rm site-config*
-		rm environment-setup*
+		env_files=(environment-setup*)
+		if [ -e "${env_files[0]}" ]; then
+			rm environment-setup*
+		fi
 	fi
 	install -d -m 0755 $VERSION_DIR
-	mv version-* $VERSION_DIR
+	ver_files=(version-*)
+	if [ -e "${ver_files[0]}" ]; then
+		mv version-* $VERSION_DIR
+	fi
 	echo "$SDK_VERSION" > sdk_version
 	chmod 0644 sdk_version
 }
