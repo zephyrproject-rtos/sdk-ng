@@ -131,14 +131,27 @@ for t in ${TARGETS}; do
 	mkdir -p ${TARGET_BUILD_DIR}
 	pushd ${TARGET_BUILD_DIR}
 
+	export CT_PREFIX=${OUTPUT_DIR}
+	TARGET_DIR=""
 	case "${t}" in
 		xtensa_*)
 			cp -a ${GITDIR}/overlays ${TARGET_BUILD_DIR}
-			export CT_PREFIX=${OUTPUT_DIR}/xtensa/${t#xtensa_}
+			TRIPLET=xtensa-zephyr-elf
+			TARGET_DIR="xtensa/${t#xtensa_}/"
+			export CT_PREFIX=${OUTPUT_DIR}/${TARGET_DIR}
 			mkdir -p ${CT_PREFIX}
 			;;
+		x86_64-zephyr-elf)
+			TRIPLET="x86_64-zephyr-elf"
+			;;
+		arm64)
+			TRIPLET="aarch64-zephyr-elf"
+			;;
+		arm)
+			TRIPLET="arm-zephyr-eabi"
+			;;
 		*)
-			export CT_PREFIX=${OUTPUT_DIR}
+			TRIPLET="${t}-zephyr-elf"
 			;;
 	esac
 
@@ -164,4 +177,6 @@ for t in ${TARGETS}; do
 
 	popd
 	rm -fr ${TARGET_BUILD_DIR}
+	mv ${CT_PREFIX}/${TRIPLET}/build.log.bz2 ${OUTPUT_DIR}/build.${t}.${os}.${machine}.log.bz2
+	tar -jcvf ${TARBALL_DIR}/${t}.${os}.${machine}.tar.bz2 -C ${OUTPUT_DIR} ${TARGET_DIR}${TRIPLET}
 done
