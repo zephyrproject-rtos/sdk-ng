@@ -46,21 +46,10 @@ steps:
     - ./go.sh $${TARGET}
     - >
       if [ $${TARGET} = "tools" ]; then
-         buildkite-agent artifact upload zephyr-sdk-$MACHINE-hosttools-standalone-0.9.sh;
+         buildkite-agent artifact upload zephyr-sdk-$MACHINE-hosttools-standalone-0.9.sh
       else
-         cd build/output
-         case "$${TARGET}" in
-           xtensa_*)
-             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$OS.$MACHINE.tar.bz2 xtensa/$${TARGET#xtensa_}/*-zephyr-*;
-             buildkite-agent artifact upload xtensa/$${TARGET#xtensa_}/*-zephyr-*/build.log.bz2
-             ;;
-           *)
-             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$OS.$MACHINE.tar.bz2 *-zephyr-*;
-             buildkite-agent artifact upload *-zephyr-*/build.log.bz2
-             ;;
-         esac
-         cd ../..
-         buildkite-agent artifact upload $${TARGET}.$OS.$MACHINE.tar.bz2;
+         buildkite-agent artifact upload build/output/build.$${TARGET}.$OS.$MACHINE.log.bz2
+         buildkite-agent artifact upload $${TARGET}.$OS.$MACHINE.tar.bz2
       fi
     parallelism: 17
     env:
