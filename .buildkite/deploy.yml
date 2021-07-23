@@ -20,9 +20,9 @@ steps:
       - echo "S3_PUB_PATH - [$${S3_PUB_PATH}]"
       - mkdir -p scripts/toolchains
       - cd scripts/toolchains
-      - buildkite-agent artifact download *.$${MACHINE}.$${OS}.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - buildkite-agent artifact download *.$${OS}.$${MACHINE}.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
       - buildkite-agent artifact download zephyr-sdk-$${MACHINE}-*.sh . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
-      - buildkite-agent artifact download cmake.$${MACHINE}.$${OS}..tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
+      - buildkite-agent artifact download cmake.$${OS}.$${MACHINE}.tar.bz2 . --build $${BUILDKITE_TRIGGERED_FROM_BUILD_ID}
       - chmod a+x *.sh
       - cd ..
       - tree -H '.' -L 1 --noreport --charset utf-8 toolchains > index.html
