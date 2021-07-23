@@ -6,9 +6,6 @@ steps:
     - buildkite-agent artifact upload cmake.$OS.$MACHINE.tar.bz2
     - ./go.sh crosstool
     - buildkite-agent artifact upload crosstool.$OS.$MACHINE.tar.bz2
-    - export CT_ONLY_DOWNLOAD=y
-    - ./go.sh arm
-    - buildkite-agent artifact upload "build/output/sources/*"
     env:
       BUILDKITE_CLEAN_CHECKOUT: "true"
     plugins:
@@ -21,7 +18,7 @@ steps:
 
   - label: "$OS-$MACHINE"
     key: "$OS-$MACHINE"
-    depends_on: "$OS-$MACHINE-crosstool-cmake"
+    depends_on: "download-sources"
     command:
     - >
       case "$${BUILDKITE_PARALLEL_JOB}" in

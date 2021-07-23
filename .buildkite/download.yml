@@ -1,0 +1,19 @@
+steps:
+  - label: "download-sources"
+    key: "download-sources"
+    depends_on: "linux-x86_64-crosstool-cmake"
+    command:
+    - buildkite-agent artifact download crosstool.linux.x86_64.tar.bz2 .
+    - tar xf crosstool.linux.x86_64.tar.bz2
+    - export CT_ONLY_DOWNLOAD=y
+    - ./go.sh arm
+    - buildkite-agent artifact upload "build/output/sources/*"
+    env:
+      BUILDKITE_CLEAN_CHECKOUT: "true"
+    plugins:
+      - docker#v3.5.0:
+          image: "zephyrprojectrtos/sdk-build:v1.0.1"
+          propagate-environment: true
+          user: buildkite-agent
+    agents:
+    - "queue=sdk-ng-x86_64"
