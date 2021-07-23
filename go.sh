@@ -58,6 +58,9 @@ if [ "$os" == "macos" ]; then
 		echo "No brew install found"
 		exit 1
 	fi
+
+	brew install autoconf automake bash binutils gawk gnu-sed gnu-tar help2man ncurses xz libtool
+
 	export PATH="$PATH:${HOMEBREW_ROOT}/opt/binutils/bin"
 	export CPPFLAGS="-I${HOMEBREW_ROOT}/opt/ncurses/include -I${HOMEBREW_ROOT}/opt/gettext/include"
 	export LDFLAGS="-L${HOMEBREW_ROOT}/opt/ncurses/lib -L${HOMEBREW_ROOT}/opt/gettext/lib"
