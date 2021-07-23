@@ -128,7 +128,7 @@ for t in ${TARGETS}; do
 	fi
 
 	${CT_NG} defconfig DEFCONFIG=${TARGET_BUILD_DIR}/defconfig
-	${CT_NG} savedefconfig DEFCONFIG=${TARGET_BUILD_DIR}${t}.config
+	${CT_NG} savedefconfig DEFCONFIG=${TARGET_BUILD_DIR}/${t}.config
 	${CT_NG} build -j ${JOBS}
 	if [ $? != 0 ]; then
 		exit 1
@@ -136,5 +136,5 @@ for t in ${TARGETS}; do
 	rm -rf ${CT_PREFIX}/*/newlib-nano
 
 	popd
-	rm -fr ${SDK_NG_HOME}/build/build_${t}
+	rm -fr ${TARGET_BUILD_DIR}
 done
