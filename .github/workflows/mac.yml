@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: cmake.macos.x86_64.tar.bz2
-          path: /Volumes/CrossToolNGNew/cmake.macos.x86_64.tar.bz2
+          path: cmake.macos.x86_64.tar.bz2
       - name: "prep to upload"
         continue-on-error: true
         run: |
@@ -114,36 +114,17 @@ jobs:
       - name: "build ${{ matrix.sample }} for ${{ matrix.host }}"
         run: |
           ./go.sh ${{ matrix.sample }}
-      - name: "tar"
-        run: |
-          export TARGET=${{ matrix.sample }}
-          export MACHINE=$(uname -m)
-          cd /Volumes/CrossToolNGNew/build/output
-          case "${TARGET}" in
-            xtensa_*)
-              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.macos.$MACHINE.tar.bz2 xtensa/${TARGET#xtensa_}/*-zephyr-*;
-              ;;
-            *)
-              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.macos.$MACHINE.tar.bz2 *-zephyr-*;
-              ;;
-          esac
-      - name: "upload xtensa build log"
-        if: ${{ always() && startsWith(matrix.sample, 'xtensa') }}
+          ls -lstr
+      - name: "upload build log"
         uses: actions/upload-artifact@v2
         with:
           name: "${{ matrix.sample }}.${{ matrix.host }}.log"
-          path: /Volumes/CrossToolNGNew/build/output/xtensa/*/*-zephyr-*/build.log.bz2
-      - name: "upload not-xtensa build log"
-        if: ${{ always() && !startsWith(matrix.sample, 'xtensa') }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: "${{ matrix.sample }}.${{ matrix.host }}.log"
-          path: /Volumes/CrossToolNGNew/build/output/*-zephyr-*/build.log.bz2
+          path: /Volumes/CrossToolNGNew/build/output/build.*.log.bz2
       - name: "upload toolchain tarball"
         uses: actions/upload-artifact@v2
         with:
-          name: "${{ matrix.sample }}.x86_64.tar.bz2"
-          path: /Volumes/CrossToolNGNew/${{ matrix.sample }}.x86_64.tar.bz2
+          name: "${{ matrix.sample }}.macos.x86_64.tar.bz2"
+          path: ${{ matrix.sample }}.macos.x86_64.tar.bz2
 
   # Create the actual zephyr toolchain and SDK packages
   package:
@@ -174,7 +155,7 @@ jobs:
       - name: "build toolchains"
         run: |
           cd scripts
-          ./make_zephyr_sdk.sh x86_64
+          ./make_zephyr_sdk.sh macos x86_64
       - name: "upload toolchains"
         uses: actions/upload-artifact@v2
         with:
