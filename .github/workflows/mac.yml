@@ -43,10 +43,6 @@ jobs:
                gnu-tar help2man ncurses
       - name: "build ct-ng"
         run: |
-          export HOMEBREW_ROOT="/usr/local"
-          export PATH="$PATH:${HOMEBREW_ROOT}/opt/binutils/bin"
-          export CPPFLAGS="-I${HOMEBREW_ROOT}/opt/ncurses/include -I${HOMEBREW_ROOT}/opt/gettext/include"
-          export LDFLAGS="-L${HOMEBREW_ROOT}/opt/ncurses/lib -L${HOMEBREW_ROOT}/opt/gettext/lib"
           ./go.sh cmake
       - name: "preload sources"
         run: |
@@ -65,8 +61,8 @@ jobs:
       - name: "upload cmake"
         uses: actions/upload-artifact@v2
         with:
-          name: cmake.x86_64.tar.bz2
-          path: /Volumes/CrossToolNGNew/cmake.x86_64.tar.bz2
+          name: cmake.macos.x86_64.tar.bz2
+          path: /Volumes/CrossToolNGNew/cmake.macos.x86_64.tar.bz2
       - name: "prep to upload"
         continue-on-error: true
         run: |
@@ -118,12 +114,6 @@ jobs:
           brew install autoconf automake bash binutils gawk gnu-sed \
                gnu-tar help2man ncurses pkg-config
           echo "$GITHUB_WORKSPACE/.local/bin" >> $GITHUB_PATH
-      - name: "prep ${{ matrix.sample }}.config"
-        run: |
-           sed -i -e '/CT_GDB_CROSS_PYTHON_BINARY/d' configs/${{ matrix.sample }}.config
-           sed -i -e '/CT_GDB_CROSS_BUILD_NO_PYTHON/d' configs/${{ matrix.sample }}.config
-           sed -i -e '/^CT_CC_GCC_EXTRA_CONFIG_ARRAY=/ s/"$/ --without-zstd"/' configs/${{ matrix.sample }}.config
-           echo "# CT_GDB_CROSS_PYTHON is not set" >> configs/${{ matrix.sample }}.config
       - name: "build ${{ matrix.sample }} for ${{ matrix.host }}"
         run: |
           ./go.sh ${{ matrix.sample }}
@@ -134,10 +124,10 @@ jobs:
           cd /Volumes/CrossToolNGNew/build/output
           case "${TARGET}" in
             xtensa_*)
-              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.$MACHINE.tar.bz2 xtensa/${TARGET#xtensa_}/*-zephyr-*;
+              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.macos.$MACHINE.tar.bz2 xtensa/${TARGET#xtensa_}/*-zephyr-*;
               ;;
             *)
-              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.$MACHINE.tar.bz2 *-zephyr-*;
+              tar --exclude='build.log.bz2' -jcvf ../../${TARGET}.macos.$MACHINE.tar.bz2 *-zephyr-*;
               ;;
           esac
       - name: "upload xtensa build log"
