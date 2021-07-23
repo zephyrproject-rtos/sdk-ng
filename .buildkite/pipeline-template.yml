@@ -41,7 +41,7 @@ steps:
          16) TARGET="arc64";;
       esac
     - buildkite-agent artifact download crosstool.$OS.$MACHINE.tar.bz2 .
-    - tar xvf crosstool.$OS.$MACHINE.tar.bz2
+    - tar xvf crosstool.$OS.$MACHINE.tar.bz2 2> /dev/null
     - ./go.sh $${TARGET}
     - >
       if [ $${TARGET} = "tools" ]; then
