@@ -3,8 +3,8 @@ steps:
     key: "download-sources"
     depends_on: "linux-x86_64-crosstool-cmake"
     command:
-    - buildkite-agent artifact download crosstool.$OS.$MACHINE.tar.bz2 .
-    - tar xf crosstool.$OS.$MACHINE.tar.bz2
+    - buildkite-agent artifact download crosstool.linux.x86_64.tar.bz2 .
+    - tar xf crosstool.linux.x86_64.tar.bz2
     - export CT_ONLY_DOWNLOAD=y
     - ./go.sh arm
     - buildkite-agent artifact upload "build/output/sources/*"
