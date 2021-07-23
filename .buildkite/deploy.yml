@@ -26,7 +26,7 @@ steps:
       - chmod a+x *.sh
       - cd ..
       - tree -H '.' -L 1 --noreport --charset utf-8 toolchains > index.html
-      - ./make_zephyr_sdk.sh $${MACHINE}
+      - ./make_zephyr_sdk.sh $${OS} $${MACHINE}
       - ls -F
       - sdk_filename=$(ls -1 zephyr-sdk*)
       - toolchain_files=$(ls -1 zephyr-toolchain-*)
