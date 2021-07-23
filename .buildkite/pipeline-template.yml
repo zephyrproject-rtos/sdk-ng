@@ -1,6 +1,6 @@
 steps:
-  - label: "$MACHINE"
-    key: "$MACHINE"
+  - label: "$OS-$MACHINE"
+    key: "$OS-$MACHINE"
     command:
     - >
       case "$${BUILDKITE_PARALLEL_JOB}" in
@@ -28,21 +28,21 @@ steps:
       if [ $${TARGET} = "tools" ]; then
          buildkite-agent artifact upload zephyr-sdk-$MACHINE-hosttools-standalone-0.9.sh;
       elif [ $${TARGET} = "cmake" ]; then
-         buildkite-agent artifact upload cmake.$MACHINE.tar.bz2;
+         buildkite-agent artifact upload cmake.$OS.$MACHINE.tar.bz2;
       else
          cd build/output
          case "$${TARGET}" in
            xtensa_*)
-             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$MACHINE.tar.bz2 xtensa/$${TARGET#xtensa_}/*-zephyr-*;
+             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$OS.$MACHINE.tar.bz2 xtensa/$${TARGET#xtensa_}/*-zephyr-*;
              buildkite-agent artifact upload xtensa/$${TARGET#xtensa_}/*-zephyr-*/build.log.bz2
              ;;
            *)
-             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$MACHINE.tar.bz2 *-zephyr-*;
+             tar --exclude='build.log.bz2' -jcvf ../../$${TARGET}.$OS.$MACHINE.tar.bz2 *-zephyr-*;
              buildkite-agent artifact upload *-zephyr-*/build.log.bz2
              ;;
          esac
          cd ../..
-         buildkite-agent artifact upload $${TARGET}.$MACHINE.tar.bz2;
+         buildkite-agent artifact upload $${TARGET}.$OS.$MACHINE.tar.bz2;
       fi
     parallelism: 18
     env:
@@ -59,7 +59,7 @@ steps:
     - "queue=sdk-ng-$MACHINE"
 
   - trigger: "sdk-ng-deploy"
-    depends_on: "$MACHINE"
+    depends_on: "$OS-$MACHINE"
     if: build.tag != null || build.pull_request.id != null
     build:
       message: "${BUILDKITE_MESSAGE}"
@@ -70,4 +70,5 @@ steps:
         BUILDKITE_PULL_REQUEST_BASE_BRANCH: "${BUILDKITE_PULL_REQUEST_BASE_BRANCH}"
         BUILDKITE_PULL_REQUEST_REPO: "${BUILDKITE_PULL_REQUEST_REPO}"
         BUILDKITE_TAG: "${BUILDKITE_TAG}"
-        MACHINE: "$MACHINE"
+        MACHINE: "${MACHINE}"
+        OS: "${OS}"

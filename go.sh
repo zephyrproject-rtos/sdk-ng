@@ -63,7 +63,7 @@ for t in ${TARGETS}; do
 		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
 		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-${machine}-hosttools-standalone-0.9.sh .
 	elif [ "${t}" = "cmake" ]; then
-		tar -jcvf ${t}.${machine}.tar.bz2 -C ${GITDIR} cmake
+		tar -jcvf ${t}.${os}.${machine}.tar.bz2 -C ${GITDIR} cmake
 	fi
 done
 
