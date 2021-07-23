@@ -2,18 +2,13 @@
 
 TARGETS=${@}
 
-
 if [ -z "$TARGETS" ]; then
 	echo "Please specify target"
 	exit 1
 fi
-if [ "$TARGETS" == "all" ]; then
-	TARGETS=$(ls -1 configs/ | sed 's/.config//')
-	TARGETS=${TARGETS}" tools"
-fi
 
-COMMIT="4d5660e34e7c5f522e8b07ded82d7a6a15b787ef"
 GITDIR=${PWD}
+TARBALL_DIR=${GITDIR}
 JOBS=$(python -c 'import multiprocessing as mp; print(mp.cpu_count())')
 
 unameOut="$(uname -s)"
@@ -27,6 +22,32 @@ case "${unameOut}" in
 esac
 
 SDK_NG_HOME=${PWD}
+
+CROSSTOOL_COMMIT="4d5660e34e7c5f522e8b07ded82d7a6a15b787ef"
+build_crosstool()
+{
+	# only build if we don't already have a built binary
+
+	if [ ! -x "${SDK_NG_HOME}/bin/ct-ng" ]; then
+		# Checkout crosstool-ng if we haven't already
+		if [ ! -d "${SDK_NG_HOME}/crosstool-ng" ]; then
+			pushd ${SDK_NG_HOME}
+			git clone https://github.com/zephyrproject-rtos/crosstool-ng.git
+			pushd crosstool-ng
+			git checkout ${CROSSTOOL_COMMIT}
+			popd
+			popd
+		fi
+
+		pushd ${SDK_NG_HOME}/crosstool-ng
+		./bootstrap
+		CFLAGS="-DKBUILD_NO_NLS" ./configure --prefix=${SDK_NG_HOME}
+		make && make install
+		popd
+
+		tar -jcvf ${TARBALL_DIR}/${t}.${os}.${machine}.tar.bz2 -C ${SDK_NG_HOME} bin libexec share
+	fi
+}
 
 if [ "$os" == "macos" ]; then
 	if [ -x "/opt/homebrew/bin/brew" ]; then
@@ -54,35 +75,26 @@ if [ "$os" == "macos" ]; then
 	fi
 fi
 
-cp -a ${GITDIR}/patches-arc64 ${SDK_NG_HOME} 2>/dev/null
-cd ${SDK_NG_HOME}
+CT_NG=${SDK_NG_HOME}/bin/ct-ng
 
 for t in ${TARGETS}; do
 	if [ "${t}" = "tools" ]; then
-		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh;
-		./meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools;
-		mv ./meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-${machine}-hosttools-standalone-0.9.sh .
+		${GITDIR}/meta-zephyr-sdk/scripts/meta-zephyr-sdk-clone.sh
+		${GITDIR}/meta-zephyr-sdk/scripts/meta-zephyr-sdk-build.sh tools
+		mv ${GITDIR}/meta-zephyr-sdk/scripts/toolchains/zephyr-sdk-${machine}-hosttools-standalone-0.9.sh ${TARBALL_DIR}
+		exit $?
 	elif [ "${t}" = "cmake" ]; then
-		tar -jcvf ${t}.${os}.${machine}.tar.bz2 -C ${GITDIR} cmake
+		tar -jcvf ${TARBALL_DIR}/${t}.${os}.${machine}.tar.bz2 -C ${GITDIR} cmake
+		exit $?
+	elif [ "${t}" = "crosstool" ]; then
+		build_crosstool
+		exit $?
 	fi
 done
 
-if [ ! -d "crosstool-ng" ]; then
-	git clone https://github.com/zephyrproject-rtos/crosstool-ng.git
-	pushd crosstool-ng
-	git checkout ${COMMIT}
-	popd
-fi
+# prep
+cp -a ${GITDIR}/patches-arc64 ${SDK_NG_HOME} 2>/dev/null
 
-if [ ! -e "${SDK_NG_HOME}/bin/ct-ng" ]; then
-	pushd crosstool-ng
-	./bootstrap
-	CFLAGS="-DKBUILD_NO_NLS" ./configure --prefix=${SDK_NG_HOME}
-	make && make install
-	popd
-fi
-
-CT_NG=${SDK_NG_HOME}/bin/ct-ng
 OUTPUT_DIR=${SDK_NG_HOME}/build/output
 
 mkdir -p ${OUTPUT_DIR}/sources
@@ -99,6 +111,9 @@ for t in ${TARGETS}; do
 		echo "Target configuration does not exist"
 		exit 1
 	fi
+
+	build_crosstool
+
 	echo "Building ${t}"
 	TARGET_BUILD_DIR=${SDK_NG_HOME}/build/build_${t}
 	mkdir -p ${TARGET_BUILD_DIR}
