@@ -161,7 +161,7 @@ create_toolchain()
 {
 	local arch=$1
 	local setup=toolchains/${arch}/setup.sh
-	local toolchain_name=zephyr-toolchain-${arch}-${sdk_version}-${machine}-${os}-setup.run
+	local toolchain_name=zephyr-toolchain-${arch}-${sdk_version}-${os}-${machine}-setup.run
 
 	var_file_arch=file_gcc_${arch}
 	file_gcc_arch=${!var_file_arch}
@@ -192,7 +192,7 @@ create_toolchain()
 create_sdk()
 {
 	local setup=toolchains/setup.sh
-	local toolchain_name=${product_name}-${sdk_version}-${machine}-${os}-setup.run
+	local toolchain_name=${product_name}-${sdk_version}-${os}-${machine}-setup.run
 
 	setup_hdr $setup $toolchain_name
 	for arch in $arch_list; do
