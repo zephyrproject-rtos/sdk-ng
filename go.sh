@@ -22,13 +22,36 @@ case "${unameOut}" in
 esac
 
 SDK_NG_HOME=${PWD}
+if [ "$os" == "macos" ]; then
+	ImageName=CrossToolNGNew
+	ImageNameExt=${ImageName}.sparseimage
+	SDK_NG_HOME="/Volumes/${ImageName}"
+fi
 
 CROSSTOOL_COMMIT="4d5660e34e7c5f522e8b07ded82d7a6a15b787ef"
 build_crosstool()
 {
 	# only build if we don't already have a built binary
-
 	if [ ! -x "${SDK_NG_HOME}/bin/ct-ng" ]; then
+		if [ "$os" == "macos" ]; then
+			if [ -x "/opt/homebrew/bin/brew" ]; then
+				export HOMEBREW_ROOT="/opt/homebrew"
+			elif [ -x "/usr/local/bin/brew" ]; then
+				export HOMEBREW_ROOT="/usr/local"
+			else
+				echo "No brew install found"
+				exit 1
+			fi
+
+			brew install autoconf automake bash binutils gawk gnu-sed gnu-tar help2man ncurses xz libtool
+
+			export PATH="$PATH:${HOMEBREW_ROOT}/opt/binutils/bin"
+			export CPPFLAGS="-I${HOMEBREW_ROOT}/opt/ncurses/include -I${HOMEBREW_ROOT}/opt/gettext/include"
+			export LDFLAGS="-L${HOMEBREW_ROOT}/opt/ncurses/lib -L${HOMEBREW_ROOT}/opt/gettext/lib"
+
+			macos_setup_diskimage
+		fi
+
 		# Checkout crosstool-ng if we haven't already
 		if [ ! -d "${SDK_NG_HOME}/crosstool-ng" ]; then
 			pushd ${SDK_NG_HOME}
@@ -49,25 +72,8 @@ build_crosstool()
 	fi
 }
 
-if [ "$os" == "macos" ]; then
-	if [ -x "/opt/homebrew/bin/brew" ]; then
-		export HOMEBREW_ROOT="/opt/homebrew"
-	elif [ -x "/usr/local/bin/brew" ]; then
-		export HOMEBREW_ROOT="/usr/local"
-	else
-		echo "No brew install found"
-		exit 1
-	fi
-
-	brew install autoconf automake bash binutils gawk gnu-sed gnu-tar help2man ncurses xz libtool
-
-	export PATH="$PATH:${HOMEBREW_ROOT}/opt/binutils/bin"
-	export CPPFLAGS="-I${HOMEBREW_ROOT}/opt/ncurses/include -I${HOMEBREW_ROOT}/opt/gettext/include"
-	export LDFLAGS="-L${HOMEBREW_ROOT}/opt/ncurses/lib -L${HOMEBREW_ROOT}/opt/gettext/lib"
-
-	ImageName=CrossToolNGNew
-	ImageNameExt=${ImageName}.sparseimage
-	SDK_NG_HOME="/Volumes/${ImageName}"
+macos_setup_diskimage()
+{
 	if [ ! -e "$ImageNameExt" ]; then
 		diskutil umount force ${SDK_NG_HOME} && true
 		rm -f ${ImageNameExt} && true
@@ -76,7 +82,7 @@ if [ "$os" == "macos" ]; then
 	if [ ! -d ${SDK_NG_HOME} ]; then
 		hdiutil mount ${ImageNameExt}
 	fi
-fi
+}
 
 CT_NG=${SDK_NG_HOME}/bin/ct-ng
 
@@ -91,6 +97,9 @@ for t in ${TARGETS}; do
 		exit $?
 	elif [ "${t}" = "crosstool" ]; then
 		build_crosstool
+		exit $?
+	elif [ "${t}" = "macos_setup_diskimage" ]; then
+		macos_setup_diskimage
 		exit $?
 	fi
 done
