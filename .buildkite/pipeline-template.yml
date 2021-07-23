@@ -6,6 +6,9 @@ steps:
     - buildkite-agent artifact upload cmake.$OS.$MACHINE.tar.bz2
     - ./go.sh crosstool
     - buildkite-agent artifact upload crosstool.$OS.$MACHINE.tar.bz2
+    - export CT_ONLY_DOWNLOAD=y
+    - ./go.sh arm
+    - buildkite-agent artifact upload "build/output/sources/*"
     env:
       BUILDKITE_CLEAN_CHECKOUT: "true"
     plugins:
@@ -41,6 +44,7 @@ steps:
          16) TARGET="arc64";;
       esac
     - buildkite-agent artifact download crosstool.$OS.$MACHINE.tar.bz2 .
+    - buildkite-agent artifact download build/output/sources/* .
     - tar xvf crosstool.$OS.$MACHINE.tar.bz2 2> /dev/null
     - ./go.sh $${TARGET}
     - >
