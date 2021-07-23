@@ -37,12 +37,9 @@ jobs:
     steps:
       - name: "clone"
         uses: actions/checkout@v2
-      - name: "prereq macOS"
-        run: |
-          brew install autoconf automake bash binutils gawk gnu-sed \
-               gnu-tar help2man ncurses
       - name: "build ct-ng"
         run: |
+          ./go.sh crosstool
           ./go.sh cmake
       - name: "preload sources"
         run: |
