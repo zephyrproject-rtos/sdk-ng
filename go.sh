@@ -28,7 +28,7 @@ if [ "$os" == "macos" ]; then
 	SDK_NG_HOME="/Volumes/${ImageName}"
 fi
 
-CROSSTOOL_COMMIT="4d5660e34e7c5f522e8b07ded82d7a6a15b787ef"
+CROSSTOOL_COMMIT="e0117582601a9a60fe279fda920da3875a0db366"
 build_crosstool()
 {
 	# only build if we don't already have a built binary
