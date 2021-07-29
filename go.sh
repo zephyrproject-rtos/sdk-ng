@@ -173,7 +173,6 @@ for t in ${TARGETS}; do
 	if [ $? != 0 ]; then
 		exit 1
 	fi
-	rm -rf ${CT_PREFIX}/*/newlib-nano
 
 	popd
 	rm -fr ${TARGET_BUILD_DIR}
