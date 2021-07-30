@@ -1,5 +1,16 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.13.0-rc4
+
+- newlib:
+  * Fix nano.spec file to pull in nano libraries.
+  * Set -mthumb-interwork for nano newlib builds to workaround
+    at crosstool issue.
+
+- general:
+  * CI/go.sh changes to make building MacOS and CI building
+    easier.
+
 ## Zephyr SDK 0.13.0-rc3
 
 - Re-release -rc2 as -rc3, forgot to update VERSION file.
