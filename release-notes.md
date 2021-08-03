@@ -1,81 +1,55 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.13.0-rc4
-
-- newlib:
-  * Fix nano.spec file to pull in nano libraries.
-  * Set -mthumb-interwork for nano newlib builds to workaround
-    at crosstool issue.
-
-- general:
-  * CI/go.sh changes to make building MacOS and CI building
-    easier.
-
-## Zephyr SDK 0.13.0-rc3
-
-- Re-release -rc2 as -rc3, forgot to update VERSION file.
-
-## Zephyr SDK 0.13.0-rc2
-
-- qemu:
-  * Pull in fix from upstream for TFM:
-    target/arm: Use correct SP in M-profile exception
-
-- crostool-ng:
-  * Fix stripping of newlib-nano libs
-
-- general:
-  * Various fixes for building/packaging on MacOS
-  * Added GitHub CI workflow to build MacOS x86_64 packages
-
-## Zephyr SDK 0.13.0-rc1
-
-- openocd:
-  * Update to upstream 20210630 snapshot
-
-- qemu:
-  * Pull in fixes from upstream for:
-    hw/arm: Fix modelling of SSE-300 TCMs and SRAM
-
-- newlib:
-  * Added multithreading support
-
-- gcc:
-  * Removed libgcc transactional memory clone registry support
-  * Fixed incorrect build specs for libstdc++ nano variant. The libstdc++ nano
-    variant, which is used with newlib-nano, is now built with
-    `-fno-exceptions` to reduce compiled binary size.
-
-## Zephyr SDK 0.13.0-alpha-1
+## Zephyr SDK 0.13.0
 
 - general:
   * Added support for ARC64.  NOTE: GDB isn't currently supported
     for ARC64.
+  * CI/go.sh changes to make building MacOS and CI building
+    easier.
+  * Various fixes for building/packaging on MacOS
+  * Added GitHub CI workflow to build MacOS x86_64 packages
 
 - qemu:
   * Updated to QEMU 6.0.0
   * Added arc64 support.  NOTE: this update ARC support replaces
     the machine (-M simhs) with (-M virt).  This change will require
     updates to boards/arc/qemu_arc/board.cmake in Zephyr to match.
+  * Pull in fix from upstream for TFM:
+    target/arm: Use correct SP in M-profile exception
+  * Pull in fixes from upstream for:
+    hw/arm: Fix modelling of SSE-300 TCMs and SRAM
 
 - gcc:
   * Update to gcc 10.3 release
   * Added support for ARC64
+  * Removed libgcc transactional memory clone registry support
+  * Fixed incorrect build specs for libstdc++ nano variant. The libstdc++ nano
+    variant, which is used with newlib-nano, is now built with
+    `-fno-exceptions` to reduce compiled binary size.
 
 - binutils:
   * Updated to add support for ARC64
 
 - newlib:
   * Updated to add support for ARC64
+  * Added multithreading support
+  * Fix nano.spec file to pull in nano libraries.
+  * Set -mthumb-interwork for nano newlib builds to workaround
+    at crosstool issue.
 
 - crosstool-ng:
   * sync with upstream.  Upstream now supports newlib-nano so we drop
     our Zephyr specific updates.  This also pulls in gcc-10.3 and
     initial support for ARC64.
+  * Fix stripping of newlib-nano libs
 
 - yocto:
   * Update to yocto 3.2.3 baseline.  This is in prep to support building
     qemu-6.0.0
+
+- openocd:
+  * Update to upstream 20210630 snapshot
 
 ## Zephyr SDK 0.12.4
 
