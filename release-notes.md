@@ -1,5 +1,9 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.13.1
+- gdb:
+  * Fix ELF file format support issue on MacOS
+
 ## Zephyr SDK 0.13.0
 
 - general:
