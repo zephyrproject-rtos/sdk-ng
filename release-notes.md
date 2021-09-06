@@ -4,6 +4,10 @@
 - gdb:
   * Fix ELF file format support issue on MacOS
 
+- newlib:
+  * Fixed Xtensa malloc failure issue reported in
+    zephyrproject-rtos/zephyr#38258.
+
 ## Zephyr SDK 0.13.0
 
 - general:
