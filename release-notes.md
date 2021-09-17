@@ -8,6 +8,12 @@
   * Fixed Xtensa malloc failure issue reported in
     zephyrproject-rtos/zephyr#38258.
 
+- gcc:
+  * Pull in patches for Arm-GCC-CVE-2021-35465
+
+- qemu:
+  * Allow setup of ARC's "virt" board memory size
+
 ## Zephyr SDK 0.13.0
 
 - general:
