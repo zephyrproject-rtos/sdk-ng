@@ -2,6 +2,9 @@
 
 ## Zephyr SDK 0.13.2
 
+- gcc:
+  * Added multilibs for the RISC-V RV32E targets.
+
 - qemu:
   * Added MIPS little endian emulation
   * Update xilinx qemu to 5.1.0
