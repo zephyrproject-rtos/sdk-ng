@@ -1,5 +1,10 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.13.2
+
+- qemu:
+  * Added MIPS little endian emulation
+
 ## Zephyr SDK 0.13.1
 - gdb:
   * Fix ELF file format support issue on MacOS
