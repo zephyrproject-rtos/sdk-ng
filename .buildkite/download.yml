@@ -5,9 +5,10 @@ steps:
     command:
     - buildkite-agent artifact download crosstool.linux.x86_64.tar.bz2 .
     - tar xf crosstool.linux.x86_64.tar.bz2
+    - aws s3 sync s3://builds.zephyrproject.org/sdk/cache/ build/output/sources
     - export CT_ONLY_DOWNLOAD=y
     - ./go.sh arm
-    - buildkite-agent artifact upload "build/output/sources/*"
+    - aws s3 sync build/output/sources s3://builds.zephyrproject.org/sdk/cache/
     env:
       BUILDKITE_CLEAN_CHECKOUT: "true"
     plugins:
