@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "fe968e21bedd88da5917a5df480b3636f43c11a2"
+SRCREV = "e40b634b24b37fe521bb2857c5e93ee1d30c2e37"
 SRC_URI = "git://github.com/Xilinx/qemu.git;protocol=https \
 	   file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
 	   file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
