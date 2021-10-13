@@ -4,6 +4,7 @@
 
 - qemu:
   * Added MIPS little endian emulation
+  * Update xilinx qemu to 5.1.0
 
 ## Zephyr SDK 0.13.1
 - gdb:
