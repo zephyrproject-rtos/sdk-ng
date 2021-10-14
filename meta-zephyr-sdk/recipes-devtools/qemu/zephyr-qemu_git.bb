@@ -243,6 +243,7 @@ do_configure() {
 
 do_install_append() {
     ln -sf ../xilinx/bin/qemu-system-aarch64 ${D}${bindir}/qemu-system-xilinx-aarch64
+    ln -sf ../xilinx/bin/qemu-system-microblazeel ${D}${bindir}/qemu-system-xilinx-microblazeel
 }
 
 FILES_${PN} = " \
