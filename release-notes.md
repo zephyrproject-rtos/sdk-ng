@@ -4,6 +4,8 @@
 
 - gcc:
   * Added multilibs for the RISC-V RV32E targets.
+  * Disabled MIPS GP register optimisation, which is not supported by the
+    Zephyr MIPS architecture port.
 
 - newlib:
   * Enabled C99 format specifier support for newlib full variant.
