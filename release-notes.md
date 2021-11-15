@@ -5,6 +5,9 @@
 - gcc:
   * Added multilibs for the RISC-V RV32E targets.
 
+- newlib:
+  * Enabled C99 format specifier support for newlib full variant.
+
 - qemu:
   * Added MIPS little endian emulation
   * Update xilinx qemu to 5.1.0
