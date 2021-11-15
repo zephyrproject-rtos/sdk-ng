@@ -10,6 +10,10 @@
   * Update xilinx qemu to 5.1.0
   * Added Xilinx MicroBlaze little endian emulation
 
+- openocd:
+  * Fixed missing DBG clock on STM32G0/L0.
+  * Fixed image verification for ARC.
+
 ## Zephyr SDK 0.13.1
 - gdb:
   * Fix ELF file format support issue on MacOS
