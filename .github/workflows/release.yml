@@ -1,0 +1,60 @@
+# Zephyr SDK Continuous Integration Workflow (Release)
+
+name: Release
+
+on:
+  release:
+    types: [ published ]
+
+env:
+  BUNDLE_PREFIX: zephyr-sdk
+
+jobs:
+  # Run main CI workflow
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  # Publish release assets
+  release:
+    name: Release
+    needs: [ ci ]
+    runs-on: zephyr_runner
+
+    steps:
+    - name: Set up build environment
+      run: |
+        # Clean up working directories
+        rm -rf ${GITHUB_WORKSPACE}/*
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: artifacts
+
+    - name: Prepare release assets
+      run: |
+        # Set base environment variables
+        ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts
+        ASSET_ROOT=${GITHUB_WORKSPACE}/assets
+        VERSION=$(<${ARTIFACT_ROOT}/version/version)
+
+        # Collect release assets
+        mkdir -p ${ASSET_ROOT}
+        pushd ${ASSET_ROOT}
+        mv ${ARTIFACT_ROOT}/toolchain_*/toolchain_* .
+        mv ${ARTIFACT_ROOT}/hosttools_*/hosttools_* .
+        mv ${ARTIFACT_ROOT}/${{ env.BUNDLE_PREFIX }}-*/${{ env.BUNDLE_PREFIX }}-* .
+
+        # Compute checksum
+        md5sum * > ${GITHUB_WORKSPACE}/md5.sum
+        sha256sum * > ${GITHUB_WORKSPACE}/sha256.sum
+        popd
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          assets/*
+          md5.sum
+          sha256.sum
