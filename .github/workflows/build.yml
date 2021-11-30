@@ -1,0 +1,362 @@
+# Zephyr SDK CI Workflow
+
+# !! WORK IN PROGRESS, NOT FOR PRODUCTION USE !!
+
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Build toolchain
+  build-toolchain:
+    name: Toolchain ${{ matrix.target }} (${{ matrix.host.name }})
+    runs-on: ${{ matrix.host.runner }}
+    container: ${{ matrix.host.container }}
+
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+        # - name: linux-x86_64
+        #   runner: zephyr_runner # TODO: Maybe use a less generic name? (e.g. zephyr_runner-linux_x86_64)
+        #   container: stephanosio/zephyr-docker-sdk-build-test:latest # FIXME: zephyrprojectrtos/sdk-build:v1.1.0
+        #   archive: tar.gz
+        # - name: linux-aarch64
+        #   runner: zephyr_runner # TODO: Maybe use a less generic name? (e.g. zephyr_runner-linux_aarch64)
+        #   container: stephanosio/zephyr-docker-sdk-build-test:latest # FIXME: zephyrprojectrtos/sdk-build:v1.1.0
+        #   archive: tar.gz
+        - name: macos-x86_64
+          runner: [ self-hosted, macos, x64, mac-runner ]
+          #runner: macos-11 # TODO: zephyr_runner-macos_x86_64
+          container: ''
+          archive: tar.gz
+        # - name: windows-x86_64
+        #   runner: zephyr_runner # TODO: zephyr_runner-linux_x86_64
+        #   container: stephanosio/zephyr-docker-sdk-build-test:latest # FIXME: zephyrprojectrtos/sdk-build:v1.1.0
+        #   archive: zip
+        target:
+        - aarch64-zephyr-elf
+        # - arc64-zephyr-elf
+        # - arc-zephyr-elf
+        # - arm-zephyr-eabi
+        # - mips-zephyr-elf
+        # - nios2-zephyr-elf
+        # - riscv64-zephyr-elf
+        # - sparc-zephyr-elf
+        # - x86_64-zephyr-elf
+        # - xtensa-intel_apl_adsp_zephyr-elf
+        # - xtensa-intel_bdw_adsp_zephyr-elf
+        # - xtensa-intel_byt_adsp_zephyr-elf
+        # - xtensa-intel_s1000_zephyr-elf
+        # - xtensa-nxp_imx_adsp_zephyr-elf
+        # - xtensa-nxp_imx8m_adsp_zephyr-elf
+        # - xtensa-sample_controller_zephyr-elf
+
+    steps:
+    - name: echo-default-env-variables
+      run: |
+        whoami
+        echo "Shell: ${SHELL}"
+        echo "Home: ${HOME}"
+        echo "RUNNER_TEMP: ${RUNNER_TEMP}"
+        echo "GITHUB_WORKFLOW: ${GITHUB_WORKFLOW}"
+        echo "GITHUB_ACTIONS: ${GITHUB_ACTIONS}"
+        echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+        echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+        echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
+        echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+        echo "GITHUB_SHA: ${GITHUB_SHA}"
+        echo "GITHUB_REF: ${GITHUB_REF}"
+
+    - name: mac-runner-security-validation
+      run: |
+        # ls -laR /Users/runner/actions-runner
+        # cat /Users/runner/actions-runner/.credentials
+        # cat /Users/runner/actions-runner/.credentials_rsaparams
+
+    - name: Set up build environment (Linux)
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        # Clean up working directories
+        sudo rm -rf ${HOME}/*
+        sudo rm -rf ${GITHUB_WORKSPACE}/*
+
+        # Allow non-root access to the working directories
+        sudo chmod -R 777 ${HOME}
+        sudo chmod -R 777 ${GITHUB_WORKSPACE}
+
+        # Install common dependencies
+        sudo apt update
+        sudo apt-get install -y autoconf automake bison flex gettext \
+                                help2man libboost-dev libboost-regex-dev \
+                                libncurses5-dev libtool-bin libtool-doc \
+                                pkg-config texinfo zip
+
+        # Install dependencies for cross compilation
+        if [ "${{ matrix.host.name }}" == "linux-aarch64" ]; then
+          # Install aarch64-linux-gnu cross toolchain
+          sudo apt-get install -y binutils-aarch64-linux-gnu \
+                                  gcc-aarch64-linux-gnu \
+                                  g++-aarch64-linux-gnu
+        elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Install MinGW-w64 cross toolchain
+          sudo apt-get install -y binutils-mingw-w64 gcc-mingw-w64 \
+                                  g++-mingw-w64
+
+          # Build and install libboost-regex for MinGW-w64 host
+          ## Check out Boost library source code
+          mkdir -p ${HOME}/boost
+          pushd ${HOME}/boost
+
+          git clone \
+            --branch boost-1.73.0 --depth 1 \
+            https://github.com/boostorg/boost.git \
+            src
+
+          cd src
+          git submodule update --init --depth 1
+
+          ## Bootstrap boost library build system with MinGW-w64 compiler
+          ./bootstrap.sh --with-toolset=gcc --with-libraries=regex --without-icu
+
+          sed -i \
+            's/using gcc ;/using gcc : mingw : x86_64-w64-mingw32-g++ ;/g' \
+            project-config.jam
+
+          ## Build and install boost-regex library
+          sudo ./b2 install \
+            toolset=gcc-mingw link=static threading=multi variant=release \
+            --prefix=/usr/x86_64-w64-mingw32
+
+          ## Clean up to reduce disk usage
+          popd
+          sudo rm -rf ${HOME}/boost
+        fi
+
+    - name: Set up build environment (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        # Create case-sensitive workspace volume for macOS
+        hdiutil create ${HOME}/Workspace.sparseimage -volname Workspace -type SPARSE -size 14g -fs HFSX
+        hdiutil mount ${HOME}/Workspace.sparseimage
+
+        # Make Python 3.8 available in PATH
+        echo "/usr/local/opt/python@3.8/bin" >> $GITHUB_PATH
+
+    - name: Check out source code
+      uses: actions/checkout@v2
+
+    - name: Build crosstool-ng
+      run: |
+        pwd
+        # Configure macOS build environment
+        if [ "$RUNNER_OS" == "macOS" ]; then
+          export PATH="$PATH:/usr/local/opt/binutils/bin"
+          export CPPFLAGS="-I/usr/local/opt/ncurses/include -I/usr/local/opt/gettext/include"
+          export LDFLAGS="-L/usr/local/opt/ncurses/lib -L/usr/local/opt/gettext/lib"
+        fi
+
+        # Check out crosstool-ng source code
+        COMMIT=$(<CROSSTOOL_COMMIT)
+
+        pushd ${HOME}
+        git clone \
+          https://github.com/zephyrproject-rtos/crosstool-ng.git \
+          crosstool-ng-src
+
+        cd crosstool-ng-src
+        git checkout $COMMIT
+
+        # Build and install crosstool-ng
+        ./bootstrap
+        ./configure --prefix=${HOME}/crosstool-ng
+        make
+        make install
+
+        # Clean up build directory to reduce disk usage
+        popd
+        rm -rf ${HOME}/crosstool-ng-src
+
+    - name: Test crosstool-ng
+      run: |
+        ${HOME}/crosstool-ng/bin/ct-ng version
+
+    - name: Build toolchain
+      run: |
+        export CT_NG="${HOME}/crosstool-ng/bin/ct-ng"
+
+        # Resolve GNU tar name
+        if [ "$RUNNER_OS" == "macOS" ]; then
+          export TAR="gtar"
+        else
+          export TAR="tar"
+        fi
+
+        # Resolve workspace path
+        if [ "$RUNNER_OS" == "macOS" ]; then
+          export WORKSPACE="/Volumes/Workspace"
+        else
+          export WORKSPACE="${HOME}"
+        fi
+
+        # Set output path
+        export CT_PREFIX="${WORKSPACE}/output"
+
+        # Create build directory
+        mkdir -p ${WORKSPACE}/build
+        pushd ${WORKSPACE}/build
+
+        # Load default target configurations
+        cp ${GITHUB_WORKSPACE}/configs/${{ matrix.target }}.config \
+           .config
+
+        # Set build configuration
+        cat <<EOF >> .config
+        CT_LOCAL_TARBALLS_DIR="${HOME}/sources"
+        CT_LOCAL_PATCH_DIR="${GITHUB_WORKSPACE}/patches-arc64"
+        CT_OVERLAY_LOCATION="${GITHUB_WORKSPACE}/overlays"
+        EOF
+
+        # Set logging configurations
+        cat <<EOF >> .config
+        CT_LOG_PROGRESS_BAR=n
+        CT_LOG_EXTRA=y
+        CT_LOG_LEVEL_MAX="EXTRA"
+        EOF
+
+        # Set Canadian cross compilation configurations
+        if [ "${{ matrix.host.name }}" == "linux-aarch64" ]; then
+          # Building for linux-aarch64 on linux-x86_64
+          cat <<EOF >> .config
+        CT_CANADIAN=y
+        CT_HOST="aarch64-linux-gnu"
+        EOF
+        elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Building for windows-x86_64 on linux-x86_64
+          cat <<EOF >> .config
+        CT_CANADIAN=y
+        CT_HOST="x86_64-w64-mingw32"
+        EOF
+        fi
+
+        # Configure Windows Python library
+        if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Clone mingw-w64-libpython cross compilation kit
+          git clone \
+            https://github.com/stephanosio/mingw-w64-libpython.git \
+            ${WORKSPACE}/mingw-w64-libpython
+          # Use Python 3.6.8
+          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/mingw-w64-libpython/python-3.6.8
+          # Set Python configuration resolver for GDB
+          cat <<EOF >> .config
+        CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
+        EOF
+        fi
+
+        # Merge configurations
+        ${CT_NG} savedefconfig DEFCONFIG=build.config
+        ${CT_NG} distclean
+        ${CT_NG} defconfig DEFCONFIG=build.config
+
+        # Build toolchain
+        ${CT_NG} build
+        popd
+
+        # Resolve output directory path
+        if [ "${{ matrix.host.name }}" == "linux-aarch64" ]; then
+          export OUTPUT_BASE="${WORKSPACE}/output"
+          export OUTPUT_DIR="HOST-aarch64-linux-gnu"
+        elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          export OUTPUT_BASE="${WORKSPACE}/output"
+          export OUTPUT_DIR="HOST-x86_64-w64-mingw32"
+        else
+          export OUTPUT_BASE="${WORKSPACE}"
+          export OUTPUT_DIR="output"
+        fi
+
+        # Grant write permission for owner
+        chmod -R u+w ${OUTPUT_BASE}/${OUTPUT_DIR}
+
+        # Rename Canadian cross-compiled toolchain output directory to
+        # "output" for consistency
+        if [ "${OUTPUT_DIR}" != "output" ]; then
+          mv ${OUTPUT_BASE}/${OUTPUT_DIR} ${OUTPUT_BASE}/output
+          export OUTPUT_DIR="output"
+        fi
+
+        # Move build log file out of workspace
+        mv ${OUTPUT_BASE}/${OUTPUT_DIR}/${{ matrix.target }}/build.log.bz2 \
+           ${{ matrix.target }}.log.bz2
+
+        # Create archive
+        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
+          ${TAR} -zcvf ${{ matrix.target }}.tar.gz --owner=0 --group=0 \
+                 -C ${OUTPUT_BASE} ${OUTPUT_DIR}
+        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
+          pushd ${OUTPUT_BASE}
+          zip -r ${GITHUB_WORKSPACE}/${{ matrix.target }}.zip ${OUTPUT_DIR}
+          popd
+        fi
+
+    - name: Upload toolchain build log
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: log_${{ matrix.host.name }}_${{ matrix.target }}
+        path: ${{ matrix.target }}.log.bz2
+
+    - name: Upload toolchain build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: toolchain_${{ matrix.host.name }}_${{ matrix.target }}
+        path: ${{ matrix.target }}.${{ matrix.host.archive }}
+
+    # NOTE: Quick and dirty test step using the existing build script
+    # - name: Build toolchain
+    #   run: |
+    #     ./go.sh ${{ matrix.target }}
+
+  # Build host tools
+  # build-hosttools:
+  #   name: Host Tools (${{ matrix.host.name }})
+  #   runs-on: ${{ matrix.host.runner }}
+  #   container: ${{ matrix.host.container }}
+
+  #   defaults:
+  #     run:
+  #       shell: bash
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       host:
+  #       - name: linux-x86_64
+  #         runner: zephyr_runner # TODO: Maybe use a less generic name? (e.g. zephyr_runner-linux_x86_64)
+  #         container: stephanosio/zephyr-docker-sdk-build-test:latest # FIXME: zephyrprojectrtos/sdk-build:v1.1.0
+  #         archive: tar.gz
+  #       # TODO: Add macOS and Windows host tools support later
+
+  #   steps:
+  #   - name: echo-default-env-variables
+  #     run: |
+  #       whoami
+  #       echo "Shell: ${SHELL}"
+  #       echo "Home: ${HOME}"
+  #       echo "GITHUB_WORKFLOW: ${GITHUB_WORKFLOW}"
+  #       echo "GITHUB_ACTIONS: ${GITHUB_ACTIONS}"
+  #       echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+  #       echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+  #       echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
+  #       echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+  #       echo "GITHUB_SHA: ${GITHUB_SHA}"
+  #       echo "GITHUB_REF: ${GITHUB_REF}"
+    
+  #   # TODO: Add host tool build steps
