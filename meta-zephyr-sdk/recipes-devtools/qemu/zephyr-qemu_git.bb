@@ -1,11 +1,11 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc ninja-native meson-native"
+DEPENDS = "glib-2.0 zlib pixman gnutls libtasn1 dtc ninja-native meson-native"
 LICENSE = "GPLv2"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "44596c428a63452efd5dd52324d0b8338a7e6919"
+SRCREV = "59f1efa351fefd631650a9a49da64fa082103ac2"
 SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
@@ -198,13 +198,13 @@ inherit autotools pkgconfig
 #--disable-blobs : BIOS needed for x86
 #--disable-fdt: Cannot use if supporting ARM
 
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu mipsel-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu arc-softmmu arc64-softmmu"
+QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu mipsel-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
   --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
-  --disable-kvm --disable-sheepdog --disable-parallels --disable-replication \
+  --disable-kvm --disable-parallels --disable-replication \
   --disable-live-block-migration --disable-dmg \
   "
 

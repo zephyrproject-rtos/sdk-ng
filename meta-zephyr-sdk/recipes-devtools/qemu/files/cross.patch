@@ -10,21 +10,21 @@ Index: qemu/configure
 ===================================================================
 --- a/configure
 +++ b/configure
-@@ -6345,7 +6345,6 @@ if has $sdl2_config; then
- fi
- echo "strip = [$(meson_quote $strip)]" >> $cross
- echo "windres = [$(meson_quote $windres)]" >> $cross
--if test "$cross_compile" = "yes"; then
+@@ -3932,7 +3932,6 @@ if test "$skip_meson" = no; then
+   fi
+   echo "strip = [$(meson_quote $strip)]" >> $cross
+   echo "windres = [$(meson_quote $windres)]" >> $cross
+-  if test "$cross_compile" = "yes"; then
      cross_arg="--cross-file config-meson.cross"
      echo "[host_machine]" >> $cross
      if test "$mingw32" = "yes" ; then
-@@ -6377,9 +6376,6 @@ if test "$cross_compile" = "yes"; then
+@@ -3964,9 +3963,6 @@ if test "$skip_meson" = no; then
      else
          echo "endian = 'little'" >> $cross
      fi
--else
+-  else
 -    cross_arg="--native-file config-meson.cross"
--fi
- mv $cross config-meson.cross
- 
- rm -rf meson-private meson-info meson-logs
+-  fi
+   mv $cross config-meson.cross
+
+   rm -rf meson-private meson-info meson-logs
