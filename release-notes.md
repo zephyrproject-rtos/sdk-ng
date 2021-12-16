@@ -1,5 +1,10 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.14.1
+
+- qemu:
+  * Updated to QEMU 6.2 release.
+
 ## Zephyr SDK 0.14.0
 
 - general:
