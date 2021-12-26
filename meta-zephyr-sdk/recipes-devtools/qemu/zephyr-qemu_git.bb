@@ -28,6 +28,7 @@ SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
 	   file://0016-hw-arm-Model-TCMs-in-the-SSE-300-not-the-AN547.patch \
 	   file://0017-target-arm-Use-correct-SP-in-M-profile-exception-ret.patch \
 	   file://0018-arc-virt-Make-target-memory-size-configurable.patch \
+	   file://0019-arc-virt-Add-second-UART.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"

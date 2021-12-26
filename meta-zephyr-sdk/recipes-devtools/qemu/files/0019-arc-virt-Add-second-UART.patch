@@ -1,0 +1,56 @@
+From 5d88c80ddc7f3b3bb5858f846296bc8b80b91893 Mon Sep 17 00:00:00 2001
+From: Alexey Brodkin <abrodkin@synopsys.com>
+Date: Fri, 24 Dec 2021 12:37:23 +0300
+Subject: [PATCH] arc: virt: Add second UART
+
+In some cases it's really useful to have more than 1 UART interface.
+For example:
+ * Use one UART for debug output while the second for interaction with
+   the virtual platform.
+ * Use one of UART's as a mean for packe communication (i.e. SLIP)
+
+That was originally requested by Zephyr users here:
+https://lists.zephyrproject.org/g/devel/message/8285
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+---
+ hw/arc/virt.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/hw/arc/virt.c b/hw/arc/virt.c
+index e2132671f7..743c3d3019 100644
+--- a/hw/arc/virt.c
++++ b/hw/arc/virt.c
+@@ -29,8 +29,12 @@
+ #define VIRT_RAM_BASE      0x80000000
+ #define VIRT_IO_BASE       0xf0000000
+ #define VIRT_IO_SIZE       0x10000000
+-#define VIRT_UART0_OFFSET  0x0
+-#define VIRT_UART0_IRQ     24
++
++/* UART */
++#define VIRT_UART_NUMBER   2
++#define VIRT_UART_OFFSET   0x0
++#define VIRT_UART_IRQ      24
++#define VIRT_UART_SIZE     0x2000
+ 
+ /* VirtIO */
+ #define VIRT_VIRTIO_NUMBER 5
+@@ -154,9 +158,11 @@ static void virt_init(MachineState *machine)
+                           VIRT_IO_SIZE);
+     memory_region_add_subregion(system_memory, VIRT_IO_BASE, system_io);
+ 
+-    serial_mm_init(system_io, VIRT_UART0_OFFSET, 2,
+-                   cpu->env.irq[VIRT_UART0_IRQ], 115200, serial_hd(0),
+-                   DEVICE_NATIVE_ENDIAN);
++    for (n = 0; n < VIRT_UART_NUMBER; n++) {
++        serial_mm_init(system_io, VIRT_UART_OFFSET + VIRT_UART_SIZE * n, 2,
++                       cpu->env.irq[VIRT_UART_IRQ + n], 115200, serial_hd(n),
++                       DEVICE_NATIVE_ENDIAN);
++    }
+ 
+     for (n = 0; n < VIRT_VIRTIO_NUMBER; n++) {
+         sysbus_create_simple("virtio-mmio",
+-- 
+2.25.1
+
