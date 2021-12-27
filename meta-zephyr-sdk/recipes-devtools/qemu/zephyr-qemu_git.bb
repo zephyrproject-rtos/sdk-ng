@@ -5,29 +5,11 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "609d7596524ab204ccd71ef42c9eee4c7c338ea4"
-SRC_URI = "git://github.com/qemu/qemu.git;protocol=https \
+SRCREV = "44596c428a63452efd5dd52324d0b8338a7e6919"
+SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
 	   file://cross.patch \
-	   file://0001-hw-misc-mps2-scc-Add-QEMU-interface-comment.patch \
-	   file://0002-hw-misc-mps2-scc-Support-using-CFG0-bit-0-for-remapp.patch \
-	   file://0003-hw-arm-mps2-tz-Implement-AN524-memory-remapping-via-.patch \
-	   file://0004-qemu-nios2-Add-Altera-MAX-10-board-support-for-Zephy.patch \
-	   file://0005-hw-sparc-Add-leon-at697-machine.patch \
-	   file://0006-hw-sparc-leon-Fix-compilation-errors.patch \
-	   file://0007-hw-sparc-leon-timer-Call-leon_timer_io_read-for-TIME.patch \
-	   file://0008-hw-sparc-leon-Switch-to-transaction-based-ptimer-API.patch \
-	   file://0009-hw-sparc-leon-Fix-compilation-errors-with-qemu-6-cha.patch \
-	   file://0010-Add-ARC-support.patch \
-	   file://0011-hw-arm-mps2-tz-Don-t-duplicate-modelling-of-SRAM-in-.patch \
-	   file://0012-hw-arm-mps2-tz-Make-SRAM_ADDR_WIDTH-board-specific.patch \
-	   file://0013-hw-arm-armsse.c-Correct-modelling-of-SSE-300-interna.patch \
-	   file://0014-hw-arm-armsse-Convert-armsse_realize-to-use-ERRP_GUA.patch \
-	   file://0015-hw-arm-mps2-tz-Allow-board-to-specify-a-boot-RAM-siz.patch \
-	   file://0016-hw-arm-Model-TCMs-in-the-SSE-300-not-the-AN547.patch \
-	   file://0017-target-arm-Use-correct-SP-in-M-profile-exception-ret.patch \
-	   file://0018-arc-virt-Make-target-memory-size-configurable.patch \
 "
 
 SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
