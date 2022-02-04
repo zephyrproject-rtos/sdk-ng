@@ -1,0 +1,109 @@
+@echo off
+
+REM # Automated setup script for Zephyr SDK distribution bundle archive
+REM # for Windows host operating system
+
+pushd %~dp0
+setlocal ENABLEDELAYEDEXPANSION
+set EXITCODE=0
+
+REM # Read bundle version from file
+set /p VERSION=<sdk_version
+
+REM # Print banner
+echo Zephyr SDK %VERSION% Setup
+echo.
+
+REM # Enable interactive mode if no argument is specified
+if [%1] equ [] (
+  set INTERACTIVE=y
+)
+
+REM # Check dependencies
+where cmake > nul 2>&1
+if [%ERRORLEVEL%] neq [0] (
+  echo Zephyr SDK setup requires CMake to be installed and available in the PATH.
+  echo Please install CMake and run this script again.
+
+  set EXITCODE=90
+  goto end
+)
+
+REM # Enter interactive mode if enabled
+if [%INTERACTIVE%] neq [] (
+  goto interactive
+)
+
+REM # Parse arguments if specified
+:parsearg
+if /i [%1] equ [/c] (
+  set DO_CMAKE_PKG=y
+) else if /i [%1] equ [/t] (
+  set DO_HOSTTOOLS=y
+) else (
+  goto usage
+)
+
+shift
+if [%1] neq [] (
+  goto parsearg
+)
+
+goto process
+
+:interactive
+REM # Print interactive mode informational message
+echo ** NOTE **
+echo You only need to run this script once after extracting the Zephyr SDK
+echo distribution bundle archive.
+echo.
+
+REM # Ask user for set-up choices
+choice /c:yn /m:"Register Zephyr SDK CMake package"
+if [%ERRORLEVEL%] equ [1] set DO_CMAKE_PKG=y
+
+choice /c:yn /m:"Install host tools"
+if [%ERRORLEVEL%] equ [1] set DO_HOSTTOOLS=y
+
+echo.
+
+:process
+REM # Register Zephyr SDK CMake package
+if [%DO_CMAKE_PKG%] neq [] (
+  echo Registering Zephyr SDK CMake package ...
+  cmake -P cmake\zephyr_sdk_export.cmake
+  echo.
+)
+
+REM # Install host tools
+if [%DO_HOSTTOOLS%] neq [] (
+  echo Installing host tools ...
+  echo SKIPPED: Windows host tools are not available yet.
+  echo.
+)
+
+echo All done.
+goto end
+
+REM # Print scripting mode usage
+:usage
+echo %~n0 [/c] [/t]
+echo.
+echo   /c     Register Zephyr SDK CMake package
+echo   /t     Install host tools
+echo.
+echo When no arguments are specified, the setup script runs in the interactive
+echo mode asking for user inputs.
+
+set EXITCODE=1
+
+:end
+if [%INTERACTIVE%] neq [] (
+  echo.
+  echo Press any key to exit ...
+  pause > nul
+)
+
+popd
+
+exit /b %EXITCODE%
