@@ -10,9 +10,7 @@ set(BINTOOLS gnu)
 
 file(GLOB toolchain_paths
   LIST_DIRECTORIES true
-  ${TOOLCHAIN_HOME}/xtensa/*/*-zephyr-elf
-  ${TOOLCHAIN_HOME}/*-zephyr-elf
-  ${TOOLCHAIN_HOME}/*-zephyr-eabi
+  ${TOOLCHAIN_HOME}/*-*zephyr-*
   )
 
 if(toolchain_paths)
