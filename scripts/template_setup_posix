@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+
+# Automated setup script for Zephyr SDK distribution bundle archive
+# for POSIX-compliant host operating systems (Linux and macOS)
+
+# Utility functions
+pushd()
+{
+  command pushd "$@" > /dev/null
+}
+
+popd()
+{
+  command popd "$@" > /dev/null
+}
+
+# Display script usage
+usage()
+{
+  echo "Usage: $(basename $0) [-c] [-t]"
+  echo
+  echo "  -c     Register Zephyr SDK CMake package"
+  echo "  -t     Install host tools"
+  echo
+  echo "If no arguments are specified, the setup script runs in the interactive"
+  echo "mode asking for user inputs."
+  exit 1
+}
+
+# Ask for user inputs (interactive mode)
+user_prompt()
+{
+  echo "** NOTE **"
+  echo "You only need to run this script once after extracting the Zephyr SDK"
+  echo "distribution bundle archive."
+  echo
+
+  read -n 1 -r -p "Register Zephyr SDK CMake package [y/n]? " yn && echo
+  [ "${yn}" = "y" ] && do_cmake_pkg="y"
+
+  read -n 1 -r -p "Install host tools [y/n]? " yn && echo
+  [ "${yn}" = "y" ] && do_hosttools="y"
+
+  echo
+}
+
+# Entry point
+pushd "$(dirname "${BASH_SOURCE[0]}")"
+
+# Parse arguments
+if [ $# == "0" ]; then
+  interactive="y"
+else
+  while [ "$1" != "" ]; do
+    case $1 in
+      -c)
+        do_cmake_pkg="y"
+        ;;
+      -t)
+        do_hosttools="y"
+        ;;
+      *)
+        echo "Invalid argument '$1'"
+        usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+fi
+
+# Read bundle version from file
+version=$(<sdk_version)
+
+# Print banner
+echo "Zephyr SDK ${version} Setup"
+echo
+
+# Check dependencies
+which cmake &> /dev/null
+if [ $? != 0 ]; then
+  echo "Zephyr SDK setup requires CMake to be installed and available in the PATH."
+  echo "Please install CMake and run this script again."
+  exit 90
+fi
+
+# Ask for user inputs if no argument is specified
+if [ "${interactive}" = "y" ]; then
+  interactive="y"
+  user_prompt
+fi
+
+# Register Zephyr SDK CMake package
+if [ "${do_cmake_pkg}" = "y" ]; then
+  echo "Registering Zephyr SDK CMake package ..."
+  cmake -P cmake/zephyr_sdk_export.cmake
+  echo
+fi
+
+# Install host tools
+if [ "${do_hosttools}" = "y" ]; then
+  echo "Installing host tools ..."
+  case ${OSTYPE} in
+    linux-gnu*)
+      ./zephyr-sdk-x86_64-hosttools-standalone-0.9.sh -y -d .
+      ;;
+    darwin*)
+      echo "SKIPPED: macOS host tools are not available yet."
+      ;;
+    *)
+      echo "SKIPPED: Unsupported host operating system"
+      exit 2
+      ;;
+  esac
+  echo
+fi
+
+echo "All done."
+if [ "${interactive}" = "y" ]; then
+  read -n 1 -s -r -p "Press any key to exit ..."
+  echo
+fi
+
+popd
