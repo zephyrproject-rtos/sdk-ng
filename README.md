@@ -13,7 +13,7 @@ The toolchains for the following target architectures are supported:
 - RISC-V (32-bit and 64-bit; RV32I, RV32E, RV64I)
 - x86 (32-bit and 64-bit)
 - Xtensa (sample_controller, intel_apl_adsp, intel_bdw_adsp, intel_byt_adsp,
-  intel_s1000, nxp_imx_adsp, nxp_imx8m_adsp)
+  intel_s1000, nxp_imx_adsp, nxp_imx8m_adsp, espressif_esp32)
 
 The following host tools are available as part of the Zephyr SDK:
 
