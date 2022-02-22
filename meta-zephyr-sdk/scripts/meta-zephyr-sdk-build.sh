@@ -27,7 +27,7 @@ TOOLCHAINS="${META_ZEPHYR_SDK_SOURCE}/scripts/toolchains"
 META_DOWNLOADS=${META_DOWNLOADS:-"$META_POKY_SOURCE/downloads"}
 META_SSTATE=${SSTATE_LOCATION:-"$META_POKY_SOURCE/sstate"}
 
-MACHINE=$(uname -m)
+MACHINE=${MACHINE:-$(uname -m)}
 
 if [ ! -d $META_ZEPHYR_SDK_SOURCE ] ; then
 	echo "ERROR: could not find $META_ZEPHYR_SDK_SOURCE"
