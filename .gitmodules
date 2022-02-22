@@ -1,0 +1,3 @@
+[submodule "crosstool-ng"]
+	path = crosstool-ng
+	url = https://github.com/zephyrproject-rtos/crosstool-ng.git
