@@ -1,7 +1,7 @@
 
 DEPENDS = "glib-2.0 zlib pixman gnutls dtc ninja-native meson-native"
 LICENSE = "GPLv2"
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
@@ -231,7 +231,7 @@ copy_seabios() {
     cp ${WORKDIR}/bios-256k.bin ${S}/pc-bios/bios-256k.bin
 }
 
-do_unpack_append() {
+do_unpack:append() {
     bb.build.exec_func('copy_seabios', d)
 }
 
@@ -241,13 +241,13 @@ do_configure() {
 	--meson=meson
 }
 
-do_install_append() {
+do_install:append() {
     ln -sf ../xilinx/bin/qemu-system-aarch64 ${D}${bindir}/qemu-system-xilinx-aarch64
     ln -sf ../xilinx/bin/qemu-system-microblazeel ${D}${bindir}/qemu-system-xilinx-microblazeel
 }
 
-FILES_${PN} = " \
+FILES:${PN} = " \
    /opt/zephyr-sdk \
   "
 
-INSANE_SKIP_${PN} = "already-stripped"
+INSANE_SKIP:${PN} = "already-stripped"

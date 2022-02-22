@@ -17,6 +17,6 @@ DISTRO_FEATURES_NATIVESDK = ""
 MAINTAINER = "Intel Yocto team"
 
 SSTATE_DIR ?= "${TOPDIR}/../zephyr-cache/sstate-cache"
-CACHE_forcevariable = "${TOPDIR}/../zephyr-cache/cache"
+CACHE:forcevariable = "${TOPDIR}/../zephyr-cache/cache"
 PERSISTENT_DIR = "${TOPDIR}/../zephyr-cache/persistent"
 DL_DIR ?= "${TOPDIR}/../zephyr-downloads"

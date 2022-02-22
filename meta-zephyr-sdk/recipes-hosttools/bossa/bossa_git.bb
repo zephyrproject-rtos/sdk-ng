@@ -33,7 +33,7 @@ do_install() {
 	install -m 0755 ${S}/bin/bossash ${D}${bindir}
 }
 
-FILES_${PN} = "${bindir} "
+FILES:${PN} = "${bindir} "
 
 BBCLASSEXTEND += "nativesdk"
 

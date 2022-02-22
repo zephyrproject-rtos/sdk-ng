@@ -1,7 +1,7 @@
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://LICENSES/preferred/GPL-2.0;md5=71ce3767d42ca42cd575f91c56eefe79"
 DEPENDS = "libusb-compat hidapi libftdi"
-RDEPENDS_${PN} = "libusb1 hidapi"
+RDEPENDS:${PN} = "libusb1 hidapi"
 
 # The various arc files are based on the commit e781e73a39bc5c845b73dc96b751d867278a7583
 # of https://github.com/foss-for-synopsys-dwc-arc-processors/openocd

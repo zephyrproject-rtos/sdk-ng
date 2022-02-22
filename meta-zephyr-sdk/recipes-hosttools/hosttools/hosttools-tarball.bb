@@ -17,11 +17,11 @@ TOOLCHAIN_OUTPUTNAME ?= "${DISTRO}-${SDKMACHINE}-hosttools-standalone-${DISTRO_V
 
 RDEPENDS = "${TOOLCHAIN_HOST_TASK}"
 
-inherit meta
+inherit nopackages
 inherit populate_sdk
 inherit toolchain-scripts
 
-create_sdk_files_append () {
+create_sdk_files:append () {
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/site-config-*
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/environment-setup-*
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/version-*

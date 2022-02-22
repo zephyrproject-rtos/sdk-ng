@@ -20,6 +20,8 @@ steps:
     key: "$OS-$MACHINE"
     depends_on: "download-sources"
     command:
+    - sudo apt update
+    - sudo apt-get install liblz4-tool zstd
     - >
       case "$${BUILDKITE_PARALLEL_JOB}" in
          0)  TARGET="arm";;
