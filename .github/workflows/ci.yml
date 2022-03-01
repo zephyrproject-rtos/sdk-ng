@@ -1279,3 +1279,21 @@ jobs:
         name: test_${{ matrix.testenv.name }}_${{ matrix.subset }}
         if-no-files-found: ignore
         path: test/twister-out/twister.xml
+
+  # Post test result check
+  test-result:
+    name: Test Result
+    needs: [ test-dist-bundle ]
+    runs-on: ubuntu-20.04
+
+    # NOTE: The 'test-result' job depends on the 'test-dist-bundle' job and
+    #       therefore only runs when all distribution bundle tests pass.
+    #
+    #       The purpose of this job is to provide a checkpoint which the GitHub
+    #       branch protection rule can use to enforce the required checks for
+    #       merging pull requests, because GitHub does not support specifying a
+    #       job that is part of a matrix for this purpose.
+    steps:
+    - name: Summary
+      run: |
+        echo "All passed"
