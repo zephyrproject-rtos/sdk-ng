@@ -1,64 +1,61 @@
-# Zephyr SDK with Crosstool NG
+# Zephyr SDK
 
-This project is to replace the previous Yocto based SDK with a new framework for
-building the Zephyr SDK using [crosstool-ng](https://crosstool-ng.github.io/).
-(Some tools are still built using Yocto/Bitbake).
+The Zephyr Software Development Kit (SDK) includes the toolchains for all
+supported target architectures as well as the host tools, such as QEMU and
+OpenOCD, for testing and debugging the Zephyr RTOS.
 
-The repository consists of configurations for the various architectures (not all
-fully tested) and a script that builds on Linux (x86_64) and Mac in a consistent
-way, applying patches where needed.
+The toolchains for the following target architectures are supported:
 
-Currently we build the following toolchains:
-- i586
-- nios2
-- arc
-- arc64
-- arm
-- arm64
-- riscv64
-- sparc
-- mips
-- xtensa (sample_controller, intel_apl_adsp, intel_s1000, intel_bdw_adsp,
-intel_byt_adsp, nxp_imx_adsp, nxp_imx8m_adsp)
+- ARC (32-bit and 64-bit; ARCv1, ARCv2, ARCv3)
+- ARM (32-bit and 64-bit; ARMv6, ARMv7, ARMv8; A/R/M Profiles)
+- MIPS (32-bit and 64-bit)
+- Nios II
+- RISC-V (32-bit and 64-bit; RV32I, RV32E, RV64I)
+- x86 (32-bit and 64-bit)
+- Xtensa (sample_controller, intel_apl_adsp, intel_bdw_adsp, intel_byt_adsp,
+  intel_s1000, nxp_imx_adsp, nxp_imx8m_adsp)
 
-To build for any of the above, run:
+The following host tools are available as part of the Zephyr SDK:
 
-```
-./go.sh <arch>
-```
+- BOSSA
+- OpenOCD
+- QEMU
+- Xilinx QEMU
 
-Production builds are done using the scripts in `.buildkite/` and
-`.github/workflows/` which identify some packages you'll need to
-have installed for the above command to work.
+## Releases
 
-When building locally be aware that `./go.sh` is written assuming it's
-invoked in a pristine workspace.  That means if you pull an update of
-this repository `./go.sh` will not update the `crosstool-ng` source or
-rebuild the `bin/ct-ng` utility to match the updated configuration.  This
-can produce very confusing results.
+The Zephyr SDK bundle releases are available for the following host platforms:
 
-## Released Binaries packages
+- Linux (AArch64, x86-64)
+- macOS (AArch64, x86-64)
+- Windows (x86-64)
 
-Pre-built binary releases of the SDK are made for a few OSes and host
-architectures. They can be found here:
+These binaries can be downloaded from here:
 
 https://github.com/zephyrproject-rtos/sdk-ng/releases
 
-## PR Builds
+## Build Process
 
-Successfull PR builds will get posted here:
+The Zephyr Project maintains the infrastructure necessary to build and test the
+Zephyr SDK, and it is highly recommended to utilise this infrastructure for
+generating the Zephyr SDK binaries.
 
-```
-https://builds.zephyrproject.org/zephyrproject-rtos/sdk-ng/<PR_NUMBER>/zephyr-sdk-<VERSION>-setup.run
-```
+When you submit a pull request to the Zephyr SDK repository, CI will
+automatically build and test the Zephyr SDK with the changes in the pull
+request and upload the binaries to the pull request check run, which you can
+download for further local testing as necessary.
+
+Locally building the Zephyr SDK is currently not supported because setting up
+the environment to do so is highly complex and the resource requirements far
+exceed what is found on common developer machines.
 
 ## Release Process
 
-To release a new SDK:
+To create a new Zephyr SDK release:
 
-- Update the VERSION file with the new version, for example 0.11.0 or
-  0.11.0-beta1 etc.
-- On https://github.com/zephyrproject-rtos/sdk-ng/releases, create the release
-  tag and add the release information.
-- Once the release is created, CI will build the SDK image and will upload it to
-  the release page.
+- Update the VERSION file with the new version (e.g. 0.11.0 or 0.11.0-beta1)
+- On https://github.com/zephyrproject-rtos/sdk-ng/releases, create a new tag
+  named with the version number prefixed with `v` (e.g. for the version 0.11.0,
+  the tag name should be `v0.11.0`) and add the release information.
+- Once the release is published, CI will build the Zephyr SDK bundles for all
+  supported host platforms and will upload the binaries to the release page.
