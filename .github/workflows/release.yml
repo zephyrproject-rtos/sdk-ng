@@ -6,6 +6,9 @@ on:
   release:
     types: [ published ]
 
+permissions:
+  contents: write
+
 env:
   BUNDLE_PREFIX: zephyr-sdk
 
