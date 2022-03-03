@@ -1,5 +1,15 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.14.0-beta1
+
+- general:
+  * Added multi-platform toolchain support (Linux, macOS and Windows).
+  * Replaced self-extracting archive (SFX) distribution format with
+    conventional archive with a setup script that can be manually run after
+    extraction.
+  * Changed Xtensa target triplet names to include the target SoC name
+    (e.g. `xtensa-sample_controller_zephyr-elf`).
+
 ## Zephyr SDK 0.13.2
 
 - gcc:
