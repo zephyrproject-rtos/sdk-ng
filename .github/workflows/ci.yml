@@ -566,7 +566,12 @@ jobs:
         EOF
         fi
 
-        # Configure Windows Python library
+        # Configure GDB Python scripting support
+        cat <<EOF >> .config
+        CT_GDB_CROSS_PYTHON=y
+        CT_GDB_CROSS_BUILD_NO_PYTHON=y
+        EOF
+
         if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
           # Clone mingw-w64-libpython cross compilation kit
           git clone \
@@ -576,8 +581,12 @@ jobs:
           export LIBPYTHON_KIT_ROOT=${WORKSPACE}/mingw-w64-libpython/python-3.8.3
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
-        CT_GDB_CROSS_PYTHON=y
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
+        EOF
+        else
+          # Use Python 3.8 for Linux and macOS builds
+          cat <<EOF >> .config
+        CT_GDB_CROSS_PYTHON_BINARY="python3.8"
         EOF
         fi
 
