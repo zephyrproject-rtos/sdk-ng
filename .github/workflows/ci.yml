@@ -572,8 +572,8 @@ jobs:
           git clone \
             https://github.com/stephanosio/mingw-w64-libpython.git \
             ${WORKSPACE}/mingw-w64-libpython
-          # Use Python 3.6.8
-          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/mingw-w64-libpython/python-3.6.8
+          # Use Python 3.8.3
+          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/mingw-w64-libpython/python-3.8.3
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON=y
