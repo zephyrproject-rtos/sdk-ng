@@ -576,6 +576,7 @@ jobs:
           export LIBPYTHON_KIT_ROOT=${WORKSPACE}/mingw-w64-libpython/python-3.6.8
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
+        CT_GDB_CROSS_PYTHON=y
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         fi
