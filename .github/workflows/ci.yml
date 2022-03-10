@@ -572,19 +572,41 @@ jobs:
         CT_GDB_CROSS_BUILD_NO_PYTHON=y
         EOF
 
-        if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
-          # Clone mingw-w64-libpython cross compilation kit
+        if [ "${{ matrix.host.name }}" == "linux-aarch64" ]; then
+          # Clone crosskit-aarch64-linux-libpython cross compilation kit
           git clone \
-            https://github.com/stephanosio/mingw-w64-libpython.git \
-            ${WORKSPACE}/mingw-w64-libpython
+            https://github.com/stephanosio/crosskit-aarch64-linux-libpython.git \
+            ${WORKSPACE}/crosskit-aarch64-linux-libpython
+          # Use Python 3.8.0
+          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-aarch64-linux-libpython/python-3.8.0
+          # Set Python configuration resolver for GDB
+          cat <<EOF >> .config
+        CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
+        EOF
+        elif [ "${{ matrix.host.name }}" == "macos-aarch64" ]; then
+          # Clone crosskit-aarch64-darwin-libpython cross compilation kit
+          git clone \
+            https://github.com/stephanosio/crosskit-aarch64-darwin-libpython.git \
+            ${WORKSPACE}/crosskit-aarch64-darwin-libpython
+          # Use Python 3.8.12
+          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-aarch64-darwin-libpython/python-3.8.12
+          # Set Python configuration resolver for GDB
+          cat <<EOF >> .config
+        CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
+        EOF
+        elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Clone crosskit-mingw-w64-libpython cross compilation kit
+          git clone \
+            https://github.com/stephanosio/crosskit-mingw-w64-libpython.git \
+            ${WORKSPACE}/crosskit-mingw-w64-libpython
           # Use Python 3.8.3
-          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/mingw-w64-libpython/python-3.8.3
+          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-mingw-w64-libpython/python-3.8.3
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         else
-          # Use Python 3.8 for Linux and macOS builds
+          # Use Python 3.8 for non-Canadian Linux and macOS builds
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="python3.8"
         EOF
