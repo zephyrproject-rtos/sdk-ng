@@ -15,4 +15,4 @@ set(ZEPHYR_TOOLCHAIN_VARIANT zephyr)
 
 # Those are CMake package parameters.
 set(Zephyr-sdk_FOUND True)
-set(Zephyr-sdk_DIR   ${ZEPHYR_SDK_INSTALL_DIR})        
+set(Zephyr-sdk_DIR   ${ZEPHYR_SDK_INSTALL_DIR})
