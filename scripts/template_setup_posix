@@ -102,7 +102,7 @@ if [ "${do_hosttools}" = "y" ]; then
   echo "Installing host tools ..."
   case ${OSTYPE} in
     linux-gnu*)
-      ./zephyr-sdk-x86_64-hosttools-standalone-0.9.sh -y -d .
+      ./zephyr-sdk-${HOSTTYPE}-hosttools-standalone-0.9.sh -y -d .
       ;;
     darwin*)
       echo "SKIPPED: macOS host tools are not available yet."
