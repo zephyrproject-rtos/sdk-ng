@@ -1,18 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.14.0-rc1
-
-- general:
-  * Fixed host tools setup failure when running `setup.sh` on AArch64 Linux.
-
-- gdb:
-  * Removed GCC dynamic library dependencies for improved cross-distro
-    compatibility.
-  * Fixed missing Python scripting functionality for `linux-aarch64`,
-    `macos-aarch64`, and `windows-x86_64` builds.
-  * Fixed broken command line key inputs on Windows.
-
-## Zephyr SDK 0.14.0-beta1
+## Zephyr SDK 0.14.0
 
 - general:
   * Added multi-platform toolchain support (Linux, macOS and Windows).
