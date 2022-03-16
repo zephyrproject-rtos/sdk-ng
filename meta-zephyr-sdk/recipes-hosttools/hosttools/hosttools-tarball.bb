@@ -6,6 +6,7 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384
 TOOLCHAIN_TARGET_TASK ?= ""
 
 TOOLCHAIN_HOST_TASK ?= "\
+    nativesdk-arc-qemu \
     nativesdk-zephyr-qemu \
     nativesdk-xilinx-qemu \
     nativesdk-openocd \
