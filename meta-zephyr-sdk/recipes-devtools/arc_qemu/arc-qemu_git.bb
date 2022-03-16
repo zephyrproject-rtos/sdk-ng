@@ -5,21 +5,18 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "59f1efa351fefd631650a9a49da64fa082103ac2"
-SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
-	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
-	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
+SRCREV = "2625a6fbc3f60233e1d340931d00242d82230091"
+SRC_URI = "git://github.com/foss-for-synopsys-dwc-arc-processors/qemu.git;protocol=https \
 	   file://cross.patch \
 "
-
-SRC_URI[bios-128k.sha256sum] = "943c077c3925ee7ec85601fb12937a0988c478a95523a628cd7e61c639dd6e81"
-SRC_URI[bios-256k.sha256sum] = "19133167cc0bfb2a9e8ce9567efcd013a4ab80d2f3522ac66df0c23c68c18984"
 
 BBCLASSEXTEND = "native nativesdk"
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 INHIBIT_PACKAGE_STRIP = "1"
 
 S = "${WORKDIR}/git"
+
+arc_qemu_prefix = "${base_prefix}/usr/synopsys"
 
 inherit autotools pkgconfig
 
@@ -195,42 +192,39 @@ inherit autotools pkgconfig
 #  --enable-numa            enable libnuma support
 
 
-#--disable-blobs : BIOS needed for x86
-#--disable-fdt: Cannot use if supporting ARM
-
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu mipsel-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
+QEMUS_BUILT = "arc-softmmu arc64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
   --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
   --disable-kvm --disable-parallels --disable-replication \
-  --disable-live-block-migration --disable-dmg \
+  --disable-live-block-migration --disable-dmg --disable-fdt --disable-blobs \
   "
 
-copy_seabios() {
-    cp ${WORKDIR}/bios-128k.bin ${S}/pc-bios/bios.bin
-    cp ${WORKDIR}/bios-256k.bin ${S}/pc-bios/bios-256k.bin
-}
-
-do_unpack_append() {
-    bb.build.exec_func('copy_seabios', d)
-}
+# NOTE: Once --prefix is set, QEMU configure script automatically figures out adequate sysconfdir,
+#       libexecdir and localstatedir based on the prefix directory; therefore, it is not necessary
+#       to manually specify these directories. Using the global directory variables to specify
+#       these directories will lead to shared file conflict with the upstream QEMU that resides in
+#       /usr.
 
 do_configure() {
-    ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
-        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir} \
-	--meson=meson
-}
+    # Unset the install path environment variables set by the BitBake because the new configure
+    # script picks these up, and that interferes with prefix-based install path resolution.
+    unset libdir
+    unset libexecdir
+    unset includedir
+    unset bindir
+    unset mandir
+    unset datadir
+    unset docdir
+    unset sysconfdir
+    unset local_statedir
+    unset firmwarepath
+    unset localedir
 
-do_install_append() {
-    # Link Xilinx QEMU executables
-    ln -sf ../xilinx/bin/qemu-system-aarch64 ${D}${bindir}/qemu-system-xilinx-aarch64
-    ln -sf ../xilinx/bin/qemu-system-microblazeel ${D}${bindir}/qemu-system-xilinx-microblazeel
-
-    # Link ARC (Synopsys) QEMU executables
-    ln -sf ../synopsys/bin/qemu-system-arc ${D}${bindir}/qemu-system-arc
-    ln -sf ../synopsys/bin/qemu-system-arc64 ${D}${bindir}/qemu-system-arc64
+    ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${arc_qemu_prefix}  \
+        --meson=meson
 }
 
 FILES_${PN} = " \
