@@ -1,0 +1,41 @@
+From 6c4eef1d92e9e42fdbc888365cab3c95fb33c605 Mon Sep 17 00:00:00 2001
+From: Ross Burton <ross.burton@intel.com>
+Date: Tue, 3 Jul 2018 13:59:09 +0100
+Subject: [PATCH] Make CPU family warnings fatal
+
+Upstream-Status: Inappropriate [OE specific]
+Signed-off-by: Ross Burton <ross.burton@intel.com>
+
+---
+ mesonbuild/envconfig.py   | 2 +-
+ mesonbuild/environment.py | 4 +---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/mesonbuild/envconfig.py b/mesonbuild/envconfig.py
+index 307aac3..66fb7ec 100644
+--- a/mesonbuild/envconfig.py
++++ b/mesonbuild/envconfig.py
+@@ -267,7 +267,7 @@ class MachineInfo(HoldableObject):
+ 
+         cpu_family = literal['cpu_family']
+         if cpu_family not in known_cpu_families:
+-            mlog.warning(f'Unknown CPU family {cpu_family}, please report this at https://github.com/mesonbuild/meson/issues/new')
++            raise EnvironmentException('Unknown CPU family {}, see https://wiki.yoctoproject.org/wiki/Meson/UnknownCPU for directions.'.format(cpu_family))
+ 
+         endian = literal['endian']
+         if endian not in ('little', 'big'):
+diff --git a/mesonbuild/environment.py b/mesonbuild/environment.py
+index 71286a5..179917e 100644
+--- a/mesonbuild/environment.py
++++ b/mesonbuild/environment.py
+@@ -352,9 +352,7 @@ def detect_cpu_family(compilers: CompilersDict) -> str:
+             trial = 'ppc64'
+ 
+     if trial not in known_cpu_families:
+-        mlog.warning(f'Unknown CPU family {trial!r}, please report this at '
+-                     'https://github.com/mesonbuild/meson/issues/new with the '
+-                     'output of `uname -a` and `cat /proc/cpuinfo`')
++        raise EnvironmentException('Unknown CPU family %s, see https://wiki.yoctoproject.org/wiki/Meson/UnknownCPU for directions.' % trial)
+ 
+     return trial
+ 
