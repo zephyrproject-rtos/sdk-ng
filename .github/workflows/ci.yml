@@ -362,8 +362,10 @@ jobs:
         sudo mkdir -p ${WORKSPACE}
 
         # Clean up working directories
+        shopt -s dotglob
         sudo rm -rf ${GITHUB_WORKSPACE}/*
         sudo rm -rf ${WORKSPACE}/*
+        shopt -u dotglob
 
         # Allow non-root access to the working directories
         sudo chmod -R 777 ${GITHUB_WORKSPACE}
@@ -440,8 +442,10 @@ jobs:
         fi
 
         # Clean up working directories
+        shopt -s dotglob
         rm -rf ${GITHUB_WORKSPACE}/*
         rm -f ${RUNNER_TEMP}/Workspace.sparseimage
+        shopt -u dotglob
 
         # Create case-sensitive workspace volume for macOS
         hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
@@ -731,7 +735,9 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         sudo rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
@@ -740,7 +746,9 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
@@ -819,7 +827,9 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         sudo rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install common dependencies
         sudo apt-get update
@@ -832,7 +842,9 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install required dependencies if running inside a GitHub-hosted runner
         # (self-hosted runners are expected to provide all required dependencies)
@@ -894,7 +906,9 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         sudo rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install common dependencies
         sudo apt-get update
@@ -907,7 +921,9 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install required dependencies if running inside a GitHub-hosted runner
         # (self-hosted runners are expected to provide all required dependencies)
@@ -1065,7 +1081,9 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         sudo rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install required system packages
         sudo apt-get update
@@ -1090,7 +1108,9 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install required system packages
         brew install ccache coreutils dos2unix dtc gperf jq ninja
@@ -1112,7 +1132,9 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: |
         # Clean up working directories
+        shopt -s dotglob
         rm -rf ${GITHUB_WORKSPACE}/*
+        shopt -u dotglob
 
         # Install required system packages
         choco install ccache dtc-msys2 gperf jq ninja
