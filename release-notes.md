@@ -4,6 +4,7 @@
 
 - qemu:
   * Updated to QEMU 6.2 release.
+  * Added I2C device emulation support for ARM targets.
 
 ## Zephyr SDK 0.14.0
 
