@@ -525,6 +525,29 @@ jobs:
         name: version
         path: ${{ runner.temp }}
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Download cached source files
+      continue-on-error: true
+      run: |
+        SRC_CACHE_BASE="s3://cache-sdk/crosstool-ng-sources"
+        SRC_CACHE_DIR="${{ matrix.host.name }}/${{ matrix.target }}"
+        SRC_CACHE_URI="${SRC_CACHE_BASE}/${SRC_CACHE_DIR}"
+
+        # Download cached source files
+        mkdir -p ${WORKSPACE}/sources
+        pushd ${WORKSPACE}/sources
+        aws s3 sync ${SRC_CACHE_URI} .
+        popd
+
+        # Export environment variables
+        echo "SRC_CACHE_URI=${SRC_CACHE_URI}" >> $GITHUB_ENV
+
     - name: Build toolchain
       run: |
         # Set output path
@@ -694,6 +717,13 @@ jobs:
         md5sum ${ARCHIVE_FILE} > md5.sum
         sha256sum ${ARCHIVE_FILE} > sha256.sum
 
+    - name: Sync downloaded source files to cache
+      continue-on-error: true
+      run: |
+        pushd ${WORKSPACE}/sources
+        aws s3 sync . ${SRC_CACHE_URI}
+        popd
+
     - name: Prepare toolchain build log
       if: always()
       run: |
@@ -761,10 +791,37 @@ jobs:
         submodules: recursive
         persist-credentials: false
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Download cached source files (Linux)
+      if: startsWith(matrix.host.name, 'linux-')
+      continue-on-error: true
+      run: |
+        SRC_CACHE_BASE="s3://cache-sdk/poky-sources"
+        SRC_CACHE_DIR="${{ matrix.host.name }}"
+        SRC_CACHE_URI="${SRC_CACHE_BASE}/${SRC_CACHE_DIR}"
+        POKY_DOWNLOADS="${RUNNER_TEMP}/poky-downloads"
+
+        # Download cached source files
+        mkdir -p ${POKY_DOWNLOADS}
+        pushd ${POKY_DOWNLOADS}
+        aws s3 sync ${SRC_CACHE_URI} .
+        popd
+
+        # Export environment variables
+        echo "SRC_CACHE_URI=${SRC_CACHE_URI}" >> $GITHUB_ENV
+        echo "POKY_DOWNLOADS=${POKY_DOWNLOADS}" >> $GITHUB_ENV
+
     - name: Build Linux host tools
       if: startsWith(matrix.host.name, 'linux-')
       run: |
         POKY_BASE=${GITHUB_WORKSPACE}/meta-zephyr-sdk
+        export META_DOWNLOADS="${POKY_DOWNLOADS}"
 
         # Check out Poky
         ${POKY_BASE}/scripts/meta-zephyr-sdk-clone.sh
@@ -795,6 +852,16 @@ jobs:
         # Compute checksum
         md5sum ${ARCHIVE_FILE} > md5.sum
         sha256sum ${ARCHIVE_FILE} > sha256.sum
+
+    - name: Sync downloaded source files to cache (Linux)
+      if: startsWith(matrix.host.name, 'linux-')
+      continue-on-error: true
+      run: |
+        pushd ${POKY_DOWNLOADS}
+        rm -rf git2
+        rm -rf svn
+        aws s3 sync . ${SRC_CACHE_URI}
+        popd
 
     - name: Upload toolchain build artifact
       if: startsWith(matrix.host.name, 'linux-') # FIXME: Do for all
