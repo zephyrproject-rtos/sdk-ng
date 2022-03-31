@@ -14,6 +14,21 @@ popd()
   command popd "$@" > /dev/null
 }
 
+ask_yn()
+{
+  local reply
+
+  while true; do
+    read -n 1 -r -p "$1 [y/n]? " reply && echo
+
+    case "${reply}" in
+      Y | y)  return 0 ;;
+      N | n)  return 1 ;;
+      *)      echo "Invalid choice '${reply}'" ;;
+    esac
+  done
+}
+
 # Display script usage
 usage()
 {
@@ -35,11 +50,8 @@ user_prompt()
   echo "distribution bundle archive."
   echo
 
-  read -n 1 -r -p "Register Zephyr SDK CMake package [y/n]? " yn && echo
-  [ "${yn}" = "y" ] && do_cmake_pkg="y"
-
-  read -n 1 -r -p "Install host tools [y/n]? " yn && echo
-  [ "${yn}" = "y" ] && do_hosttools="y"
+  ask_yn "Register Zephyr SDK CMake package" && do_cmake_pkg="y"
+  ask_yn "Install host tools" && do_hosttools="y"
 
   echo
 }
