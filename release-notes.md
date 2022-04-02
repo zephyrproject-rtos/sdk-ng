@@ -1,10 +1,14 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.14.1
+## Zephyr SDK 0.14.1-rc1
+
+- general:
+  * Added ESP32 and ESP32-S2 Xtensa toolchains.
 
 - qemu:
   * Updated to QEMU 6.2 release.
   * Added I2C device emulation support for ARM targets.
+  * Separated QEMU for ARC architecture from the upstream QEMU.
 
 ## Zephyr SDK 0.14.0
 
