@@ -8,6 +8,11 @@ on:
   pull_request_target:
     branches: [ main ]
   workflow_call:
+    secrets:
+      AWS_CACHE_SDK_ACCESS_KEY_ID:
+        required: true
+      AWS_CACHE_SDK_SECRET_ACCESS_KEY:
+        required: true
   workflow_dispatch:
     inputs:
       zephyr-ref:

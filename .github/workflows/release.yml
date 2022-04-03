@@ -17,6 +17,9 @@ jobs:
   ci:
     name: CI
     uses: ./.github/workflows/ci.yml
+    secrets:
+      AWS_CACHE_SDK_ACCESS_KEY_ID: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
+      AWS_CACHE_SDK_SECRET_ACCESS_KEY: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
 
   # Publish release assets
   release:
