@@ -1281,9 +1281,9 @@ jobs:
 
         if [ "${{ runner.os }}" == "Windows" ]; then
           # NOTE: Escape forward slashes because MinGW (bash)
-          ./setup.cmd //c //t
+          ./setup.cmd //t all //h //c
         else
-          ./setup.sh -c -t
+          ./setup.sh -t all -h -c
         fi
 
         # Clean up bundle archive to reduce disk usage
