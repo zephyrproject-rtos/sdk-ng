@@ -1061,24 +1061,6 @@ jobs:
         ## Extract CMake package archive
         ${EXTRACT} ${ARTIFACT_ROOT}/cmake_${HOST}/cmake_${HOST}.${EXT}
 
-        # Stage toolchains
-        ## Generate target list from the workflow matrix
-        TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]')
-
-        ## Extract all toolchains
-        for TARGET in ${TARGETS}; do
-          TOOLCHAIN_ARTIFACT=toolchain_${HOST}_${TARGET}
-
-          # Verify toolchain archive checksum
-          pushd ${ARTIFACT_ROOT}/${TOOLCHAIN_ARTIFACT}
-          md5sum --check md5.sum
-          sha256sum --check sha256.sum
-          popd
-
-          # Extract toolchain archive
-          ${EXTRACT} ${ARTIFACT_ROOT}/${TOOLCHAIN_ARTIFACT}/${TOOLCHAIN_ARTIFACT}.${EXT}
-        done
-
         # Stage host tools
         HOSTTOOLS_ARTIFACT=hosttools_${HOST}
         if [ -d ${ARTIFACT_ROOT}/${HOSTTOOLS_ARTIFACT} ]; then
@@ -1104,7 +1086,36 @@ jobs:
         esac
         popd
 
-        # Create distribution bundle archive
+        # Create minimal (without toolchains) distribution bundle archive
+        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
+          ${TAR} -zcvf ${ARCHIVE_NAME}_minimal.${EXT} --owner=0 --group=0 \
+                 -C . ${ARCHIVE_DIR}
+        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
+          zip -r ${ARCHIVE_NAME}_minimal.${EXT} ${ARCHIVE_DIR}
+        fi
+
+        # Stage toolchains
+        pushd ${ARCHIVE_DIR}
+
+        ## Generate target list from the workflow matrix
+        TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]')
+
+        ## Extract all toolchains
+        for TARGET in ${TARGETS}; do
+          TOOLCHAIN_ARTIFACT=toolchain_${HOST}_${TARGET}
+
+          # Verify toolchain archive checksum
+          pushd ${ARTIFACT_ROOT}/${TOOLCHAIN_ARTIFACT}
+          md5sum --check md5.sum
+          sha256sum --check sha256.sum
+          popd
+
+          # Extract toolchain archive
+          ${EXTRACT} ${ARTIFACT_ROOT}/${TOOLCHAIN_ARTIFACT}/${TOOLCHAIN_ARTIFACT}.${EXT}
+        done
+        popd
+
+        # Create full distribution bundle archive
         if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
           ${TAR} -zcvf ${ARCHIVE_NAME}.${EXT} --owner=0 --group=0 \
                  -C . ${ARCHIVE_DIR}
@@ -1113,8 +1124,8 @@ jobs:
         fi
 
         # Compute checksum
-        md5sum ${ARCHIVE_NAME}.${EXT} > md5.sum
-        sha256sum ${ARCHIVE_NAME}.${EXT} > sha256.sum
+        md5sum ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > md5.sum
+        sha256sum ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > sha256.sum
 
     - name: Upload distribution bundle
       uses: actions/upload-artifact@v2
@@ -1122,6 +1133,7 @@ jobs:
         name: ${{ env.BUNDLE_ARCHIVE_NAME }}
         path: |
           ${{ env.BUNDLE_ARCHIVE_NAME }}.${{ matrix.host.archive }}
+          ${{ env.BUNDLE_ARCHIVE_NAME }}_minimal.${{ matrix.host.archive }}
           md5.sum
           sha256.sum
 
@@ -1166,7 +1178,7 @@ jobs:
         # Install required system packages
         sudo apt-get update
         sudo apt-get install -y ccache device-tree-compiler dos2unix gperf \
-                                jq ninja-build
+                                jq ninja-build wget
 
         # Upgrade pip
         python3 -m pip install --upgrade pip
@@ -1191,7 +1203,7 @@ jobs:
         shopt -u dotglob
 
         # Install required system packages
-        brew install ccache coreutils dos2unix dtc gperf jq ninja
+        brew install ccache coreutils dos2unix dtc gperf jq ninja wget
 
         # Upgrade pip
         sudo python3 -m pip install --upgrade pip
@@ -1215,7 +1227,7 @@ jobs:
         shopt -u dotglob
 
         # Install required system packages
-        choco install ccache dtc-msys2 gperf jq ninja
+        choco install ccache dtc-msys2 gperf jq ninja wget unzip
 
         # Upgrade pip
         python3 -m pip install --upgrade pip
