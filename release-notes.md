@@ -1,8 +1,10 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.14.1-rc1
+## Zephyr SDK 0.14.1-rc2
 
 - general:
+  * Introduced minimal distribution bundle that supports selective download
+    and installation of the target toolchains.
   * Added ESP32 and ESP32-S2 Xtensa toolchains.
 
 - qemu:
