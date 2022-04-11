@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.14.1-rc2
+## Zephyr SDK 0.14.1
 
 - general:
   * Introduced minimal distribution bundle that supports selective download
