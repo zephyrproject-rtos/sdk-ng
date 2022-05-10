@@ -77,8 +77,17 @@ jobs:
 
     steps:
     - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v2
       with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
         persist-credentials: false
 
@@ -484,8 +493,17 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v2
       with:
+        submodules: recursive
+        persist-credentials: false
+
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
         submodules: recursive
         persist-credentials: false
 
@@ -791,8 +809,17 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v2
       with:
+        submodules: recursive
+        persist-credentials: false
+
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
         submodules: recursive
         persist-credentials: false
 
@@ -931,8 +958,16 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v2
       with:
+        persist-credentials: false
+
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
 
     - name: Build CMake package
@@ -1012,8 +1047,17 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v2
       with:
+        path: repository
+        persist-credentials: false
+
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
         path: repository
         persist-credentials: false
 
