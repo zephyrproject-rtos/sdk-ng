@@ -1,5 +1,15 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.14.2-rc1
+
+- gcc:
+  * Fixed incorrect newlib-nano include path specified by the `nano.specs`
+    file.
+
+- newlib:
+  * Enabled C99 format specifier support for the newlib-nano, which only had
+    format specifier support up to that of the C89 standard.
+
 ## Zephyr SDK 0.14.1
 
 - general:
