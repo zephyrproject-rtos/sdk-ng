@@ -185,8 +185,17 @@ version=$(<sdk_version)
 
 # Resolve host type
 case ${OSTYPE} in
-  linux-gnu*)  host="linux-${HOSTTYPE}" ;;
-  darwin*)     host="macos-${HOSTTYPE}" ;;
+  linux-gnu*)
+    host="linux-${HOSTTYPE}"
+    ;;
+  darwin*)
+    # Bash 3.x on AArch64 Darwin sets HOSTTYPE to 'arm64'
+    if [ "${HOSTTYPE}" = "arm64" ]; then
+      HOSTTYPE="aarch64"
+    fi
+
+    host="macos-${HOSTTYPE}"
+    ;;
   *)
     echo "ERROR: Unsupported host operating system"
     exit 5
