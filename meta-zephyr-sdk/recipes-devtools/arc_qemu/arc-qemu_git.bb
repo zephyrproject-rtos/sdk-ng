@@ -5,8 +5,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "2625a6fbc3f60233e1d340931d00242d82230091"
-SRC_URI = "git://github.com/foss-for-synopsys-dwc-arc-processors/qemu.git;protocol=https \
+SRCREV = "7772126b19fb09a377f942254fef40c3555d92ca"
+SRC_URI = "git://github.com/foss-for-synopsys-dwc-arc-processors/qemu.git;protocol=https;nobranch=1 \
 	   file://cross.patch \
 "
 
