@@ -1,6 +1,9 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.14.2-rc1
+## Zephyr SDK 0.14.2
+
+- general:
+  * Fixed minimal distribution bundle toolchain download failure on M1 Macs.
 
 - gcc:
   * Fixed incorrect newlib-nano include path specified by the `nano.specs`
@@ -9,6 +12,12 @@
 - newlib:
   * Enabled C99 format specifier support for the newlib-nano, which only had
     format specifier support up to that of the C89 standard.
+
+- qemu:
+  * Updated ARC QEMU to 2022.04.26 relesae.
+
+- openocd:
+  * Fixed Cyclone V SoC JTAG device order.
 
 ## Zephyr SDK 0.14.1
 
