@@ -629,7 +629,7 @@ jobs:
         # Configure GDB Python scripting support
         cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON=y
-        CT_GDB_CROSS_BUILD_NO_PYTHON=y
+        CT_GDB_CROSS_PYTHON_VARIANT=y
         EOF
 
         if [ "${{ matrix.host.name }}" == "linux-aarch64" ]; then
