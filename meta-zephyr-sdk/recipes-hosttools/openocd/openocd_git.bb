@@ -3,13 +3,10 @@ LIC_FILES_CHKSUM = "file://LICENSES/preferred/GPL-2.0;md5=71ce3767d42ca42cd575f9
 DEPENDS = "libusb-compat hidapi libftdi"
 RDEPENDS_${PN} = "libusb1 hidapi"
 
-# The various arc files are based on the commit e781e73a39bc5c845b73dc96b751d867278a7583
-# of https://github.com/foss-for-synopsys-dwc-arc-processors/openocd
-
 SRC_URI = " \
 	git://github.com/zephyrproject-rtos/openocd.git;protocol=https;nobranch=1 \
 	"
-SRCREV = "af169e805396e5f7ab926aa32ba293a618a894f7"
+SRCREV = "42b6471c1f6c3236ec762e9a4fde62c84ab6861d"
 
 S = "${WORKDIR}/git"
 
