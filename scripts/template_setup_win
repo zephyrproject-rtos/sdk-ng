@@ -26,8 +26,9 @@ exit /b 0
 REM # Initialise toolchain list
 set TOOLCHAINS=
 set TOOLCHAINS=%TOOLCHAINS% aarch64-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% arc64-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% arc-zephyr-elf
+REM # FIXME: Re-enable ARC when the patches for the latest toolchains are available
+REM set TOOLCHAINS=%TOOLCHAINS% arc64-zephyr-elf
+REM set TOOLCHAINS=%TOOLCHAINS% arc-zephyr-elf
 set TOOLCHAINS=%TOOLCHAINS% arm-zephyr-eabi
 set TOOLCHAINS=%TOOLCHAINS% mips-zephyr-elf
 set TOOLCHAINS=%TOOLCHAINS% nios2-zephyr-elf
