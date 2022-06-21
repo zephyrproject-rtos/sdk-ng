@@ -15,7 +15,7 @@ SRC_URI = "https://github.com/mesonbuild/meson/releases/download/${PV}/meson-${P
            file://0002-Support-building-allarch-recipes-again.patch \
            file://0001-is_debianlike-always-return-False.patch \
            "
-SRC_URI[sha256sum] = "13dee549a7ba758b7e33ce7719f28d1d337a98d10d378a4779ccc996f5a2fc49"
+SRC_URI[sha256sum] = "0a35cfd4cb779a6a415ad3ccbf2d4143334e96139125585ce49915bec494da02"
 
 UPSTREAM_CHECK_URI = "https://github.com/mesonbuild/meson/releases"
 UPSTREAM_CHECK_REGEX = "meson-(?P<pver>\d+(\.\d+)+)\.tar"
