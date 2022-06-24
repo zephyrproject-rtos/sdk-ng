@@ -1458,6 +1458,7 @@ jobs:
               ;;
             riscv64-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_riscv32 "
+              PLATFORM_ARGS+="-p qemu_riscv32e "
               PLATFORM_ARGS+="-p qemu_riscv64 "
               ;;
             sparc-zephyr-elf)
