@@ -181,9 +181,8 @@ jobs:
 
         if [ "${build_target_all}" == "y" ]; then
           build_target_aarch64_zephyr_elf="y"
-          # FIXME: Re-enable ARC when the patches for the latest toolchains are available
-          # build_target_arc64_zephyr_elf="y"
-          # build_target_arc_zephyr_elf="y"
+          build_target_arc64_zephyr_elf="y"
+          build_target_arc_zephyr_elf="y"
           build_target_arm_zephyr_eabi="y"
           build_target_mips_zephyr_elf="y"
           build_target_nios2_zephyr_elf="y"
