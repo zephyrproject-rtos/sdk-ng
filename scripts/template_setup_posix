@@ -118,9 +118,8 @@ pushd "$(dirname "${BASH_SOURCE[0]}")"
 # Initialise toolchain list
 toolchains=(
   "aarch64-zephyr-elf"
-  # FIXME: Re-enable ARC when the patches for the latest toolchains are available
-  # "arc64-zephyr-elf"
-  # "arc-zephyr-elf"
+  "arc64-zephyr-elf"
+  "arc-zephyr-elf"
   "arm-zephyr-eabi"
   "mips-zephyr-elf"
   "nios2-zephyr-elf"
