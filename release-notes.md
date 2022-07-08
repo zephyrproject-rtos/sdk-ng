@@ -1,5 +1,40 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.15.0-beta1
+
+- general:
+  * Added ARCv3 support to the toolchains.
+
+- binutils:
+  * Updated to Binutils 2.38 release.
+
+- gcc:
+  * Updated to GCC 12.1 release.
+  * Added multi-libs for the RISC-V base instruction sets (rv32i, rv32e, rv64i)
+    to increase the ISA extension configuration coverage.
+  * Added multi-libs for the RISC-V bit manipulation (Bitmanip) extensions.
+
+- gdb:
+  * Updated to GDB 12.1 release.
+  * Added separate GDB executable, gdb-py, supporting Python scripting and made
+    the default GDB executable, gdb, build without Python scripting support
+    such that it does not depend on a specific version of libpython.
+  * Removed Python incapable GDB executable, gdb-no-py, which is no longer
+    needed because it is equivalent to the default GDB executable.
+  * Disabled unneeded "mini debuginfo" support for the macOS GDB in order to
+    remove liblzma dependency.
+  * Added GDB build for ARC64 architecture.
+
+- newlib:
+  * Added ARCv3 support.
+
+- qemu:
+  * Updated to QEMU 7.0 release.
+
+- openocd:
+  * Updated OpenOCD to the commit 480d4e17727864f75dc60e22cb1a42e022cb1db3 (the
+    latest version as of 11 June 2022).
+
 ## Zephyr SDK 0.14.2
 
 - general:
