@@ -57,10 +57,43 @@ jobs:
         sha256sum * > ${GITHUB_WORKSPACE}/sha256.sum
         popd
 
-    - name: Upload release assets
+    # NOTE: The release asset upload action is called in multiple parts because the
+    #       'action-gh-release' action attempts to load all specified release assets
+    #       into the runner memory at once and this may cause the runner instance to
+    #       run out of memory (see the GitHub issue #520).
+    - name: Upload release assets (host tools)
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          assets/*
+          assets/hosttools_*
+
+    - name: Upload release assets (Linux toolchains)
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          assets/toolchain_linux*
+
+    - name: Upload release assets (macOS toolchains)
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          assets/toolchain_macos*
+
+    - name: Upload release assets (Windows toolchains)
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          assets/toolchain_windows*
+
+    - name: Upload release assets (Distribution bundles)
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          assets/${{ env.BUNDLE_PREFIX }}-*
+
+    - name: Upload release assets (checksum)
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
           md5.sum
           sha256.sum
