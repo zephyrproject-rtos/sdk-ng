@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.15.0-beta1
+## Zephyr SDK 0.15.0-beta2
 
 - general:
   * Added ARCv3 support to the toolchains.
