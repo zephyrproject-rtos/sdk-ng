@@ -1,5 +1,16 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.15.0-rc1
+
+- gcc:
+  * Fixed "undefined reference to `getentropy`" error when using
+    `std::random_device`.
+
+- newlib:
+  * Disabled C99 format specifier support for the newlib "nano" variant in
+    order to reduce its footprint. This feature will be kept disabled until
+    the picolibc gains wider adoption.
+
 ## Zephyr SDK 0.15.0-beta2
 
 - general:
