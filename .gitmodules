@@ -3,7 +3,7 @@
 	url = https://github.com/zephyrproject-rtos/crosstool-ng.git
 [submodule "binutils"]
 	path = binutils
-	url = https://github.com/zephyrproject-rtos/binutils-gdb.git
+	url = https://github.com/evgeniy-paltsev/binutils-gdb.git
 [submodule "newlib"]
 	path = newlib
 	url = https://github.com/zephyrproject-rtos/newlib-cygwin.git
