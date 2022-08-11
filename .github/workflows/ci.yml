@@ -1483,7 +1483,7 @@ jobs:
               # NOTE: no default user for this target is available
               ;;
             xtensa-intel_s1000_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_s1000_crb "
+              PLATFORM_ARGS+="-p intel_adsp_cavs18 "
               ;;
             xtensa-nxp_imx_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p nxp_adsp_imx8 "
