@@ -1,5 +1,16 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.15.0-rc2
+
+- binutils:
+  * Fixed various ARC architecture issues.
+
+- gcc:
+  * Fixed incorrect ARC enter pattern instruction offset.
+
+- qemu:
+  * Updated ARC QEMU to 2022.08.04 release.
+
 ## Zephyr SDK 0.15.0-rc1
 
 - gcc:
