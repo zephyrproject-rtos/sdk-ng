@@ -1,28 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.15.0-rc2
-
-- binutils:
-  * Fixed various ARC architecture issues.
-
-- gcc:
-  * Fixed incorrect ARC enter pattern instruction offset.
-
-- qemu:
-  * Updated ARC QEMU to 2022.08.04 release.
-
-## Zephyr SDK 0.15.0-rc1
-
-- gcc:
-  * Fixed "undefined reference to `getentropy`" error when using
-    `std::random_device`.
-
-- newlib:
-  * Disabled C99 format specifier support for the newlib "nano" variant in
-    order to reduce its footprint. This feature will be kept disabled until
-    the picolibc gains wider adoption.
-
-## Zephyr SDK 0.15.0-beta2
+## Zephyr SDK 0.15.0
 
 - general:
   * Added ARCv3 support to the toolchains.
@@ -35,6 +13,7 @@
   * Added multi-libs for the RISC-V base instruction sets (rv32i, rv32e, rv64i)
     to increase the ISA extension configuration coverage.
   * Added multi-libs for the RISC-V bit manipulation (Bitmanip) extensions.
+  * Fixed incorrect ARC enter pattern instruction offset.
 
 - gdb:
   * Updated to GDB 12.1 release.
@@ -48,10 +27,14 @@
   * Added GDB build for ARC64 architecture.
 
 - newlib:
+  * Disabled C99 format specifier support for the newlib "nano" variant in
+    order to reduce its footprint. This feature will be kept disabled until
+    the picolibc gains wider adoption.
   * Added ARCv3 support.
 
 - qemu:
   * Updated to QEMU 7.0 release.
+  * Updated ARC QEMU to 2022.08.04 release.
 
 - openocd:
   * Updated OpenOCD to the commit 480d4e17727864f75dc60e22cb1a42e022cb1db3 (the
