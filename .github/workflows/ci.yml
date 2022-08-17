@@ -489,7 +489,7 @@ jobs:
         # (self-hosted runners are expected to provide all required dependencies)
         if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
           brew install autoconf automake bash binutils boost coreutils gawk \
-                       gnu-sed gnu-tar help2man ncurses pkg-config
+                       gnu-sed gnu-tar help2man meson ncurses ninja pkg-config
         fi
 
         # Install dependencies for cross compilation
