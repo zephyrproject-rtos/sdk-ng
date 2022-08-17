@@ -13,3 +13,6 @@
 [submodule "gdb"]
 	path = gdb
 	url = https://github.com/zephyrproject-rtos/binutils-gdb.git
+[submodule "picolibc"]
+	path = picolibc
+	url = https://github.com/zephyrproject-rtos/picolibc.git
