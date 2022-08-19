@@ -822,8 +822,7 @@ jobs:
         #        match the container user UID because of the way GitHub
         #        Actions runner is implemented. Remove this workaround when
         #        GitHub comes up with a fundamental fix for this problem.
-        git config --global --add safe.directory ${GITHUB_WORKSPACE}
-        git config --global --add safe.directory ${RUNNER_TEMP}
+        git config --global --add safe.directory '*'
 
     - name: Set up build environment (Linux)
       if: ${{ runner.os == 'Linux' }}
