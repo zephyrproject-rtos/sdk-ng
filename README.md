@@ -49,6 +49,22 @@ Locally building the Zephyr SDK is currently not supported because setting up
 the environment to do so is highly complex and the resource requirements far
 exceed what is found on common developer machines.
 
+### Workflow to Test Patches with Zephyr SDK
+
+The following workflow can be used to test a patch for GCC, for example,
+building the SDK remotely:
+
+- Submit your **DRAFT** gcc PR to Zephyr's
+  [GCC fork](https://github.com/zephyrproject-rtos/gcc) (etc.)
+- Update `.gitmodules` in sdk-ng to point to the fork with your gcc commit(s)
+- Resync submodules (`git submodule sync --recursive && cd gcc && git pull`)
+- Checkout the gcc commit hash in sdk-ng's `gcc` submodule and commit the
+  `.gitmodule` changes (`git add .gitmodules gcc && git commit -s`)
+- Submit a **DRAFT** PR to sdk-ng with the submodule change(s)
+
+Zephyr's CI will then build a new toolchain, which will be available in the PR
+check step. Verify that the GCC fix behaves as expected with the generated SDK.
+
 ## Release Process
 
 To create a new Zephyr SDK release:
