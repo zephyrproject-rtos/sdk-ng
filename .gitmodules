@@ -9,7 +9,7 @@
 	url = https://github.com/zephyrproject-rtos/newlib-cygwin.git
 [submodule "gcc"]
 	path = gcc
-	url = https://github.com/zephyrproject-rtos/gcc.git
+	url = https://github.com/microbuilder/zephyr-gcc.git
 [submodule "gdb"]
 	path = gdb
 	url = https://github.com/zephyrproject-rtos/binutils-gdb.git
