@@ -18,7 +18,7 @@ on:
       zephyr-ref:
         description: 'Zephyr Ref (branch, tag, SHA, ...)'
         required: true
-        default: topic-sdk15
+        default: main
       host:
         description: 'Host'
         type: choice
