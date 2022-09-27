@@ -1,5 +1,19 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.15.1-rc1
+
+- general:
+  * Updated the Zephyr SDK CMake package to declare Thread Local Storage (TLS)
+    support.
+
+- gcc:
+  * Changed RV64I multi-libs to use the `medany` code model.
+  * Changed the default RISC-V library to build with Zicsr and Zifencei
+    extensions.
+  * Added RISC-V `rv32ifac` multi-lib.
+  * Added ARC `hs4x_rel31` CPU variant support.
+  * Disabled GOT indirection usage for weak symbol references on AArch64.
+
 ## Zephyr SDK 0.15.0
 
 - general:
