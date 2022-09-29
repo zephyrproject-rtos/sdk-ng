@@ -6,7 +6,7 @@ RDEPENDS_${PN} = "libusb1 hidapi"
 SRC_URI = " \
 	git://github.com/zephyrproject-rtos/openocd.git;protocol=https;nobranch=1 \
 	"
-SRCREV = "42b6471c1f6c3236ec762e9a4fde62c84ab6861d"
+SRCREV = "c5c47943dbd036079d96fe49ea9092f78abec427"
 
 S = "${WORKDIR}/git"
 
