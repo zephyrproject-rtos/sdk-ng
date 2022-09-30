@@ -1,5 +1,10 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.15.1-rc2
+
+- openocd:
+  * Fixed debugger connection failure on various STM32 platforms.
+
 ## Zephyr SDK 0.15.1-rc1
 
 - general:
