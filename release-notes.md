@@ -1,11 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.15.1-rc2
-
-- openocd:
-  * Fixed debugger connection failure on various STM32 platforms.
-
-## Zephyr SDK 0.15.1-rc1
+## Zephyr SDK 0.15.1
 
 - general:
   * Updated the Zephyr SDK CMake package to declare Thread Local Storage (TLS)
@@ -18,6 +13,9 @@
   * Added RISC-V `rv32ifac` multi-lib.
   * Added ARC `hs4x_rel31` CPU variant support.
   * Disabled GOT indirection usage for weak symbol references on AArch64.
+
+- openocd:
+  * Fixed debugger connection failure on various STM32 platforms.
 
 ## Zephyr SDK 0.15.0
 
