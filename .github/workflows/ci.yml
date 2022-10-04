@@ -302,7 +302,7 @@ jobs:
         if [ "${build_host_windows_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "windows-2019-x86_64",
-              "runner": "windows-2019",
+              "runner": "windows-2019-8c",
               "container": "",
               "bundle-host": "windows-x86_64",
               "bundle-archive": "zip"
