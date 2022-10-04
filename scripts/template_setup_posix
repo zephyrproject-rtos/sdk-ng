@@ -185,7 +185,7 @@ esac
 
 # Resolve release download base URI
 dl_rel_base="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}"
-dl_toolchain_filename='toolchain_${host}_${toolchain}.tar.gz'
+dl_toolchain_filename='toolchain_${host}_${toolchain}.tar.xz'
 
 # Print banner
 echo "Zephyr SDK ${version} Setup"

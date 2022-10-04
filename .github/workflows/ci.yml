@@ -212,7 +212,7 @@ jobs:
               "name": "linux-x86_64",
               "runner": "zephyr_runner",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
-              "archive": "tar.gz"
+              "archive": "tar.xz"
             },'
         fi
 
@@ -221,7 +221,7 @@ jobs:
               "name": "linux-aarch64",
               "runner": "zephyr_runner",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
-              "archive": "tar.gz"
+              "archive": "tar.xz"
             },'
         fi
 
@@ -230,7 +230,7 @@ jobs:
               "name": "macos-x86_64",
               "runner": "zephyr_runner-macos-x86_64",
               "container": "",
-              "archive": "tar.gz"
+              "archive": "tar.xz"
             },'
         fi
 
@@ -239,7 +239,7 @@ jobs:
               "name": "macos-aarch64",
               "runner": "zephyr_runner-macos-x86_64",
               "container": "",
-              "archive": "tar.gz"
+              "archive": "tar.xz"
             },'
         fi
 
@@ -285,7 +285,7 @@ jobs:
               "runner": "ubuntu-20.04",
               "container": "",
               "bundle-host": "linux-x86_64",
-              "bundle-archive": "tar.gz"
+              "bundle-archive": "tar.xz"
             },'
         fi
 
@@ -295,7 +295,7 @@ jobs:
               "runner": "macos-11",
               "container": "",
               "bundle-host": "macos-x86_64",
-              "bundle-archive": "tar.gz"
+              "bundle-archive": "tar.xz"
             },'
         fi
 
@@ -750,8 +750,9 @@ jobs:
         ARCHIVE_NAME=toolchain_${{ matrix.host.name }}_${{ matrix.target }}
         ARCHIVE_FILE=${ARCHIVE_NAME}.${{ matrix.host.archive }}
 
-        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
-          ${TAR} -zcvf ${ARCHIVE_FILE} \
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_FILE} \
                  --owner=0 --group=0 -C ${OUTPUT_BASE}/${OUTPUT_DIR} ${{ matrix.target }}
         elif [ "${{ matrix.host.archive }}" == "zip" ]; then
           pushd ${OUTPUT_BASE}/${OUTPUT_DIR}
@@ -914,9 +915,10 @@ jobs:
         ARTIFACT=${ARTIFACT[0]}
         ARTIFACT=$(basename ${ARTIFACT})
         ARCHIVE_NAME=hosttools_${{ matrix.host.name }}
-        ARCHIVE_FILE=hosttools_${{ matrix.host.name }}.tar.gz
+        ARCHIVE_FILE=hosttools_${{ matrix.host.name }}.tar.xz
 
-        ${TAR} -zcvf ${ARCHIVE_FILE} --owner=0 --group=0 \
+        XZ_OPT="-T0" \
+        ${TAR} -Jcvf ${ARCHIVE_FILE} --owner=0 --group=0 \
                -C ${ARTIFACT_ROOT} ${ARTIFACT}
 
         # Compute checksum
@@ -1020,8 +1022,9 @@ jobs:
         ARCHIVE_NAME=cmake_${{ matrix.host.name }}
         ARCHIVE_FILE=${ARCHIVE_NAME}.${{ matrix.host.archive }}
 
-        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
-          ${TAR} -zcvf ${ARCHIVE_FILE} --owner=0 --group=0 \
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_FILE} --owner=0 --group=0 \
                  -C . cmake
         elif [ "${{ matrix.host.archive }}" == "zip" ]; then
           zip -r ${ARCHIVE_FILE} \
@@ -1126,8 +1129,8 @@ jobs:
 
         echo "BUNDLE_ARCHIVE_NAME=${ARCHIVE_NAME}" >> $GITHUB_ENV
 
-        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
-          EXTRACT="${TAR} -zxvf"
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          EXTRACT="${TAR} -Jxvf"
         elif [ "${{ matrix.host.archive }}" == "zip" ]; then
           EXTRACT="unzip"
         fi
@@ -1178,8 +1181,9 @@ jobs:
         popd
 
         # Create minimal (without toolchains) distribution bundle archive
-        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
-          ${TAR} -zcvf ${ARCHIVE_NAME}_minimal.${EXT} --owner=0 --group=0 \
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_NAME}_minimal.${EXT} --owner=0 --group=0 \
                  -C . ${ARCHIVE_DIR}
         elif [ "${{ matrix.host.archive }}" == "zip" ]; then
           zip -r ${ARCHIVE_NAME}_minimal.${EXT} ${ARCHIVE_DIR}
@@ -1207,8 +1211,9 @@ jobs:
         popd
 
         # Create full distribution bundle archive
-        if [ "${{ matrix.host.archive }}" == "tar.gz" ]; then
-          ${TAR} -zcvf ${ARCHIVE_NAME}.${EXT} --owner=0 --group=0 \
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_NAME}.${EXT} --owner=0 --group=0 \
                  -C . ${ARCHIVE_DIR}
         elif [ "${{ matrix.host.archive }}" == "zip" ]; then
           zip -r ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_DIR}
@@ -1373,8 +1378,8 @@ jobs:
 
         # Extract distribution bundle archive
         BUNDLE_FILE=${BUNDLE_NAME}.${{ matrix.testenv.bundle-archive }}
-        if [ "${{ matrix.testenv.bundle-archive }}" == "tar.gz" ]; then
-          ${TAR} -zxvf ${ARTIFACT_ROOT}/${BUNDLE_FILE} -C tools
+        if [ "${{ matrix.testenv.bundle-archive }}" == "tar.xz" ]; then
+          ${TAR} -Jxvf ${ARTIFACT_ROOT}/${BUNDLE_FILE} -C tools
         elif [ "${{ matrix.testenv.bundle-archive }}" == "zip" ]; then
           unzip ${ARTIFACT_ROOT}/${BUNDLE_FILE} -d tools
         fi
