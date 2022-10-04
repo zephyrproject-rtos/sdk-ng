@@ -1240,10 +1240,10 @@ jobs:
       fail-fast: false
       matrix:
         testenv: ${{ fromJSON(needs.setup.outputs.testenvs) }}
-        subset: [ 1, 2, 3, 4, 5 ]
+        subset: [ 1, 2 ]
 
     env:
-      SUBSET_COUNT: 5
+      SUBSET_COUNT: 2
       PYTHON_DEPS: https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/main/scripts/requirements.txt
       ZEPHYR_TOOLCHAIN_VARIANT: zephyr
 
