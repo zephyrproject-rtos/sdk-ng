@@ -252,7 +252,7 @@ jobs:
               "name": "windows-x86_64",
               "runner": "zephyr-runner-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
-              "archive": "zip"
+              "archive": "7z"
             },'
         fi
 
@@ -309,7 +309,7 @@ jobs:
               "runner": "windows-2019-8c",
               "container": "",
               "bundle-host": "windows-x86_64",
-              "bundle-archive": "zip"
+              "bundle-archive": "7z"
             },'
         fi
 
@@ -413,7 +413,7 @@ jobs:
         sudo apt-get install -y autoconf automake bison flex gettext \
                                 help2man libboost-dev libboost-regex-dev \
                                 libncurses5-dev libtool-bin libtool-doc \
-                                pkg-config texinfo zip
+                                pkg-config texinfo p7zip
 
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "linux-aarch64" ]; then
@@ -758,10 +758,9 @@ jobs:
           XZ_OPT="-T0" \
           ${TAR} -Jcvf ${ARCHIVE_FILE} \
                  --owner=0 --group=0 -C ${OUTPUT_BASE}/${OUTPUT_DIR} ${{ matrix.target }}
-        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
           pushd ${OUTPUT_BASE}/${OUTPUT_DIR}
-          zip -r ${GITHUB_WORKSPACE}/${ARCHIVE_FILE} \
-                 ${{ matrix.target }}
+          7z a -t7z -l ${GITHUB_WORKSPACE}/${ARCHIVE_FILE} ${{ matrix.target }}
           popd
         fi
 
@@ -985,7 +984,7 @@ jobs:
 
         # Install common dependencies
         sudo apt-get update
-        sudo apt-get install -y zip
+        sudo apt-get install -y p7zip
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
@@ -1030,9 +1029,8 @@ jobs:
           XZ_OPT="-T0" \
           ${TAR} -Jcvf ${ARCHIVE_FILE} --owner=0 --group=0 \
                  -C . cmake
-        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
-          zip -r ${ARCHIVE_FILE} \
-                 cmake
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          7z a -t7z -l ${ARCHIVE_FILE} cmake
         fi
 
         # Compute checksum
@@ -1075,7 +1073,7 @@ jobs:
 
         # Install common dependencies
         sudo apt-get update
-        sudo apt-get install -y jq zip
+        sudo apt-get install -y jq p7zip
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
@@ -1135,8 +1133,8 @@ jobs:
 
         if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
           EXTRACT="${TAR} -Jxvf"
-        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
-          EXTRACT="unzip"
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          EXTRACT="7z x -o."
         fi
 
         # Create bundle directory
@@ -1189,8 +1187,8 @@ jobs:
           XZ_OPT="-T0" \
           ${TAR} -Jcvf ${ARCHIVE_NAME}_minimal.${EXT} --owner=0 --group=0 \
                  -C . ${ARCHIVE_DIR}
-        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
-          zip -r ${ARCHIVE_NAME}_minimal.${EXT} ${ARCHIVE_DIR}
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          7z a -t7z -l ${ARCHIVE_NAME}_minimal.${EXT} ${ARCHIVE_DIR}
         fi
 
         # Stage toolchains
@@ -1219,8 +1217,8 @@ jobs:
           XZ_OPT="-T0" \
           ${TAR} -Jcvf ${ARCHIVE_NAME}.${EXT} --owner=0 --group=0 \
                  -C . ${ARCHIVE_DIR}
-        elif [ "${{ matrix.host.archive }}" == "zip" ]; then
-          zip -r ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_DIR}
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          7z a -t7z -l ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_DIR}
         fi
 
         # Compute checksum
@@ -1327,7 +1325,7 @@ jobs:
         shopt -u dotglob
 
         # Install required system packages
-        choco install ccache dtc-msys2 gperf jq ninja wget unzip
+        choco install ccache dtc-msys2 gperf jq ninja wget 7zip
 
         # Upgrade pip
         python3 -m pip install --upgrade pip
@@ -1384,8 +1382,8 @@ jobs:
         BUNDLE_FILE=${BUNDLE_NAME}.${{ matrix.testenv.bundle-archive }}
         if [ "${{ matrix.testenv.bundle-archive }}" == "tar.xz" ]; then
           ${TAR} -Jxvf ${ARTIFACT_ROOT}/${BUNDLE_FILE} -C tools
-        elif [ "${{ matrix.testenv.bundle-archive }}" == "zip" ]; then
-          unzip ${ARTIFACT_ROOT}/${BUNDLE_FILE} -d tools
+        elif [ "${{ matrix.testenv.bundle-archive }}" == "7z" ]; then
+          7z x -otools ${ARTIFACT_ROOT}/${BUNDLE_FILE}
         fi
 
         # Run setup script
