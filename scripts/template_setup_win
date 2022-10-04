@@ -25,24 +25,9 @@ exit /b 0
 
 REM # Initialise toolchain list
 set TOOLCHAINS=
-set TOOLCHAINS=%TOOLCHAINS% aarch64-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% arc64-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% arc-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% arm-zephyr-eabi
-set TOOLCHAINS=%TOOLCHAINS% mips-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% nios2-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% riscv64-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% sparc-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% x86_64-zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-espressif_esp32_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-espressif_esp32s2_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-intel_apl_adsp_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-intel_bdw_adsp_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-intel_byt_adsp_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-intel_s1000_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-nxp_imx_adsp_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-nxp_imx8m_adsp_zephyr-elf
-set TOOLCHAINS=%TOOLCHAINS% xtensa-sample_controller_zephyr-elf
+for /f %%t in (sdk_toolchains) do (
+  set TOOLCHAINS=%TOOLCHAINS% %%t
+)
 
 REM Initialise list of toolchains to install
 set INST_TOOLCHAINS=

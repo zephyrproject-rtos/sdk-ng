@@ -1139,6 +1139,9 @@ jobs:
         # Stage version file
         echo "${VERSION}" > sdk_version
 
+        # Stage toolchain list file
+        echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]' > sdk_toolchains
+
         # Stage CMake package
         ## Verify CMake package archive checksum
         pushd ${ARTIFACT_ROOT}/cmake_${HOST}
