@@ -37,7 +37,7 @@ set /p VERSION=<sdk_version
 
 REM # Resolve release download base URI
 set DL_REL_BASE=https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v%VERSION%
-set DL_TOOLCHAIN_FILENAME=toolchain_windows-x86_64_%%t.zip
+set DL_TOOLCHAIN_FILENAME=toolchain_windows-x86_64_%%t.7z
 
 REM # Print banner
 echo Zephyr SDK %VERSION% Setup
@@ -54,7 +54,7 @@ call :check_command cmake 90
 if [%ERRORLEVEL%] neq [0] goto end
 call :check_command wget 91
 if [%ERRORLEVEL%] neq [0] goto end
-call :check_command unzip 92
+call :check_command 7z 92
 if [%ERRORLEVEL%] neq [0] goto end
 
 REM # Enter interactive mode if enabled
@@ -152,7 +152,7 @@ for %%t in (%INST_TOOLCHAINS%) do (
     )
 
     REM # Extract archive
-    unzip -q !TOOLCHAIN_FILENAME!
+    7z x -o. !TOOLCHAIN_FILENAME!
     if [!ERRORLEVEL!] neq [0] (
       echo ERROR: Toolchain archive extraction failed
       set EXITCODE=21
