@@ -1383,8 +1383,14 @@ jobs:
         pushd ${GITHUB_WORKSPACE}/tools/${BUNDLE_DIR}
 
         if [ "${{ runner.os }}" == "Windows" ]; then
+          # Shorten distribution bundle path on Windows
+          subst s: ${PWD}
+          pushd /s
           # NOTE: Escape forward slashes because MinGW (bash)
-          ./setup.cmd //t all //h //c
+          # NOTE: A full path (using PWD) must be specified to ensure that the
+          #       setup script is launched from the shortened path.
+          ${PWD}/setup.cmd //t all //h //c
+          popd
         else
           ./setup.sh -t all -h -c
         fi
