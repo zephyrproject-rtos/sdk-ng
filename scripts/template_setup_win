@@ -26,7 +26,7 @@ exit /b 0
 REM # Initialise toolchain list
 set TOOLCHAINS=
 for /f %%t in (sdk_toolchains) do (
-  set TOOLCHAINS=%TOOLCHAINS% %%t
+  set TOOLCHAINS=!TOOLCHAINS! %%t
 )
 
 REM Initialise list of toolchains to install
