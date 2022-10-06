@@ -4,9 +4,13 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+    - main
+    - topic-*
   pull_request_target:
-    branches: [ main ]
+    branches:
+    - main
+    - topic-*
   workflow_call:
     secrets:
       AWS_CACHE_SDK_ACCESS_KEY_ID:
