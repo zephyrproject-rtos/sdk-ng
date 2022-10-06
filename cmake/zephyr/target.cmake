@@ -10,6 +10,7 @@ set(CROSS_COMPILE_TARGET_arm64   aarch64-zephyr-elf)
 set(CROSS_COMPILE_TARGET_nios2     nios2-zephyr-elf)
 set(CROSS_COMPILE_TARGET_riscv   riscv64-zephyr-elf)
 set(CROSS_COMPILE_TARGET_mips       mips-zephyr-elf)
+set(CROSS_COMPILE_TARGET_microblaze microblazeel-zephyr-elf)
 set(CROSS_COMPILE_TARGET_xtensa   xtensa-${SOC_TOOLCHAIN_NAME}_zephyr-elf)
 
 # ARC uses the same source tree for both ARCv2 & ARCv3 architectures,
