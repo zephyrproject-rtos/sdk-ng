@@ -197,6 +197,7 @@ inherit autotools pkgconfig
 
 #--disable-blobs : BIOS needed for x86
 #--disable-fdt: Cannot use if supporting ARM
+#--disable-kvm: AArch64 has a QEMU/KVM board
 
 QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu mipsel-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
@@ -204,7 +205,7 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
   --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
-  --disable-kvm --disable-parallels --disable-replication \
+  --disable-parallels --disable-replication \
   --disable-live-block-migration --disable-dmg \
   "
 
