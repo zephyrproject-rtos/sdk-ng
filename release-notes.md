@@ -1,5 +1,34 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.15.2-rc1
+
+- general:
+
+  * Fixed "ERROR: Unsupported host operating system" when running the
+    distribution bundle setup script on the Linux distros that report the
+    `OSTYPE` of `linux` instead of `linux-gnu` (e.g. Alpine, SUSE).
+  * Changed the glibc version for the host tool binaries from 2.32 to 2.27
+    (default in Ubuntu 18.04) in order to improve compatibility with the older
+    Linux distros.
+
+- gcc:
+
+  * Fixed the missing C99 math function declarations in the libstdc++ <cmath>
+    header for the AArch64, RISC-V and x86-64 targets.
+  * Disabled the compiler level support for the thread-local storage on the
+    targets without the Zephyr-side thread-local storage support to prevent
+    users from arbitrarily enabling it.
+  * Updated the AArch64 toolchain libraries to build with the
+    `-moverride=tune=no_ldp_stp_qregs` flag that disables the GCC optimisation
+    that generates the `ldp` and `stp` instructions with the Advanced SIMD
+    register operands for consecutive 32-byte copy operations, which can be
+    expensive because it activates the Advanced SIMD context for a thread and
+    can incur a massive context switching overhead due to its large size.
+  * Updated the ARC toolchain libraries to build with the `-mtp-regno=26` flag
+    to ensure that the toolchain library functions do not overwrite the thread-
+    local storage pointer register when the thread-local storage support is
+    enabled.
+
 ## Zephyr SDK 0.15.1
 
 - general:
