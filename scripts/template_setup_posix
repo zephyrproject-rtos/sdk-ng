@@ -117,6 +117,7 @@ pushd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Initialise toolchain list
 toolchains=$(<sdk_toolchains)
+toolchains=("${toolchains[@]//$'\n'/ }")
 
 # Initialise list of toolchains to install
 inst_toolchains=()
