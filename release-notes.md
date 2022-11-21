@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.15.2-rc1
+## Zephyr SDK 0.15.2
 
 - general:
 
