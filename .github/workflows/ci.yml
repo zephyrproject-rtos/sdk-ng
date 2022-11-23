@@ -332,10 +332,10 @@ jobs:
         MATRIX_TESTENVS=$(echo "${MATRIX_TESTENVS}" | sed -zr 's/,([^,]*$)/\1/')
 
         # Output matrix variables
-        echo "::set-output name=hosts::${MATRIX_HOSTS}"
-        echo "::set-output name=targets::${MATRIX_TARGETS}"
-        echo "::set-output name=testenvs::${MATRIX_TESTENVS}"
-        echo "::set-output name=debug::${MATRIX_DEBUG}"
+        echo "hosts=${MATRIX_HOSTS}" >> $GITHUB_OUTPUT
+        echo "targets=${MATRIX_TARGETS}" >> $GITHUB_OUTPUT
+        echo "testenvs=${MATRIX_TESTENVS}" >> $GITHUB_OUTPUT
+        echo "debug=${MATRIX_DEBUG}" >> $GITHUB_OUTPUT
 
         # Prepare configuration report
         CONFIG_REPORT=${RUNNER_TEMP}/config-report.txt
