@@ -34,7 +34,7 @@ jobs:
         rm -rf ${GITHUB_WORKSPACE}/*
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         path: artifacts
 
