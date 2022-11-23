@@ -286,7 +286,7 @@ jobs:
         if [ "${build_host_linux_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-x86_64",
-              "runner": "ubuntu-20.04",
+              "runner": "zephyr-runner-linux-x64-xlarge",
               "container": "",
               "bundle-host": "linux-x86_64",
               "bundle-archive": "tar.xz"
@@ -1242,10 +1242,14 @@ jobs:
         sudo rm -rf ${GITHUB_WORKSPACE}/*
         shopt -u dotglob
 
+        # Add CMake APT repository
+        wget https://apt.kitware.com/kitware-archive.sh
+        sudo bash kitware-archive.sh
+
         # Install required system packages
         sudo apt-get update
-        sudo apt-get install -y ccache device-tree-compiler dos2unix gperf \
-                                jq ninja-build wget
+        sudo apt-get install -y ccache cmake device-tree-compiler dos2unix \
+                                git gperf jq ninja-build wget
 
         # Upgrade pip
         python3 -m pip install --upgrade pip
