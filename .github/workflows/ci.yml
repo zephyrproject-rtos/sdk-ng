@@ -214,7 +214,7 @@ jobs:
         if [ "${build_host_linux_x86_64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "linux-x86_64",
-              "runner": "zephyr_runner",
+              "runner": "zephyr-runner-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
               "archive": "tar.gz"
             },'
@@ -223,7 +223,7 @@ jobs:
         if [ "${build_host_linux_aarch64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "linux-aarch64",
-              "runner": "zephyr_runner",
+              "runner": "zephyr-runner-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
               "archive": "tar.gz"
             },'
@@ -250,7 +250,7 @@ jobs:
         if [ "${build_host_windows_x86_64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "windows-x86_64",
-              "runner": "zephyr_runner",
+              "runner": "zephyr-runner-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
               "archive": "zip"
             },'
