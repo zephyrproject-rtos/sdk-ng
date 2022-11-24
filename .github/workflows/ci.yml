@@ -287,7 +287,7 @@ jobs:
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-x86_64",
               "runner": "zephyr-runner-linux-x64-xlarge",
-              "container": "",
+              "container": "ghcr.io/zephyrproject-rtos/ci:master",
               "bundle-host": "linux-x86_64",
               "bundle-archive": "tar.xz"
             },'
@@ -297,7 +297,7 @@ jobs:
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-aarch64",
               "runner": "zephyr-runner-linux-arm64-xlarge",
-              "container": "",
+              "container": "ghcr.io/zephyrproject-rtos/ci:master",
               "bundle-host": "linux-aarch64",
               "bundle-archive": "tar.xz"
             },'
@@ -1238,6 +1238,7 @@ jobs:
 
     steps:
     - name: Set up Python
+      if: ${{ runner.os != 'Linux' }}
       uses: actions/setup-python@v4
       with:
         # Force Python 3.10 because the twister is not compatible with a Python
@@ -1252,24 +1253,9 @@ jobs:
         sudo rm -rf ${GITHUB_WORKSPACE}/*
         shopt -u dotglob
 
-        # Add CMake APT repository
-        wget https://apt.kitware.com/kitware-archive.sh
-        sudo bash kitware-archive.sh
-
         # Install required system packages
         sudo apt-get update
-        sudo apt-get install -y ccache cmake device-tree-compiler dos2unix \
-                                git gperf jq ninja-build wget
-
-        # Upgrade pip
-        python3 -m pip install --upgrade pip
-
-        # Install west
-        pip3 install --user --upgrade west
-        echo 'export PATH=~/.local/bin:"$PATH"' >> ~/.bashrc
-
-        # Install required Python packages
-        pip3 install --user --upgrade -r "${{ env.PYTHON_DEPS }}"
+        sudo apt-get install -y dos2unix jq
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
