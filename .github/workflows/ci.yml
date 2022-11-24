@@ -232,7 +232,7 @@ jobs:
         if [ "${build_host_macos_x86_64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "macos-x86_64",
-              "runner": "zephyr_runner-macos-x86_64",
+              "runner": "zephyr-runner-macos-arm64-2xlarge",
               "container": "",
               "archive": "tar.xz"
             },'
@@ -241,7 +241,7 @@ jobs:
         if [ "${build_host_macos_aarch64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "macos-aarch64",
-              "runner": "zephyr_runner-macos-x86_64",
+              "runner": "zephyr-runner-macos-arm64-2xlarge",
               "container": "",
               "archive": "tar.xz"
             },'
@@ -502,10 +502,10 @@ jobs:
         fi
 
         # Install dependencies for cross compilation
-        if [ "${{ matrix.host.name }}" == "macos-aarch64" ]; then
-          # Clone x86-AArch64 crosskit
+        if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
+          # Clone AArch64-x86 crosskit
           git clone \
-            https://github.com/stephanosio/crosskit-aarch64-apple-darwin.git \
+            https://github.com/stephanosio/crosskit-x86_64-apple-darwin.git \
             ${WORKSPACE}/crosskit
 
           # Make crosskit available in PATH
@@ -513,7 +513,7 @@ jobs:
         fi
 
         # Make Python 3.8 available in PATH
-        echo "/usr/local/opt/python@3.8/bin" >> $GITHUB_PATH
+        echo "${HOMEBREW_PREFIX}/opt/python@3.8/bin" >> $GITHUB_PATH
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
@@ -538,9 +538,9 @@ jobs:
       run: |
         # Configure macOS build environment
         if [ "$RUNNER_OS" == "macOS" ]; then
-          export PATH="$PATH:/usr/local/opt/binutils/bin"
-          export CPPFLAGS="-I/usr/local/opt/ncurses/include -I/usr/local/opt/gettext/include"
-          export LDFLAGS="-L/usr/local/opt/ncurses/lib -L/usr/local/opt/gettext/lib"
+          export PATH="$PATH:${HOMEBREW_PREFIX}/opt/binutils/bin"
+          export CPPFLAGS="-I${HOMEBREW_PREFIX}/opt/ncurses/include -I${HOMEBREW_PREFIX}/opt/gettext/include"
+          export LDFLAGS="-L${HOMEBREW_PREFIX}/opt/ncurses/lib -L${HOMEBREW_PREFIX}/opt/gettext/lib"
         fi
 
         # Create build directory
@@ -639,11 +639,11 @@ jobs:
         EOF
 
         # Set Canadian cross compilation configurations
-        if [ "${{ matrix.host.name }}" == "macos-aarch64" ]; then
-          # Building for macos-aarch64 on macos-x86_64
+        if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
+          # Building for macos-x86_64 on macos-aarch64
           cat <<EOF >> .config
         CT_CANADIAN=y
-        CT_HOST="aarch64-apple-darwin"
+        CT_HOST="x86_64-apple-darwin"
         EOF
         elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
           # Building for windows-x86_64 on linux-x86_64
@@ -659,13 +659,13 @@ jobs:
         CT_GDB_CROSS_PYTHON_VARIANT=y
         EOF
 
-        if [ "${{ matrix.host.name }}" == "macos-aarch64" ]; then
-          # Clone crosskit-aarch64-darwin-libpython cross compilation kit
+        if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
+          # Clone crosskit-x86_64-darwin-libpython cross compilation kit
           git clone \
-            https://github.com/stephanosio/crosskit-aarch64-darwin-libpython.git \
-            ${WORKSPACE}/crosskit-aarch64-darwin-libpython
+            https://github.com/stephanosio/crosskit-x86_64-darwin-libpython.git \
+            ${WORKSPACE}/crosskit-x86_64-darwin-libpython
           # Use Python 3.8.12
-          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-aarch64-darwin-libpython/python-3.8.12
+          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-x86_64-darwin-libpython/python-3.8.12
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
@@ -708,9 +708,9 @@ jobs:
         popd
 
         # Resolve output directory path
-        if [ "${{ matrix.host.name }}" == "macos-aarch64" ]; then
+        if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
           OUTPUT_BASE="${WORKSPACE}/output"
-          OUTPUT_DIR="HOST-aarch64-apple-darwin"
+          OUTPUT_DIR="HOST-x86_64-apple-darwin"
         elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
           OUTPUT_BASE="${WORKSPACE}/output"
           OUTPUT_DIR="HOST-x86_64-w64-mingw32"
