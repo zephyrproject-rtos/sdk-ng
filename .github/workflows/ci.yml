@@ -1233,7 +1233,6 @@ jobs:
 
     env:
       SUBSET_COUNT: 2
-      PYTHON_DEPS: https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/main/scripts/requirements.txt
       ZEPHYR_TOOLCHAIN_VARIANT: zephyr
 
     steps:
@@ -1275,15 +1274,6 @@ jobs:
           brew install ccache coreutils dos2unix dtc gperf jq ninja wget
         fi
 
-        # Upgrade pip
-        sudo python3 -m pip install --upgrade pip
-
-        # Install west
-        sudo pip3 install --upgrade west
-
-        # Install required Python packages
-        sudo pip3 install --upgrade -r "${{ env.PYTHON_DEPS }}"
-
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
         echo "ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts" >> $GITHUB_ENV
@@ -1299,20 +1289,37 @@ jobs:
         # Install required system packages
         choco install ccache dtc-msys2 gperf jq ninja wget 7zip
 
-        # Upgrade pip
-        python3 -m pip install --upgrade pip
-
-        # Install west
-        pip3 install --upgrade west
-
-        # Install required Python packages
-        pip3 install --upgrade -r "${{ env.PYTHON_DEPS }}"
-
         # Enable long paths support for Git
         git config --system core.longpaths true
 
         # Set environment variables
         echo "ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts" >> $GITHUB_ENV
+
+    - name: Create Python virtual environment
+      if: ${{ runner.os != 'Linux' }}
+      run: |
+        # Create Python virtual environment
+        python3 -m venv ${GITHUB_WORKSPACE}/venv
+
+        # Resolve activation script path
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          VENV_ACTIVATE="${GITHUB_WORKSPACE}/venv/Scripts/activate"
+        else
+          VENV_ACTIVATE="${GITHUB_WORKSPACE}/venv/bin/activate"
+        fi
+
+        # Test Python virtual environment
+        source ${VENV_ACTIVATE}
+        which python3
+        which pip3
+
+        # Install core components
+        python3 -m pip install --upgrade pip
+        pip3 install --upgrade setuptools wheel
+
+        # Set environment variables
+        echo "VENV=${GITHUB_WORKSPACE}/venv" >> $GITHUB_ENV
+        echo "VENV_ACTIVATE=${VENV_ACTIVATE}" >> $GITHUB_ENV
 
     - name: Download version information
       uses: actions/download-artifact@v3
@@ -1379,8 +1386,23 @@ jobs:
 
         popd
 
+    - name: Install west
+      run: |
+        # Activate Python virtual environment
+        if [ ! -z "${VENV_ACTIVATE}" ]; then
+          source ${VENV_ACTIVATE}
+        fi
+
+        # Install or upgrade west
+        pip3 install --upgrade west
+
     - name: Set up Zephyr repository
       run: |
+        # Activate Python virtual environment
+        if [ ! -z "${VENV_ACTIVATE}" ]; then
+          source ${VENV_ACTIVATE}
+        fi
+
         # Create Zephyr workspace
         ZEPHYR_WORKSPACE=${GITHUB_WORKSPACE}/zephyrproject
         west init ${ZEPHYR_WORKSPACE}
@@ -1406,8 +1428,25 @@ jobs:
         echo "ZEPHYR_WORKSPACE=${ZEPHYR_WORKSPACE}" >> $GITHUB_ENV
         echo "ZEPHYR_ROOT=${ZEPHYR_WORKSPACE}/zephyr" >> $GITHUB_ENV
 
+    - name: Install Python dependencies
+      run: |
+        # Activate Python virtual environment
+        if [ ! -z "${VENV_ACTIVATE}" ]; then
+          source ${VENV_ACTIVATE}
+
+          # Install Python dependencies from the checked out Zephyr repository
+          # if running inside a virtual environment; otherwise, it is assumed
+          # that the host already provides all the required dependencies.
+          pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
+        fi
+
     - name: Run test suites
       run: |
+        # Activate Python virtual environment
+        if [ ! -z "${VENV_ACTIVATE}" ]; then
+          source ${VENV_ACTIVATE}
+        fi
+
         # Create working directory
         mkdir -p test
         cd test
