@@ -306,7 +306,7 @@ jobs:
         if [ "${build_host_macos_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "macos-11-x86_64",
-              "runner": "macos-11",
+              "runner": "zephyr-runner-macos-arm64-2xlarge",
               "container": "",
               "bundle-host": "macos-x86_64",
               "bundle-archive": "tar.xz"
@@ -1238,7 +1238,7 @@ jobs:
 
     steps:
     - name: Set up Python
-      if: ${{ runner.os != 'Linux' }}
+      if: ${{ runner.os == 'Windows' }}
       uses: actions/setup-python@v4
       with:
         # Force Python 3.10 because the twister is not compatible with a Python
@@ -1269,8 +1269,11 @@ jobs:
         rm -rf ${GITHUB_WORKSPACE}/*
         shopt -u dotglob
 
-        # Install required system packages
-        brew install ccache coreutils dos2unix dtc gperf jq ninja wget
+        # Install required dependencies if running inside a GitHub-hosted runner
+        # (self-hosted runners are expected to provide all required dependencies)
+        if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
+          brew install ccache coreutils dos2unix dtc gperf jq ninja wget
+        fi
 
         # Upgrade pip
         sudo python3 -m pip install --upgrade pip
