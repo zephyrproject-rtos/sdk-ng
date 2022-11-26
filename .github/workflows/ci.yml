@@ -313,6 +313,16 @@ jobs:
             },'
         fi
 
+        if [ "${build_host_macos_aarch64}" == "y" ]; then
+          MATRIX_TESTENVS+='{
+              "name": "macos-11-aarch64",
+              "runner": "zephyr-runner-macos-arm64-2xlarge",
+              "container": "",
+              "bundle-host": "macos-aarch64",
+              "bundle-archive": "tar.xz"
+            },'
+        fi
+
         if [ "${build_host_windows_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "windows-2019-x86_64",
