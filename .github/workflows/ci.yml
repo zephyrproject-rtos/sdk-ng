@@ -52,6 +52,7 @@ on:
         - x86_64-zephyr-elf
         - xtensa-espressif_esp32_zephyr-elf
         - xtensa-espressif_esp32s2_zephyr-elf
+        - xtensa-espressif_esp32s3_zephyr-elf
         - xtensa-intel_apl_adsp_zephyr-elf
         - xtensa-intel_s1000_zephyr-elf
         - xtensa-nxp_imx_adsp_zephyr-elf
@@ -159,6 +160,7 @@ jobs:
             x86_64-zephyr-elf)                    build_target_x86_64_zephyr_elf="y";;
             xtensa-espressif_esp32_zephyr-elf)    build_target_xtensa_espressif_esp32_zephyr_elf="y";;
             xtensa-espressif_esp32s2_zephyr-elf)  build_target_xtensa_espressif_esp32s2_zephyr_elf="y";;
+            xtensa-espressif_esp32s3_zephyr-elf)  build_target_xtensa_espressif_esp32s3_zephyr_elf="y";;
             xtensa-intel_apl_adsp_zephyr-elf)     build_target_xtensa_intel_apl_adsp_zephyr_elf="y";;
             xtensa-intel_s1000_zephyr-elf)        build_target_xtensa_intel_s1000_zephyr_elf="y";;
             xtensa-nxp_imx_adsp_zephyr-elf)       build_target_xtensa_nxp_imx_adsp_zephyr_elf="y";;
@@ -194,6 +196,7 @@ jobs:
           build_target_x86_64_zephyr_elf="y"
           build_target_xtensa_espressif_esp32_zephyr_elf="y"
           build_target_xtensa_espressif_esp32s2_zephyr_elf="y"
+          build_target_xtensa_espressif_esp32s3_zephyr_elf="y"
           build_target_xtensa_intel_apl_adsp_zephyr_elf="y"
           build_target_xtensa_intel_s1000_zephyr_elf="y"
           build_target_xtensa_nxp_imx_adsp_zephyr_elf="y"
@@ -269,6 +272,7 @@ jobs:
         [ "${build_target_x86_64_zephyr_elf}" == "y" ]                    && MATRIX_TARGETS+='"x86_64-zephyr-elf",'
         [ "${build_target_xtensa_espressif_esp32_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-espressif_esp32_zephyr-elf",'
         [ "${build_target_xtensa_espressif_esp32s2_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s2_zephyr-elf",'
+        [ "${build_target_xtensa_espressif_esp32s3_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s3_zephyr-elf",'
         [ "${build_target_xtensa_intel_apl_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-intel_apl_adsp_zephyr-elf",'
         [ "${build_target_xtensa_intel_s1000_zephyr_elf}" == "y" ]        && MATRIX_TARGETS+='"xtensa-intel_s1000_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-nxp_imx_adsp_zephyr-elf",'
@@ -1517,6 +1521,9 @@ jobs:
               ;;
             xtensa-espressif_esp32s2_zephyr-elf)
               PLATFORM_ARGS+="-p esp32s2_saola "
+              ;;
+            xtensa-espressif_esp32s3_zephyr-elf)
+              PLATFORM_ARGS+="-p esp32s3_devkitc "
               ;;
             xtensa-intel_apl_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp_cavs15 "
