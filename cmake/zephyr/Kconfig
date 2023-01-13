@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-config TOOLCHAIN_ZEPHYR_0_15
+config TOOLCHAIN_ZEPHYR_0_16
 	def_bool y
 	select HAS_NEWLIB_LIBC_NANO if (ARC || (ARM && !ARM64) || RISCV)
 
