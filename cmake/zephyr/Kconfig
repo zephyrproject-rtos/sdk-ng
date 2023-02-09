@@ -7,3 +7,9 @@ config TOOLCHAIN_ZEPHYR_0_16
 config TOOLCHAIN_ZEPHYR_SUPPORTS_THREAD_LOCAL_STORAGE
 	def_bool y
 	select TOOLCHAIN_SUPPORTS_THREAD_LOCAL_STORAGE
+
+config NEWLIB_SUPPORTED
+	def_bool y
+	depends on "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr"
+	help
+	  Zephyr always supports newlib for C and C++ development.
