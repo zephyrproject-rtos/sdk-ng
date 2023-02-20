@@ -121,7 +121,7 @@
     format specifier support up to that of the C89 standard.
 
 - qemu:
-  * Updated ARC QEMU to 2022.04.26 relesae.
+  * Updated ARC QEMU to 2022.04.26 release.
 
 - openocd:
   * Fixed Cyclone V SoC JTAG device order.
