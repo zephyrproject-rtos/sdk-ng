@@ -294,7 +294,7 @@
 ## Zephyr SDK 0.11.4
 - General:
   * Fixed issue with cmake files not being installed in arch specific
-    toolchan packages
+    toolchain packages
 
 - newlib:
   * Fix setting of -DMISSING_SYSCALL_NAMES consistent on all builds
