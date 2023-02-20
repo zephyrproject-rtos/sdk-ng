@@ -28,7 +28,7 @@ FILES_${PN} += "${datadir}/polkit-1"
 
 do_install_append () {
 	# As per the same issue in the python recipe itself:
-	# Unfortunately the following pyc files are non-deterministc due to 'frozenset'
+	# Unfortunately the following pyc files are non-deterministic due to 'frozenset'
 	# being written without strict ordering, even with PYTHONHASHSEED = 0
 	# Upstream is discussing ways to solve the issue properly, until then let's
 	# just not install the problematic files.
