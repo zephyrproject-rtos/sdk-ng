@@ -14,10 +14,15 @@ else()
   # Currently, this Zephyr SDK is expected to work with any Zephyr project
   # requiring this version or any older version.
   #
-  # In case this version is no longer backward compatible then this is the place
-  # to test, for example as
-  # set(ZEPHYR_MINIMUM_COMPATIBLE_VERSION 0.11)
-  # if(PACKAGE_FIND_VERSION VERSION_LESS ZEPHYR_MINIMUM_COMPATIBLE_VERSION)
+  # In case this version of Zephyr SDK is no longer backwards compatible with
+  # previous versions of Zephyr SDK, this is the place to test if the caller
+  # requested an older (incompatible) revision.
+  # For example, imagine caller requests Zephyr SDK v0.10, and this Zephyr SDK
+  # is revision v0.11, then the below snippet can be activated to ensure that
+  # this Zephyr SDK (v0.11) is marked as not compatible if caller requested an
+  # older version, like v0.10
+  # set(ZEPHYR_SDK_MINIMUM_COMPATIBLE_VERSION 0.11)
+  # if(PACKAGE_FIND_VERSION VERSION_LESS ZEPHYR_SDK_MINIMUM_COMPATIBLE_VERSION)
   #   set(PACKAGE_VERSION_COMPATIBLE FALSE)
   #   return()
   # endif()
