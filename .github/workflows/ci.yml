@@ -1523,7 +1523,8 @@ jobs:
               PLATFORM_ARGS+="-p esp32s2_saola "
               ;;
             xtensa-espressif_esp32s3_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32s3_devkitc "
+              # FIXME: Disabled until esp32s3_devkitc board is upstreamed.
+              # PLATFORM_ARGS+="-p esp32s3_devkitc "
               ;;
             xtensa-intel_apl_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp_cavs15 "
