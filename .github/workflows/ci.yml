@@ -624,8 +624,9 @@ jobs:
         pushd ${WORKSPACE}/build
 
         # Load default target configurations
-        cp ${GITHUB_WORKSPACE}/configs/${{ matrix.target }}.config \
-           .config
+        cat ${GITHUB_WORKSPACE}/configs/common.config \
+            ${GITHUB_WORKSPACE}/configs/${{ matrix.target }}.config \
+            > .config
 
         # Set version information
         cat <<EOF >> .config
