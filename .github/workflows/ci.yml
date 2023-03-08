@@ -638,7 +638,6 @@ jobs:
         # Set environment configuration
         cat <<EOF >> .config
         CT_LOCAL_TARBALLS_DIR="${WORKSPACE}/sources"
-        CT_LOCAL_PATCH_DIR="${GITHUB_WORKSPACE}/patches-arc64"
         CT_OVERLAY_LOCATION="${GITHUB_WORKSPACE}/overlays"
         EOF
 
