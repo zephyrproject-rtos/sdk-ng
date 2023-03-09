@@ -729,14 +729,14 @@ jobs:
           OUTPUT_DIR="output"
         fi
 
+        # Grant write permission for owner
+        chmod -R u+w ${OUTPUT_BASE}/${OUTPUT_DIR}
+
         # Remove unneeded files from output directory
         pushd ${OUTPUT_BASE}/${OUTPUT_DIR}/${{ matrix.target }}
         rm -rf newlib-nano
         rm -f build.log.bz2
         popd
-
-        # Grant write permission for owner
-        chmod -R u+w ${OUTPUT_BASE}/${OUTPUT_DIR}
 
         # Rename Canadian cross-compiled toolchain output directory to
         # "output" for consistency
