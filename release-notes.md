@@ -1,25 +1,37 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.0-beta1
+## Zephyr SDK 0.16.0-rc1
 
 - general:
 
   * Changed the distribution bundle archive format from `tar.gz` to `tar.xz` for
     Linux and macOS and from `zip` to `7z` for Windows in order to reduce the
     download size.
+  * Added Microblaze little endian toolchain (`microblazeel-zephyr-elf`).
+  * Added Espressif ESP32-S3 toolchain (`xtensa-espressif_esp32s3_zephyr-elf`).
   * Removed the unused `xtensa-intel_bdw_adsp_zephyr-elf` and
     `xtensa-intel_byt_adsp_zephyr-elf` toolchain.
 
+- gdb:
+
+  * Fixed GDB shell key input issues on tmux.
+
 - gcc:
 
+  * Updated to GCC 12.2 release.
   * Added Picolibc and the libstdc++ compiled for it as part of the toolchain
     in order to allow using the C++ standard library alongside the Picolibc.
+  * Fixed ARM MVE vcmpq vector-scalar internal compiler error (GCC PR107987).
 
 - qemu:
 
   * Added KVM (Kernel-based Virtual Machine) mode support for the AArch64 and
     x86-64 targets. This allows running the KVM-enabled Zephyr boards such as
     `qemu_kvm_arm64`.
+
+- picolibc:
+
+  * Updated to Picolibc 1.8 release.
 
 ## Zephyr SDK 0.15.2
 
