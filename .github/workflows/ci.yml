@@ -58,6 +58,7 @@ on:
         - xtensa-nxp_imx_adsp_zephyr-elf
         - xtensa-nxp_imx8m_adsp_zephyr-elf
         - xtensa-sample_controller_zephyr-elf
+        - xtensa-amd_rmb_adsp_zephyr-elf
       debug:
         description: 'Debug'
         type: choice
@@ -166,6 +167,8 @@ jobs:
             xtensa-nxp_imx_adsp_zephyr-elf)       build_target_xtensa_nxp_imx_adsp_zephyr_elf="y";;
             xtensa-nxp_imx8m_adsp_zephyr-elf)     build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y";;
             xtensa-sample_controller_zephyr-elf)  build_target_xtensa_sample_controller_zephyr_elf="y";;
+            xtensa-amd_rmb_adsp_zephyr-elf)       build_target_xtensa_amd_rmb_adsp_zephyr_elf="y";;
+            
           esac
 
           MATRIX_DEBUG="${{ github.event.inputs.debug }}"
@@ -202,6 +205,7 @@ jobs:
           build_target_xtensa_nxp_imx_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y"
           build_target_xtensa_sample_controller_zephyr_elf="y"
+          build_target_xtensa_amd_rmb_adsp_zephyr_elf="y"
         fi
 
         # Build 'linux_x86_64' by default if no host is selected
@@ -278,6 +282,7 @@ jobs:
         [ "${build_target_xtensa_nxp_imx_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-nxp_imx_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx8m_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_imx8m_adsp_zephyr-elf",'
         [ "${build_target_xtensa_sample_controller_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-sample_controller_zephyr-elf",'
+         [ "${build_target_xtensa_amd_rmb_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-amd_rmb_adsp_zephyr-elf",'
         MATRIX_TARGETS+=']'
 
         # Generate test environment list
