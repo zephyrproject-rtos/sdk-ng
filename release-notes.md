@@ -1,5 +1,29 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.1-beta1
+
+- general:
+
+  * Added Intel ACE15 MTPM toolchain (`xtensa-intel_ace15_mtpm_zephyr-elf`).
+
+- cmake:
+
+  * Fixed the Zephyr SDK CMake package registration failure when the setup
+    script is run by a non-root user and the SDK is located in a directory
+    that is not writable by the user.
+
+- newlib:
+
+  * Enabled newlib-nano for all targets except Xtensa. Note that newlib-nano is
+    disabled for the Xtensa targets because of a `memset` bug causing crashes
+    (refer to the [GitHub issue #660]).
+
+- picolibc:
+
+  * Updated to Picolibc 1.8.1 release.
+
+[GitHub issue #660]: https://github.com/zephyrproject-rtos/sdk-ng/issues/660
+
 ## Zephyr SDK 0.16.0
 
 - general:
