@@ -2,7 +2,9 @@
 
 config TOOLCHAIN_ZEPHYR_0_16
 	def_bool y
-	select HAS_NEWLIB_LIBC_NANO
+	# FIXME: Newlib-nano is disabled for Xtensa targets due to the memset
+        #        bug causing crashes (see the GitHub issue #660).
+	select HAS_NEWLIB_LIBC_NANO if !XTENSA
 
 config TOOLCHAIN_ZEPHYR_SUPPORTS_THREAD_LOCAL_STORAGE
 	def_bool y
