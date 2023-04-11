@@ -1539,7 +1539,10 @@ jobs:
               # PLATFORM_ARGS+="-p intel_adsp_cavs15 "
               ;;
             xtensa-intel_s1000_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp_cavs18 "
+              # NOTE: The `intel_adsp_cavs18` board was removed from the
+              #       upstream Zephyr and there currently is no upstream
+              #       board that uses this toolchain.
+              # PLATFORM_ARGS+="-p intel_adsp_cavs18 "
               ;;
             xtensa-nxp_imx_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p nxp_adsp_imx8 "
