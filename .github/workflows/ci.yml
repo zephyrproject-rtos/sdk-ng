@@ -54,7 +54,6 @@ on:
         - xtensa-espressif_esp32s2_zephyr-elf
         - xtensa-espressif_esp32s3_zephyr-elf
         - xtensa-intel_ace15_mtpm_zephyr-elf
-        - xtensa-intel_s1000_zephyr-elf
         - xtensa-intel_tgl_adsp_zephyr-elf
         - xtensa-nxp_imx_adsp_zephyr-elf
         - xtensa-nxp_imx8m_adsp_zephyr-elf
@@ -163,7 +162,6 @@ jobs:
             xtensa-espressif_esp32s2_zephyr-elf)  build_target_xtensa_espressif_esp32s2_zephyr_elf="y";;
             xtensa-espressif_esp32s3_zephyr-elf)  build_target_xtensa_espressif_esp32s3_zephyr_elf="y";;
             xtensa-intel_ace15_mtpm_zephyr-elf)   build_target_xtensa_intel_ace15_mtpm_zephyr_elf="y";;
-            xtensa-intel_s1000_zephyr-elf)        build_target_xtensa_intel_s1000_zephyr_elf="y";;
             xtensa-intel_tgl_adsp_zephyr-elf)     build_target_xtensa_intel_tgl_adsp_zephyr_elf="y";;
             xtensa-nxp_imx_adsp_zephyr-elf)       build_target_xtensa_nxp_imx_adsp_zephyr_elf="y";;
             xtensa-nxp_imx8m_adsp_zephyr-elf)     build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y";;
@@ -200,7 +198,6 @@ jobs:
           build_target_xtensa_espressif_esp32s2_zephyr_elf="y"
           build_target_xtensa_espressif_esp32s3_zephyr_elf="y"
           build_target_xtensa_intel_ace15_mtpm_zephyr_elf="y"
-          build_target_xtensa_intel_s1000_zephyr_elf="y"
           build_target_xtensa_intel_tgl_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y"
@@ -277,7 +274,6 @@ jobs:
         [ "${build_target_xtensa_espressif_esp32s2_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s2_zephyr-elf",'
         [ "${build_target_xtensa_espressif_esp32s3_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s3_zephyr-elf",'
         [ "${build_target_xtensa_intel_ace15_mtpm_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-intel_ace15_mtpm_zephyr-elf",'
-        [ "${build_target_xtensa_intel_s1000_zephyr_elf}" == "y" ]        && MATRIX_TARGETS+='"xtensa-intel_s1000_zephyr-elf",'
         [ "${build_target_xtensa_intel_tgl_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-intel_tgl_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-nxp_imx_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx8m_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_imx8m_adsp_zephyr-elf",'
@@ -1531,12 +1527,6 @@ jobs:
               ;;
             xtensa-intel_ace15_mtpm_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp_ace15_mtpm "
-              ;;
-            xtensa-intel_s1000_zephyr-elf)
-              # NOTE: The `intel_adsp_cavs18` board was removed from the
-              #       upstream Zephyr and there currently is no upstream
-              #       board that uses this toolchain.
-              # PLATFORM_ARGS+="-p intel_adsp_cavs18 "
               ;;
             xtensa-intel_tgl_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp_cavs25 "
