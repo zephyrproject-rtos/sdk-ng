@@ -431,9 +431,8 @@ xtensa_register_t rmap[] =
   XTREG_END
 };
 
+xtensa_gdbarch_tdep xtensa_tdep (rmap);
 
 
-#ifdef XTENSA_CONFIG_INSTANTIATE
-XTENSA_CONFIG_INSTANTIATE(rmap,16)
-#endif
+
 
