@@ -1,16 +1,28 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.1-beta1
+## Zephyr SDK 0.16.1-rc1
 
 - general:
 
   * Added Intel ACE15 MTPM toolchain (`xtensa-intel_ace15_mtpm_zephyr-elf`).
+  * Added Intel TGL ADSP toolchain (`xtensa-intel_tgl_adsp_zephyr-elf`).
+  * Removed Intel APL ADSP toolchain (`xtensa-intel_apl_adsp_zephyr-elf`).
+  * Removed Intel S1000 toolchain (`xtensa-intel_s1000_zephyr-elf`).
 
 - cmake:
 
   * Fixed the Zephyr SDK CMake package registration failure when the setup
     script is run by a non-root user and the SDK is located in a directory
     that is not writable by the user.
+
+- binutils:
+
+  * Fixed ARM MVE `VCVTNE` instruction misinterpretation bug.
+
+- openocd:
+
+  * Disabled ARC_SEC core debugging support to work around the GDB connection
+    timeout issue (refer to the [GitHub issue #631]).
 
 - newlib:
 
@@ -22,6 +34,7 @@
 
   * Updated to Picolibc 1.8.1 release.
 
+[GitHub issue #631]: https://github.com/zephyrproject-rtos/sdk-ng/issues/631
 [GitHub issue #660]: https://github.com/zephyrproject-rtos/sdk-ng/issues/660
 
 ## Zephyr SDK 0.16.0
