@@ -78,3 +78,7 @@ To create a new Zephyr SDK release:
   the tag name should be `v0.11.0`) and add the release information.
 - Once the release is published, CI will build the Zephyr SDK bundles for all
   supported host platforms and will upload the binaries to the release page.
+
+For more detailed information on the release process, please refer to the
+[Release Process](https://github.com/zephyrproject-rtos/sdk-ng/wiki/Release-Process)
+document in the wiki.
