@@ -85,3 +85,22 @@ To create a new Zephyr SDK release:
 For more detailed information on the release process, please refer to the
 [Release Process](https://github.com/zephyrproject-rtos/sdk-ng/wiki/Release-Process)
 document in the wiki.
+
+## Submodule Update Process
+
+The Zephyr SDK repository contains various submodules, such as `binutils` and
+`gcc`, required for building the Zephyr SDK.
+
+When updating a submodule, the following procedure should be followed:
+
+- Push a topic branch to the submodule repository.
+- Create a pull request from the topic branch to the default (current) branch
+  of the submodule repository.
+- Create a pull request in the Zephyr SDK repository to update the submodule
+  reference to the tip of the topic (pull request) branch.
+- When the pull request in the Zephyr SDK repository passes the CI and the
+  submodule pull request is sufficiently reviewed, merge the submodule pull
+  request.
+- Update the pull request in the Zephyr SDK repository to reference the merged
+  commit in the submodule repository.
+- Merge the pull request in the Zephyr SDK repository.
