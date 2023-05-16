@@ -33,9 +33,12 @@ The Zephyr SDK bundle releases are available for the following host platforms:
 - macOS (AArch64, x86-64)
 - Windows (x86-64)
 
-These binaries can be downloaded from here:
+These binaries can be downloaded from
+[here](https://github.com/zephyrproject-rtos/sdk-ng/tags).
 
-https://github.com/zephyrproject-rtos/sdk-ng/releases
+For future release plans, please refer to the
+[Release Plan](https://github.com/zephyrproject-rtos/sdk-ng/wiki/Release-Plan)
+document in the wiki.
 
 ## Build Process
 
