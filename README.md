@@ -104,3 +104,7 @@ When updating a submodule, the following procedure should be followed:
 - Update the pull request in the Zephyr SDK repository to reference the merged
   commit in the submodule repository.
 - Merge the pull request in the Zephyr SDK repository.
+
+When updating the `picolibc` submodule, the `picolibc` module in the `west.yml`
+of the [main Zephyr repository](https://github.com/zephyrproject-rtos/zephyr)
+must also be updated to reference the same commit.
