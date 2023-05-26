@@ -13,13 +13,8 @@ set(CROSS_COMPILE_TARGET_mips       mips-zephyr-elf)
 set(CROSS_COMPILE_TARGET_microblaze microblazeel-zephyr-elf)
 set(CROSS_COMPILE_TARGET_xtensa   xtensa-${SOC_TOOLCHAIN_NAME}_zephyr-elf)
 
-# ARC uses the same source tree for both ARCv2 & ARCv3 architectures,
-# while toolchain differ significantly and so their cross-compile prefixes
-if(CONFIG_ISA_ARCV3)
-set(CROSS_COMPILE_TARGET_arc       arc64-zephyr-elf)
-else()
-set(CROSS_COMPILE_TARGET_arc         arc-zephyr-elf)
-endif()
+include(${CMAKE_CURRENT_LIST_DIR}/arc-cross-compile.cmake)
+
 set(CROSS_COMPILE_TARGET_x86      x86_64-zephyr-elf)
 set(CROSS_COMPILE_TARGET_sparc     sparc-zephyr-elf)
 
