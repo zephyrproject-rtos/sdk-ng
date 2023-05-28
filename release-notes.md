@@ -1,5 +1,13 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.2-rc1
+
+- picolibc:
+
+  * Updated to [Picolibc 1.8.1-397-gdc78096232].
+
+[Picolibc 1.8.1-397-gdc78096232]: https://github.com/zephyrproject-rtos/picolibc/tree/dc780962322dbaf2b326305f312721ea8cf7c265
+
 ## Zephyr SDK 0.16.1
 
 - general:
