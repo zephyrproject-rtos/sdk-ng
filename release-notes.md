@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.2-rc2
+## Zephyr SDK 0.16.2
 
 - picolibc:
 
