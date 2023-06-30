@@ -40,25 +40,8 @@ on:
         required: true
         options:
         - all
-        - aarch64-zephyr-elf
-        - arc64-zephyr-elf
-        - arc-zephyr-elf
-        - arm-zephyr-eabi
-        - microblazeel-zephyr-elf
-        - mips-zephyr-elf
-        - nios2-zephyr-elf
-        - riscv64-zephyr-elf
-        - sparc-zephyr-elf
-        - x86_64-zephyr-elf
-        - xtensa-espressif_esp32_zephyr-elf
-        - xtensa-espressif_esp32s2_zephyr-elf
-        - xtensa-espressif_esp32s3_zephyr-elf
-        - xtensa-intel_ace15_mtpm_zephyr-elf
-        - xtensa-intel_tgl_adsp_zephyr-elf
-        - xtensa-nxp_imx_adsp_zephyr-elf
-        - xtensa-nxp_imx8m_adsp_zephyr-elf
-        - xtensa-sample_controller_zephyr-elf
         - xtensa-mtk_mvpu6_0226_zephyr-elf
+        - xtensa-sample_controller_zephyr-elf
       debug:
         description: 'Debug'
         type: choice
