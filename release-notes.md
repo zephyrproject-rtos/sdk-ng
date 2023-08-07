@@ -2,6 +2,10 @@
 
 ## Zephyr SDK 0.16.2
 
+- general:
+
+  * Added MediaTek MT8195 toolchain (`xtensa-mt8195_adsp_zephyr-elf`).
+
 - picolibc:
 
   * Updated to Picolibc 1.8.2 release.
