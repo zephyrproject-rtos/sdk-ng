@@ -50,6 +50,7 @@ on:
         - riscv64-zephyr-elf
         - sparc-zephyr-elf
         - x86_64-zephyr-elf
+        - xtensa-dc233c_zephyr-elf
         - xtensa-espressif_esp32_zephyr-elf
         - xtensa-espressif_esp32s2_zephyr-elf
         - xtensa-espressif_esp32s3_zephyr-elf
@@ -159,6 +160,7 @@ jobs:
             riscv64-zephyr-elf)                   build_target_riscv64_zephyr_elf="y";;
             sparc-zephyr-elf)                     build_target_sparc_zephyr_elf="y";;
             x86_64-zephyr-elf)                    build_target_x86_64_zephyr_elf="y";;
+            xtensa-dc233c_zephyr-elf)             build_target_xtensa_dc233c_zephyr_elf="y";;
             xtensa-espressif_esp32_zephyr-elf)    build_target_xtensa_espressif_esp32_zephyr_elf="y";;
             xtensa-espressif_esp32s2_zephyr-elf)  build_target_xtensa_espressif_esp32s2_zephyr_elf="y";;
             xtensa-espressif_esp32s3_zephyr-elf)  build_target_xtensa_espressif_esp32s3_zephyr_elf="y";;
@@ -196,6 +198,7 @@ jobs:
           build_target_riscv64_zephyr_elf="y"
           build_target_sparc_zephyr_elf="y"
           build_target_x86_64_zephyr_elf="y"
+          build_target_xtensa_dc233c_zephyr_elf="y"
           build_target_xtensa_espressif_esp32_zephyr_elf="y"
           build_target_xtensa_espressif_esp32s2_zephyr_elf="y"
           build_target_xtensa_espressif_esp32s3_zephyr_elf="y"
@@ -273,6 +276,7 @@ jobs:
         [ "${build_target_riscv64_zephyr_elf}" == "y" ]                   && MATRIX_TARGETS+='"riscv64-zephyr-elf",'
         [ "${build_target_sparc_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"sparc-zephyr-elf",'
         [ "${build_target_x86_64_zephyr_elf}" == "y" ]                    && MATRIX_TARGETS+='"x86_64-zephyr-elf",'
+        [ "${build_target_xtensa_dc233c_zephyr_elf}" == "y" ]             && MATRIX_TARGETS+='"xtensa-dc233c_zephyr-elf",'
         [ "${build_target_xtensa_espressif_esp32_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-espressif_esp32_zephyr-elf",'
         [ "${build_target_xtensa_espressif_esp32s2_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s2_zephyr-elf",'
         [ "${build_target_xtensa_espressif_esp32s3_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s3_zephyr-elf",'
@@ -1519,6 +1523,9 @@ jobs:
             x86_64-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_x86 "
               PLATFORM_ARGS+="-p qemu_x86_64 "
+              ;;
+            xtensa-dc233c_zephyr-elf)
+              PLATFORM_ARGS+="-p qemu_xtensa_dc233c "
               ;;
             xtensa-espressif_esp32_zephyr-elf)
               PLATFORM_ARGS+="-p esp32 "
