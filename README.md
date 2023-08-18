@@ -15,7 +15,7 @@ The toolchains for the following target architectures are supported:
 - SPARC (32-bit and 64-bit; SPARC V8, SPARC V9)
 - x86 (32-bit and 64-bit)
 - Xtensa (sample_controller, intel_ace15_mtpm, intel_tgl_adsp,
-  nxp_imx_adsp, nxp_imx8m_adsp, espressif_esp32, espressif_esp32s2,
+  nxp_imx_adsp, nxp_imx8m_adsp, nxp_rt500_adsp, espressif_esp32, espressif_esp32s2,
   espressif_esp32s3)
 
 The following host tools are available as part of the Zephyr SDK:
