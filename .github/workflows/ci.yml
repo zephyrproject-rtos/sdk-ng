@@ -1524,9 +1524,6 @@ jobs:
               PLATFORM_ARGS+="-p qemu_x86 "
               PLATFORM_ARGS+="-p qemu_x86_64 "
               ;;
-            xtensa-dc233c_zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_xtensa_dc233c "
-              ;;
             xtensa-espressif_esp32_zephyr-elf)
               PLATFORM_ARGS+="-p esp32 "
               ;;
