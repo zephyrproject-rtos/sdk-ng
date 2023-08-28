@@ -430,6 +430,7 @@ jobs:
         shopt -s dotglob
         sudo rm -rf ${GITHUB_WORKSPACE}/*
         sudo rm -rf ${WORKSPACE}/*
+        ls -la ${GITHUB_WORKSPACE}
         shopt -u dotglob
 
         # Allow non-root access to the working directories
