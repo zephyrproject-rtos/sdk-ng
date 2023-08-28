@@ -1424,9 +1424,6 @@ jobs:
 
         # Create Zephyr workspace
         ZEPHYR_WORKSPACE=${GITHUB_WORKSPACE}/zephyrproject
-        sudo rm -rf ${ZEPHYR_WORKSPACE}/.west
-        sudo rm -rf ${ZEPHYR_WORKSPACE}
-        ls -la  ${ZEPHYR_WORKSPACE}
         west init ${ZEPHYR_WORKSPACE}
         cd ${ZEPHYR_WORKSPACE}
 
