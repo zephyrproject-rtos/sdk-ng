@@ -1546,9 +1546,6 @@ jobs:
             xtensa-intel_tgl_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp_cavs25 "
               ;;
-            xtensa-mt8195_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p mt8195_adsp "
-              ;;
             xtensa-nxp_imx_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p nxp_adsp_imx8 "
               ;;
