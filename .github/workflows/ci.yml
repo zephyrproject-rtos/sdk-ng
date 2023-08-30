@@ -56,7 +56,7 @@ on:
         - xtensa-espressif_esp32s3_zephyr-elf
         - xtensa-intel_ace15_mtpm_zephyr-elf
         - xtensa-intel_tgl_adsp_zephyr-elf
-        - xtensa-mt8195_adsp_zephyr-elf
+        - xtensa-mtk_mt8195_adsp_zephyr-elf
         - xtensa-nxp_imx_adsp_zephyr-elf
         - xtensa-nxp_imx8m_adsp_zephyr-elf
         - xtensa-nxp_rt500_adsp_zephyr-elf
@@ -167,7 +167,7 @@ jobs:
             xtensa-espressif_esp32s3_zephyr-elf)  build_target_xtensa_espressif_esp32s3_zephyr_elf="y";;
             xtensa-intel_ace15_mtpm_zephyr-elf)   build_target_xtensa_intel_ace15_mtpm_zephyr_elf="y";;
             xtensa-intel_tgl_adsp_zephyr-elf)     build_target_xtensa_intel_tgl_adsp_zephyr_elf="y";;
-            xtensa-mt8195_adsp_zephyr-elf)        build_target_xtensa_mt8195_adsp_zephyr_elf="y";;
+            xtensa-mtk_mt8195_adsp_zephyr-elf)    build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y";;
             xtensa-nxp_imx_adsp_zephyr-elf)       build_target_xtensa_nxp_imx_adsp_zephyr_elf="y";;
             xtensa-nxp_imx8m_adsp_zephyr-elf)     build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y";;
             xtensa-nxp_rt500_adsp_zephyr-elf)     build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y";;
@@ -206,7 +206,7 @@ jobs:
           build_target_xtensa_espressif_esp32s3_zephyr_elf="y"
           build_target_xtensa_intel_ace15_mtpm_zephyr_elf="y"
           build_target_xtensa_intel_tgl_adsp_zephyr_elf="y"
-          build_target_xtensa_mt8195_adsp_zephyr_elf="y"
+          build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y"
@@ -285,7 +285,7 @@ jobs:
         [ "${build_target_xtensa_espressif_esp32s3_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s3_zephyr-elf",'
         [ "${build_target_xtensa_intel_ace15_mtpm_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-intel_ace15_mtpm_zephyr-elf",'
         [ "${build_target_xtensa_intel_tgl_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-intel_tgl_adsp_zephyr-elf",'
-        [ "${build_target_xtensa_mt8195_adsp_zephyr_elf}" == "y" ]        && MATRIX_TARGETS+='"xtensa-mt8195_adsp_zephyr-elf",'
+        [ "${build_target_xtensa_mtk_mt8195_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt8195_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-nxp_imx_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx8m_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_imx8m_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_rt500_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_rt500_adsp_zephyr-elf",'
