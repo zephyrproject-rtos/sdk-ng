@@ -496,4 +496,4 @@ static xtensa_register_t rmap[] =
   XTREG_END
 };
 
-xtensa_gdbarch_tdep xtensa_tdep rmap);
+xtensa_gdbarch_tdep xtensa_tdep (rmap);
