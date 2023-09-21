@@ -1,10 +1,13 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.2
+## Zephyr SDK 0.16.3
 
 - general:
 
   * Added MediaTek MT8195 toolchain (`xtensa-mt8195_adsp_zephyr-elf`).
+  * Added NXP ADSP RT500 toolchain (`nxp_adsp_rt500`)
+  * Added Qemu DC233C toolchain (`qemu_xtensa_dc233c`)
+  * `arc_qemu`: Update to 2023.07.28 release
 
 - picolibc:
 
