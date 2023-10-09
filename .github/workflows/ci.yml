@@ -59,6 +59,7 @@ on:
         - xtensa-mtk_mt8195_adsp_zephyr-elf
         - xtensa-nxp_imx_adsp_zephyr-elf
         - xtensa-nxp_imx8m_adsp_zephyr-elf
+        - xtensa-nxp_imx8ulp_adsp_zephyr-elf
         - xtensa-nxp_rt500_adsp_zephyr-elf
         - xtensa-sample_controller_zephyr-elf
       debug:
@@ -170,6 +171,7 @@ jobs:
             xtensa-mtk_mt8195_adsp_zephyr-elf)    build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y";;
             xtensa-nxp_imx_adsp_zephyr-elf)       build_target_xtensa_nxp_imx_adsp_zephyr_elf="y";;
             xtensa-nxp_imx8m_adsp_zephyr-elf)     build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y";;
+            xtensa-nxp_imx8ulp_adsp_zephyr-elf)   build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf="y";;
             xtensa-nxp_rt500_adsp_zephyr-elf)     build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y";;
             xtensa-sample_controller_zephyr-elf)  build_target_xtensa_sample_controller_zephyr_elf="y";;
           esac
@@ -209,6 +211,7 @@ jobs:
           build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y"
+          build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y"
           build_target_xtensa_sample_controller_zephyr_elf="y"
         fi
@@ -288,6 +291,7 @@ jobs:
         [ "${build_target_xtensa_mtk_mt8195_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt8195_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-nxp_imx_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx8m_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_imx8m_adsp_zephyr-elf",'
+        [ "${build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-nxp_imx8ulp_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_rt500_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_rt500_adsp_zephyr-elf",'
         [ "${build_target_xtensa_sample_controller_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-sample_controller_zephyr-elf",'
         MATRIX_TARGETS+=']'
@@ -1551,6 +1555,9 @@ jobs:
               ;;
             xtensa-nxp_imx8m_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p nxp_adsp_imx8m "
+              ;;
+            xtensa-nxp_imx8ulp_adsp_zephyr-elf)
+              PLATFORM_ARGS+="-p nxp_adsp_imx8ulp "
               ;;
             xtensa-sample_controller_zephyr-elf)
               PLATFORM_ARGS+="-p qemu_xtensa "
