@@ -1557,7 +1557,10 @@ jobs:
               PLATFORM_ARGS+="-p nxp_adsp_imx8m "
               ;;
             xtensa-nxp_imx8ulp_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p nxp_adsp_imx8ulp "
+              # FIXME: Disabled because nxp_adsp_imx8ulp support has not been
+              #        merged yet. Enable when zephyrproject-rtos/zephyr#63751
+              #        is merged.
+              #PLATFORM_ARGS+="-p nxp_adsp_imx8ulp "
               ;;
             xtensa-sample_controller_zephyr-elf)
               PLATFORM_ARGS+="-p qemu_xtensa "
