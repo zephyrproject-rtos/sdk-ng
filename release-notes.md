@@ -1,5 +1,16 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.4-rc1
+
+- general:
+
+  * Added NXP ADSP 8ULP toolchain (`xtensa-nxp_imx8ulp_adsp_zephyr-elf`).
+
+- picolibc:
+
+  * Updated to Picolibc 1.8.5 release.
+  * Disabled `assert_verbose` option to reduce binary size.
+
 ## Zephyr SDK 0.16.3
 
 - general:
