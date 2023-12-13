@@ -51,9 +51,8 @@ automatically build and test the Zephyr SDK with the changes in the pull
 request and upload the binaries to the pull request check run, which you can
 download for further local testing as necessary.
 
-Locally building the Zephyr SDK is currently not supported because setting up
-the environment to do so is highly complex and the resource requirements far
-exceed what is found on common developer machines.
+To aid in verifying changes and introduction of a new toolchain, a helper script,
+contrib/linux_build_toolchain.sh, can be used to build one toolchain under Linux.
 
 ### Workflow to Test Patches with Zephyr SDK
 
