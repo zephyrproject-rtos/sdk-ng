@@ -66,6 +66,7 @@ on:
         - xtensa-nxp_rt500_adsp_zephyr-elf
         - xtensa-nxp_rt600_adsp_zephyr-elf
         - xtensa-sample_controller_zephyr-elf
+        - xtensa-sample_controller32_zephyr-elf
       debug:
         description: 'Debug'
         type: choice
@@ -180,6 +181,7 @@ jobs:
             xtensa-nxp_rt500_adsp_zephyr-elf)     build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y";;
             xtensa-nxp_rt600_adsp_zephyr-elf)     build_target_xtensa_nxp_rt600_adsp_zephyr_elf="y";;
             xtensa-sample_controller_zephyr-elf)  build_target_xtensa_sample_controller_zephyr_elf="y";;
+            xtensa-sample_controller32_zephyr-elf) build_target_xtensa_sample_controller32_zephyr_elf="y";;
           esac
 
           MATRIX_DEBUG="${{ github.event.inputs.debug }}"
@@ -222,6 +224,7 @@ jobs:
           build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_rt600_adsp_zephyr_elf="y"
           build_target_xtensa_sample_controller_zephyr_elf="y"
+          build_target_xtensa_sample_controller32_zephyr_elf="y"
         fi
 
         # Build 'linux_x86_64' by default if no host is selected
@@ -304,6 +307,7 @@ jobs:
         [ "${build_target_xtensa_nxp_rt500_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_rt500_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_rt600_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_rt600_adsp_zephyr-elf",'
         [ "${build_target_xtensa_sample_controller_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-sample_controller_zephyr-elf",'
+        [ "${build_target_xtensa_sample_controller32_zephyr_elf}" == "y" ] && MATRIX_TARGETS+='"xtensa-sample_controller32_zephyr-elf",'
         MATRIX_TARGETS+=']'
 
         # Generate test environment list
@@ -1581,6 +1585,9 @@ jobs:
               ;;
             xtensa-sample_controller_zephyr-elf)
               PLATFORM_ARGS+="-p qemu_xtensa "
+              ;;
+            xtensa-sample_controller32_zephyr-elf)
+              PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
               ;;
           esac
         done
