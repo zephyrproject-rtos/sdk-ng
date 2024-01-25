@@ -1,5 +1,26 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.5-rc1
+
+- general:
+
+  * Added NXP RT600 ADSP toolchain (`xtensa-nxp_rt600_adsp_zephyr-elf`).
+
+- binutils:
+
+  * Added ELF program header rewrite segment first section address check
+    workaround for the ELF files that contain a section whose LMA is not equal
+    to VMA. This fixes occasional "error in private header data" error observed
+    when running objcopy with `--change-section-lma` option.
+
+- openocd:
+
+  * Added STM32WBA5xx device support.
+
+- picolibc:
+
+  * Updated to Picolibc 1.8.6 release.
+
 ## Zephyr SDK 0.16.4
 
 - general:
