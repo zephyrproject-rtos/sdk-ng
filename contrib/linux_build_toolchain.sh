@@ -18,7 +18,7 @@ function usage()
 	echo "  -c Name of config file (without extension .config)"
 	echo ""
 	echo "  -s SDK directory. Optional."
-	echo "     Default is ${GITHUB_WORKSPACE}"
+	echo "     Default is ${SDK_DIR}"
 	echo ""
 	echo "  -o Build directory, for building artifacts and final output. Optional."
 	echo "     Default is ${WORKSPACE}"
@@ -110,10 +110,10 @@ pushd "${BUILD_DIR}" || exit 1
 
 cat "${GITHUB_WORKSPACE}"/configs/common.config "${SDK_CONFIG_FILE}" > .config
 
-cat <<EOF >> .config
+cat << 'EOF' >> .config
 CT_SHOW_CT_VERSION=n
-CT_LOCAL_TARBALLS_DIR="\$\{WORKSPACE\}/sources"
-CT_OVERLAY_LOCATION="\$\{GITHUB_WORKSPACE\}/overlays"
+CT_LOCAL_TARBALLS_DIR="${WORKSPACE}/sources"
+CT_OVERLAY_LOCATION="${GITHUB_WORKSPACE}/overlays"
 CT_LOG_PROGRESS_BAR=n
 CT_LOG_EXTRA=y
 CT_LOG_LEVEL_MAX="EXTRA"
