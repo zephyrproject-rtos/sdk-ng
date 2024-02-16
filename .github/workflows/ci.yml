@@ -229,7 +229,7 @@ jobs:
         if [ "${build_host_linux_x86_64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "linux-x86_64",
-              "runner": "zephyr-runner-linux-x64-4xlarge",
+              "runner": "zephyr-runner-v2-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
               "archive": "tar.xz"
             },'
@@ -238,7 +238,7 @@ jobs:
         if [ "${build_host_linux_aarch64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "linux-aarch64",
-              "runner": "zephyr-runner-linux-arm64-4xlarge",
+              "runner": "zephyr-runner-v2-linux-arm64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
               "archive": "tar.xz"
             },'
@@ -247,7 +247,7 @@ jobs:
         if [ "${build_host_macos_x86_64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "macos-x86_64",
-              "runner": "zephyr-runner-macos-arm64-2xlarge",
+              "runner": "zephyr-runner-v2-macos-arm64-2xlarge",
               "container": "",
               "archive": "tar.xz"
             },'
@@ -256,7 +256,7 @@ jobs:
         if [ "${build_host_macos_aarch64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "macos-aarch64",
-              "runner": "zephyr-runner-macos-arm64-2xlarge",
+              "runner": "zephyr-runner-v2-macos-arm64-2xlarge",
               "container": "",
               "archive": "tar.xz"
             },'
@@ -265,7 +265,7 @@ jobs:
         if [ "${build_host_windows_x86_64}" == "y" ]; then
           MATRIX_HOSTS+='{
               "name": "windows-x86_64",
-              "runner": "zephyr-runner-linux-x64-4xlarge",
+              "runner": "zephyr-runner-v2-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3",
               "archive": "7z"
             },'
@@ -306,7 +306,7 @@ jobs:
         if [ "${build_host_linux_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-x86_64",
-              "runner": "zephyr-runner-linux-x64-4xlarge",
+              "runner": "zephyr-runner-v2-linux-x64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/ci:master",
               "bundle-host": "linux-x86_64",
               "bundle-archive": "tar.xz"
@@ -316,7 +316,7 @@ jobs:
         if [ "${build_host_linux_aarch64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-aarch64",
-              "runner": "zephyr-runner-linux-arm64-4xlarge",
+              "runner": "zephyr-runner-v2-linux-arm64-4xlarge",
               "container": "ghcr.io/zephyrproject-rtos/ci:master",
               "bundle-host": "linux-aarch64",
               "bundle-archive": "tar.xz"
@@ -326,7 +326,7 @@ jobs:
         if [ "${build_host_macos_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "macos-11-x86_64",
-              "runner": "zephyr-runner-macos-arm64-2xlarge",
+              "runner": "zephyr-runner-v2-macos-arm64-2xlarge",
               "container": "",
               "bundle-host": "macos-x86_64",
               "bundle-archive": "tar.xz"
@@ -336,7 +336,7 @@ jobs:
         if [ "${build_host_macos_aarch64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "macos-11-aarch64",
-              "runner": "zephyr-runner-macos-arm64-2xlarge",
+              "runner": "zephyr-runner-v2-macos-arm64-2xlarge",
               "container": "",
               "bundle-host": "macos-aarch64",
               "bundle-archive": "tar.xz"
@@ -346,7 +346,7 @@ jobs:
         if [ "${build_host_windows_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
               "name": "windows-2019-x86_64",
-              "runner": "windows-2019-8c",
+              "runner": "zephyr-runner-v2-windows-x64-2xlarge",
               "container": "",
               "bundle-host": "windows-x86_64",
               "bundle-archive": "7z"
@@ -401,7 +401,8 @@ jobs:
   build-toolchain:
     name: Toolchain ${{ matrix.target }} (${{ matrix.host.name }})
     needs: setup
-    runs-on: ${{ matrix.host.runner }}
+    runs-on:
+      group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
 
     defaults:
@@ -822,7 +823,8 @@ jobs:
   build-hosttools:
     name: Host Tools (${{ matrix.host.name }})
     needs: setup
-    runs-on: ${{ matrix.host.runner }}
+    runs-on:
+      group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
 
     defaults:
@@ -970,7 +972,8 @@ jobs:
   build-cmake-pkg:
     name: CMake Package (${{ matrix.host.name }})
     needs: setup
-    runs-on: ${{ matrix.host.runner }}
+    runs-on:
+      group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
 
     defaults:
@@ -1059,7 +1062,8 @@ jobs:
   build-dist-bundle:
     name: Distribution Bundle (${{ matrix.host.name }})
     needs: [ setup, build-toolchain, build-hosttools, build-cmake-pkg ]
-    runs-on: ${{ matrix.host.runner }}
+    runs-on:
+      group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
 
     defaults:
@@ -1248,7 +1252,8 @@ jobs:
   test-dist-bundle:
     name: Test (${{ matrix.testenv.name }}) Subset ${{ matrix.subset }}
     needs: [ setup, build-dist-bundle ]
-    runs-on: ${{ matrix.testenv.runner }}
+    runs-on:
+      group: ${{ matrix.testenv.runner }}
     container: ${{ matrix.testenv.container }}
 
     defaults:
