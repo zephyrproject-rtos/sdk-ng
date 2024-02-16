@@ -187,7 +187,7 @@ jobs:
 
         if [ "${build_host_all}" == "y" ]; then
           build_host_linux_x86_64="y"
-          # build_host_linux_aarch64="y"
+          build_host_linux_aarch64="y"
           build_host_macos_x86_64="y"
           build_host_macos_aarch64="y"
           build_host_windows_x86_64="y"
