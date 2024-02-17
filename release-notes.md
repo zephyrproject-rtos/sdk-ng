@@ -1,6 +1,9 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.5
+## Zephyr SDK 0.16.5/0.16.5-1
+
+_The 0.16.5-1 release is identical to 0.16.5 except that it also includes the
+AArch64 Linux host binaries._
 
 - general:
 
