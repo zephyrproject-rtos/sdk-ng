@@ -522,7 +522,7 @@ jobs:
 
         # Create case-sensitive workspace volume for macOS
         hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
-                       -volname Workspace -type SPARSE -size 70g -fs HFSX
+                       -volname Workspace -type SPARSE -size 150g -fs HFSX
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
 
         # Install required dependencies if running inside a GitHub-hosted runner
