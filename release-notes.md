@@ -1,5 +1,18 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.6-rc1
+
+- gcc:
+
+  * Added experimental ISO C11 `<threads.h>`-based gthread implementation and
+    libstdc++ support. This enables ISO C++11 threads, mutexes, condition
+    variables, semaphores, locks, scoped locks, synchronised stream and futures
+    (async programming) support via ISO C11 threads.
+  * Added minimal Arm Cortex-M85 support. This includes the support for
+    `-mcpu=cortex-m85` compiler flag without the PACBTI extension.
+  * Added RISC-V `rv32imfc` and `rv64imfc` multi-libs.
+  * Added RISC-V `rv32emc` multi-libs without Zifencei extension support.
+
 ## Zephyr SDK 0.16.5/0.16.5-1
 
 _The 0.16.5-1 release is identical to 0.16.5 except that it also includes the
