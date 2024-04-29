@@ -1568,6 +1568,9 @@ jobs:
             xtensa-nxp_imx8ulp_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p imx8ulp_evk/mimx8ud7/adsp "
               ;;
+            xtensa-nxp_rt500_adsp_zephyr-elf)
+              PLATFORM_ARGS+="-p mimxrt595_evk/mimxrt595s/f1 "
+              ;;
             xtensa-sample_controller_zephyr-elf)
               PLATFORM_ARGS+="-p qemu_xtensa "
               ;;
