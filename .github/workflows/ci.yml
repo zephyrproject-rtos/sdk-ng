@@ -1507,17 +1507,17 @@ jobs:
               PLATFORM_ARGS+="-p qemu_cortex_a53 "
               ;;
             arc64-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_arc_hs6x "
+              PLATFORM_ARGS+="-p qemu_arc/qemu_arc_hs6x "
               ;;
             arc-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_arc_em "
-              PLATFORM_ARGS+="-p qemu_arc_hs "
+              PLATFORM_ARGS+="-p qemu_arc/qemu_arc_em "
+              PLATFORM_ARGS+="-p qemu_arc/qemu_arc_hs "
               ;;
             arm-zephyr-eabi)
               PLATFORM_ARGS+="-p qemu_cortex_m0 "
-              PLATFORM_ARGS+="-p mps2_an385 "
-              PLATFORM_ARGS+="-p mps2_an521 "
-              PLATFORM_ARGS+="-p mps3_an547 "
+              PLATFORM_ARGS+="-p mps2/an385 "
+              PLATFORM_ARGS+="-p mps2/an521/cpu0 "
+              PLATFORM_ARGS+="-p mps3/an547 "
               ;;
             # TODO: Release the microblaze arch source in a public repo
             # microblazeel-zephyr-elf)
@@ -1542,28 +1542,28 @@ jobs:
               PLATFORM_ARGS+="-p qemu_x86_64 "
               ;;
             xtensa-dc233c_zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_xtensa_mmu "
+              PLATFORM_ARGS+="-p qemu_xtensa/dc233c/mmu "
               ;;
             xtensa-espressif_esp32_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32_devkitc_wroom "
+              PLATFORM_ARGS+="-p esp32_devkitc_wroom/esp32/procpu "
               ;;
             xtensa-espressif_esp32s2_zephyr-elf)
               PLATFORM_ARGS+="-p esp32s2_saola "
               ;;
             xtensa-espressif_esp32s3_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32s3_devkitm "
+              PLATFORM_ARGS+="-p esp32s3_devkitm/esp32s3/procpu "
               ;;
             xtensa-intel_ace15_mtpm_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp_ace15_mtpm "
+              PLATFORM_ARGS+="-p intel_adsp/ace15_mtpm "
               ;;
             xtensa-intel_tgl_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp_cavs25 "
+              PLATFORM_ARGS+="-p intel_adsp/cavs25 "
               ;;
             xtensa-nxp_imx_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p nxp_adsp_imx8 "
+              PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
               ;;
             xtensa-nxp_imx8m_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p nxp_adsp_imx8m "
+              PLATFORM_ARGS+="-p imx8mp_evk/mimx8ml8/adsp "
               ;;
             xtensa-nxp_imx8ulp_adsp_zephyr-elf)
               # FIXME: Disabled because nxp_adsp_imx8ulp support has not been
