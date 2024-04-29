@@ -1559,6 +1559,10 @@ jobs:
             xtensa-intel_tgl_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp/cavs25 "
               ;;
+            xtensa-mtk_mt8195_adsp_zephyr-elf)
+              # xtensa-mtk_mt8195_adsp_zephyr-elf is untested because no
+              # upstream user platform is currently available.
+              ;;
             xtensa-nxp_imx_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
               ;;
@@ -1570,6 +1574,10 @@ jobs:
               ;;
             xtensa-nxp_rt500_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p mimxrt595_evk/mimxrt595s/f1 "
+              ;;
+            xtensa-nxp_rt600_adsp_zephyr-elf)
+              # xtensa-nxp_rt600_adsp_zephyr-elf is untested because no
+              # upstream user platform is currently available.
               ;;
             xtensa-sample_controller_zephyr-elf)
               PLATFORM_ARGS+="-p qemu_xtensa "
