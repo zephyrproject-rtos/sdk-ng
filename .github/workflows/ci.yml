@@ -1588,6 +1588,9 @@ jobs:
         # Generate test list
         TEST_ARGS="
             -T ${ZEPHYR_ROOT}/samples/hello_world
+            -T ${ZEPHYR_ROOT}/samples/cpp/hello_world
+            -T ${ZEPHYR_ROOT}/tests/lib/c_lib
+            -T ${ZEPHYR_ROOT}/tests/lib/cpp
             -T ${ZEPHYR_ROOT}/tests/lib/newlib
             "
 
