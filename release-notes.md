@@ -1,5 +1,14 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.7
+
+- gcc:
+
+  * Removed experimental ISO C11 `<threads.h>`-based gthread implementation
+    (added in the SDK 0.16.6 release) due to compatibility issues with prior
+    Zephyr versions. This feature will be reworked and re-introduced in a
+    future SDK release.
+
 ## Zephyr SDK 0.16.6
 
 - gcc:
