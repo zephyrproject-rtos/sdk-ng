@@ -1588,11 +1588,17 @@ jobs:
         # Generate test list
         TEST_ARGS="
             -T ${ZEPHYR_ROOT}/samples/hello_world
-            -T ${ZEPHYR_ROOT}/samples/cpp/hello_world
             -T ${ZEPHYR_ROOT}/tests/lib/c_lib
-            -T ${ZEPHYR_ROOT}/tests/lib/cpp
             -T ${ZEPHYR_ROOT}/tests/lib/newlib
             "
+
+        # FIXME: Build C++ samples and tests only for Linux hosts because there
+        #        is a known issue causing link failures on non-Linux hosts (see
+        #        GitHub issue #760).
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          TEST_ARGS+="-T ${ZEPHYR_ROOT}/samples/cpp/hello_world "
+          TEST_ARGS+="-T ${ZEPHYR_ROOT}/tests/lib/cpp "
+        fi
 
         # Run tests with twister
         TWISTER="${ZEPHYR_ROOT}/scripts/twister"
