@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.7
+## Zephyr SDK 0.16.7/0.16.8-rc1
 
 - gcc:
 
