@@ -100,14 +100,14 @@ jobs:
     steps:
     - name: Check out source code
       if: ${{ github.event_name != 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         persist-credentials: false
 
     - name: Check out source code (pull request)
       if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
@@ -119,7 +119,7 @@ jobs:
         echo "${VERSION:1}" > version
 
     - name: Upload version file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: version
         path: version
@@ -558,14 +558,14 @@ jobs:
 
     - name: Check out source code
       if: ${{ github.event_name != 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
         persist-credentials: false
 
     - name: Check out source code (pull request)
       if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         submodules: recursive
@@ -607,13 +607,13 @@ jobs:
         ${CT_NG} version
 
     - name: Download version information
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: version
         path: ${{ runner.temp }}
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1-node16
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
@@ -811,13 +811,13 @@ jobs:
 
     - name: Upload toolchain build log
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: log_${{ matrix.host.name }}_${{ matrix.target }}
         path: ${{ matrix.target }}.log
 
     - name: Upload toolchain build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: toolchain_${{ matrix.host.name }}_${{ matrix.target }}
         path: |
@@ -875,21 +875,21 @@ jobs:
 
     - name: Check out source code
       if: ${{ github.event_name != 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
         persist-credentials: false
 
     - name: Check out source code (pull request)
       if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         submodules: recursive
         persist-credentials: false
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1-node16
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
@@ -963,7 +963,7 @@ jobs:
 
     - name: Upload toolchain build artifact
       if: startsWith(matrix.host.name, 'linux-') # FIXME: Do for all
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: hosttools_${{ matrix.host.name }}
         path: |
@@ -1026,13 +1026,13 @@ jobs:
 
     - name: Check out source code
       if: ${{ github.event_name != 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         persist-credentials: false
 
     - name: Check out source code (pull request)
       if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
@@ -1056,7 +1056,7 @@ jobs:
         sha256sum ${ARCHIVE_FILE} > sha256.sum
 
     - name: Upload CMake package build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cmake_${{ matrix.host.name }}
         path: |
@@ -1116,21 +1116,21 @@ jobs:
 
     - name: Check out source code
       if: ${{ github.event_name != 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: repository
         persist-credentials: false
 
     - name: Check out source code (pull request)
       if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         path: repository
         persist-credentials: false
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         # NOTE: This downloads all build artifacts, including the toolchains and host tools for
         #       the irrelevant hosts, because the download-artifact action does not support
@@ -1245,7 +1245,7 @@ jobs:
         sha256sum ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > sha256.sum
 
     - name: Upload distribution bundle
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.BUNDLE_ARCHIVE_NAME }}
         path: |
@@ -1279,7 +1279,7 @@ jobs:
     steps:
     - name: Set up Python
       if: ${{ runner.os == 'Windows' }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         # Force Python 3.10 because the twister is not compatible with a Python
         # version lower than 3.8 on Windows.
@@ -1363,7 +1363,7 @@ jobs:
         echo "VENV_ACTIVATE=${VENV_ACTIVATE}" >> $GITHUB_ENV
 
     - name: Download version information
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: version
         path: artifacts
@@ -1382,7 +1382,7 @@ jobs:
         echo "BUNDLE_DIR=${BUNDLE_DIR}" >> $GITHUB_ENV
 
     - name: Download distribution bundle
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: ${{ env.BUNDLE_NAME }}
         path: artifacts
@@ -1620,7 +1620,7 @@ jobs:
 
     - name: Publish test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test_${{ matrix.testenv.name }}_${{ matrix.subset }}
         if-no-files-found: ignore
