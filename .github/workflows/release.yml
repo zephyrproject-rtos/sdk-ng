@@ -35,7 +35,7 @@ jobs:
         rm -rf ${GITHUB_WORKSPACE}/*
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: artifacts
 
@@ -63,37 +63,37 @@ jobs:
     #       into the runner memory at once and this may cause the runner instance to
     #       run out of memory (see the GitHub issue #520).
     - name: Upload release assets (host tools)
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           assets/hosttools_*
 
     - name: Upload release assets (Linux toolchains)
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           assets/toolchain_linux*
 
     - name: Upload release assets (macOS toolchains)
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           assets/toolchain_macos*
 
     - name: Upload release assets (Windows toolchains)
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           assets/toolchain_windows*
 
     - name: Upload release assets (Distribution bundles)
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           assets/${{ env.BUNDLE_PREFIX }}-*
 
     - name: Upload release assets (checksum)
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           md5.sum
