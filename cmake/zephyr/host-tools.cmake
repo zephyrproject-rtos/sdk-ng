@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
+# This file is kept for backward compatibility with Zephyr <v3.2.0
+
 cmake_host_system_information(RESULT TOOLCHAIN_ARCH QUERY OS_PLATFORM)
 set(HOST_TOOLS_HOME ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/${TOOLCHAIN_ARCH}-pokysdk-linux)
 
