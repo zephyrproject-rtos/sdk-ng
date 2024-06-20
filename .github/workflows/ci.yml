@@ -7,10 +7,12 @@ on:
     branches:
     - main
     - topic-*
+    - v*-branch
   pull_request_target:
     branches:
     - main
     - topic-*
+    - v*-branch
   workflow_call:
     secrets:
       AWS_CACHE_SDK_ACCESS_KEY_ID:
