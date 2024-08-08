@@ -1,0 +1,53 @@
+diff --git a/minichlink/Makefile b/minichlink/Makefile
+index 2608380..2a53a1e 100644
+--- a/minichlink/Makefile
++++ b/minichlink/Makefile
+@@ -1,6 +1,7 @@
+ TOOLS:=minichlink minichlink.so
+ 
+-CFLAGS:=-O0 -g3 -Wall -DCH32V003 -I.
++CFLAGS ?= -O0 -g3 -Wall
++CFLAGS += -DCH32V003 -I.
+ C_S:=minichlink.c pgm-wch-linke.c pgm-esp32s2-ch32xx.c nhc-link042.c ardulink.c serial_dev.c pgm-b003fun.c minichgdb.c
+ 
+ # General Note: To use with GDB, gdb-multiarch
+@@ -8,19 +9,19 @@ C_S:=minichlink.c pgm-wch-linke.c pgm-esp32s2-ch32xx.c nhc-link042.c ardulink.c
+ # target remote :2345
+ 
+ ifeq ($(OS),Windows_NT)
+-	LDFLAGS:=-L. -lpthread -lusb-1.0 -lsetupapi -lws2_32
+-	CFLAGS:=-Os -s -Wall -D_WIN32_WINNT=0x0600 -DCH32V003 -I.
++	LDFLAGS ?= -L. -lpthread -lusb-1.0 -lsetupapi -lws2_32
++	CFLAGS ?= -Os -s -Wall -D_WIN32_WINNT=0x0600 -DCH32V003 -I.
+ 	TOOLS:=minichlink.exe
+ else
+ 	OS_NAME := $(shell uname -s | tr A-Z a-z)
+ 	ifeq ($(OS_NAME),linux)
+-		LDFLAGS:=-lpthread -lusb-1.0 -ludev
++		LDFLAGS += -lpthread -lusb-1.0 -ludev
+ 	endif
+ 	ifeq ($(OS_NAME),darwin)
+-		LDFLAGS:=-lpthread -lusb-1.0 -framework CoreFoundation -framework IOKit
+-		CFLAGS:=-O0 -Wall -Wno-asm-operand-widths -Wno-deprecated-declarations -Wno-deprecated-non-prototype -D__MACOSX__ -DCH32V003 -I.
+-		INCLUDES:=$(shell pkg-config --cflags-only-I libusb-1.0)
+-		LIBINCLUDES:=$(shell pkg-config --libs-only-L libusb-1.0)
++		LDFLAGS += -lpthread -lusb-1.0 -framework CoreFoundation -framework IOKit
++		CFLAGS ?= -O0 -Wall -Wno-asm-operand-widths -Wno-deprecated-declarations -Wno-deprecated-non-prototype -D__MACOSX__ -DCH32V003 -I.
++		INCLUDES ?= $(shell pkg-config --cflags-only-I libusb-1.0)
++		LIBINCLUDES ?= $(shell pkg-config --libs-only-L libusb-1.0)
+ 		INCS:=$(INCLUDES) $(LIBINCLUDES)
+ 	endif
+ endif
+@@ -32,10 +33,10 @@ minichlink.exe : $(C_S)
+ 	x86_64-w64-mingw32-gcc -o $@ $^ $(LDFLAGS) $(CFLAGS)
+ 
+ minichlink : $(C_S)
+-	gcc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS)
++	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS)
+ 
+ minichlink.so : $(C_S)
+-	gcc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS) -shared -fPIC
++	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS) -shared -fPIC
+ 
+ minichlink.dll : $(C_S)
+ 	x86_64-w64-mingw32-gcc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS) -shared -DMINICHLINK_AS_LIBRARY
