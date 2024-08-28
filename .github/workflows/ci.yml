@@ -65,6 +65,7 @@ on:
         - xtensa-nxp_imx8ulp_adsp_zephyr-elf
         - xtensa-nxp_rt500_adsp_zephyr-elf
         - xtensa-nxp_rt600_adsp_zephyr-elf
+        - xtensa-nxp_rt700_hifi1_zephyr-elf
         - xtensa-sample_controller_zephyr-elf
       debug:
         description: 'Debug'
@@ -179,6 +180,7 @@ jobs:
             xtensa-nxp_imx8ulp_adsp_zephyr-elf)   build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf="y";;
             xtensa-nxp_rt500_adsp_zephyr-elf)     build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y";;
             xtensa-nxp_rt600_adsp_zephyr-elf)     build_target_xtensa_nxp_rt600_adsp_zephyr_elf="y";;
+            xtensa-nxp_rt700_hifi1_zephyr-elf)    build_target_xtensa_nxp_rt700_hifi1_zephyr_elf="y";;
             xtensa-sample_controller_zephyr-elf)  build_target_xtensa_sample_controller_zephyr_elf="y";;
           esac
 
@@ -221,6 +223,7 @@ jobs:
           build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_rt500_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_rt600_adsp_zephyr_elf="y"
+          build_target_xtensa_nxp_rt700_hifi1_zephyr_elf="y"
           build_target_xtensa_sample_controller_zephyr_elf="y"
         fi
 
@@ -303,6 +306,7 @@ jobs:
         [ "${build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-nxp_imx8ulp_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_rt500_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_rt500_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_rt600_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_rt600_adsp_zephyr-elf",'
+        [ "${build_target_xtensa_nxp_rt700_hifi1_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-nxp_rt700_hifi1_zephyr-elf",'
         [ "${build_target_xtensa_sample_controller_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-sample_controller_zephyr-elf",'
         MATRIX_TARGETS+=']'
 
@@ -1577,6 +1581,10 @@ jobs:
               ;;
             xtensa-nxp_rt600_adsp_zephyr-elf)
               # xtensa-nxp_rt600_adsp_zephyr-elf is untested because no
+              # upstream user platform is currently available.
+              ;;
+            xtensa-nxp_rt700_hifi1_zephyr-elf)
+              # xtensa-nxp_rt700_hifi1_zephyr-elf is untested because no
               # upstream user platform is currently available.
               ;;
             xtensa-sample_controller_zephyr-elf)
