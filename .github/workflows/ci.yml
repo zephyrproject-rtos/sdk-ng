@@ -544,8 +544,8 @@ jobs:
           echo "${GITHUB_WORKSPACE}/crosskit/crosskit-x86_64-apple-darwin/scripts" >> $GITHUB_PATH
         fi
 
-        # Make Python 3.8 available in PATH
-        echo "${HOMEBREW_PREFIX}/opt/python@3.8/bin" >> $GITHUB_PATH
+        # Make Python 3.10 available in PATH
+        echo "${HOMEBREW_PREFIX}/opt/python@3.10/bin" >> $GITHUB_PATH
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
@@ -692,23 +692,23 @@ jobs:
         EOF
 
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
-          # Use Python 3.8.12
-          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-x86_64-darwin-libpython/python-3.8.12
+          # Use Python 3.10.15
+          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-x86_64-darwin-libpython/python-3.10.15
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
-          # Use Python 3.8.3
-          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.8.3
+          # Use Python 3.10.11
+          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.10.11
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         else
-          # Use Python 3.8 for non-Canadian Linux and macOS builds
+          # Use Python 3.10 for non-Canadian Linux and macOS builds
           cat <<EOF >> .config
-        CT_GDB_CROSS_PYTHON_BINARY="python3.8"
+        CT_GDB_CROSS_PYTHON_BINARY="python3.10"
         EOF
         fi
 
