@@ -16,3 +16,12 @@
 [submodule "picolibc"]
 	path = picolibc
 	url = https://github.com/zephyrproject-rtos/picolibc.git
+[submodule "crosskit-x86_64-apple-darwin"]
+	path = crosskit/crosskit-x86_64-apple-darwin
+	url = https://github.com/zephyrproject-rtos/crosskit-x86_64-apple-darwin.git
+[submodule "crosskit/crosskit-x86_64-darwin-libpython"]
+	path = crosskit/crosskit-x86_64-darwin-libpython
+	url = https://github.com/zephyrproject-rtos/crosskit-x86_64-darwin-libpython.git
+[submodule "crosskit/crosskit-mingw-w64-libpython"]
+	path = crosskit/crosskit-mingw-w64-libpython
+	url = https://github.com/zephyrproject-rtos/crosskit-mingw-w64-libpython.git
