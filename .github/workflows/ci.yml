@@ -540,13 +540,8 @@ jobs:
 
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
-          # Clone AArch64-x86 crosskit
-          git clone \
-            https://github.com/stephanosio/crosskit-x86_64-apple-darwin.git \
-            ${WORKSPACE}/crosskit
-
           # Make crosskit available in PATH
-          echo "${WORKSPACE}/crosskit/scripts" >> $GITHUB_PATH
+          echo "${GITHUB_WORKSPACE}/crosskit/crosskit-x86_64-apple-darwin/scripts" >> $GITHUB_PATH
         fi
 
         # Make Python 3.8 available in PATH
@@ -697,23 +692,15 @@ jobs:
         EOF
 
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
-          # Clone crosskit-x86_64-darwin-libpython cross compilation kit
-          git clone \
-            https://github.com/stephanosio/crosskit-x86_64-darwin-libpython.git \
-            ${WORKSPACE}/crosskit-x86_64-darwin-libpython
           # Use Python 3.8.12
-          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-x86_64-darwin-libpython/python-3.8.12
+          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-x86_64-darwin-libpython/python-3.8.12
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
-          # Clone crosskit-mingw-w64-libpython cross compilation kit
-          git clone \
-            https://github.com/stephanosio/crosskit-mingw-w64-libpython.git \
-            ${WORKSPACE}/crosskit-mingw-w64-libpython
           # Use Python 3.8.3
-          export LIBPYTHON_KIT_ROOT=${WORKSPACE}/crosskit-mingw-w64-libpython/python-3.8.3
+          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.8.3
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
