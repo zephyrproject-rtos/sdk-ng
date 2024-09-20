@@ -538,6 +538,10 @@ jobs:
                        gnu-sed gnu-tar help2man meson ncurses ninja pkg-config
         fi
 
+        # Install Python 3.10 (temporary until the sdk-build-macos image is
+        # updated)
+        brew install python@3.10
+
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
           # Make crosskit available in PATH
