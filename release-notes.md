@@ -1,5 +1,33 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.16.9-rc1
+
+- general:
+
+  * Linux Zephyr SDK binaries now link against glibc 2.28 and require a host
+    operating system with glibc 2.28 or above (RHEL 8+, Debian 10+, Ubuntu
+    20.04+).
+  * Added Intel ACE30 PTL toolchain (`xtensa-intel_ace30_ptl_zephyr-elf`).
+
+- gdb:
+
+  * Python scripting-enabled GDB (`gdb-py`) now links against Python 3.10, which
+    is the minimum Python version supported by Zephyr.
+
+- gcc:
+
+  * Fixed incorrect C library header usage when compiling libstdc++ for
+    newlib-nano and picolibc in non-Linux toolchains. This fixes the "undefined
+    reference to `_impure_ptr`" errors when building Zephyr C++ applications
+    with macOS and Windows toolchains.
+  * Fixed insufficient argument checking in Secure state entry functions in
+    software using Cortex-M Security Extensions (CMSE). For more details, refer
+    to the CVE-2024-0151.
+
+- picolibc:
+
+  * Updated to Picolibc 1.8.7 release.
+
 ## Zephyr SDK 0.16.7/0.16.8
 
 - gcc:
