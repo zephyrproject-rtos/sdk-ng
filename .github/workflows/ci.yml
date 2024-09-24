@@ -1602,7 +1602,7 @@ jobs:
 
         # Run tests with twister
         TWISTER="${ZEPHYR_ROOT}/scripts/twister"
-        ${TWISTER} -v -N -M --force-color --inline-logs --retry-failed 3 \
+        ${TWISTER} -v -N --force-color --inline-logs --retry-failed 3 \
                    --force-toolchain \
                    --subset ${{ matrix.subset }}/${{ env.SUBSET_COUNT }} \
                    ${HOST_ARGS} \
