@@ -10,4 +10,8 @@ list(APPEND CMAKE_PREFIX_PATH ${HOST_TOOLS_HOME}/usr)
 
 # TODO: Use find_* somehow for these as well?
 set_ifndef(QEMU_BIOS            ${HOST_TOOLS_HOME}/usr/share/qemu)
-set_ifndef(OPENOCD_DEFAULT_PATH ${HOST_TOOLS_HOME}/usr/share/openocd/scripts)
+if (WIN32)
+    set_ifndef(OPENOCD_DEFAULT_PATH $ENV{ProgramFiles}/OpenOCD/share/openocd/scripts)
+else ()
+    set_ifndef(OPENOCD_DEFAULT_PATH ${HOST_TOOLS_HOME}/usr/share/openocd/scripts)
+endif ()
