@@ -1,13 +1,23 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.9-rc1
+## Zephyr SDK 0.16.9-rc2
 
 - general:
 
   * Linux Zephyr SDK binaries now link against glibc 2.28 and require a host
     operating system with glibc 2.28 or above (RHEL 8+, Debian 10+, Ubuntu
     20.04+).
+  * Arm toolchain (`arm-zephyr-eabi`) now includes ARMv7-R big-endian
+    multi-libs.
+  * Added Xtensa sample_controller32 toolchain
+    (`xtensa-sample_controller32_zephyr-elf`).
+  * Added AMD ACP 6_0 toolchain (`xtensa-amd_acp_6_0_adsp_zephyr-elf.`).
   * Added Intel ACE30 PTL toolchain (`xtensa-intel_ace30_ptl_zephyr-elf`).
+  * Added NXP HIFI1 toolchain (`xtensa-nxp_rt700_hifi1_zephyr-elf`).
+  * Added NXP HIFI4 toolchain (`xtensa-nxp_rt700_hifi4_zephyr-elf`).
+  * On Windows, OpenOCD installed under the "Program Files" directory is now
+    used by default when `ZEPHYR_TOOLCHAIN_VARIANT` is set to `zephyr`. Note
+    that OpenOCD is not currently available as part of Zephyr SDK on Windows.
 
 - gdb:
 
@@ -26,7 +36,7 @@
 
 - picolibc:
 
-  * Updated to Picolibc 1.8.7 release.
+  * Updated to Picolibc 1.8.8 release.
 
 ## Zephyr SDK 0.16.7/0.16.8
 
