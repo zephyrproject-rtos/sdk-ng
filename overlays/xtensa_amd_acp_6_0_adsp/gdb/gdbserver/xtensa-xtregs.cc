@@ -1,6 +1,6 @@
 /* Customized table mapping between kernel xtregset and GDB register cache.
 
-   Customer ID=12153; Build=0x878bf; Copyright (c) 2007-2010 Tensilica Inc.
+   Copyright (c) 2007-2010 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -93,4 +93,3 @@ const xtensa_regtable_t  xtensa_regmap_table[] = {
   {  129, 680,   8,  24,  4,  1, 0x102a, "fcr_fsr" },
   { 0 }
 };
-

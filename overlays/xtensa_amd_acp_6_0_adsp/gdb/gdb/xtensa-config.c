@@ -1,6 +1,6 @@
 /* Configuration for the Xtensa architecture for GDB, the GNU debugger.
 
-   Customer ID=12153; Build=0x878bf; Copyright (c) 2003-2020 Tensilica Inc.
+   Copyright (c) 2003-2020 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -22,7 +22,7 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #define XTENSA_CONFIG_VERSION 0x60
-
+#include "defs.h"
 #include "xtensa-config.h"
 #include "xtensa-tdep.h"
 

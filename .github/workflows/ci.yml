@@ -1538,8 +1538,9 @@ jobs:
               PLATFORM_ARGS+="-p qemu_x86 "
               PLATFORM_ARGS+="-p qemu_x86_64 "
               ;;
-            xtensa-amd_acp_6_0_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p acp_6_0 "
+             xtensa-amd_acp_6_0_adsp_zephyr-elf)
+              # xtensa-amd_acp_6_0_adsp_zephyr-elf is untested because no
+              # upstream user platform is currently available.
               ;;
             xtensa-dc233c_zephyr-elf)
               PLATFORM_ARGS+="-p qemu_xtensa/dc233c/mmu "

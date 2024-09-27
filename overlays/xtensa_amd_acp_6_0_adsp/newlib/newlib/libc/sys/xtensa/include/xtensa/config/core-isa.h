@@ -7,7 +7,7 @@
 
 /* Xtensa processor core configuration information.
 
-   Customer ID=12153; Build=0x878bf; Copyright (c) 1999-2020 Tensilica Inc.
+   Copyright (c) 1999-2020 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -669,4 +669,3 @@
 
 
 #endif /* _XTENSA_CORE_CONFIGURATION_H */
-
