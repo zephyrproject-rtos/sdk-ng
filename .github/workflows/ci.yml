@@ -1277,10 +1277,10 @@ jobs:
       fail-fast: false
       matrix:
         testenv: ${{ fromJSON(needs.setup.outputs.testenvs) }}
-        subset: [ 1, 2 ]
+        subset: [ 1, 2, 3 ]
 
     env:
-      SUBSET_COUNT: 2
+      SUBSET_COUNT: 3
       ZEPHYR_TOOLCHAIN_VARIANT: zephyr
 
     steps:
