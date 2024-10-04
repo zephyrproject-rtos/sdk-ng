@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.16.9-rc2
+## Zephyr SDK 0.16.9-rc3
 
 - general:
 
@@ -33,10 +33,6 @@
   * Fixed insufficient argument checking in Secure state entry functions in
     software using Cortex-M Security Extensions (CMSE). For more details, refer
     to the CVE-2024-0151.
-
-- picolibc:
-
-  * Updated to Picolibc 1.8.8 release.
 
 ## Zephyr SDK 0.16.7/0.16.8
 
