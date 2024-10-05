@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-config TOOLCHAIN_ZEPHYR_0_16
+config TOOLCHAIN_ZEPHYR_0_17
 	def_bool y
 	# FIXME: Newlib-nano is disabled for Xtensa targets due to the memset
         #        bug causing crashes (see the GitHub issue #660).
