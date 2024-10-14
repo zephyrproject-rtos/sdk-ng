@@ -129,7 +129,7 @@ EOF
 "${CT_NG}" distclean
 "${CT_NG}" defconfig DEFCONFIG=build.config
 
-"${CT_NG}" build
+"${CT_NG}" build || exit 1
 
 chmod -R u+w "${TOOLCHAIN_OUTPUT_DIR}"
 
