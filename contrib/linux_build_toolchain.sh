@@ -21,7 +21,7 @@ function usage()
 	echo "     Default is ${SDK_DIR}"
 	echo ""
 	echo "  -o Build directory, for building artifacts and final output. Optional."
-	echo "     Default is ${WORKSPACE}"
+	echo "     Default is ${BUILD_DIR}"
 	echo ""
 	echo "  -h This help."
 	echo ""
@@ -119,7 +119,7 @@ CT_LOG_EXTRA=y
 CT_LOG_LEVEL_MAX="EXTRA"
 CT_GDB_CROSS_PYTHON=y
 CT_GDB_CROSS_PYTHON_VARIANT=y
-CT_GDB_CROSS_PYTHON_BINARY="python3.10"
+CT_GDB_CROSS_PYTHON_BINARY="python3.12"
 CT_EXPERIMENTAL=y
 CT_ALLOW_BUILD_AS_ROOT=y
 CT_ALLOW_BUILD_AS_ROOT_SURE=y
@@ -129,7 +129,7 @@ EOF
 "${CT_NG}" distclean
 "${CT_NG}" defconfig DEFCONFIG=build.config
 
-"${CT_NG}" build
+"${CT_NG}" build || exit 1
 
 chmod -R u+w "${TOOLCHAIN_OUTPUT_DIR}"
 
