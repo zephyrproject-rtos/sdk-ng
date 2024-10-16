@@ -1,0 +1,3 @@
+# RUN: %clang -print-multi-directory --target=aarch64-none-elf | FileCheck %s
+# CHECK: aarch64-none-elf/aarch64a_exn_rtti{{$}}
+# CHECK-EMPTY:
