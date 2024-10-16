@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "ffe03b7e85c17a3db65e53718b30393d2cf159ee"
+SRCREV = "b2a5fada7c0a7837ff31a2407562c8b7a58a989b"
 SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
