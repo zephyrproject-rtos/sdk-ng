@@ -13,6 +13,9 @@
 [submodule "picolibc"]
 	path = picolibc
 	url = https://github.com/zephyrproject-rtos/picolibc.git
+[submodule "llvm"]
+	path = llvm
+	url = https://github.com/zephyrproject-rtos/llvm-project.git
 [submodule "crosskit-x86_64-apple-darwin"]
 	path = crosskit/crosskit-x86_64-apple-darwin
 	url = https://github.com/zephyrproject-rtos/crosskit-x86_64-apple-darwin.git
