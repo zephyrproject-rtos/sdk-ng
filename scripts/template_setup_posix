@@ -48,11 +48,11 @@ check_command()
   fi
 }
 
-# Check if the current installation is a full SDK with all toolchains
+# Check if the current installation is a full SDK with all GNU toolchains
 check_full_sdk()
 {
-  for toolchain in ${toolchains[@]}; do
-    if [ ! -d "${toolchain}" ]; then
+  for toolchain in ${gnu_toolchains[@]}; do
+    if [ ! -d "gnu/${toolchain}" ]; then
       return 1
     fi
   done
@@ -63,16 +63,16 @@ check_full_sdk()
 # Display script usage
 usage()
 {
-  echo "Usage: $(basename $0) [-t <toolchain>] [-h] [-c]"
+  echo "Usage: $(basename $0) [-t <gnu_toolchain>] [-h] [-c]"
   echo
-  echo "  -t <toolchain>   Install specified toolchain"
-  echo "     all           Install all toolchains"
-  echo "  -h               Install host tools"
-  echo "  -c               Register Zephyr SDK CMake package"
+  echo "  -t <gnu_toolchain>   Install specified GNU toolchain"
+  echo "     all               Install all GNU toolchains"
+  echo "  -h                   Install host tools"
+  echo "  -c                   Register Zephyr SDK CMake package"
   echo
-  echo "Supported Toolchains:"
+  echo "Supported GNU Toolchains:"
   echo
-  for toolchain in ${toolchains[@]}; do
+  for toolchain in ${gnu_toolchains[@]}; do
     echo "  ${toolchain}"
   done
   echo
@@ -88,16 +88,16 @@ user_prompt()
   echo "distribution bundle archive."
   echo
 
-  # Toolchains
+  # GNU Toolchains
   check_full_sdk
   if [ $? != 0 ]; then
-    ask_yn "Install toolchains for all targets"
+    ask_yn "Install GNU toolchains for all targets"
     if [ $? == 0 ]; then
-      inst_toolchains=(${toolchains[*]})
+      inst_gnu_toolchains=(${gnu_toolchains[*]})
     else
-      for toolchain in ${toolchains[@]}; do
-        if [ ! -d "${toolchain}" ]; then
-          ask_yn "Install '${toolchain}' toolchain" && inst_toolchains+=("${toolchain}")
+      for toolchain in ${gnu_toolchains[@]}; do
+        if [ ! -d "gnu/${toolchain}" ]; then
+          ask_yn "Install '${toolchain}' GNU toolchain" && inst_gnu_toolchains+=("${toolchain}")
         fi
       done
     fi
@@ -115,12 +115,12 @@ user_prompt()
 # Entry point
 pushd "$(dirname "${BASH_SOURCE[0]}")"
 
-# Initialise toolchain list
-toolchains=$(<sdk_toolchains)
-toolchains=("${toolchains[@]//$'\n'/ }")
+# Initialise GNU toolchain list
+gnu_toolchains=$(<sdk_gnu_toolchains)
+gnu_toolchains=("${gnu_toolchains[@]//$'\n'/ }")
 
-# Initialise list of toolchains to install
-inst_toolchains=()
+# Initialise list of GNU toolchains to install
+inst_gnu_toolchains=()
 
 # Parse arguments
 if [ $# == "0" ]; then
@@ -131,12 +131,12 @@ else
       -t)
         shift
         if [[ "$1" = "all" ]]; then
-          inst_toolchains=(${toolchains[*]})
+          inst_gnu_toolchains=(${gnu_toolchains[*]})
         else
-          if [[ " ${toolchains[*]} " =~ " $1 " ]]; then
-            inst_toolchains+=("$1")
+          if [[ " ${gnu_toolchains[*]} " =~ " $1 " ]]; then
+            inst_gnu_toolchains+=("$1")
           else
-            echo "ERROR: Unknown toolchain '$1'"
+            echo "ERROR: Unknown GNU toolchain '$1'"
             exit 2
           fi
         fi
@@ -186,7 +186,7 @@ esac
 
 # Resolve release download base URI
 dl_rel_base="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}"
-dl_toolchain_filename='toolchain_${host}_${toolchain}.tar.xz'
+dl_gnu_toolchain_filename='toolchain_gnu_${host}_${toolchain}.tar.xz'
 
 # Print banner
 echo "Zephyr SDK ${version} Setup"
@@ -202,9 +202,12 @@ if [ "${interactive}" = "y" ]; then
   user_prompt
 fi
 
-# Install toolchains
-for toolchain in ${inst_toolchains[@]}; do
-  eval toolchain_filename="${dl_toolchain_filename}"
+# Install GNU toolchains
+mkdir -p gnu
+pushd gnu
+
+for toolchain in ${inst_gnu_toolchains[@]}; do
+  eval toolchain_filename="${dl_gnu_toolchain_filename}"
   toolchain_uri="${dl_rel_base}/${toolchain_filename}"
 
   # Skip if toolchain directory already exists
@@ -212,33 +215,36 @@ for toolchain in ${inst_toolchains[@]}; do
     continue
   fi
 
-  echo "Installing '${toolchain}' toolchain ..."
+  echo "Installing '${toolchain}' GNU toolchain ..."
 
   # Download toolchain archive
   wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
   if [ $? != 0 ]; then
     rm -f "${toolchain_filename}"
-    echo "ERROR: Toolchain download failed"
+    echo "ERROR: GNU toolchain download failed"
     exit 20
   fi
 
   # Extract archive
   tar xf "${toolchain_filename}"
-  assert_rc "ERROR: Toolchain archive extraction failed" 21
+  assert_rc "ERROR: GNU toolchain archive extraction failed" 21
 
   # Remove archive
   rm -f "${toolchain_filename}"
 
   echo
 done
+popd
 
 # Install host tools
 if [ "${do_hosttools}" = "y" ]; then
   echo "Installing host tools ..."
   case ${host} in
     linux-*)
+      pushd hosttools
       ./zephyr-sdk-${HOSTTYPE}-hosttools-standalone-0.10.sh -y -d . &> /dev/null
       assert_rc "ERROR: Host tools installation failed" 30
+      popd
       ;;
     macos-*)
       echo "SKIPPED: macOS host tools are not available yet."
