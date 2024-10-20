@@ -431,9 +431,9 @@ jobs:
         CONFIG_REPORT_CONTENT="${CONFIG_REPORT_CONTENT//$'\r'/'%0D'}"
         echo "::notice:: ${CONFIG_REPORT_CONTENT}"
 
-  # Build toolchain
-  build-toolchain:
-    name: Toolchain ${{ matrix.target }} (${{ matrix.host.name }})
+  # Build GNU toolchain
+  build-gnu-toolchain:
+    name: GNU Toolchain ${{ matrix.target }} (${{ matrix.host.name }})
     needs: setup
     runs-on:
       group: ${{ matrix.host.runner }}
@@ -792,7 +792,7 @@ jobs:
         fi
 
         # Create archive
-        ARCHIVE_NAME=toolchain_${{ matrix.host.name }}_${{ matrix.target }}
+        ARCHIVE_NAME=toolchain_gnu_${{ matrix.host.name }}_${{ matrix.target }}
         ARCHIVE_FILE=${ARCHIVE_NAME}.${{ matrix.host.archive }}
 
         if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
@@ -832,15 +832,15 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: log_${{ matrix.host.name }}_${{ matrix.target }}
+        name: log_toolchain_gnu_${{ matrix.host.name }}_${{ matrix.target }}
         path: ${{ matrix.target }}.log
 
     - name: Upload toolchain build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: toolchain_${{ matrix.host.name }}_${{ matrix.target }}
+        name: toolchain_gnu_${{ matrix.host.name }}_${{ matrix.target }}
         path: |
-          toolchain_${{ matrix.host.name }}_${{ matrix.target }}.${{ matrix.host.archive }}
+          toolchain_gnu_${{ matrix.host.name }}_${{ matrix.target }}.${{ matrix.host.archive }}
           md5.sum
           sha256.sum
 
@@ -1090,7 +1090,7 @@ jobs:
   # Build distribution bundle
   build-dist-bundle:
     name: Distribution Bundle (${{ matrix.host.name }})
-    needs: [ setup, build-toolchain, build-hosttools, build-cmake-pkg ]
+    needs: [ setup, build-gnu-toolchain, build-hosttools, build-cmake-pkg ]
     runs-on:
       group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
@@ -1190,8 +1190,8 @@ jobs:
         # Stage version file
         echo "${VERSION}" > sdk_version
 
-        # Stage toolchain list file
-        echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]' > sdk_toolchains
+        # Stage GNU toolchain list file
+        echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]' > sdk_gnu_toolchains
 
         # Stage CMake package
         ## Verify CMake package archive checksum
@@ -1212,8 +1212,13 @@ jobs:
           sha256sum --check sha256.sum
           popd
 
+          # Create host tools root directory
+          mkdir hosttools
+
           # Extract host tools archive
+          pushd hosttools
           ${EXTRACT} ${ARTIFACT_ROOT}/${HOSTTOOLS_ARTIFACT}/${HOSTTOOLS_ARTIFACT}.${EXT}
+          popd
         fi
 
         # Stage setup script
@@ -1237,15 +1242,16 @@ jobs:
           7z a -t7z -l ${ARCHIVE_NAME}_minimal.${EXT} ${ARCHIVE_DIR}
         fi
 
-        # Stage toolchains
-        pushd ${ARCHIVE_DIR}
+        # Stage GNU toolchains
+        mkdir ${ARCHIVE_DIR}/gnu
+        pushd ${ARCHIVE_DIR}/gnu
 
         ## Generate target list from the workflow matrix
         TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]')
 
         ## Extract all toolchains
         for TARGET in ${TARGETS}; do
-          TOOLCHAIN_ARTIFACT=toolchain_${HOST}_${TARGET}
+          TOOLCHAIN_ARTIFACT=toolchain_gnu_${HOST}_${TARGET}
 
           # Verify toolchain archive checksum
           pushd ${ARTIFACT_ROOT}/${TOOLCHAIN_ARTIFACT}
@@ -1258,25 +1264,25 @@ jobs:
         done
         popd
 
-        # Create full distribution bundle archive
+        # Create GNU distribution bundle archive
         if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
           XZ_OPT="-T0" \
-          ${TAR} -Jcvf ${ARCHIVE_NAME}.${EXT} --owner=0 --group=0 \
+          ${TAR} -Jcvf ${ARCHIVE_NAME}_gnu.${EXT} --owner=0 --group=0 \
                  -C . ${ARCHIVE_DIR}
         elif [ "${{ matrix.host.archive }}" == "7z" ]; then
-          7z a -t7z -l ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_DIR}
+          7z a -t7z -l ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_DIR}
         fi
 
         # Compute checksum
-        md5sum ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > md5.sum
-        sha256sum ${ARCHIVE_NAME}.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > sha256.sum
+        md5sum ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > md5.sum
+        sha256sum ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > sha256.sum
 
     - name: Upload distribution bundle
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.BUNDLE_ARCHIVE_NAME }}
         path: |
-          ${{ env.BUNDLE_ARCHIVE_NAME }}.${{ matrix.host.archive }}
+          ${{ env.BUNDLE_ARCHIVE_NAME }}_gnu.${{ matrix.host.archive }}
           ${{ env.BUNDLE_ARCHIVE_NAME }}_minimal.${{ matrix.host.archive }}
           md5.sum
           sha256.sum
@@ -1425,8 +1431,8 @@ jobs:
         sha256sum --check sha256.sum
         popd
 
-        # Extract distribution bundle archive
-        BUNDLE_FILE=${BUNDLE_NAME}.${{ matrix.testenv.bundle-archive }}
+        # Extract GNU distribution bundle archive
+        BUNDLE_FILE=${BUNDLE_NAME}_gnu.${{ matrix.testenv.bundle-archive }}
         if [ "${{ matrix.testenv.bundle-archive }}" == "tar.xz" ]; then
           ${TAR} -Jxvf ${ARTIFACT_ROOT}/${BUNDLE_FILE} -C tools
         elif [ "${{ matrix.testenv.bundle-archive }}" == "7z" ]; then
