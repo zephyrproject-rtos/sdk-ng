@@ -23,21 +23,21 @@ exit /b 0
 
 :entry
 
-REM # Initialise toolchain list
-set TOOLCHAINS=
-for /f %%t in (sdk_toolchains) do (
-  set TOOLCHAINS=!TOOLCHAINS! %%t
+REM # Initialise GNU toolchain list
+set GNU_TOOLCHAINS=
+for /f %%t in (sdk_gnu_toolchains) do (
+  set GNU_TOOLCHAINS=!GNU_TOOLCHAINS! %%t
 )
 
-REM Initialise list of toolchains to install
-set INST_TOOLCHAINS=
+REM Initialise list of GNU toolchains to install
+set INST_GNU_TOOLCHAINS=
 
 REM # Read bundle version from file
 set /p VERSION=<sdk_version
 
 REM # Resolve release download base URI
 set DL_REL_BASE=https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v%VERSION%
-set DL_TOOLCHAIN_FILENAME=toolchain_windows-x86_64_%%t.7z
+set DL_GNU_TOOLCHAIN_FILENAME=toolchain_gnu_windows-x86_64_%%t.7z
 
 REM # Print banner
 echo Zephyr SDK %VERSION% Setup
@@ -66,14 +66,14 @@ REM # Parse arguments if specified
 :parsearg
 if /i [%1] equ [/t] (
   if [%2] equ [all] (
-    set INST_TOOLCHAINS=%TOOLCHAINS%
+    set INST_GNU_TOOLCHAINS=%GNU_TOOLCHAINS%
   ) else (
     set IS_VALID=
-    for %%t in (%TOOLCHAINS%) do if [%%t] equ [%2] set IS_VALID=y
+    for %%t in (%GNU_TOOLCHAINS%) do if [%%t] equ [%2] set IS_VALID=y
     if [!IS_VALID!] equ [y] (
-      set INST_TOOLCHAINS=!INST_TOOLCHAINS! %2
+      set INST_GNU_TOOLCHAINS=!INST_GNU_TOOLCHAINS! %2
     ) else (
-      echo ERROR: Unknown toolchain '%2'
+      echo ERROR: Unknown GNU toolchain '%2'
       set EXITCODE=2
       goto end
     )
@@ -102,23 +102,23 @@ echo distribution bundle archive.
 echo.
 
 REM # Check installation type
-for %%t in (%TOOLCHAINS%) do (
-  if not exist %%t\ (
+for %%t in (%GNU_TOOLCHAINS%) do (
+  if not exist gnu\%%t\ (
     set IS_PARTIAL_SDK=y
   )
 )
 
 REM # Ask user for set-up choices
 if [%IS_PARTIAL_SDK%] neq [] (
-  choice /c:yn /m:"Install toolchains for all targets"
+  choice /c:yn /m:"Install GNU toolchains for all targets"
   if [!ERRORLEVEL!] equ [1] (
-    set INST_TOOLCHAINS=%TOOLCHAINS%
+    set INST_GNU_TOOLCHAINS=%GNU_TOOLCHAINS%
   ) else (
-    for %%t in (%TOOLCHAINS%) do (
-      if not exist %%t\ (
-        choice /c:yn /m:"Install '%%t' toolchain"
+    for %%t in (%GNU_TOOLCHAINS%) do (
+      if not exist gnu\%%t\ (
+        choice /c:yn /m:"Install '%%t' GNU toolchain"
         if [!ERRORLEVEL!] equ [1] (
-          set INST_TOOLCHAINS=!INST_TOOLCHAINS! %%t
+          set INST_GNU_TOOLCHAINS=!INST_GNU_TOOLCHAINS! %%t
         )
       )
     )
@@ -134,19 +134,22 @@ if [%ERRORLEVEL%] equ [1] set DO_CMAKE_PKG=y
 echo.
 
 :process
-REM # Install toolchains
-for %%t in (%INST_TOOLCHAINS%) do (
-  set TOOLCHAIN_FILENAME=%DL_TOOLCHAIN_FILENAME%
+REM # Install GNU toolchains
+if not exist gnu\ mkdir gnu
+pushd gnu
+
+for %%t in (%INST_GNU_TOOLCHAINS%) do (
+  set TOOLCHAIN_FILENAME=%DL_GNU_TOOLCHAIN_FILENAME%
   set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
 
   if not exist %%t\ (
-    echo Installing '%%t' toolchain ...
+    echo Installing '%%t' GNU toolchain ...
 
     REM # Download toolchain archive
     wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
     if [!ERRORLEVEL!] neq [0] (
       del /q !TOOLCHAIN_FILENAME!
-      echo ERROR: Toolchain download failed
+      echo ERROR: GNU toolchain download failed
       set EXITCODE=20
       goto end
     )
@@ -154,7 +157,7 @@ for %%t in (%INST_TOOLCHAINS%) do (
     REM # Extract archive
     7z x -o. !TOOLCHAIN_FILENAME!
     if [!ERRORLEVEL!] neq [0] (
-      echo ERROR: Toolchain archive extraction failed
+      echo ERROR: GNU toolchain archive extraction failed
       set EXITCODE=21
       goto end
     )
@@ -163,6 +166,7 @@ for %%t in (%INST_TOOLCHAINS%) do (
     del /q !TOOLCHAIN_FILENAME!
   )
 )
+popd
 
 REM # Install host tools
 if [%DO_HOSTTOOLS%] neq [] (
@@ -187,16 +191,16 @@ goto end
 
 REM # Print scripting mode usage
 :usage
-echo %~n0 [/t ^<toolchain^>] [/h] [/c]
+echo %~n0 [/t ^<gnu_toolchain^>] [/h] [/c]
 echo.
-echo   /t ^<toolchain^>   Install specified toolchain
-echo      all           Install all toolchains
-echo   /h               Install host tools
-echo   /c               Register Zephyr SDK CMake package
+echo   /t ^<gnu_toolchain^>   Install specified GNU toolchain
+echo      all               Install all GNU toolchains
+echo   /h                   Install host tools
+echo   /c                   Register Zephyr SDK CMake package
 echo.
-echo Supported Toolchains:
+echo Supported GNU Toolchains:
 echo.
-for %%t in (%TOOLCHAINS%) do (
+for %%t in (%GNU_TOOLCHAINS%) do (
   echo %%t
 )
 echo.
