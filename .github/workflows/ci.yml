@@ -1303,7 +1303,7 @@ jobs:
 
     env:
       SUBSET_COUNT: 3
-      ZEPHYR_TOOLCHAIN_VARIANT: zephyr
+      ZEPHYR_TOOLCHAIN_VARIANT: zephyr-gnu
 
     steps:
     - name: Set up Python
