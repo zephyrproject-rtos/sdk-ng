@@ -1152,17 +1152,29 @@ jobs:
         path: repository
         persist-credentials: false
 
-    - name: Download Version
+    - name: Download version file
       uses: actions/download-artifact@v4
       with:
-        path: artifacts
         pattern: version
+        path: artifacts
 
-    - name: Download artifacts
+    - name: Download CMake artifacts
       uses: actions/download-artifact@v4
       with:
+        pattern: cmake_${{ matrix.host.name }}
         path: artifacts
-        pattern: "*_${{ matrix.host.name }}*"
+
+    - name: Download host tools artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: hosttools_${{ matrix.host.name }}
+        path: artifacts
+
+    - name: Download GNU toolchain artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: toolchain_gnu_${{ matrix.host.name }}_*
+        path: artifacts
 
     - name: Create distribution bundle
       run: |
