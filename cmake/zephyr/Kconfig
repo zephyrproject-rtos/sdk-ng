@@ -13,7 +13,7 @@ config TOOLCHAIN_ZEPHYR_SUPPORTS_GNU_EXTENSIONS
 
 config PICOLIBC_SUPPORTED
 	def_bool y
-	depends on "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr"
+	depends on "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr-gnu"
 	help
 	  Zephyr SDK >=0.16 always supports Picolibc for C and C++ development.
 
