@@ -24,7 +24,7 @@ on:
       zephyr-ref:
         description: 'Zephyr Ref (branch, tag, SHA, ...)'
         required: true
-        default: collab-sdk-dev
+        default: collab-sdk-0.18-dev
       host:
         description: 'Host'
         type: choice
@@ -88,7 +88,7 @@ env:
   BUG_URL: 'https://github.com/zephyrproject-rtos/sdk-ng/issues'
   BUNDLE_NAME: Zephyr SDK
   BUNDLE_PREFIX: zephyr-sdk
-  ZEPHYR_REF: collab-sdk-dev
+  ZEPHYR_REF: collab-sdk-0.18-dev
 
 jobs:
   # Setup
