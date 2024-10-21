@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 cmake_host_system_information(RESULT TOOLCHAIN_ARCH QUERY OS_PLATFORM)
-set(HOST_TOOLS_HOME ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/${TOOLCHAIN_ARCH}-pokysdk-linux)
+set(HOST_TOOLS_HOME ${ZEPHYR_SDK_INSTALL_DIR}/hosttools/sysroots/${TOOLCHAIN_ARCH}-pokysdk-linux)
 
 # Path used for searching by the find_*() functions, with appropriate
 # suffixes added. Ensures that the SDK's host tools will be found when
