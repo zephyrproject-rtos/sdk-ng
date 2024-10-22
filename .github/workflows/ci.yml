@@ -256,7 +256,7 @@ jobs:
           MATRIX_HOSTS+='{
               "name": "linux-x86_64",
               "runner": "zephyr-runner-v2-linux-x64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.3.2",
+              "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.3.4",
               "archive": "tar.xz"
             },'
         fi
@@ -265,7 +265,7 @@ jobs:
           MATRIX_HOSTS+='{
               "name": "linux-aarch64",
               "runner": "zephyr-runner-v2-linux-arm64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.3.2",
+              "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.3.4",
               "archive": "tar.xz"
             },'
         fi
@@ -292,7 +292,7 @@ jobs:
           MATRIX_HOSTS+='{
               "name": "windows-x86_64",
               "runner": "zephyr-runner-v2-linux-x64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.3.2",
+              "container": "ghcr.io/zephyrproject-rtos/sdk-build:v1.3.4",
               "archive": "7z"
             },'
         fi
