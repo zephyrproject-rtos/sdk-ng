@@ -426,6 +426,7 @@ jobs:
     runs-on:
       group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
+    timeout-minutes: 720 
 
     defaults:
       run:
