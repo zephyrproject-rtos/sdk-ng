@@ -844,6 +844,161 @@ jobs:
           md5.sum
           sha256.sum
 
+  # Build LLVM toolchain
+  build-llvm-toolchain:
+    name: LLVM Toolchain (${{ matrix.host.name }})
+    needs: setup
+    runs-on:
+      group: ${{ matrix.host.runner }}
+    container: ${{ matrix.host.container }}
+
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(needs.setup.outputs.hosts) }}
+
+    steps:
+    - name: Set up build environment (Linux)
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        # Create workspace directory
+        WORKSPACE="${RUNNER_TEMP}/workspace"
+        sudo mkdir -p ${WORKSPACE}
+
+        # Allow non-root access to the working directories
+        sudo chmod -R 777 ${GITHUB_WORKSPACE}
+        sudo chmod -R 777 ${RUNNER_TEMP}
+
+        # Install common dependencies
+        sudo apt-get update
+
+        # Install dependencies for cross compilation
+        if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Install MinGW-w64 cross toolchain
+          sudo apt-get install -y binutils-mingw-w64 gcc-mingw-w64 \
+                                  g++-mingw-w64
+        fi
+
+        # Set environment variables
+        echo "TAR=tar" >> $GITHUB_ENV
+        echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
+
+    - name: Set up build environment (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        # Create case-sensitive workspace volume for macOS
+        WORKSPACE="/Volumes/Workspace"
+        hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
+                       -volname Workspace -type SPARSE -size 150g -fs HFSX
+        hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
+
+        # Install dependencies
+        brew install qemu
+
+        # Set environment variables
+        echo "TAR=gtar" >> $GITHUB_ENV
+        echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
+
+    - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        persist-credentials: false
+
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        submodules: recursive
+        persist-credentials: false
+
+    - name: Setup debug session (pre)
+      if: always() && needs.setup.outputs.debug == 'toolchain-pre'
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
+    - name: Build LLVM toolchain
+      run: |
+        # Create build directory
+        pushd ${WORKSPACE}
+        mkdir -p llvm
+        mkdir -p llvm-build
+        cd llvm-build
+
+        # Configure and generate LLVM build scripts
+        if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          LLVM_CMAKE_ARGS+="-DLLVM_TOOLCHAIN_CROSS_BUILD_MINGW=ON "
+        elif [ "${{ matrix.host.name }}" == "macos-aarch64" ]; then
+          LLVM_CMAKE_ARGS+="-DCMAKE_OSX_ARCHITECTURES=arm64 "
+        elif [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
+          LLVM_CMAKE_ARGS+="-DCMAKE_OSX_ARCHITECTURES=x86_64 "
+        fi
+
+        cmake \
+          -GNinja \
+          --install-prefix ${WORKSPACE}/llvm \
+          -DLLVM_ENABLE_ZSTD=OFF \
+          ${LLVM_CMAKE_ARGS} \
+          ${GITHUB_WORKSPACE}/scripts/llvm \
+          |& tee ${GITHUB_WORKSPACE}/llvm-cmake.log
+
+        # Build LLVM toolchain
+        ninja llvm-toolchain |& tee ${GITHUB_WORKSPACE}/llvm-build.log
+
+        # Run LLVM tests
+        ninja check-llvm-toolchain |& tee ${GITHUB_WORKSPACE}/llvm-test.log
+
+        # Install LLVM toolchain
+        ninja install-llvm-toolchain |& tee ${GITHUB_WORKSPACE}/llvm-install.log
+        popd
+
+        # Create archive
+        ARCHIVE_NAME=toolchain_llvm_${{ matrix.host.name }}
+        ARCHIVE_FILE=${ARCHIVE_NAME}.${{ matrix.host.archive }}
+
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_FILE} \
+                 --owner=0 --group=0 -C ${WORKSPACE} llvm
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          pushd ${WORKSPACE}
+          7z a -t7z -l ${GITHUB_WORKSPACE}/${ARCHIVE_FILE} llvm
+          popd
+        fi
+
+        # Compute checksum
+        md5sum ${ARCHIVE_FILE} > md5.sum
+        sha256sum ${ARCHIVE_FILE} > sha256.sum
+
+    - name: Setup debug session (post)
+      if: always() && needs.setup.outputs.debug == 'toolchain-post'
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
+    - name: Upload toolchain build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: log_toolchain_llvm_${{ matrix.host.name }}
+        path: '*.log'
+
+    - name: Upload toolchain build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: toolchain_llvm_${{ matrix.host.name }}
+        path: |
+          toolchain_llvm_${{ matrix.host.name }}.${{ matrix.host.archive }}
+          md5.sum
+          sha256.sum
+
   # Build host tools
   build-hosttools:
     name: Host Tools (${{ matrix.host.name }})
@@ -1090,7 +1245,7 @@ jobs:
   # Build distribution bundle
   build-dist-bundle:
     name: Distribution Bundle (${{ matrix.host.name }})
-    needs: [ setup, build-gnu-toolchain, build-hosttools, build-cmake-pkg ]
+    needs: [ setup, build-gnu-toolchain, build-llvm-toolchain, build-hosttools, build-cmake-pkg ]
     runs-on:
       group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
@@ -1174,6 +1329,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: toolchain_gnu_${{ matrix.host.name }}_*
+        path: artifacts
+
+    - name: Download LLVM toolchain artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: toolchain_llvm_${{ matrix.host.name }}
         path: artifacts
 
     - name: Create distribution bundle
@@ -1285,9 +1446,43 @@ jobs:
           7z a -t7z -l ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_DIR}
         fi
 
+        # Unstage GNU toolchain directory
+        rm -rf ${ARCHIVE_DIR}/gnu
+
+        # Stage LLVM toolchains
+        pushd ${ARCHIVE_DIR}
+
+        ## Verify toolchain archive checksum
+        pushd ${ARTIFACT_ROOT}/toolchain_llvm_${HOST}
+        md5sum --check md5.sum
+        sha256sum --check sha256.sum
+        popd
+
+        ## Extract toolchain archive
+        ${EXTRACT} ${ARTIFACT_ROOT}/toolchain_llvm_${HOST}/toolchain_llvm_${HOST}.${EXT}
+        popd
+
+        # Create LLVM distribution bundle archive
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_NAME}_llvm.${EXT} --owner=0 --group=0 \
+                 -C . ${ARCHIVE_DIR}
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          7z a -t7z -l ${ARCHIVE_NAME}_llvm.${EXT} ${ARCHIVE_DIR}
+        fi
+
         # Compute checksum
-        md5sum ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > md5.sum
-        sha256sum ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_NAME}_minimal.${EXT} > sha256.sum
+        md5sum \
+          ${ARCHIVE_NAME}_gnu.${EXT} \
+          ${ARCHIVE_NAME}_llvm.${EXT} \
+          ${ARCHIVE_NAME}_minimal.${EXT} \
+          > md5.sum
+
+        sha256sum \
+          ${ARCHIVE_NAME}_gnu.${EXT} \
+          ${ARCHIVE_NAME}_llvm.${EXT} \
+          ${ARCHIVE_NAME}_minimal.${EXT} \
+          > sha256.sum
 
     - name: Upload distribution bundle
       uses: actions/upload-artifact@v4
@@ -1295,13 +1490,14 @@ jobs:
         name: ${{ env.BUNDLE_ARCHIVE_NAME }}
         path: |
           ${{ env.BUNDLE_ARCHIVE_NAME }}_gnu.${{ matrix.host.archive }}
+          ${{ env.BUNDLE_ARCHIVE_NAME }}_llvm.${{ matrix.host.archive }}
           ${{ env.BUNDLE_ARCHIVE_NAME }}_minimal.${{ matrix.host.archive }}
           md5.sum
           sha256.sum
 
   # Test distribution bundle
   test-dist-bundle:
-    name: Test (${{ matrix.testenv.name }}) Subset ${{ matrix.subset }}
+    name: Test (${{ matrix.testenv.name }}, ${{ matrix.toolchain }}) Subset ${{ matrix.subset }}
     needs: [ setup, build-dist-bundle ]
     runs-on:
       group: ${{ matrix.testenv.runner }}
@@ -1315,11 +1511,11 @@ jobs:
       fail-fast: false
       matrix:
         testenv: ${{ fromJSON(needs.setup.outputs.testenvs) }}
+        toolchain: [ gnu, llvm ]
         subset: [ 1, 2, 3 ]
 
     env:
       SUBSET_COUNT: 3
-      ZEPHYR_TOOLCHAIN_VARIANT: zephyr-gnu
 
     steps:
     - name: Set up Python
@@ -1444,7 +1640,7 @@ jobs:
         popd
 
         # Extract GNU distribution bundle archive
-        BUNDLE_FILE=${BUNDLE_NAME}_gnu.${{ matrix.testenv.bundle-archive }}
+        BUNDLE_FILE=${BUNDLE_NAME}_${{ matrix.toolchain }}.${{ matrix.testenv.bundle-archive }}
         if [ "${{ matrix.testenv.bundle-archive }}" == "tar.xz" ]; then
           ${TAR} -Jxvf ${ARTIFACT_ROOT}/${BUNDLE_FILE} -C tools
         elif [ "${{ matrix.testenv.bundle-archive }}" == "7z" ]; then
@@ -1461,10 +1657,18 @@ jobs:
           # NOTE: Escape forward slashes because MinGW (bash)
           # NOTE: A full path (using PWD) must be specified to ensure that the
           #       setup script is launched from the shortened path.
-          ${PWD}/setup.cmd //t all //h //c
+          if [ "${{ matrix.toolchain }}" == "gnu" ]; then
+            ${PWD}/setup.cmd //t all //h //c
+          elif [ "${{ matrix.toolchain }}" == "llvm" ]; then
+            ${PWD}/setup.cmd //l //h //c
+          fi
           popd
         else
-          ./setup.sh -t all -h -c
+          if [ "${{ matrix.toolchain }}" == "gnu" ]; then
+            ./setup.sh -t all -h -c
+          elif [ "${{ matrix.toolchain }}" == "llvm" ]; then
+            ./setup.sh -l -h -c
+          fi
         fi
 
         # Clean up bundle archive to reduce disk usage
@@ -1549,134 +1753,159 @@ jobs:
           HOST_ARGS+="--short-build-path "
         fi
 
-        # Generate platform list from the target list
-        TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]' | dos2unix)
+        # Generate platform list
+        if [ "${{ matrix.toolchain }}" == "gnu" ]; then
+          # Generate platform list from the GNU toolchain target list
+          TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]' | dos2unix)
 
-        for TARGET in ${TARGETS}; do
-          case ${TARGET} in
-            aarch64-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_cortex_a53 "
-              ;;
-            arc64-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_arc/qemu_arc_hs6x "
-              ;;
-            arc-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_arc/qemu_arc_em "
-              PLATFORM_ARGS+="-p qemu_arc/qemu_arc_hs "
-              ;;
-            arm-zephyr-eabi)
-              PLATFORM_ARGS+="-p qemu_cortex_m0 "
-              PLATFORM_ARGS+="-p mps2/an385 "
-              PLATFORM_ARGS+="-p mps2/an521/cpu0 "
-              PLATFORM_ARGS+="-p mps3/corstone300/an547 "
-              ;;
-            # TODO: Release the microblaze arch source in a public repo
-            # microblazeel-zephyr-elf)
-            #  PLATFORM_ARGS+="-p qemu_microblaze "
-            #  ;;
-            mips-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_malta "
-              ;;
-            riscv64-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_riscv32 "
-              PLATFORM_ARGS+="-p qemu_riscv32e "
-              PLATFORM_ARGS+="-p qemu_riscv64 "
-              ;;
-            rx-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_rx "
-              ;;
-            sparc-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_leon3 "
-              ;;
-            x86_64-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_x86 "
-              PLATFORM_ARGS+="-p qemu_x86_64 "
-              ;;
-            xtensa-amd_acp_6_0_adsp_zephyr-elf)
-              # xtensa-sample_controller32_zephyr-elf is untested because no
-              # upstream user platform is currently available.
-              # PLATFORM_ARGS+="-p acp_6_0 "
-              ;;
-            xtensa-dc233c_zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_xtensa/dc233c/mmu "
-              ;;
-            xtensa-espressif_esp32_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32_devkitc/esp32/procpu "
-              ;;
-            xtensa-espressif_esp32s2_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32s2_saola "
-              ;;
-            xtensa-espressif_esp32s3_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32s3_devkitm/esp32s3/procpu "
-              ;;
-            xtensa-intel_ace15_mtpm_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp/ace15_mtpm "
-              ;;
-            xtensa-intel_ace30_ptl_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp/ace30/ptl "
-              ;;
-            xtensa-intel_tgl_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp/cavs25 "
-              ;;
-            xtensa-mtk_mt8195_adsp_zephyr-elf)
-              # Not merged yet, see Zephyr #81154
-              #PLATFORM_ARGS+="-p mt8195/mt8195/adsp"
-              ;;
-            xtensa-mtk_mt818x_adsp_zephyr-elf)
-              # Not merged yet, see Zephyr #81154
-              #PLATFORM_ARGS+="-p mt818x/mt818x/adsp"
-              ;;
-            xtensa-mtk_mt8196_adsp_zephyr-elf)
-              # Not merged yet, see Zephyr #81154
-              #PLATFORM_ARGS+="-p mt8196/mt8196/adsp"
-              ;;
-            xtensa-mtk_mt8365_adsp_zephyr-elf)
-              # xtensa-mtk_mt8365_adsp_zephyr-elf is untested because no
-              # upstream user platform is currently available.
-              #PLATFORM_ARGS+="-p mt8365/mt8365/adsp"
-              ;;
-            xtensa-nxp_imx_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
-              ;;
-            xtensa-nxp_imx8m_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p imx8mp_evk/mimx8ml8/adsp "
-              ;;
-            xtensa-nxp_imx8ulp_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p imx8ulp_evk/mimx8ud7/adsp "
-              ;;
-            xtensa-nxp_rt500_adsp_zephyr-elf)
-              PLATFORM_ARGS+="-p mimxrt595_evk/mimxrt595s/f1 "
-              ;;
-            xtensa-nxp_rt600_adsp_zephyr-elf)
-              # xtensa-nxp_rt600_adsp_zephyr-elf is untested because no
-              # upstream user platform is currently available.
-              ;;
-            xtensa-nxp_rt700_hifi1_zephyr-elf)
-              # xtensa-nxp_rt700_hifi1_zephyr-elf is untested because no
-              # upstream user platform is currently available.
-              ;;
-            xtensa-nxp_rt700_hifi4_zephyr-elf)
-              # xtensa-nxp_rt700_hifi4_zephyr-elf is untested because no
-              # upstream user platform is currently available.
-              ;;
-            xtensa-sample_controller_zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_xtensa/dc233c "
-              ;;
-            xtensa-sample_controller32_zephyr-elf)
-              # xtensa-sample_controller32_zephyr-elf is untested because no
-              # upstream user platform is currently available.
-              # PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
-              ;;
-          esac
-        done
+          for TARGET in ${TARGETS}; do
+            case ${TARGET} in
+              aarch64-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_cortex_a53 "
+                ;;
+              arc64-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_arc/qemu_arc_hs6x "
+                ;;
+              arc-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_arc/qemu_arc_em "
+                PLATFORM_ARGS+="-p qemu_arc/qemu_arc_hs "
+                ;;
+              arm-zephyr-eabi)
+                PLATFORM_ARGS+="-p qemu_cortex_m0 "
+                PLATFORM_ARGS+="-p mps2/an385 "
+                PLATFORM_ARGS+="-p mps2/an521/cpu0 "
+                PLATFORM_ARGS+="-p mps3/corstone300/an547 "
+                ;;
+              # TODO: Release the microblaze arch source in a public repo
+              # microblazeel-zephyr-elf)
+              #  PLATFORM_ARGS+="-p qemu_microblaze "
+              #  ;;
+              mips-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_malta "
+                ;;
+              riscv64-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_riscv32 "
+                PLATFORM_ARGS+="-p qemu_riscv32e "
+                PLATFORM_ARGS+="-p qemu_riscv64 "
+                ;;
+              rx-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_rx "
+                ;;
+              sparc-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_leon3 "
+                ;;
+              x86_64-zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_x86 "
+                PLATFORM_ARGS+="-p qemu_x86_64 "
+                ;;
+              xtensa-amd_acp_6_0_adsp_zephyr-elf)
+                # xtensa-sample_controller32_zephyr-elf is untested because no
+                # upstream user platform is currently available.
+                # PLATFORM_ARGS+="-p acp_6_0 "
+                ;;
+              xtensa-dc233c_zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_xtensa/dc233c/mmu "
+                ;;
+              xtensa-espressif_esp32_zephyr-elf)
+                PLATFORM_ARGS+="-p esp32_devkitc/esp32/procpu "
+                ;;
+              xtensa-espressif_esp32s2_zephyr-elf)
+                PLATFORM_ARGS+="-p esp32s2_saola "
+                ;;
+              xtensa-espressif_esp32s3_zephyr-elf)
+                PLATFORM_ARGS+="-p esp32s3_devkitm/esp32s3/procpu "
+                ;;
+              xtensa-intel_ace15_mtpm_zephyr-elf)
+                PLATFORM_ARGS+="-p intel_adsp/ace15_mtpm "
+                ;;
+              xtensa-intel_ace30_ptl_zephyr-elf)
+                PLATFORM_ARGS+="-p intel_adsp/ace30/ptl "
+                ;;
+              xtensa-intel_tgl_adsp_zephyr-elf)
+                PLATFORM_ARGS+="-p intel_adsp/cavs25 "
+                ;;
+              xtensa-mtk_mt8195_adsp_zephyr-elf)
+                # Not merged yet, see Zephyr #81154
+                #PLATFORM_ARGS+="-p mt8195/mt8195/adsp"
+                ;;
+              xtensa-mtk_mt818x_adsp_zephyr-elf)
+                # Not merged yet, see Zephyr #81154
+                #PLATFORM_ARGS+="-p mt818x/mt818x/adsp"
+                ;;
+              xtensa-mtk_mt8196_adsp_zephyr-elf)
+                # Not merged yet, see Zephyr #81154
+                #PLATFORM_ARGS+="-p mt8196/mt8196/adsp"
+                ;;
+              xtensa-mtk_mt8365_adsp_zephyr-elf)
+                # xtensa-mtk_mt8365_adsp_zephyr-elf is untested because no
+                # upstream user platform is currently available.
+                #PLATFORM_ARGS+="-p mt8365/mt8365/adsp"
+                ;;
+              xtensa-nxp_imx_adsp_zephyr-elf)
+                PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
+                ;;
+              xtensa-nxp_imx8m_adsp_zephyr-elf)
+                PLATFORM_ARGS+="-p imx8mp_evk/mimx8ml8/adsp "
+                ;;
+              xtensa-nxp_imx8ulp_adsp_zephyr-elf)
+                PLATFORM_ARGS+="-p imx8ulp_evk/mimx8ud7/adsp "
+                ;;
+              xtensa-nxp_rt500_adsp_zephyr-elf)
+                PLATFORM_ARGS+="-p mimxrt595_evk/mimxrt595s/f1 "
+                ;;
+              xtensa-nxp_rt600_adsp_zephyr-elf)
+                # xtensa-nxp_rt600_adsp_zephyr-elf is untested because no
+                # upstream user platform is currently available.
+                ;;
+              xtensa-nxp_rt700_hifi1_zephyr-elf)
+                # xtensa-nxp_rt700_hifi1_zephyr-elf is untested because no
+                # upstream user platform is currently available.
+                ;;
+              xtensa-nxp_rt700_hifi4_zephyr-elf)
+                # xtensa-nxp_rt700_hifi4_zephyr-elf is untested because no
+                # upstream user platform is currently available.
+                ;;
+              xtensa-sample_controller_zephyr-elf)
+                PLATFORM_ARGS+="-p qemu_xtensa/dc233c "
+                ;;
+              xtensa-sample_controller32_zephyr-elf)
+                # xtensa-sample_controller32_zephyr-elf is untested because no
+                # upstream user platform is currently available.
+                # PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
+                ;;
+            esac
+          done
+        elif [ "${{ matrix.toolchain }}" == "llvm" ]; then
+          # Add AArch64 platforms
+          PLATFORM_ARGS+="-p qemu_cortex_a53 "
+
+          # Add ARM platforms
+          ## ARMv6-M (Cortex-M0)
+          PLATFORM_ARGS+="-p qemu_cortex_m0 "
+          ## ARMv7-M (Cortex-M3)
+          PLATFORM_ARGS+="-p mps2/an385 "
+          ## ARMv8-M (Cortex-M33)
+          PLATFORM_ARGS+="-p mps2/an521/cpu0 "
+          ## ARMv8.1-M (Cortex-M55)
+          PLATFORM_ARGS+="-p mps3/an547 "
+
+          # Add RISC-V platforms
+          ## TODO: Add RV32I platforms
+          ## TODO: Add RV32E platforms
+          ## TODO: Add RV64I platforms
+        fi
 
         # Generate test list
+        ## Add common tests
         TEST_ARGS="
             -T ${ZEPHYR_ROOT}/samples/hello_world
             -T ${ZEPHYR_ROOT}/samples/cpp/hello_world
             -T ${ZEPHYR_ROOT}/tests/lib/c_lib
             -T ${ZEPHYR_ROOT}/tests/lib/cpp
             "
+
+        # Set toolchain variant
+        export ZEPHYR_TOOLCHAIN_VARIANT=zephyr-${{ matrix.toolchain }}
 
         # Run tests with twister
         TWISTER="${ZEPHYR_ROOT}/scripts/twister"
@@ -1691,7 +1920,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test_${{ matrix.testenv.name }}_${{ matrix.subset }}
+        name: test_${{ matrix.testenv.name }}_${{ matrix.toolchain }}_${{ matrix.subset }}
         if-no-files-found: ignore
         path: test/twister-out/twister.xml
 
