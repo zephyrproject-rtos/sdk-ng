@@ -522,13 +522,6 @@ jobs:
                        -volname Workspace -type SPARSE -size 150g -fs HFSX
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
 
-        # Install required dependencies if running inside a GitHub-hosted runner
-        # (self-hosted runners are expected to provide all required dependencies)
-        if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
-          brew install autoconf automake bash binutils boost coreutils gawk \
-                       gnu-sed gnu-tar help2man meson ncurses ninja pkg-config
-        fi
-
         # Install Python 3.10 (temporary until the sdk-build-macos image is
         # updated)
         brew install python@3.10
@@ -1132,12 +1125,6 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Install required dependencies if running inside a GitHub-hosted runner
-        # (self-hosted runners are expected to provide all required dependencies)
-        if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
-          brew install gnu-tar
-        fi
-
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
 
@@ -1212,12 +1199,6 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Install required dependencies if running inside a GitHub-hosted runner
-        # (self-hosted runners are expected to provide all required dependencies)
-        if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
-          brew install coreutils gnu-tar jq
-        fi
-
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
 
@@ -1469,12 +1450,6 @@ jobs:
     - name: Set up test environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Install required dependencies if running inside a GitHub-hosted runner
-        # (self-hosted runners are expected to provide all required dependencies)
-        if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
-          brew install ccache coreutils dos2unix dtc gperf jq ninja wget
-        fi
-
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
         echo "ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts" >> $GITHUB_ENV
