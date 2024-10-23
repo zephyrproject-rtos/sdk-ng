@@ -462,12 +462,6 @@ jobs:
         WORKSPACE="${RUNNER_TEMP}/workspace"
         sudo mkdir -p ${WORKSPACE}
 
-        # Clean up working directories
-        shopt -s dotglob
-        sudo rm -rf ${GITHUB_WORKSPACE}/*
-        sudo rm -rf ${WORKSPACE}/*
-        shopt -u dotglob
-
         # Allow non-root access to the working directories
         sudo chmod -R 777 ${GITHUB_WORKSPACE}
         sudo chmod -R 777 ${RUNNER_TEMP}
@@ -522,28 +516,8 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Delete workspace from the previous run
-        WORKSPACE="/Volumes/Workspace"
-        if [ -d ${WORKSPACE} ]; then
-          # Get disk device name
-          OLDDISK=$(diskutil info -plist "${WORKSPACE}" |
-                    plutil -extract ParentWholeDisk xml1 - -o - |
-                    sed -n "s/.*<string>\(.*\)<\/string>.*/\1/p")
-
-          # Force unmount and eject to deallocate disk blocks
-          if [ ! -z "${OLDDISK}" ]; then
-            diskutil unmountDisk force ${OLDDISK}
-            diskutil eject ${OLDDISK}
-          fi
-        fi
-
-        # Clean up working directories
-        shopt -s dotglob
-        rm -rf ${GITHUB_WORKSPACE}/*
-        rm -f ${RUNNER_TEMP}/Workspace.sparseimage
-        shopt -u dotglob
-
         # Create case-sensitive workspace volume for macOS
+        WORKSPACE="/Volumes/Workspace"
         hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
                        -volname Workspace -type SPARSE -size 150g -fs HFSX
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
@@ -1017,22 +991,12 @@ jobs:
     - name: Set up build environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        sudo rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
 
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
 
@@ -1158,11 +1122,6 @@ jobs:
     - name: Set up build environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        sudo rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install common dependencies
         sudo apt-get update
         sudo apt-get install -y p7zip
@@ -1173,11 +1132,6 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install required dependencies if running inside a GitHub-hosted runner
         # (self-hosted runners are expected to provide all required dependencies)
         if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
@@ -1248,11 +1202,6 @@ jobs:
     - name: Set up build environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        sudo rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install common dependencies
         sudo apt-get update
         sudo apt-get install -y jq p7zip
@@ -1263,11 +1212,6 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install required dependencies if running inside a GitHub-hosted runner
         # (self-hosted runners are expected to provide all required dependencies)
         if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
@@ -1514,11 +1458,6 @@ jobs:
     - name: Set up test environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        sudo rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install required system packages
         sudo apt-get update
         sudo apt-get install -y dos2unix jq
@@ -1530,11 +1469,6 @@ jobs:
     - name: Set up test environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install required dependencies if running inside a GitHub-hosted runner
         # (self-hosted runners are expected to provide all required dependencies)
         if [[ "${{ matrix.host.runner }}" =~ ^macos.* ]]; then
@@ -1548,11 +1482,6 @@ jobs:
     - name: Set up test environment (Windows)
       if: ${{ runner.os == 'Windows' }}
       run: |
-        # Clean up working directories
-        shopt -s dotglob
-        rm -rf ${GITHUB_WORKSPACE}/*
-        shopt -u dotglob
-
         # Install required system packages
         choco install ccache dtc-msys2 gperf jq ninja wget 7zip
 
