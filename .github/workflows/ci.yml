@@ -472,15 +472,15 @@ jobs:
       run: |
         # Create workspace directory
         WORKSPACE="${RUNNER_TEMP}/workspace"
-        sudo mkdir -p ${WORKSPACE}
+        mkdir -p ${WORKSPACE}
 
         # Allow non-root access to the working directories
-        sudo chmod -R 777 ${GITHUB_WORKSPACE}
-        sudo chmod -R 777 ${RUNNER_TEMP}
+        chmod -R 777 ${GITHUB_WORKSPACE}
+        chmod -R 777 ${RUNNER_TEMP}
 
         # Install common dependencies
-        sudo apt-get update
-        sudo apt-get install -y autoconf automake bison flex gettext \
+        apt-get update
+        apt-get install -y autoconf automake bison flex gettext \
                                 help2man libboost-dev libboost-regex-dev \
                                 libncurses5-dev libtool-bin libtool-doc \
                                 pkg-config texinfo p7zip
@@ -512,13 +512,13 @@ jobs:
             project-config.jam
 
           ## Build and install boost-regex library
-          sudo ./b2 install \
+          ./b2 install \
             toolset=gcc-mingw link=static threading=multi variant=release \
             --prefix=/usr/x86_64-w64-mingw32
 
           ## Clean up to reduce disk usage
           popd
-          sudo rm -rf ${WORKSPACE}/boost
+          rm -rf ${WORKSPACE}/boost
         fi
 
         # Set environment variables
@@ -834,14 +834,14 @@ jobs:
       run: |
         # Create workspace directory
         WORKSPACE="${RUNNER_TEMP}/workspace"
-        sudo mkdir -p ${WORKSPACE}
+        mkdir -p ${WORKSPACE}
 
         # Allow non-root access to the working directories
-        sudo chmod -R 777 ${GITHUB_WORKSPACE}
-        sudo chmod -R 777 ${RUNNER_TEMP}
+        chmod -R 777 ${GITHUB_WORKSPACE}
+        chmod -R 777 ${RUNNER_TEMP}
 
         # Install common dependencies
-        sudo apt-get update
+        apt-get update
 
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
@@ -1131,8 +1131,8 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # Install common dependencies
-        sudo apt-get update
-        sudo apt-get install -y p7zip
+        apt-get update
+        apt-get install -y p7zip
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
@@ -1205,8 +1205,8 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # Install common dependencies
-        sudo apt-get update
-        sudo apt-get install -y jq p7zip
+        apt-get update
+        apt-get install -y jq p7zip
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
