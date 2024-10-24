@@ -329,7 +329,7 @@ jobs:
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-x86_64",
               "runner": "zephyr-runner-v2-linux-x64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/ci:master",
+              "container": "ghcr.io/zephyrproject-rtos/ci:main",
               "bundle-host": "linux-x86_64",
               "bundle-archive": "tar.xz"
             },'
@@ -339,7 +339,7 @@ jobs:
           MATRIX_TESTENVS+='{
               "name": "ubuntu-20.04-aarch64",
               "runner": "zephyr-runner-v2-linux-arm64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/ci:master",
+              "container": "ghcr.io/zephyrproject-rtos/ci:main",
               "bundle-host": "linux-aarch64",
               "bundle-archive": "tar.xz"
             },'
