@@ -11,7 +11,10 @@ set(SDK_MAJOR_MINOR_MICRO ${SDK_VERSION})
 
 get_filename_component(ZEPHYR_SDK_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
 set(ZEPHYR_SDK_INSTALL_DIR ${ZEPHYR_SDK_INSTALL_DIR})
-set(ZEPHYR_TOOLCHAIN_VARIANT zephyr-gnu)
+
+if(NOT DEFINED ZEPHYR_TOOLCHAIN_VARIANT)
+  set(ZEPHYR_TOOLCHAIN_VARIANT zephyr-gnu)
+endif()
 
 # Those are CMake package parameters.
 set(Zephyr-sdk_FOUND True)
