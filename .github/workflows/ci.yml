@@ -1429,11 +1429,10 @@ jobs:
 
     steps:
     - name: Set up Python
-      if: ${{ runner.os == 'Windows' }}
       uses: actions/setup-python@v5
       with:
-        # Force Python 3.10 because the twister is not compatible with a Python
-        # version lower than 3.8 on Windows.
+        # Force Python 3.10, which is the minimum Python version supported by
+        # Zephyr and intended to be used with Zephyr SDK.
         python-version: '3.10'
 
     - name: Set up test environment (Linux)
@@ -1467,7 +1466,6 @@ jobs:
         echo "ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts" >> $GITHUB_ENV
 
     - name: Create Python virtual environment
-      if: ${{ runner.os != 'Linux' }}
       run: |
         # Create Python virtual environment
         python3 -m venv ${GITHUB_WORKSPACE}/venv
@@ -1568,9 +1566,7 @@ jobs:
     - name: Install west
       run: |
         # Activate Python virtual environment
-        if [ ! -z "${VENV_ACTIVATE}" ]; then
-          source ${VENV_ACTIVATE}
-        fi
+        source ${VENV_ACTIVATE}
 
         # Install or upgrade west
         pip3 install --upgrade west
@@ -1578,9 +1574,7 @@ jobs:
     - name: Set up Zephyr repository
       run: |
         # Activate Python virtual environment
-        if [ ! -z "${VENV_ACTIVATE}" ]; then
-          source ${VENV_ACTIVATE}
-        fi
+        source ${VENV_ACTIVATE}
 
         # Create Zephyr workspace
         ZEPHYR_WORKSPACE=${GITHUB_WORKSPACE}/zephyrproject
@@ -1610,21 +1604,15 @@ jobs:
     - name: Install Python dependencies
       run: |
         # Activate Python virtual environment
-        if [ ! -z "${VENV_ACTIVATE}" ]; then
-          source ${VENV_ACTIVATE}
+        source ${VENV_ACTIVATE}
 
-          # Install Python dependencies from the checked out Zephyr repository
-          # if running inside a virtual environment; otherwise, it is assumed
-          # that the host already provides all the required dependencies.
-          pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
-        fi
+        # Install Python dependencies from the checked out Zephyr repository.
+        pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
 
     - name: Run test suites
       run: |
         # Activate Python virtual environment
-        if [ ! -z "${VENV_ACTIVATE}" ]; then
-          source ${VENV_ACTIVATE}
-        fi
+        source ${VENV_ACTIVATE}
 
         # Create working directory
         mkdir -p test
