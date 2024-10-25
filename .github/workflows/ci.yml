@@ -1779,7 +1779,8 @@ jobs:
           ## ARMv8-M (Cortex-M33)
           PLATFORM_ARGS+="-p mps2/an521/cpu0 "
           ## ARMv8.1-M (Cortex-M55)
-          PLATFORM_ARGS+="-p mps3/an547 "
+          # FIXME: mps3/an547 currently cannot build using LLVM.
+          # PLATFORM_ARGS+="-p mps3/an547 "
 
           # Add RISC-V platforms
           ## TODO: Add RV32I platforms
