@@ -1768,7 +1768,8 @@ jobs:
           done
         elif [ "${{ matrix.toolchain }}" == "llvm" ]; then
           # Add AArch64 platforms
-          PLATFORM_ARGS+="-p qemu_cortex_a53 "
+          # FIXME: qemu_cortex_a53 currently cannot build using LLVM.
+          # PLATFORM_ARGS+="-p qemu_cortex_a53 "
 
           # Add ARM platforms
           ## ARMv6-M (Cortex-M0)
