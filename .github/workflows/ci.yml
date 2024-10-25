@@ -1745,7 +1745,8 @@ jobs:
 
           # Add ARM platforms
           ## ARMv6-M (Cortex-M0)
-          PLATFORM_ARGS+="-p qemu_cortex_m0 "
+          # FIXME: qemu_cortex_m0 currently cannot build using LLVM.
+          # PLATFORM_ARGS+="-p qemu_cortex_m0 "
           ## ARMv7-M (Cortex-M3)
           PLATFORM_ARGS+="-p mps2/an385 "
           ## ARMv8-M (Cortex-M33)
