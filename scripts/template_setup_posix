@@ -49,7 +49,7 @@ check_command()
 }
 
 # Check if the current installation is a full SDK with all GNU toolchains
-check_full_sdk()
+check_full_gnu_sdk()
 {
   for toolchain in ${gnu_toolchains[@]}; do
     if [ ! -d "gnu/${toolchain}" ]; then
@@ -67,6 +67,7 @@ usage()
   echo
   echo "  -t <gnu_toolchain>   Install specified GNU toolchain"
   echo "     all               Install all GNU toolchains"
+  echo "  -l                   Install LLVM toolchain"
   echo "  -h                   Install host tools"
   echo "  -c                   Register Zephyr SDK CMake package"
   echo
@@ -89,19 +90,26 @@ user_prompt()
   echo
 
   # GNU Toolchains
-  check_full_sdk
-  if [ $? != 0 ]; then
-    ask_yn "Install GNU toolchains for all targets"
-    if [ $? == 0 ]; then
-      inst_gnu_toolchains=(${gnu_toolchains[*]})
-    else
-      for toolchain in ${gnu_toolchains[@]}; do
-        if [ ! -d "gnu/${toolchain}" ]; then
-          ask_yn "Install '${toolchain}' GNU toolchain" && inst_gnu_toolchains+=("${toolchain}")
-        fi
-      done
+  ask_yn "Install GNU toolchain"
+  if [ $? == 0 ]; then
+    do_gnu_toolchain="y"
+    check_full_gnu_sdk
+    if [ $? != 0 ]; then
+      ask_yn "Install GNU toolchains for all targets"
+      if [ $? == 0 ]; then
+        inst_gnu_toolchains=(${gnu_toolchains[*]})
+      else
+        for toolchain in ${gnu_toolchains[@]}; do
+          if [ ! -d "gnu/${toolchain}" ]; then
+            ask_yn "Install '${toolchain}' GNU toolchain" && inst_gnu_toolchains+=("${toolchain}")
+          fi
+        done
+      fi
     fi
   fi
+
+  # LLVM Toolchain
+  ask_yn "Install LLVM toolchain" && do_llvm_toolchain="y"
 
   # Host Tools
   ask_yn "Install host tools" && do_hosttools="y"
@@ -140,6 +148,10 @@ else
             exit 2
           fi
         fi
+        do_gnu_toolchain="y"
+        ;;
+      -l)
+        do_llvm_toolchain="y"
         ;;
       -h)
         do_hosttools="y"
@@ -187,6 +199,7 @@ esac
 # Resolve release download base URI
 dl_rel_base="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}"
 dl_gnu_toolchain_filename='toolchain_gnu_${host}_${toolchain}.tar.xz'
+dl_llvm_toolchain_filename='toolchain_llvm_${host}.tar.xz'
 
 # Print banner
 echo "Zephyr SDK ${version} Setup"
@@ -203,38 +216,65 @@ if [ "${interactive}" = "y" ]; then
 fi
 
 # Install GNU toolchains
-mkdir -p gnu
-pushd gnu
+if [ "${do_gnu_toolchain}" = "y" ]; then
+  mkdir -p gnu
+  pushd gnu
 
-for toolchain in ${inst_gnu_toolchains[@]}; do
-  eval toolchain_filename="${dl_gnu_toolchain_filename}"
+  for toolchain in ${inst_gnu_toolchains[@]}; do
+    eval toolchain_filename="${dl_gnu_toolchain_filename}"
+    toolchain_uri="${dl_rel_base}/${toolchain_filename}"
+
+    # Skip if toolchain directory already exists
+    if [ -d "${toolchain}" ]; then
+      continue
+    fi
+
+    echo "Installing '${toolchain}' GNU toolchain ..."
+
+    # Download toolchain archive
+    wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
+    if [ $? != 0 ]; then
+      rm -f "${toolchain_filename}"
+      echo "ERROR: GNU toolchain download failed"
+      exit 20
+    fi
+
+    # Extract archive
+    tar xf "${toolchain_filename}"
+    assert_rc "ERROR: GNU toolchain archive extraction failed" 21
+
+    # Remove archive
+    rm -f "${toolchain_filename}"
+
+    echo
+  done
+  popd
+fi
+
+# Install LLVM toolchain
+if [ "${do_llvm_toolchain}" = "y" ] && [ ! -d "llvm" ]; then
+  echo "Installing LLVM toolchain ..."
+
+  eval toolchain_filename="${dl_llvm_toolchain_filename}"
   toolchain_uri="${dl_rel_base}/${toolchain_filename}"
-
-  # Skip if toolchain directory already exists
-  if [ -d "${toolchain}" ]; then
-    continue
-  fi
-
-  echo "Installing '${toolchain}' GNU toolchain ..."
 
   # Download toolchain archive
   wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
   if [ $? != 0 ]; then
     rm -f "${toolchain_filename}"
-    echo "ERROR: GNU toolchain download failed"
+    echo "ERROR: LLVM toolchain download failed"
     exit 20
   fi
 
   # Extract archive
   tar xf "${toolchain_filename}"
-  assert_rc "ERROR: GNU toolchain archive extraction failed" 21
+  assert_rc "ERROR: LLVM toolchain archive extraction failed" 21
 
   # Remove archive
   rm -f "${toolchain_filename}"
 
   echo
-done
-popd
+fi
 
 # Install host tools
 if [ "${do_hosttools}" = "y" ]; then
