@@ -38,6 +38,7 @@ set /p VERSION=<sdk_version
 REM # Resolve release download base URI
 set DL_REL_BASE=https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v%VERSION%
 set DL_GNU_TOOLCHAIN_FILENAME=toolchain_gnu_windows-x86_64_%%t.7z
+set DL_LLVM_TOOLCHAIN_FILENAME=toolchain_llvm_windows-x86_64.7z
 
 REM # Print banner
 echo Zephyr SDK %VERSION% Setup
@@ -78,7 +79,10 @@ if /i [%1] equ [/t] (
       goto end
     )
   )
+  set DO_GNU_TOOLCHAIN=y
   shift
+) else if /i [%1] equ [/l] (
+  set DO_LLVM_TOOLCHAIN=y
 ) else if /i [%1] equ [/h] (
   set DO_HOSTTOOLS=y
 ) else if /i [%1] equ [/c] (
@@ -104,26 +108,33 @@ echo.
 REM # Check installation type
 for %%t in (%GNU_TOOLCHAINS%) do (
   if not exist gnu\%%t\ (
-    set IS_PARTIAL_SDK=y
+    set IS_PARTIAL_GNU_SDK=y
   )
 )
 
 REM # Ask user for set-up choices
-if [%IS_PARTIAL_SDK%] neq [] (
-  choice /c:yn /m:"Install GNU toolchains for all targets"
-  if [!ERRORLEVEL!] equ [1] (
-    set INST_GNU_TOOLCHAINS=%GNU_TOOLCHAINS%
-  ) else (
-    for %%t in (%GNU_TOOLCHAINS%) do (
-      if not exist gnu\%%t\ (
-        choice /c:yn /m:"Install '%%t' GNU toolchain"
-        if [!ERRORLEVEL!] equ [1] (
-          set INST_GNU_TOOLCHAINS=!INST_GNU_TOOLCHAINS! %%t
+choice /c:yn /m:"Install GNU toolchain"
+if [!ERRORLEVEL!] equ [1] (
+  set DO_GNU_TOOLCHAIN=y
+  if [%IS_PARTIAL_GNU_SDK%] neq [] (
+    choice /c:yn /m:"Install GNU toolchains for all targets"
+    if [!ERRORLEVEL!] equ [1] (
+      set INST_GNU_TOOLCHAINS=%GNU_TOOLCHAINS%
+    ) else (
+      for %%t in (%GNU_TOOLCHAINS%) do (
+        if not exist gnu\%%t\ (
+          choice /c:yn /m:"Install '%%t' GNU toolchain"
+          if [!ERRORLEVEL!] equ [1] (
+            set INST_GNU_TOOLCHAINS=!INST_GNU_TOOLCHAINS! %%t
+          )
         )
       )
     )
   )
 )
+
+choice /c:yn /m:"Install LLVM toolchain"
+if [%ERRORLEVEL%] equ [1] set DO_LLVM_TOOLCHAIN=y
 
 choice /c:yn /m:"Install host tools"
 if [%ERRORLEVEL%] equ [1] set DO_HOSTTOOLS=y
@@ -135,21 +146,54 @@ echo.
 
 :process
 REM # Install GNU toolchains
-if not exist gnu\ mkdir gnu
-pushd gnu
+if [%DO_GNU_TOOLCHAIN%] neq [] (
+  if not exist gnu\ mkdir gnu
+  pushd gnu
 
-for %%t in (%INST_GNU_TOOLCHAINS%) do (
-  set TOOLCHAIN_FILENAME=%DL_GNU_TOOLCHAIN_FILENAME%
-  set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
+  for %%t in (%INST_GNU_TOOLCHAINS%) do (
+    set TOOLCHAIN_FILENAME=%DL_GNU_TOOLCHAIN_FILENAME%
+    set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
 
-  if not exist %%t\ (
-    echo Installing '%%t' GNU toolchain ...
+    if not exist %%t\ (
+      echo Installing '%%t' GNU toolchain ...
+
+      REM # Download toolchain archive
+      wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
+      if [!ERRORLEVEL!] neq [0] (
+        del /q !TOOLCHAIN_FILENAME!
+        echo ERROR: GNU toolchain download failed
+        set EXITCODE=20
+        goto end
+      )
+
+      REM # Extract archive
+      7z x -o. !TOOLCHAIN_FILENAME!
+      if [!ERRORLEVEL!] neq [0] (
+        echo ERROR: GNU toolchain archive extraction failed
+        set EXITCODE=21
+        goto end
+      )
+
+      REM # Remove archive
+      del /q !TOOLCHAIN_FILENAME!
+    )
+  )
+  popd
+)
+
+REM # Install LLVM toolchain
+if [%DO_LLVM_TOOLCHAIN%] neq [] (
+  if not exist llvm\ (
+    echo Installing LLVM toolchain ...
+
+    set TOOLCHAIN_FILENAME=%DL_GNU_TOOLCHAIN_FILENAME%
+    set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
 
     REM # Download toolchain archive
     wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
     if [!ERRORLEVEL!] neq [0] (
       del /q !TOOLCHAIN_FILENAME!
-      echo ERROR: GNU toolchain download failed
+      echo ERROR: LLVM toolchain download failed
       set EXITCODE=20
       goto end
     )
@@ -157,16 +201,17 @@ for %%t in (%INST_GNU_TOOLCHAINS%) do (
     REM # Extract archive
     7z x -o. !TOOLCHAIN_FILENAME!
     if [!ERRORLEVEL!] neq [0] (
-      echo ERROR: GNU toolchain archive extraction failed
+      echo ERROR: LLVM toolchain archive extraction failed
       set EXITCODE=21
       goto end
     )
 
     REM # Remove archive
     del /q !TOOLCHAIN_FILENAME!
+
+    echo.
   )
 )
-popd
 
 REM # Install host tools
 if [%DO_HOSTTOOLS%] neq [] (
@@ -195,6 +240,7 @@ echo %~n0 [/t ^<gnu_toolchain^>] [/h] [/c]
 echo.
 echo   /t ^<gnu_toolchain^>   Install specified GNU toolchain
 echo      all               Install all GNU toolchains
+echo   /l                   Install LLVM toolchain
 echo   /h                   Install host tools
 echo   /c                   Register Zephyr SDK CMake package
 echo.
