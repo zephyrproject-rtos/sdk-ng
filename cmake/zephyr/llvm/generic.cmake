@@ -9,3 +9,4 @@ set(LINKER lld)
 set(BINTOOLS llvm)
 
 set(TOOLCHAIN_HAS_PICOLIBC ON CACHE BOOL "True if toolchain supports picolibc")
+set(TOOLCHAIN_HAS_LIBCXX ON CACHE BOOL "True if toolchain supports libc++")
