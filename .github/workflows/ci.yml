@@ -82,6 +82,8 @@ on:
         - toolchain-pre
         - toolchain-post
         - hosttools
+        - test-pre
+        - test-post
 
 concurrency:
   group: ${{ github.event_name == 'workflow_dispatch' && github.run_id || github.head_ref || github.ref }}
@@ -150,6 +152,8 @@ jobs:
           ${{ contains(github.event.pull_request.labels.*.name, 'debug-toolchain-pre') }} && MATRIX_DEBUG="toolchain-pre"
           ${{ contains(github.event.pull_request.labels.*.name, 'debug-toolchain-post') }} && MATRIX_DEBUG="toolchain-post"
           ${{ contains(github.event.pull_request.labels.*.name, 'debug-hosttools') }} && MATRIX_DEBUG="hosttools"
+          ${{ contains(github.event.pull_request.labels.*.name, 'debug-test-pre') }} && MATRIX_DEBUG="test-pre"
+          ${{ contains(github.event.pull_request.labels.*.name, 'debug-test-post') }} && MATRIX_DEBUG="test-post"
         elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
           # Set configurations based on the user selection
           case '${{ github.event.inputs.host }}' in
@@ -1623,6 +1627,12 @@ jobs:
         # Install Python dependencies from the checked out Zephyr repository.
         pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
 
+    - name: Setup debug session (pre)
+      if: always() && needs.setup.outputs.debug == 'test-pre'
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
     - name: Run test suites
       run: |
         # Activate Python virtual environment
@@ -1809,6 +1819,12 @@ jobs:
                    ${HOST_ARGS} \
                    ${TEST_ARGS} \
                    ${PLATFORM_ARGS}
+
+    - name: Setup debug session (post)
+      if: always() && needs.setup.outputs.debug == 'test-post'
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
 
     - name: Publish test results
       if: always()
