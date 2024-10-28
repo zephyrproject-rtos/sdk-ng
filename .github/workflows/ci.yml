@@ -383,7 +383,7 @@ jobs:
 
         if [ "${build_host_windows_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
-              "name": "windows-2019-x86_64",
+              "name": "windows-2022-x86_64",
               "runner": "zephyr-runner-v2-windows-x64-2xlarge",
               "container": "",
               "bundle-host": "windows-x86_64",
