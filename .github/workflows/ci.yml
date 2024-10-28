@@ -1787,6 +1787,13 @@ jobs:
             "
         fi
 
+        # FIXME: Skip testing for LLVM on Windows because there are known issues
+        # (see GitHub issue #831).
+        if [ "${{ matrix.toolchain }}" == "llvm" ] &&
+           [ "${{ runner.os }}" == "Windows" ]; then
+          exit 0
+        fi
+
         # Set toolchain variant
         export ZEPHYR_TOOLCHAIN_VARIANT=zephyr-${{ matrix.toolchain }}
 
