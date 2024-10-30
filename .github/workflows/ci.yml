@@ -538,10 +538,6 @@ jobs:
                        -volname Workspace -type SPARSE -size 150g -fs HFSX
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
 
-        # Install Python 3.10 (temporary until the sdk-build-macos image is
-        # updated)
-        brew install python@3.10
-
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
           # Make crosskit available in PATH
