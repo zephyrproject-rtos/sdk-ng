@@ -1,5 +1,23 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.18.0
+
+- general:
+
+  * Added Clang/LLVM 19.1.1 toolchain.
+  * Introduced Clang/LLVM toolchain distribution bundle
+    (`zephyr-sdk-VER_HOST_llvm`).
+  * Renamed existing "full" GNU toolchain distribution bundle to
+    `zephyr-sdk-VER_HOST_gnu`.
+  * Windows executables now link against UCRT, which supports Unicode.
+
+- cmake:
+
+  * Restructured toolchain CMake script to support GNU and LLVM toolchains.
+    This requires Zephyr 4.1.0 or above (or the latest `collab-sdk-0.18-dev`).
+  * Zephyr SDK GNU toolchain now declares `TOOLCHAIN_HAS_GLIBCXX`.
+  * Zephyr SDK LLVM toolchain now declares `TOOLCHAIN_HAS_LIBCXX`.
+
 ## Zephyr SDK 0.17.1-rc1
 
 - general:
