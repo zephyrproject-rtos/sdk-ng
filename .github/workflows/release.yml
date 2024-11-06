@@ -72,19 +72,22 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          assets/toolchain_linux*
+          assets/toolchain_gnu_linux*
+          assets/toolchain_llvm_linux*
 
     - name: Upload release assets (macOS toolchains)
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          assets/toolchain_macos*
+          assets/toolchain_gnu_macos*
+          assets/toolchain_llvm_macos*
 
     - name: Upload release assets (Windows toolchains)
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          assets/toolchain_windows*
+          assets/toolchain_gnu_windows*
+          assets/toolchain_llvm_windows*
 
     - name: Upload release assets (Distribution bundles)
       uses: softprops/action-gh-release@v2
