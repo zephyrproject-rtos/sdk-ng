@@ -215,7 +215,7 @@ for toolchain in ${inst_toolchains[@]}; do
   echo "Installing '${toolchain}' toolchain ..."
 
   # Download toolchain archive
-  wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
+  wget -q --progress=bar -N -O "${toolchain_filename}" "${toolchain_uri}"
   if [ $? != 0 ]; then
     rm -f "${toolchain_filename}"
     echo "ERROR: Toolchain download failed"

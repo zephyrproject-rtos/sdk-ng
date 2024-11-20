@@ -143,7 +143,7 @@ for %%t in (%INST_TOOLCHAINS%) do (
     echo Installing '%%t' toolchain ...
 
     REM # Download toolchain archive
-    wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
+    wget -q --progress=bar -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
     if [!ERRORLEVEL!] neq [0] (
       del /q !TOOLCHAIN_FILENAME!
       echo ERROR: Toolchain download failed
