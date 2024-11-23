@@ -189,7 +189,7 @@ set(LLVM_TOOLCHAIN_DISTRIBUTION_COMPONENTS
 installed by the install-llvm-toolchain target"
 )
 set(LLVM_ENABLE_PROJECTS clang;lld CACHE STRING "")
-set(LLVM_TARGETS_TO_BUILD AArch64;ARM CACHE STRING "")
+set(LLVM_TARGETS_TO_BUILD AArch64;ARM;RISCV CACHE STRING "")
 set(LLVM_DEFAULT_TARGET_TRIPLE aarch64-linux-gnu CACHE STRING "")
 set(LLVM_APPEND_VC_REV OFF CACHE BOOL "")
 set(LLVM_ENABLE_TERMINFO OFF CACHE BOOL "")
@@ -524,7 +524,11 @@ set(LLVM_DEFAULT_EXTERNAL_LIT "${LLVM_BINARY_DIR}/bin/llvm-lit")
 add_custom_target(check-newlib) # FIXME: put things in this
 
 function(get_test_executor_params target_triple qemu_machine qemu_cpu qemu_params)
-    if(target_triple MATCHES "^aarch64")
+    if(target_triple MATCHES "^riscv32")
+        set(qemu_command "qemu-system-riscv32")
+    elseif(target_triple MATCHES "^riscv64")
+        set(qemu_command "qemu-system-riscv64")
+    elseif(target_triple MATCHES "^aarch64")
         set(qemu_command "qemu-system-aarch64")
     else()
         set(qemu_command "qemu-system-arm")
@@ -567,7 +571,13 @@ function(
         set(MESON_INSTALL_QUIET "--quiet")
     endif()
 
-    if(target_triple MATCHES "^aarch64")
+    if(target_triple MATCHES "^riscv32")
+        set(cpu_family riscv32)
+        set(enable_long_double_test true)
+    elseif(target_triple MATCHES "^riscv64")
+        set(cpu_family riscv64)
+        set(enable_long_double_test true)
+    elseif(target_triple MATCHES "^aarch64")
         set(cpu_family aarch64)
         set(enable_long_double_test false)
     else()
@@ -952,7 +962,7 @@ function(
     # Exceptions are architectures pre-armv7, which compiler-rt expects to
     # see in the triple because that's where it looks to decide whether to
     # use specific assembly sources.
-    if(NOT target_triple MATCHES "^(aarch64-none-elf|arm-none-eabi|armv[4-6])")
+    if(NOT target_triple MATCHES "^(aarch64-none-elf|arm-none-eabi|armv[4-6]|riscv32-none-elf|riscv64-none-elf)")
         message(FATAL_ERROR "\
 Target triple name \"${target_triple}\" not compatible with compiler-rt.
 Use -march to specify the architecture.")
@@ -1176,7 +1186,11 @@ function(add_libcxx_libcxxabi_libunwind_tests variant)
 endfunction()
 
 function(get_compiler_rt_target_triple target_arch flags)
-    if(target_arch MATCHES "^aarch64")
+    if(target_arch MATCHES "^rv32")
+        set(target_triple "riscv32-none-elf")
+    elseif(target_arch MATCHES "^rv64")
+        set(target_triple "riscv64-none-elf")
+    elseif(target_arch MATCHES "^aarch64")
         set(target_triple "aarch64-none-elf")
     else()
         # Choose the target triple so that compiler-rt will do the
@@ -1247,7 +1261,11 @@ function(add_library_variant target_arch)
         endif()
     endif()
 
-    if(target_arch MATCHES "^aarch64")
+    if(target_arch MATCHES "^rv32")
+        set(parent_dir_name riscv32-none-elf)
+    elseif(target_arch MATCHES "^rv64")
+        set(parent_dir_name riscv64-none-elf)
+    elseif(target_arch MATCHES "^aarch64")
         set(parent_dir_name aarch64-none-elf)
     else()
         set(parent_dir_name arm-none-eabi)
@@ -1748,7 +1766,58 @@ add_library_variants_for_cpu(
     RAM_SIZE 0x1000000
     STACK_SIZE 4K
 )
-
+# RISC-V multilibs
+## RV32I
+add_library_variants_for_cpu(
+    rv32i_zicsr_zifencei
+    COMPILE_FLAGS "-march=rv32i_zicsr_zifencei -mabi=ilp32"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+## RV32E
+add_library_variants_for_cpu(
+    rv32e_zicsr_zifencei
+    COMPILE_FLAGS "-march=rv32e_zicsr_zifencei -mabi=ilp32e"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+## RV64I
+add_library_variants_for_cpu(
+    rv64i_zicsr_zifencei
+    COMPILE_FLAGS "-march=rv64i_zicsr_zifencei -mabi=lp64 -mcmodel=medany"
+    MULTILIB_FLAGS "--target=riscv64-unknown-none-elf"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv64"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/multilib.yaml.in
