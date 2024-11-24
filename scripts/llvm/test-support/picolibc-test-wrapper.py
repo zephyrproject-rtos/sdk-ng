@@ -13,9 +13,10 @@ import sys
 EXIT_CODE_SKIP = 77
 
 disabled_tests = [
-    # compiler-rt does not properly set floating point exceptions for
-    # computations on types implemented in software
+    # compiler-rt does not properly support floating point exceptions and
+    # rounding modes for computations on types implemented in software
     # https://github.com/picolibc/picolibc/pull/500
+    # https://github.com/zephyrproject-rtos/sdk-ng/issues/838
     "picolibc_armv7m_soft_fpv4_sp_d16-build/test/math_errhandling",
     "picolibc_armv7m_hard_fpv4_sp_d16-build/test/math_errhandling",
     "picolibc_armv7r_hard_vfpv3xd-build/test/math_errhandling",
@@ -30,6 +31,48 @@ disabled_tests = [
     "picolibc_armv8.1m.main_hard_nofp_mve_exn_rtti-build/test/fenv",
     "picolibc_armv8.1m.main_hard_nofp_mve_exn_rtti-build/test/math_errhandling",
     "picolibc_armv8m.main_hard_fp_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv32imafc_zicsr_zifencei_ilp32f-build/test/rounding-mode",
+    "picolibc_rv32imafc_zicsr_zifencei_ilp32f-build/test/math_errhandling",
+    "picolibc_rv32imafc_zicsr_zifencei_ilp32f-build/test/test-fma",
+    "picolibc_rv32imafc_zicsr_zifencei_ilp32f_exn_rtti-build/test/rounding-mode",
+    "picolibc_rv32imafc_zicsr_zifencei_ilp32f_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv32imafc_zicsr_zifencei_ilp32f_exn_rtti-build/test/test-fma",
+    "picolibc_rv32imfc_zicsr_zifencei_ilp32f-build/test/rounding-mode",
+    "picolibc_rv32imfc_zicsr_zifencei_ilp32f-build/test/math_errhandling",
+    "picolibc_rv32imfc_zicsr_zifencei_ilp32f-build/test/test-fma",
+    "picolibc_rv32imfc_zicsr_zifencei_ilp32f_exn_rtti-build/test/rounding-mode",
+    "picolibc_rv32imfc_zicsr_zifencei_ilp32f_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv32imfc_zicsr_zifencei_ilp32f_exn_rtti-build/test/test-fma",
+    "picolibc_rv32imafd_zicsr_zifencei_ilp32d-build/test/math_errhandling",
+    "picolibc_rv32imafd_zicsr_zifencei_ilp32d-build/test/test-fma",
+    "picolibc_rv32imafd_zicsr_zifencei_ilp32d_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv32imafd_zicsr_zifencei_ilp32d_exn_rtti-build/test/test-fma",
+    "picolibc_rv32if_zicsr_zifencei_ilp32f-build/test/rounding-mode",
+    "picolibc_rv32if_zicsr_zifencei_ilp32f-build/test/math_errhandling",
+    "picolibc_rv32if_zicsr_zifencei_ilp32f-build/test/test-fma",
+    "picolibc_rv32if_zicsr_zifencei_ilp32f_exn_rtti-build/test/rounding-mode",
+    "picolibc_rv32if_zicsr_zifencei_ilp32f_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv32if_zicsr_zifencei_ilp32f_exn_rtti-build/test/test-fma",
+    "picolibc_rv64imafdc_zicsr_zifencei_lp64d-build/test/math_errhandling",
+    "picolibc_rv64imafdc_zicsr_zifencei_lp64d-build/test/test-fma",
+    "picolibc_rv64imafdc_zicsr_zifencei_lp64d_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv64imafdc_zicsr_zifencei_lp64d_exn_rtti-build/test/test-fma",
+    "picolibc_rv64imafd_zicsr_zifencei_lp64d-build/test/math_errhandling",
+    "picolibc_rv64imafd_zicsr_zifencei_lp64d-build/test/test-fma",
+    "picolibc_rv64imafd_zicsr_zifencei_lp64d_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv64imafd_zicsr_zifencei_lp64d_exn_rtti-build/test/test-fma",
+    "picolibc_rv64imfc_zicsr_zifencei_lp64f-build/test/rounding-mode",
+    "picolibc_rv64imfc_zicsr_zifencei_lp64f-build/test/math_errhandling",
+    "picolibc_rv64imfc_zicsr_zifencei_lp64f-build/test/test-fma",
+    "picolibc_rv64imfc_zicsr_zifencei_lp64f_exn_rtti-build/test/rounding-mode",
+    "picolibc_rv64imfc_zicsr_zifencei_lp64f_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv64imfc_zicsr_zifencei_lp64f_exn_rtti-build/test/test-fma",
+    "picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f-build/test/rounding-mode",
+    "picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f-build/test/math_errhandling",
+    "picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f-build/test/test-fma",
+    "picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f_exn_rtti-build/test/rounding-mode",
+    "picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f_exn_rtti-build/test/math_errhandling",
+    "picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f_exn_rtti-build/test/test-fma",
 ]
 
 
