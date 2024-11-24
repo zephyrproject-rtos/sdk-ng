@@ -1769,9 +1769,121 @@ add_library_variants_for_cpu(
 # RISC-V multilibs
 ## RV32I
 add_library_variants_for_cpu(
-    rv32i_zicsr_zifencei
+    rv32i_zicsr_zifencei_ilp32
     COMPILE_FLAGS "-march=rv32i_zicsr_zifencei -mabi=ilp32"
-    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_zicsr2p0_zifencei2p0 -mabi=ilp32"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32im_zicsr_zifencei_ilp32
+    COMPILE_FLAGS "-march=rv32im_zicsr_zifencei -mabi=ilp32"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0 -mabi=ilp32"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32im_zicsr_zifencei_zba_zbb_zbc_zbs_ilp32
+    COMPILE_FLAGS "-march=rv32im_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0 -mabi=ilp32"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32imac_zicsr_zifencei_ilp32
+    COMPILE_FLAGS "-march=rv32imac_zicsr_zifencei -mabi=ilp32"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_m2p0_a2p1_c2p0_zicsr2p0_zifencei2p0_zmmul1p0 -mabi=ilp32"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32imafc_zicsr_zifencei_ilp32f
+    COMPILE_FLAGS "-march=rv32imafc_zicsr_zifencei -mabi=ilp32f"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_m2p0_a2p1_f2p2_c2p0_zicsr2p0_zifencei2p0_zmmul1p0 -mabi=ilp32f"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32imfc_zicsr_zifencei_ilp32f
+    COMPILE_FLAGS "-march=rv32imfc_zicsr_zifencei -mabi=ilp32f"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_m2p0_f2p2_c2p0_zicsr2p0_zifencei2p0_zmmul1p0 -mabi=ilp32f"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32imafd_zicsr_zifencei_ilp32d
+    COMPILE_FLAGS "-march=rv32imafd_zicsr_zifencei -mabi=ilp32d"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_m2p0_a2p1_f2p2_d2p2_zicsr2p0_zifencei2p0_zmmul1p0 -mabi=ilp32d"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv32if_zicsr_zifencei_ilp32f
+    COMPILE_FLAGS "-march=rv32if_zicsr_zifencei -mabi=ilp32f"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32i2p1_f2p2_zicsr2p0_zifencei2p0 -mabi=ilp32f"
     PICOLIBC_BUILD_TYPE "release"
     QEMU_MACHINE "none"
     QEMU_CPU "rv32"
