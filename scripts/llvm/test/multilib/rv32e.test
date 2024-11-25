@@ -1,16 +1,22 @@
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32e_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32E_ZICSR_ZIFENCEI_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ea_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32E_ZICSR_ZIFENCEI_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32eac_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32E_ZICSR_ZIFENCEI_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ec_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32E_ZICSR_ZIFENCEI_ILP32E
 # RV32E_ZICSR_ZIFENCEI_ILP32E: riscv32-none-elf/rv32e_zicsr_zifencei_ilp32e_exn_rtti{{$}}
 # RV32E_ZICSR_ZIFENCEI_ILP32E-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32em_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32EM_ZICSR_ZIFENCEI_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ema_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32EM_ZICSR_ZIFENCEI_ILP32E
 # RV32EM_ZICSR_ZIFENCEI_ILP32E: riscv32-none-elf/rv32em_zicsr_zifencei_ilp32e_exn_rtti{{$}}
 # RV32EM_ZICSR_ZIFENCEI_ILP32E-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emc_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZIFENCEI_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emac_zicsr_zifencei -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZIFENCEI_ILP32E
 # RV32EMC_ZICSR_ZIFENCEI_ILP32E: riscv32-none-elf/rv32emc_zicsr_zifencei_ilp32e_exn_rtti{{$}}
 # RV32EMC_ZICSR_ZIFENCEI_ILP32E-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emc_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emac_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32E
 # RV32EMC_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32E: riscv32-none-elf/rv32emc_zicsr_zifencei_zba_zbb_zbc_zbs_ilp32e_exn_rtti{{$}}
 # RV32EMC_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32E-EMPTY:
 
