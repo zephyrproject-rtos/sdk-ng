@@ -21,7 +21,12 @@ if("${ARCH}" STREQUAL "arm")
   endif()
 elseif("${ARCH}" STREQUAL "arm64")
   set(triple aarch64-none-elf)
-# TODO: Add RISC-V target support.
+elseif("${ARCH}" STREQUAL "riscv")
+  if(CONFIG_64BIT)
+    set(triple riscv64-none-elf)
+  else()
+    set(triple riscv32-none-elf)
+  endif()
 endif()
 
 if(DEFINED triple)
