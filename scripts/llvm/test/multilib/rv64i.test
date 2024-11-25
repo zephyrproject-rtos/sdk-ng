@@ -1,12 +1,19 @@
 # RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64i_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64I_ZICSR_ZIFENCEI_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64ia_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64I_ZICSR_ZIFENCEI_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64iac_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64I_ZICSR_ZIFENCEI_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64ic_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64I_ZICSR_ZIFENCEI_LP64
 # RV64I_ZICSR_ZIFENCEI_LP64: riscv64-none-elf/rv64i_zicsr_zifencei_lp64_exn_rtti{{$}}
 # RV64I_ZICSR_ZIFENCEI_LP64-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64im_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64IM_ZICSR_ZIFENCEI_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64ima_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64IM_ZICSR_ZIFENCEI_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64imc_zicsr_zifencei -mabi=lp64 | FileCheck %s --check-prefix=RV64IM_ZICSR_ZIFENCEI_LP64
 # RV64IM_ZICSR_ZIFENCEI_LP64: riscv64-none-elf/rv64im_zicsr_zifencei_lp64_exn_rtti{{$}}
 # RV64IM_ZICSR_ZIFENCEI_LP64-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64im_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=lp64 | FileCheck %s --check-prefix=RV64IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64ima_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=lp64 | FileCheck %s --check-prefix=RV64IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_LP64
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64imc_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=lp64 | FileCheck %s --check-prefix=RV64IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_LP64
 # RV64IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_LP64: riscv64-none-elf/rv64im_zicsr_zifencei_zba_zbb_zbc_zbs_lp64_exn_rtti{{$}}
 # RV64IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_LP64-EMPTY:
 
@@ -19,10 +26,12 @@
 # RV64IMAC_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_LP64-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64imafdc_zicsr_zifencei -mabi=lp64d | FileCheck %s --check-prefix=RV64IMAFDC_ZICSR_ZIFENCEI_LP64D
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64gc -mabi=lp64d | FileCheck %s --check-prefix=RV64IMAFDC_ZICSR_ZIFENCEI_LP64D
 # RV64IMAFDC_ZICSR_ZIFENCEI_LP64D: riscv64-none-elf/rv64imafdc_zicsr_zifencei_lp64d_exn_rtti{{$}}
 # RV64IMAFDC_ZICSR_ZIFENCEI_LP64D-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64imafd_zicsr_zifencei -mabi=lp64d | FileCheck %s --check-prefix=RV64IMAFD_ZICSR_ZIFENCEI_LP64D
+# RUN: %clang -print-multi-directory --target=riscv64-none-elf -march=rv64g -mabi=lp64d | FileCheck %s --check-prefix=RV64IMAFD_ZICSR_ZIFENCEI_LP64D
 # RV64IMAFD_ZICSR_ZIFENCEI_LP64D: riscv64-none-elf/rv64imafd_zicsr_zifencei_lp64d_exn_rtti{{$}}
 # RV64IMAFD_ZICSR_ZIFENCEI_LP64D-EMPTY:
 
