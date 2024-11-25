@@ -1,12 +1,21 @@
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32i_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32I_ZICSR_ZIFENCEI_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ia_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32I_ZICSR_ZIFENCEI_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32iac_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32I_ZICSR_ZIFENCEI_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32iafc_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32I_ZICSR_ZIFENCEI_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ic_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32I_ZICSR_ZIFENCEI_ILP32
 # RV32I_ZICSR_ZIFENCEI_ILP32: riscv32-none-elf/rv32i_zicsr_zifencei_ilp32_exn_rtti{{$}}
 # RV32I_ZICSR_ZIFENCEI_ILP32-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32im_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ima_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32imc_zicsr_zifencei -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ILP32
 # RV32IM_ZICSR_ZIFENCEI_ILP32: riscv32-none-elf/rv32im_zicsr_zifencei_ilp32_exn_rtti{{$}}
 # RV32IM_ZICSR_ZIFENCEI_ILP32-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32im_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32ima_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32imac_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32imc_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=ilp32 | FileCheck %s --check-prefix=RV32IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32
 # RV32IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32: riscv32-none-elf/rv32im_zicsr_zifencei_zba_zbb_zbc_zbs_ilp32_exn_rtti{{$}}
 # RV32IM_ZICSR_ZIFENCEI_ZBA_ZBB_ZBC_ZBS_ILP32-EMPTY:
 
@@ -23,9 +32,13 @@
 # RV32IMFC_ZICSR_ZIFENCEI_ILP32F-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32imafd_zicsr_zifencei -mabi=ilp32d | FileCheck %s --check-prefix=RV32IMAFD_ZICSR_ZIFENCEI_ILP32D
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32imafdc_zicsr_zifencei -mabi=ilp32d | FileCheck %s --check-prefix=RV32IMAFD_ZICSR_ZIFENCEI_ILP32D
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32g -mabi=ilp32d | FileCheck %s --check-prefix=RV32IMAFD_ZICSR_ZIFENCEI_ILP32D
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32gc -mabi=ilp32d | FileCheck %s --check-prefix=RV32IMAFD_ZICSR_ZIFENCEI_ILP32D
 # RV32IMAFD_ZICSR_ZIFENCEI_ILP32D: riscv32-none-elf/rv32imafd_zicsr_zifencei_ilp32d_exn_rtti{{$}}
 # RV32IMAFD_ZICSR_ZIFENCEI_ILP32D-EMPTY:
 
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32if_zicsr_zifencei -mabi=ilp32f | FileCheck %s --check-prefix=RV32IF_ZICSR_ZIFENCEI_ILP32F
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32iafc_zicsr_zifencei -mabi=ilp32f | FileCheck %s --check-prefix=RV32IF_ZICSR_ZIFENCEI_ILP32F
 # RV32IF_ZICSR_ZIFENCEI_ILP32F: riscv32-none-elf/rv32if_zicsr_zifencei_ilp32f_exn_rtti{{$}}
 # RV32IF_ZICSR_ZIFENCEI_ILP32F-EMPTY:
