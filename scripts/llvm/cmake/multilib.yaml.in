@@ -1,5 +1,7 @@
 #
 # Copyright (c) 2023, Arm Limited and affiliates.
+# Copyright (c) 2024 Stephanos Ioannidis <root@stephanos.io>
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -171,3 +173,49 @@ Mappings:
 - Match: -march=thumbv8\.[1-9]m\.main(\+[^\+]+)*\+lob(\+[^\+]+)*
   Flags:
   - -march=thumbv8.1m.main+lob
+
+# RV32I alternate mappings
+## march.rv32i_zicsr_zifencei/mabi.ilp32=march.rv32ia_zicsr_zifencei/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_zicsr2p0_zifencei2p0
+## march.rv32i_zicsr_zifencei/mabi.ilp32=march.rv32iac_zicsr_zifencei/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_zicsr2p0_zifencei2p0
+## march.rv32i_zicsr_zifencei/mabi.ilp32=march.rv32iafc_zicsr_zifencei/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_f([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_zicsr2p0_zifencei2p0
+## march.rv32i_zicsr_zifencei/mabi.ilp32=march.rv32ic_zicsr_zifencei/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_zicsr2p0_zifencei2p0
+## march.rv32im_zicsr_zifencei/mabi.ilp32=march.rv32ima_zicsr_zifencei/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0
+## march.rv32im_zicsr_zifencei/mabi.ilp32=march.rv32imc_zicsr_zifencei/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0
+## march.rv32im_zicsr_zifencei_zba_zbb_zbc_zbs/mabi.ilp32=march.rv32ima_zicsr_zifencei_zba_zbb_zbc_zbs/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)_zba([0-9]+p[0-9]+)_zbb([0-9]+p[0-9]+)_zbc([0-9]+p[0-9]+)_zbs([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0
+## march.rv32im_zicsr_zifencei_zba_zbb_zbc_zbs/mabi.ilp32=march.rv32imac_zicsr_zifencei_zba_zbb_zbc_zbs/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)_zba([0-9]+p[0-9]+)_zbb([0-9]+p[0-9]+)_zbc([0-9]+p[0-9]+)_zbs([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0
+## march.rv32im_zicsr_zifencei_zba_zbb_zbc_zbs/mabi.ilp32=march.rv32imc_zicsr_zifencei_zba_zbb_zbc_zbs/mabi.ilp32
+- Match: -march=rv32i([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)_zba([0-9]+p[0-9]+)_zbb([0-9]+p[0-9]+)_zbc([0-9]+p[0-9]+)_zbs([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0
+## march.rv32imafd_zicsr_zifencei/mabi.ilp32d=march.rv32imafdc_zicsr_zifencei/mabi.ilp32d
+- Match: -march=rv32i([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_f([0-9]+p[0-9]+)_d([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_m2p0_a2p1_f2p2_d2p2_zicsr2p0_zifencei2p0_zmmul1p0
+## march.rv32if_zicsr_zifencei/mabi.ilp32f=march.rv32iafc_zicsr_zifencei/mabi.ilp32f
+- Match: -march=rv32i([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_f([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32i2p1_f2p2_zicsr2p0_zifencei2p0
