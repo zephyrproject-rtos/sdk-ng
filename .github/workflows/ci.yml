@@ -1765,9 +1765,12 @@ jobs:
           # PLATFORM_ARGS+="-p mps3/an547 "
 
           # Add RISC-V platforms
-          ## TODO: Add RV32I platforms
-          ## TODO: Add RV32E platforms
-          ## TODO: Add RV64I platforms
+          ## RV32I
+          PLATFORM_ARGS+="-p qemu_riscv32 "
+          ## RV32E
+          PLATFORM_ARGS+="-p qemu_riscv32e "
+          ## RV64I
+          PLATFORM_ARGS+="-p qemu_riscv64 "
         fi
 
         # Generate test list
