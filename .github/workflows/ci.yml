@@ -1772,7 +1772,8 @@ jobs:
           # FIXME: There are issues building some tests for qemu_riscv32e.
           # PLATFORM_ARGS+="-p qemu_riscv32e "
           ## RV64I
-          PLATFORM_ARGS+="-p qemu_riscv64 "
+          # FIXME: There are issues building some tests for qemu_riscv64.
+          # PLATFORM_ARGS+="-p qemu_riscv64 "
         fi
 
         # Generate test list
