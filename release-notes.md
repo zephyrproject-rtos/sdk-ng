@@ -1,10 +1,10 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.18.0
+## Zephyr SDK 0.18.0-alpha2
 
 - general:
 
-  * Added Clang/LLVM 19.1.1 toolchain.
+  * Added Clang/LLVM 19.1.1 toolchain with Arm and RISC-V architecture support.
   * Introduced Clang/LLVM toolchain distribution bundle
     (`zephyr-sdk-VER_HOST_llvm`).
   * Renamed existing "full" GNU toolchain distribution bundle to
