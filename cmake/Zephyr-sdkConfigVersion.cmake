@@ -11,21 +11,27 @@ string(STRIP ${SDK_VERSION} PACKAGE_VERSION)
 if(PACKAGE_VERSION VERSION_LESS PACKAGE_FIND_VERSION)
   set(PACKAGE_VERSION_COMPATIBLE FALSE)
 else()
-  # Currently, this Zephyr SDK is expected to work with any Zephyr project
-  # requiring this version or any older version.
-  #
-  # In case this version of Zephyr SDK is no longer backwards compatible with
-  # previous versions of Zephyr SDK, this is the place to test if the caller
-  # requested an older (incompatible) revision.
-  # For example, imagine caller requests Zephyr SDK v0.10, and this Zephyr SDK
-  # is revision v0.11, then the below snippet can be activated to ensure that
-  # this Zephyr SDK (v0.11) is marked as not compatible if caller requested an
-  # older version, like v0.10
-  # set(ZEPHYR_SDK_MINIMUM_COMPATIBLE_VERSION 0.11)
-  # if(PACKAGE_FIND_VERSION VERSION_LESS ZEPHYR_SDK_MINIMUM_COMPATIBLE_VERSION)
-  #   set(PACKAGE_VERSION_COMPATIBLE FALSE)
-  #   return()
-  # endif()
+  # This Zephyr SDK will not work with Zephyr projects requiring Zephyr SDK <0.18.x
+  set(ZEPHYR_SDK_MINIMUM_COMPATIBLE_VERSION 0.18)
+  if(PACKAGE_FIND_VERSION VERSION_LESS ZEPHYR_SDK_MINIMUM_COMPATIBLE_VERSION)
+    set(PACKAGE_VERSION_COMPATIBLE FALSE)
+    return()
+  endif()
+
+  # Basic validation if user requests 'zephyr-gnu' ('zephyr') or 'zephyr-llvm'.
+  # We must ensure gcc is available, likewise with clang.
+  if(ZEPHYR_TOOLCHAIN_VARIANT STREQUAL "zephyr-gnu" OR ZEPHYR_TOOLCHAIN_VARIANT STREQUAL "zephyr")
+    file(GLOB has_gnu "${CMAKE_CURRENT_LIST_DIR}/../gnu/*/bin/*zephyr-*-gcc")
+    if(NOT has_gnu)
+      set(PACKAGE_VERSION_COMPATIBLE FALSE)
+      return()
+    endif()
+  elseif(ZEPHYR_TOOLCHAIN_VARIANT STREQUAL "zephyr-llvm")
+    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/../llvm/bin/clang")
+      set(PACKAGE_VERSION_COMPATIBLE FALSE)
+      return()
+    endif()
+  endif()
 
   set(PACKAGE_VERSION_COMPATIBLE TRUE)
   if(PACKAGE_FIND_VERSION STREQUAL PACKAGE_VERSION)
