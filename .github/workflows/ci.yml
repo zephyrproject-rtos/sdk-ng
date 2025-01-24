@@ -50,6 +50,7 @@ on:
         - mips-zephyr-elf
         - nios2-zephyr-elf
         - riscv64-zephyr-elf
+        - rx-zephyr-elf
         - sparc-zephyr-elf
         - x86_64-zephyr-elf
         - xtensa-amd_acp_6_0_adsp_zephyr-elf
@@ -170,6 +171,7 @@ jobs:
             mips-zephyr-elf)                      build_target_mips_zephyr_elf="y";;
             nios2-zephyr-elf)                     build_target_nios2_zephyr_elf="y";;
             riscv64-zephyr-elf)                   build_target_riscv64_zephyr_elf="y";;
+            rx-zephyr-elf)                        build_target_rx_zephyr_elf="y";;
             sparc-zephyr-elf)                     build_target_sparc_zephyr_elf="y";;
             x86_64-zephyr-elf)                    build_target_x86_64_zephyr_elf="y";;
             xtensa-amd_acp_6_0_adsp_zephyr-elf)   build_target_xtensa_amd_acp_6_0_adsp_zephyr_elf="y";;
@@ -218,6 +220,7 @@ jobs:
           build_target_mips_zephyr_elf="y"
           build_target_nios2_zephyr_elf="y"
           build_target_riscv64_zephyr_elf="y"
+          build_target_rx_zephyr_elf="y"
           build_target_sparc_zephyr_elf="y"
           build_target_x86_64_zephyr_elf="y"
           build_target_xtensa_amd_acp_6_0_adsp_zephyr_elf="y"
@@ -306,6 +309,7 @@ jobs:
         [ "${build_target_mips_zephyr_elf}" == "y" ]                      && MATRIX_TARGETS+='"mips-zephyr-elf",'
         [ "${build_target_nios2_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"nios2-zephyr-elf",'
         [ "${build_target_riscv64_zephyr_elf}" == "y" ]                   && MATRIX_TARGETS+='"riscv64-zephyr-elf",'
+        [ "${build_target_rx_zephyr_elf}" == "y" ]                        && MATRIX_TARGETS+='"rx-zephyr-elf",'
         [ "${build_target_sparc_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"sparc-zephyr-elf",'
         [ "${build_target_x86_64_zephyr_elf}" == "y" ]                    && MATRIX_TARGETS+='"x86_64-zephyr-elf",'
         [ "${build_target_xtensa_amd_acp_6_0_adsp_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-amd_acp_6_0_adsp_zephyr-elf",'
@@ -1555,6 +1559,9 @@ jobs:
               PLATFORM_ARGS+="-p qemu_riscv32 "
               PLATFORM_ARGS+="-p qemu_riscv32e "
               PLATFORM_ARGS+="-p qemu_riscv64 "
+              ;;
+            rx-zephyr-elf)
+              PLATFORM_ARGS+="-p qemu_rx "
               ;;
             sparc-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_leon3 "
