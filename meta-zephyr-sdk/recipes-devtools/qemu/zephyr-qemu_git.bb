@@ -228,6 +228,8 @@ do_install_append() {
     # Link Xilinx QEMU executables
     ln -sf ../xilinx/bin/qemu-system-aarch64 ${D}${bindir}/qemu-system-xilinx-aarch64
     ln -sf ../xilinx/bin/qemu-system-microblazeel ${D}${bindir}/qemu-system-xilinx-microblazeel
+    ln -sf ../xilinx/bin/qemu-system-riscv32 ${D}${bindir}/qemu-system-xilinx-riscv32
+    ln -sf ../xilinx/bin/qemu-system-riscv64 ${D}${bindir}/qemu-system-xilinx-riscv64
 
     # Link ARC (Synopsys) QEMU executables
     ln -sf ../synopsys/bin/qemu-system-arc ${D}${bindir}/qemu-system-arc
