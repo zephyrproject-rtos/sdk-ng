@@ -187,3 +187,7 @@
 
 
 #endif /* !XTENSA_CONFIG_H */
+
+#ifndef XCHAL_HAVE_PREDICTED_BRANCHES
+#define XCHAL_HAVE_PREDICTED_BRANCHES 0 /* Needed by Zephyr SDK binutils */
+#endif
