@@ -63,6 +63,7 @@ on:
         - xtensa-mtk_mt8195_adsp_zephyr-elf
         - xtensa-mtk_mt818x_adsp_zephyr-elf
         - xtensa-mtk_mt8196_adsp_zephyr-elf
+        - xtensa-mtk_mt8365_adsp_zephyr-elf
         - xtensa-nxp_imx_adsp_zephyr-elf
         - xtensa-nxp_imx8m_adsp_zephyr-elf
         - xtensa-nxp_imx8ulp_adsp_zephyr-elf
@@ -183,6 +184,7 @@ jobs:
             xtensa-mtk_mt8195_adsp_zephyr-elf)    build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y";;
             xtensa-mtk_mt818x_adsp_zephyr-elf)    build_target_xtensa_mtk_mt818x_adsp_zephyr_elf="y";;
             xtensa-mtk_mt8196_adsp_zephyr-elf)    build_target_xtensa_mtk_mt8196_adsp_zephyr_elf="y";;
+            xtensa-mtk_mt8365_adsp_zephyr-elf)    build_target_xtensa_mtk_mt8365_adsp_zephyr_elf="y";;
             xtensa-nxp_imx_adsp_zephyr-elf)       build_target_xtensa_nxp_imx_adsp_zephyr_elf="y";;
             xtensa-nxp_imx8m_adsp_zephyr-elf)     build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y";;
             xtensa-nxp_imx8ulp_adsp_zephyr-elf)   build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf="y";;
@@ -231,6 +233,7 @@ jobs:
           build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y"
           build_target_xtensa_mtk_mt818x_adsp_zephyr_elf="y"
           build_target_xtensa_mtk_mt8196_adsp_zephyr_elf="y"
+          build_target_xtensa_mtk_mt8365_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx8m_adsp_zephyr_elf="y"
           build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf="y"
@@ -319,6 +322,7 @@ jobs:
         [ "${build_target_xtensa_mtk_mt8195_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt8195_adsp_zephyr-elf",'
         [ "${build_target_xtensa_mtk_mt818x_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt818x_adsp_zephyr-elf",'
         [ "${build_target_xtensa_mtk_mt8196_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt8196_adsp_zephyr-elf",'
+        [ "${build_target_xtensa_mtk_mt8365_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt8365_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx_adsp_zephyr_elf}" == "y" ]       && MATRIX_TARGETS+='"xtensa-nxp_imx_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx8m_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-nxp_imx8m_adsp_zephyr-elf",'
         [ "${build_target_xtensa_nxp_imx8ulp_adsp_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-nxp_imx8ulp_adsp_zephyr-elf",'
@@ -1602,6 +1606,11 @@ jobs:
             xtensa-mtk_mt8196_adsp_zephyr-elf)
               # Not merged yet, see Zephyr #81154
               #PLATFORM_ARGS+="-p mt8196/mt8196/adsp"
+              ;;
+            xtensa-mtk_mt8365_adsp_zephyr-elf)
+              # xtensa-mtk_mt8365_adsp_zephyr-elf is untested because no
+              # upstream user platform is currently available.
+              #PLATFORM_ARGS+="-p mt8365/mt8365/adsp"
               ;;
             xtensa-nxp_imx_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
