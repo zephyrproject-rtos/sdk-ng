@@ -500,7 +500,9 @@ xtensa_register_t rmap[] =
   XTREG_END
 };
 
+extern xtensa_register_t xtensa_rmap[] __attribute__((alias("rmap")));
 
+xtensa_gdbarch_tdep xtensa_tdep (rmap);
 
 #ifdef XTENSA_CONFIG_INSTANTIATE
 XTENSA_CONFIG_INSTANTIATE(rmap,16)
