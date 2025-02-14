@@ -1,30 +1,20 @@
-We need to be able to trigger configure's cross code but we don't want
-to set cross_prefix as it does other things we don't want. Patch things
-so we can do what we need in the target config case.
-
-Upstream-Status: Inappropriate [may be rewritten in a way upstream may accept?]
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-
-
-Index: qemu/configure
-===================================================================
+diff --git a/configure b/configure
+index 18336376bf..07cd016280 100755
 --- a/configure
 +++ b/configure
-@@ -3932,7 +3932,6 @@ if test "$skip_meson" = no; then
-   fi
-   echo "strip = [$(meson_quote $strip)]" >> $cross
+@@ -1923,7 +1923,6 @@ if test "$skip_meson" = no; then
+   echo "widl = [$(meson_quote $widl)]" >> $cross
    echo "windres = [$(meson_quote $windres)]" >> $cross
+   echo "windmc = [$(meson_quote $windmc)]" >> $cross
 -  if test "$cross_compile" = "yes"; then
-     cross_arg="--cross-file config-meson.cross"
      echo "[host_machine]" >> $cross
-     if test "$mingw32" = "yes" ; then
-@@ -3964,9 +3963,6 @@ if test "$skip_meson" = no; then
-     else
-         echo "endian = 'little'" >> $cross
-     fi
--  else
--    cross_arg="--native-file config-meson.cross"
+     echo "system = '$host_os'" >> $cross
+     case "$cpu" in
+@@ -1951,7 +1950,6 @@ if test "$skip_meson" = no; then
+     mv $native config-meson.native
+     meson_option_add --native-file
+     meson_option_add config-meson.native
 -  fi
    mv $cross config-meson.cross
-
-   rm -rf meson-private meson-info meson-logs
+   meson_add_machine_file config-meson.cross
+   if test -f "$source_path/configs/meson/$host_os.txt"; then

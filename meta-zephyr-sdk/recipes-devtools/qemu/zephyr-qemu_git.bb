@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "06740e68dcb2c2ae168875a730f233f5661eb8b6"
+SRCREV = "f814bc5b4d16403b15fcd80b1678d12202dab0f2"
 SRC_URI = "git://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-128k.bin;name=bios-128k \
 	   https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.0.0/bios-256k.bin;name=bios-256k \
@@ -100,7 +100,6 @@ inherit autotools pkgconfig
 #  --disable-vnc-jpeg       disable JPEG lossy compression for VNC server
 #  --enable-vnc-jpeg        enable JPEG lossy compression for VNC server
 #  --disable-vnc-png        disable PNG compression for VNC server (default)
-#  --enable-vnc-png         enable PNG compression for VNC server
 #  --disable-vnc-ws         disable Websockets support for VNC server
 #  --enable-vnc-ws          enable Websockets support for VNC server
 #  --disable-curses         disable curses output
@@ -199,14 +198,13 @@ inherit autotools pkgconfig
 #--disable-fdt: Cannot use if supporting ARM
 #--disable-kvm: AArch64 has a QEMU/KVM board
 
-QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu mipsel-softmmu nios2-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu sparc-softmmu x86_64-softmmu"
+QEMUS_BUILT = "aarch64-softmmu arm-softmmu i386-softmmu mips-softmmu mipsel-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu x86_64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
-  --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
+  --disable-guest-agent --disable-libssh --disable-seccomp \
   --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
-  --disable-parallels --disable-replication \
-  --disable-live-block-migration --disable-dmg \
+  --disable-parallels --disable-replication --disable-dmg \
   "
 
 copy_seabios() {
