@@ -218,8 +218,7 @@ do_unpack_append() {
 
 do_configure() {
     ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
-        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir} \
-	--meson=meson
+        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir}
 }
 
 do_install_append() {
