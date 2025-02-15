@@ -206,7 +206,8 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
 
 do_configure() {
     ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${prefix}  \
-        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir}
+        --sysconfdir=${sysconfdir} --libexecdir=${libexecdir} --localstatedir=${localstatedir} \
+        --meson=meson
 }
 
 FILES_${PN} = " \
