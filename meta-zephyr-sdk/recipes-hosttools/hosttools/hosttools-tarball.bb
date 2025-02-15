@@ -7,6 +7,7 @@ TOOLCHAIN_TARGET_TASK ?= ""
 
 TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-arc-qemu \
+    nativesdk-legacy-qemu \
     nativesdk-zephyr-qemu \
     nativesdk-xilinx-qemu \
     nativesdk-openocd \
