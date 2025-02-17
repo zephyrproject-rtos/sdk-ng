@@ -31,3 +31,4 @@ set(CROSS_COMPILE ${one_toolchain_root}/${CROSS_COMPILE_TARGET}/bin/${CROSS_COMP
 set(SYSROOT_DIR   ${one_toolchain_root}/${SYSROOT_TARGET}/${SYSROOT_TARGET})
 set(TOOLCHAIN_HAS_NEWLIB ON CACHE BOOL "True if toolchain supports newlib")
 set(TOOLCHAIN_HAS_PICOLIBC ON CACHE BOOL "True if toolchain supports picolibc")
+set(TOOLCHAIN_HAS_PICOLIBC_NOEXCEPT ON CACHE BOOL "True if toolchain supports picolibc variant with exceptions disabled")
