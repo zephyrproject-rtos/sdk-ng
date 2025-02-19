@@ -1,12 +1,12 @@
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://LICENSES/preferred/GPL-2.0;md5=71ce3767d42ca42cd575f91c56eefe79"
-DEPENDS = "libusb-compat hidapi libftdi"
+DEPENDS = "hidapi libftdi"
 RDEPENDS_${PN} = "libusb1 hidapi"
 
 SRC_URI = " \
-	git://github.com/zephyrproject-rtos/openocd.git;protocol=https;nobranch=1 \
+	gitsm://github.com/zephyrproject-rtos/openocd.git;protocol=https;nobranch=1 \
 	"
-SRCREV = "b6f95a16c1360e347a06faf91befd122c0d15864"
+SRCREV = "51dbf7050b34a40f28c3fc7b5f4e49326c3e3aa6"
 
 S = "${WORKDIR}/git"
 
@@ -14,7 +14,7 @@ inherit pkgconfig autotools gettext
 
 BBCLASSEXTEND += "nativesdk"
 
-EXTRA_OECONF = "--enable-ftdi --enable-cmsis-dap --enable-jlink --enable-stlink --disable-doxygen-html "
+EXTRA_OECONF = "--enable-ftdi --enable-cmsis-dap --enable-jlink --enable-stlink --disable-doxygen-html --disable-git-update"
 
 do_configure() {
     cd ${S}
