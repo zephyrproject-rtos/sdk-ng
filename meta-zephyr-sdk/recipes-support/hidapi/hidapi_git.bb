@@ -12,7 +12,7 @@ BBCLASSEXTEND += " native nativesdk"
 
 inherit autotools pkgconfig
 
-SRC_URI = "git://github.com/libusb/hidapi.git;protocol=https"
-PV = "0.9.0"
-SRCREV = "7da5cc91fc0d2dbe4df4f08cd31f6ca1a262418f"
+SRC_URI = "git://github.com/libusb/hidapi.git;protocol=https;branch=master"
+PV = "0.14.0"
+SRCREV = "d3013f0af3f4029d82872c1a9487ea461a56dee4"
 S = "${WORKDIR}/git"

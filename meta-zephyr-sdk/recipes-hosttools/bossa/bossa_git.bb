@@ -6,14 +6,14 @@ HOMEPAGE = "https://github.com/shumatech/BOSSA"
 #     sudo apt-get install wx2.8-headers libwxgtk2.8-0 libwxgtk2.8-dev
 #
 
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=bcf9399f7b9b96149837290bcdc3ad39"
 
 DEPENDS = "readline"
 
 PR = "r0"
 SRCREV = "3532de82efd28fadbabc2b258d84dddf14298107"
-SRC_URI = "git://github.com/shumatech/BOSSA.git;protocol=https \
+SRC_URI = "git://github.com/shumatech/BOSSA.git;protocol=https;branch=master \
 	   file://0001-Wait-for-EEFC-flash-to-complete-operations-before-re.patch \
 	   file://0001-Flash.h-Add-flash-override-samba-error.patch \
 	   file://0002-CalwFlash-Add-SAM4L-Flashcalw-controller.patch \
