@@ -1,0 +1,41 @@
+From aa75635d53ae7d2dd7b1a76aa571e686533ed813 Mon Sep 17 00:00:00 2001
+Message-ID: <aa75635d53ae7d2dd7b1a76aa571e686533ed813.1739290771.git.michal.simek@amd.com>
+From: Michal Simek <michal.simek@amd.com>
+Date: Tue, 11 Feb 2025 17:18:42 +0100
+Subject: [PATCH] cross
+
+We need to be able to trigger configure's cross code but we don't want
+to set cross_prefix as it does other things we don't want. Patch things
+so we can do what we need in the target config case.
+
+Upstream-Status: Inappropriate [may be rewritten in a way upstream may accept?]
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ configure | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/configure b/configure
+index 133f4e323512..49fb6bd36a92 100755
+--- a/configure
++++ b/configure
+@@ -1897,7 +1897,6 @@ if test "$skip_meson" = no; then
+   echo "widl = [$(meson_quote $widl)]" >> $cross
+   echo "windres = [$(meson_quote $windres)]" >> $cross
+   echo "windmc = [$(meson_quote $windmc)]" >> $cross
+-  if test "$cross_compile" = "yes"; then
+     cross_arg="--cross-file config-meson.cross"
+     echo "[host_machine]" >> $cross
+     echo "system = '$targetos'" >> $cross
+@@ -1915,9 +1914,6 @@ if test "$skip_meson" = no; then
+     else
+         echo "endian = 'little'" >> $cross
+     fi
+-  else
+-    cross_arg="--native-file config-meson.cross"
+-  fi
+   mv $cross config-meson.cross
+ 
+   rm -rf meson-private meson-info meson-logs
+-- 
+2.43.0
+
