@@ -1,24 +1,26 @@
-We need to be able to trigger configure's cross code but we don't want
-to set cross_prefix as it does other things we don't want. Patch things
-so we can do what we need in the target config case.
+From 0f45ccc448ff392e9844ea7f66bb697f334eefa7 Mon Sep 17 00:00:00 2001
+From: Anas Nashif <anas.nashif@intel.com>
+Date: Sun, 16 Feb 2025 07:44:37 -0500
+Subject: [PATCH] cross patch
 
-Upstream-Status: Inappropriate [may be rewritten in a way upstream may accept?]
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Anas Nashif <anas.nashif@intel.com>
+---
+ configure | 4 ----
+ 1 file changed, 4 deletions(-)
 
-
-Index: qemu/configure
-===================================================================
+diff --git a/configure b/configure
+index 529d28fa5a..7ecbe94dc0 100755
 --- a/configure
 +++ b/configure
-@@ -3934,7 +3934,6 @@ if test "$skip_meson" = no; then
+@@ -3122,7 +3122,6 @@ if test "$skip_meson" = no; then
    fi
    echo "strip = [$(meson_quote $strip)]" >> $cross
    echo "windres = [$(meson_quote $windres)]" >> $cross
 -  if test "$cross_compile" = "yes"; then
      cross_arg="--cross-file config-meson.cross"
      echo "[host_machine]" >> $cross
-     if test "$mingw32" = "yes" ; then
-@@ -3966,9 +3965,6 @@ if test "$skip_meson" = no; then
+     echo "system = '$targetos'" >> $cross
+@@ -3140,9 +3139,6 @@ if test "$skip_meson" = no; then
      else
          echo "endian = 'little'" >> $cross
      fi
@@ -26,5 +28,8 @@ Index: qemu/configure
 -    cross_arg="--native-file config-meson.cross"
 -  fi
    mv $cross config-meson.cross
-
+ 
    rm -rf meson-private meson-info meson-logs
+-- 
+2.43.0
+
