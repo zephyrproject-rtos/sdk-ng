@@ -935,6 +935,8 @@ jobs:
       run: |
         POKY_BASE=${GITHUB_WORKSPACE}/meta-zephyr-sdk
         export META_DOWNLOADS="${POKY_DOWNLOADS}"
+        sudo apt-get update
+        sudo apt-get install -y lz4 zstd
 
         # Check out Poky
         ${POKY_BASE}/scripts/meta-zephyr-sdk-clone.sh
