@@ -1,0 +1,13 @@
+diff --git a/configure b/configure
+index 133f4e3235..63e3c97fd9 100755
+--- a/configure
++++ b/configure
+@@ -1037,7 +1037,7 @@ fi
+ # We ignore PATH completely here: we want to use the venv's Meson
+ # *exclusively*.
+ 
+-meson="$(cd pyvenv/bin; pwd)/meson"
++meson=`which meson`
+ 
+ # Conditionally ensure Sphinx is installed.
+ 
