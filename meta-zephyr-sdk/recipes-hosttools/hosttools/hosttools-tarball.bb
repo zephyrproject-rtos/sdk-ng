@@ -6,23 +6,23 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384
 TOOLCHAIN_TARGET_TASK ?= ""
 
 TOOLCHAIN_HOST_TASK ?= "\
-    nativesdk-arc-qemu \
-    nativesdk-zephyr-qemu \
-    nativesdk-xilinx-qemu \
-    nativesdk-openocd \
     nativesdk-bossa \
+    nativesdk-openocd \
     nativesdk-dtc \
+    nativesdk-arc-qemu \
+    nativesdk-legacy-qemu \
+    nativesdk-qemu-zephyr \
     "
 
 TOOLCHAIN_OUTPUTNAME ?= "${DISTRO}-${SDKMACHINE}-hosttools-standalone-${DISTRO_VERSION}"
 
 RDEPENDS = "${TOOLCHAIN_HOST_TASK}"
 
-inherit meta
+#inherit meta
 inherit populate_sdk
 inherit toolchain-scripts
 
-create_sdk_files_append () {
+create_sdk_files:append () {
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/site-config-*
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/environment-setup-*
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/version-*
