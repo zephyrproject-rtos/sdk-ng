@@ -1,0 +1,70 @@
+From f814bc5b4d16403b15fcd80b1678d12202dab0f2 Mon Sep 17 00:00:00 2001
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Thu, 14 Dec 2023 18:14:00 -0800
+Subject: [PATCH 4/4] tests/tcg/xtensa: fix SR test for configs with MPU
+
+- atomctl is available not only in the presence of s32c1i, but also with
+  the exclusive access option
+- cacheadrdis SR has the same number as cacheattr, mpuenb SR has the
+  same number as rasid and mpucfg SR has the same number as dtlbcfg,
+  add MPU case to the tests of these SR numbers
+
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+---
+ tests/tcg/xtensa/test_sr.S | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/tests/tcg/xtensa/test_sr.S b/tests/tcg/xtensa/test_sr.S
+index 34441c7aff..661ef6c66e 100644
+--- a/tests/tcg/xtensa/test_sr.S
++++ b/tests/tcg/xtensa/test_sr.S
+@@ -62,7 +62,7 @@ test_sr_mask /*acchi*/17, 0, 0
+ test_sr_mask /*acclo*/16, 0, 0
+ #endif
+ 
+-#if XCHAL_HAVE_S32C1I && XCHAL_HW_VERSION >= 230000
++#if XCHAL_HAVE_S32C1I && XCHAL_HW_VERSION >= 230000 || XCHAL_HAVE_EXCLUSIVE
+ test_sr atomctl, 1
+ #else
+ test_sr_mask /*atomctl*/99, 0, 0
+@@ -74,7 +74,11 @@ test_sr br, 1
+ test_sr_mask /*br*/4, 0, 0
+ #endif
+ 
++#if XCHAL_HAVE_MPU
++test_sr cacheadrdis, 1
++#else
+ test_sr_mask /*cacheattr*/98, 0, 0
++#endif
+ 
+ #if XCHAL_HAVE_CCOUNT
+ test_sr ccompare0, 1
+@@ -106,6 +110,8 @@ test_sr depc, 1
+ 
+ #if XCHAL_HAVE_PTP_MMU
+ test_sr dtlbcfg, 1
++#elif XCHAL_HAVE_MPU
++test_sr_mask /*mpucfg*/92, 0, 3
+ #else
+ test_sr_mask /*dtlbcfg*/92, 0, 0
+ #endif
+@@ -205,9 +211,15 @@ test_sr ps, 1
+ 
+ #if XCHAL_HAVE_PTP_MMU
+ test_sr ptevaddr, 1
+-test_sr rasid, 1
+ #else
+ test_sr_mask /*ptevaddr*/83, 0, 0
++#endif
++
++#if XCHAL_HAVE_PTP_MMU
++test_sr rasid, 1
++#elif XCHAL_HAVE_MPU
++test_sr mpuenb, 1
++#else
+ test_sr_mask /*rasid*/90, 0, 0
+ #endif
+ 
+-- 
+2.43.0
+
