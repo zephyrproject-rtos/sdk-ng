@@ -1,40 +1,43 @@
-From 6c4eef1d92e9e42fdbc888365cab3c95fb33c605 Mon Sep 17 00:00:00 2001
+From 32c4ccfbdc8649f595a79e7fd1bd39d6f8325340 Mon Sep 17 00:00:00 2001
 From: Ross Burton <ross.burton@intel.com>
 Date: Tue, 3 Jul 2018 13:59:09 +0100
 Subject: [PATCH] Make CPU family warnings fatal
 
 Upstream-Status: Inappropriate [OE specific]
 Signed-off-by: Ross Burton <ross.burton@intel.com>
-
 ---
- mesonbuild/envconfig.py   | 2 +-
- mesonbuild/environment.py | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ mesonbuild/envconfig.py   | 4 ++--
+ mesonbuild/environment.py | 6 ++----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/mesonbuild/envconfig.py b/mesonbuild/envconfig.py
-index 307aac3..66fb7ec 100644
+index 86bad9b..9703315 100644
 --- a/mesonbuild/envconfig.py
 +++ b/mesonbuild/envconfig.py
-@@ -267,7 +267,7 @@ class MachineInfo(HoldableObject):
+@@ -277,8 +277,8 @@ class MachineInfo(HoldableObject):
+                 'but is missing {}.'.format(minimum_literal - set(literal)))
  
          cpu_family = literal['cpu_family']
-         if cpu_family not in known_cpu_families:
+-        if cpu_family not in known_cpu_families:
 -            mlog.warning(f'Unknown CPU family {cpu_family}, please report this at https://github.com/mesonbuild/meson/issues/new')
++        if cpu_family not in known_cpu_families and cpu_family != "riscv":
 +            raise EnvironmentException('Unknown CPU family {}, see https://wiki.yoctoproject.org/wiki/Meson/UnknownCPU for directions.'.format(cpu_family))
  
          endian = literal['endian']
          if endian not in ('little', 'big'):
 diff --git a/mesonbuild/environment.py b/mesonbuild/environment.py
-index 71286a5..179917e 100644
+index 71a2f3a..4cbeabe 100644
 --- a/mesonbuild/environment.py
 +++ b/mesonbuild/environment.py
-@@ -352,9 +352,7 @@ def detect_cpu_family(compilers: CompilersDict) -> str:
-             trial = 'ppc64'
+@@ -416,10 +416,8 @@ def detect_cpu_family(compilers: CompilersDict) -> str:
+         if compilers and not any_compiler_has_define(compilers, '__mips64'):
+             trial = 'mips'
  
-     if trial not in known_cpu_families:
+-    if trial not in known_cpu_families:
 -        mlog.warning(f'Unknown CPU family {trial!r}, please report this at '
 -                     'https://github.com/mesonbuild/meson/issues/new with the '
 -                     'output of `uname -a` and `cat /proc/cpuinfo`')
++    if trial not in known_cpu_families and trail != "riscv":
 +        raise EnvironmentException('Unknown CPU family %s, see https://wiki.yoctoproject.org/wiki/Meson/UnknownCPU for directions.' % trial)
  
      return trial
