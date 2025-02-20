@@ -37,7 +37,5 @@ if(DEFINED triple)
   unset(triple)
 endif()
 
-list(APPEND TOOLCHAIN_C_FLAGS --config
-	${ZEPHYR_SDK_INSTALL_DIR}/cmake/zephyr/llvm/clang_compiler_rt.cfg)
-list(APPEND TOOLCHAIN_LD_FLAGS --config
-	${ZEPHYR_SDK_INSTALL_DIR}/cmake/zephyr/llvm/clang_compiler_rt.cfg)
+list(APPEND TOOLCHAIN_C_FLAGS "--config=${ZEPHYR_SDK_INSTALL_DIR}/cmake/zephyr/llvm/clang_compiler_rt.cfg")
+list(APPEND TOOLCHAIN_LD_FLAGS "--config=${ZEPHYR_SDK_INSTALL_DIR}/cmake/zephyr/llvm/clang_compiler_rt.cfg")
