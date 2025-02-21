@@ -9,8 +9,8 @@ TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-bossa \
     nativesdk-openocd \
     nativesdk-dtc \
-    nativesdk-arc-qemu \
-    nativesdk-legacy-qemu \
+    nativesdk-qemu-arc \
+    nativesdk-qemu-legacy \
     nativesdk-qemu-zephyr \
     "
 
