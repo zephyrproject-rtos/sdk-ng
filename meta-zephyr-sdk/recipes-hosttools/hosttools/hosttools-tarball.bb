@@ -11,6 +11,7 @@ TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-dtc \
     nativesdk-qemu-arc \
     nativesdk-qemu-legacy \
+    nativesdk-qemu-xilinx \
     nativesdk-qemu-zephyr \
     "
 
