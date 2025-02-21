@@ -49,6 +49,7 @@ on:
         - microblazeel-zephyr-elf
         - mips-zephyr-elf
         - nios2-zephyr-elf
+        - or1k-zephyr-elf
         - riscv64-zephyr-elf
         - sparc-zephyr-elf
         - x86_64-zephyr-elf
@@ -169,6 +170,7 @@ jobs:
             microblazeel-zephyr-elf)              build_target_microblazeel_zephyr_elf="y";;
             mips-zephyr-elf)                      build_target_mips_zephyr_elf="y";;
             nios2-zephyr-elf)                     build_target_nios2_zephyr_elf="y";;
+            or1k-zephyr-elf)                      build_target_or1k_zephyr_elf="y";;
             riscv64-zephyr-elf)                   build_target_riscv64_zephyr_elf="y";;
             sparc-zephyr-elf)                     build_target_sparc_zephyr_elf="y";;
             x86_64-zephyr-elf)                    build_target_x86_64_zephyr_elf="y";;
@@ -217,6 +219,7 @@ jobs:
           build_target_microblazeel_zephyr_elf="y"
           build_target_mips_zephyr_elf="y"
           build_target_nios2_zephyr_elf="y"
+          build_target_or1k_zephyr_elf="y"
           build_target_riscv64_zephyr_elf="y"
           build_target_sparc_zephyr_elf="y"
           build_target_x86_64_zephyr_elf="y"
@@ -305,6 +308,7 @@ jobs:
         [ "${build_target_microblazeel_zephyr_elf}" == "y" ]              && MATRIX_TARGETS+='"microblazeel-zephyr-elf",'
         [ "${build_target_mips_zephyr_elf}" == "y" ]                      && MATRIX_TARGETS+='"mips-zephyr-elf",'
         [ "${build_target_nios2_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"nios2-zephyr-elf",'
+        [ "${build_target_or1k_zephyr_elf}" == "y" ]                      && MATRIX_TARGETS+='"or1k-zephyr-elf",'
         [ "${build_target_riscv64_zephyr_elf}" == "y" ]                   && MATRIX_TARGETS+='"riscv64-zephyr-elf",'
         [ "${build_target_sparc_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"sparc-zephyr-elf",'
         [ "${build_target_x86_64_zephyr_elf}" == "y" ]                    && MATRIX_TARGETS+='"x86_64-zephyr-elf",'
@@ -1552,6 +1556,9 @@ jobs:
               ;;
             nios2-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_nios2 "
+              ;;
+            or1k-zephyr-elf)
+              PLATFORM_ARGS+="-p qemu_or1k "
               ;;
             riscv64-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_riscv32 "
