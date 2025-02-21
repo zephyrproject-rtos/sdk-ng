@@ -1,12 +1,11 @@
 
 DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
 LICENSE = "GPLv2"
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
 SRCREV = "e40b634b24b37fe521bb2857c5e93ee1d30c2e37"
-SRC_URI = "git://github.com/Xilinx/qemu.git;protocol=https \
+SRC_URI = "gitsm://github.com/Xilinx/qemu.git;protocol=https;nobranch=1 \
 	   file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
 	   file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
 "
@@ -201,7 +200,7 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
   --disable-tpm  --disable-numa --disable-glusterfs --disable-blobs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
   --disable-kvm --disable-sheepdog --disable-parallels --disable-replication \
-  --disable-live-block-migration --disable-dmg \
+  --disable-live-block-migration --disable-dmg --disable-werror \
   "
 
 # NOTE: Once --prefix is set, QEMU configure script automatically figures out adequate sysconfdir,
@@ -211,11 +210,22 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
 #       /usr.
 
 do_configure() {
+    unset libdir
+    unset libexecdir
+    unset includedir
+    unset bindir
+    unset mandir
+    unset datadir
+    unset docdir
+    unset sysconfdir
+    unset local_statedir
+    unset firmwarepath
+    unset localedir
     ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${xilinx_qemu_prefix}
 }
 
-FILES_${PN} = " \
-   /opt/zephyr-sdk \
+FILES:${PN} = " \
+   ${xilinx_qemu_prefix} \
   "
 
 INSANE_SKIP_${PN} = "already-stripped"
