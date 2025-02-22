@@ -849,6 +849,8 @@ jobs:
       group: ${{ matrix.host.runner }}
     container: ${{ matrix.host.container }}
 
+    env:
+      TAR_OPTIONS: --no-same-owner
     defaults:
       run:
         shell: bash

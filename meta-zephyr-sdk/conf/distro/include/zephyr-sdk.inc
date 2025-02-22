@@ -14,9 +14,12 @@ DISTRO_FEATURES_NATIVE = ""
 DISTRO_FEATURES_BACKFILL = ""
 DISTRO_FEATURES_NATIVESDK = ""
 
-MAINTAINER = "Intel Yocto team"
+MAINTAINER = "Zephyr developers / devops team"
 
 SSTATE_DIR ?= "${TOPDIR}/../zephyr-cache/sstate-cache"
 CACHE_forcevariable = "${TOPDIR}/../zephyr-cache/cache"
 PERSISTENT_DIR = "${TOPDIR}/../zephyr-cache/persistent"
 DL_DIR ?= "${TOPDIR}/../zephyr-downloads"
+
+PREFERRED_VERSION_meson:forcevariable = "1.7.%"
+PREFERRED_VERSION_nativesdk-meson:forcevariable = "1.7.%"

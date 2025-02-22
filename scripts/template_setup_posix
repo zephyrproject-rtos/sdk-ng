@@ -237,7 +237,7 @@ if [ "${do_hosttools}" = "y" ]; then
   echo "Installing host tools ..."
   case ${host} in
     linux-*)
-      ./zephyr-sdk-${HOSTTYPE}-hosttools-standalone-0.9.sh -y -d . &> /dev/null
+      ./zephyr-sdk-${HOSTTYPE}-hosttools-standalone-0.10.sh -y -d . &> /dev/null
       assert_rc "ERROR: Host tools installation failed" 30
       ;;
     macos-*)

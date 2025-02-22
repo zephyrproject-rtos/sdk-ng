@@ -1,14 +1,13 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
+DEPENDS = "glib-2.0 zlib pixman gnutls libtasn1 dtc ninja-native meson-native"
 LICENSE = "GPLv2"
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+#FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "e40b634b24b37fe521bb2857c5e93ee1d30c2e37"
-SRC_URI = "git://github.com/Xilinx/qemu.git;protocol=https \
-	   file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
-	   file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
+SRCREV = "b46c4ec2d07a4c56c426b3d48195d6f2902226e5"
+SRC_URI = "gitsm://github.com/foss-for-synopsys-dwc-arc-processors/qemu.git;protocol=https;nobranch=1 \
+	   file://cross.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"
@@ -17,7 +16,7 @@ INHIBIT_PACKAGE_STRIP = "1"
 
 S = "${WORKDIR}/git"
 
-xilinx_qemu_prefix = "${base_prefix}/usr/xilinx"
+arc_qemu_prefix = "${base_prefix}/usr/synopsys"
 
 inherit autotools pkgconfig
 
@@ -192,16 +191,15 @@ inherit autotools pkgconfig
 #  --disable-numa           disable libnuma support
 #  --enable-numa            enable libnuma support
 
-#--disable-fdt: Cannot use if supporting arm-generic-fdt machine type
 
-QEMUS_BUILT = "aarch64-softmmu microblazeel-softmmu"
+QEMUS_BUILT = "arc-softmmu arc64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
-  --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio \
+  --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio\
   --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
-  --disable-tpm  --disable-numa --disable-glusterfs --disable-blobs \
+  --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
-  --disable-kvm --disable-sheepdog --disable-parallels --disable-replication \
-  --disable-live-block-migration --disable-dmg \
+  --disable-kvm --disable-parallels --disable-replication \
+  --disable-live-block-migration --disable-dmg --disable-fdt --disable-blobs --disable-werror \
   "
 
 # NOTE: Once --prefix is set, QEMU configure script automatically figures out adequate sysconfdir,
@@ -211,11 +209,28 @@ QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-
 #       /usr.
 
 do_configure() {
-    ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}" --prefix=${xilinx_qemu_prefix}
+    # Unset the install path environment variables set by the BitBake because the new configure
+    # script picks these up, and that interferes with prefix-based install path resolution.
+    unset libdir
+    unset libexecdir
+    unset includedir
+    unset bindir
+    unset mandir
+    unset datadir
+    unset docdir
+    unset sysconfdir
+    unset local_statedir
+    unset firmwarepath
+    unset localedir
+
+    ${S}/configure ${QEMU_FLAGS} --target-list="${QEMUS_BUILT}"  --prefix=${arc_qemu_prefix} \
+        --meson=meson
 }
 
-FILES_${PN} = " \
-   /opt/zephyr-sdk \
+
+FILES:${PN} = " \
+   ${arc_qemu_prefix} \
   "
+
 
 INSANE_SKIP_${PN} = "already-stripped"

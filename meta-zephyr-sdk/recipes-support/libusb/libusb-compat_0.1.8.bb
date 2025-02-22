@@ -19,10 +19,10 @@ BBCLASSEXTEND = "native nativesdk"
 PE = "1"
 
 SRC_URI = " \
-    git://github.com/libusb/libusb-compat-0.1.git;protocol=https \
+    git://github.com/libusb/libusb-compat-0.1.git;protocol=https;branch=master \
     file://0001-usb.h-Include-sys-types.h.patch \
 "
-SRCREV = "4a27760ec5954ec8605e052a3207afbe0979eeef"
+SRCREV = "3e8a88d296b5405902c22d2ada61937bd9a89415"
 S = "${WORKDIR}/git"
 
 UPSTREAM_CHECK_URI = "https://github.com/libusb/libusb-compat-0.1/releases"
@@ -33,7 +33,7 @@ inherit autotools pkgconfig binconfig-disabled lib_package
 
 EXTRA_OECONF = "--libdir=${base_libdir}"
 
-do_install_append() {
+do_install:append() {
 	install -d ${D}${libdir}
 	if [ ! ${D}${libdir} -ef ${D}${base_libdir} ]; then
 		mv ${D}${base_libdir}/pkgconfig ${D}${libdir}
