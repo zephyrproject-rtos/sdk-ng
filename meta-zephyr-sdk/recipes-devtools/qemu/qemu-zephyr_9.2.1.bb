@@ -133,6 +133,8 @@ do_configure[cleandirs] += "${B}"
 do_install () {
 	export STRIP=""
 	oe_runmake 'DESTDIR=${D}' install
+        install -m 0755 ${WORKDIR}/build/contrib/ivshmem-server/ivshmem-server ${D}${bindir}
+        install -m 0755 ${WORKDIR}/build/contrib/ivshmem-client/ivshmem-client ${D}${bindir}
 
 	# If we built the guest agent, also install startup/udev rules
 	if [ -e "${D}${bindir}/qemu-ga" ]; then
