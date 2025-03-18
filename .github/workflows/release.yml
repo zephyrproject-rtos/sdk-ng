@@ -26,7 +26,7 @@ jobs:
     name: Release
     needs: [ ci ]
     runs-on:
-      group: zephyr-runner-v2-linux-x64-4xlarge
+      group: test-runner-v2-linux-x64-4xlarge
 
     steps:
     - name: Set up build environment
