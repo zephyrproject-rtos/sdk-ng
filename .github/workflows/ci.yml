@@ -1547,7 +1547,7 @@ jobs:
               PLATFORM_ARGS+="-p qemu_cortex_m0 "
               PLATFORM_ARGS+="-p mps2/an385 "
               PLATFORM_ARGS+="-p mps2/an521/cpu0 "
-              PLATFORM_ARGS+="-p mps3/an547 "
+              PLATFORM_ARGS+="-p mps3/corstone300/an547 "
               ;;
             # TODO: Release the microblaze arch source in a public repo
             # microblazeel-zephyr-elf)
