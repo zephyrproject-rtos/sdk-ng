@@ -1,13 +1,12 @@
 
-DEPENDS = "glib-2.0 zlib pixman gnutls dtc"
+DEPENDS = "glib-2.0 zlib pixman gnutls dtc libtasn1 bison-native ninja-native"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "e40b634b24b37fe521bb2857c5e93ee1d30c2e37"
+SRCREV = "01482fa113dcbfa785feb7d513df50d15ec4c5df"
 SRC_URI = "gitsm://github.com/Xilinx/qemu.git;protocol=https;nobranch=1 \
-	   file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
-	   file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
+          file://cross.patch \
 "
 
 BBCLASSEXTEND = "native nativesdk"
@@ -193,14 +192,15 @@ inherit autotools pkgconfig
 
 #--disable-fdt: Cannot use if supporting arm-generic-fdt machine type
 
-QEMUS_BUILT = "aarch64-softmmu microblazeel-softmmu"
+QEMUS_BUILT = "aarch64-softmmu microblazeel-softmmu riscv32-softmmu riscv64-softmmu"
 QEMU_FLAGS = "--disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
   --disable-libnfs --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio \
-  --disable-guest-agent --disable-libssh --disable-vnc-png  --disable-seccomp \
-  --disable-tpm  --disable-numa --disable-glusterfs --disable-blobs \
+  --disable-guest-agent --disable-libssh --disable-seccomp \
+  --disable-tpm  --disable-numa --disable-glusterfs \
   --disable-virtfs --disable-xen --disable-curl --disable-attr --disable-curses --disable-iconv \
-  --disable-kvm --disable-sheepdog --disable-parallels --disable-replication \
+  --disable-kvm --disable-parallels --disable-replication \
   --disable-live-block-migration --disable-dmg --disable-werror \
+  --skip-meson \
   "
 
 # NOTE: Once --prefix is set, QEMU configure script automatically figures out adequate sysconfdir,
