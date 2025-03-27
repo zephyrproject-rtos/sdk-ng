@@ -1592,7 +1592,7 @@ jobs:
               PLATFORM_ARGS+="-p intel_adsp/ace15_mtpm "
               ;;
             xtensa-intel_ace30_ptl_zephyr-elf)
-              PLATFORM_ARGS+="-p intel_adsp/ace30_ptl "
+              PLATFORM_ARGS+="-p intel_adsp/ace30/ptl "
               ;;
             xtensa-intel_tgl_adsp_zephyr-elf)
               PLATFORM_ARGS+="-p intel_adsp/cavs25 "
