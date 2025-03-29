@@ -105,3 +105,4 @@ When updating a submodule, the following procedure should be followed:
 When updating the `picolibc` submodule, the `picolibc` module in the `west.yml`
 of the [main Zephyr repository](https://github.com/zephyrproject-rtos/zephyr)
 must also be updated to reference the same commit.
+
