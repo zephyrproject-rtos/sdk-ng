@@ -1639,7 +1639,7 @@ jobs:
               # upstream user platform is currently available.
               ;;
             xtensa-sample_controller_zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_xtensa "
+              PLATFORM_ARGS+="-p qemu_xtensa/dc233c "
               ;;
             xtensa-sample_controller32_zephyr-elf)
               # xtensa-sample_controller32_zephyr-elf is untested because no
