@@ -21,7 +21,7 @@ function usage()
 	echo "     Default is ${SDK_DIR}"
 	echo ""
 	echo "  -o Build directory, for building artifacts and final output. Optional."
-	echo "     Default is ${WORKSPACE}"
+	echo "     Default is ${BUILD_DIR}"
 	echo ""
 	echo "  -h This help."
 	echo ""
@@ -129,7 +129,7 @@ EOF
 "${CT_NG}" distclean
 "${CT_NG}" defconfig DEFCONFIG=build.config
 
-"${CT_NG}" build
+"${CT_NG}" build || exit 1
 
 chmod -R u+w "${TOOLCHAIN_OUTPUT_DIR}"
 
