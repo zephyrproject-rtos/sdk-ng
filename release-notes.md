@@ -1,5 +1,27 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.17.1-rc1
+
+- general:
+
+  * Linux host tool distribution is now based on the Poky 5.0.7 release.
+  * Added MediaTek MT8186/MT8188 toolchain
+    (`xtensa-mtk_mt818x_adsp_zephyr-elf`).
+  * Added MediaTek MT8196 toolchain (`xtensa-mtk_mt8196_adsp_zephyr-elf`).
+  * Added MediaTek MT8365 toolchain (`xtensa-mtk_mt8365_adsp_zephyr-elf`).
+
+- picolibc:
+
+  * Updated to Picolibc 1.8.9 release.
+
+- qemu:
+
+  * Updated QEMU to 9.2.1 release.
+  * Updated Xilinx QEMU to 8.1.0 release (part of Xilinx tools v2024.2 release).
+  * Added "legacy QEMU" that is equivalent to the "QEMU 7.0.0 with Zephyr
+    patches" in the SDK 0.17.0 release. This is to allow testing of the legacy
+    platforms that are not compatible with QEMU 9.2.1.
+
 ## Zephyr SDK 0.17.0
 
 - general:
