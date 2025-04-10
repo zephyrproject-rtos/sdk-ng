@@ -2,6 +2,9 @@
 
 cmake_host_system_information(RESULT TOOLCHAIN_ARCH QUERY OS_PLATFORM)
 set(HOST_TOOLS_HOME ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/${TOOLCHAIN_ARCH}-pokysdk-linux)
+if(NOT EXISTS ${HOST_TOOLS_HOME})
+  message(WARNING "${HOST_TOOLS_HOME} doesn't exists, perhaps you forgot to run: ${ZEPHYR_SDK_INSTALL_DIR}/setup.sh ?")
+endif()
 
 # Path used for searching by the find_*() functions, with appropriate
 # suffixes added. Ensures that the SDK's host tools will be found when
