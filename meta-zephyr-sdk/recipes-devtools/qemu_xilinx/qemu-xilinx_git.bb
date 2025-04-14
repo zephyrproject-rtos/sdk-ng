@@ -1,4 +1,4 @@
-DEPENDS = "glib-2.0 zlib dtc pixman bison-native meson-native ninja-native libgcrypt"
+DEPENDS = "glib-2.0 zlib dtc pixman bison-native meson-native ninja-native libgcrypt libslirp"
 LICENSE = "GPL-2.0-only & LGPL-2.1-only"
 
 RDEPENDS:${PN}-common:class-target += "bash"
@@ -57,6 +57,7 @@ EXTRA_OECONF = " \
   --disable-curl --disable-attr --disable-curses --disable-iconv \
   --disable-kvm --disable-parallels --disable-replication \
   --disable-live-block-migration --disable-dmg --disable-werror \
+  --enable-slirp \
   "
 
 QEMU_TARGETS = "aarch64-softmmu riscv32-softmmu riscv64-softmmu microblazeel-softmmu"
