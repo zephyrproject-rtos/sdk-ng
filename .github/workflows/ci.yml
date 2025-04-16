@@ -97,7 +97,7 @@ jobs:
   # Setup
   setup:
     name: Setup
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     outputs:
       hosts: ${{ steps.generate-matrix.outputs.hosts }}
       targets: ${{ steps.generate-matrix.outputs.targets }}
@@ -1679,7 +1679,7 @@ jobs:
   test-result:
     name: Test Result
     needs: [ test-dist-bundle ]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     # NOTE: The 'test-result' job depends on the 'test-dist-bundle' job and
     #       therefore only runs when all distribution bundle tests pass.
