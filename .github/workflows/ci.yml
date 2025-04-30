@@ -741,7 +741,7 @@ jobs:
         else
           # Use Python 3.10 for non-Canadian Linux and macOS builds
           cat <<EOF >> .config
-        CT_GDB_CROSS_PYTHON_BINARY="python3.10"
+        CT_GDB_CROSS_PYTHON_BINARY="python3.12"
         EOF
         fi
 
