@@ -129,6 +129,7 @@ EOF
 "${CT_NG}" savedefconfig DEFCONFIG=build.config
 "${CT_NG}" distclean
 "${CT_NG}" defconfig DEFCONFIG=build.config
+"${CT_NG}" upgradeconfig DEFCONFIG=build.config
 
 "${CT_NG}" build || exit 1
 
