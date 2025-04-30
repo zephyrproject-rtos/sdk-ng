@@ -64,6 +64,7 @@ export CT_NG="${WORKSPACE}"/crosstool-ng/bin/ct-ng
 TOOLCHAIN_OUTPUT_DIR="${WORKSPACE}"/output/${CONFIG_FILE_NAME}
 
 echo "SDK directory: ${GITHUB_WORKSPACE}"
+mkdir -p ${WORKSPACE}
 echo "Build directory: ${WORKSPACE}"
 
 SDK_CONFIG_FILE="${GITHUB_WORKSPACE}/configs/${CONFIG_FILE_NAME}.config"
