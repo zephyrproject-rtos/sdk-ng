@@ -739,9 +739,9 @@ jobs:
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         else
-          # Use Python 3.10 for non-Canadian Linux and macOS builds
+          # Use host Python 3 for non-Canadian Linux and macOS builds
           cat <<EOF >> .config
-        CT_GDB_CROSS_PYTHON_BINARY="python3.12"
+        CT_GDB_CROSS_PYTHON_BINARY="python3"
         EOF
         fi
 
