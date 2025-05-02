@@ -25,3 +25,6 @@
 [submodule "crosskit/crosskit-mingw-w64-libpython"]
 	path = crosskit/crosskit-mingw-w64-libpython
 	url = https://github.com/zephyrproject-rtos/crosskit-mingw-w64-libpython.git
+[submodule "gcc_arc"]
+	path = gcc_arc
+	url = https://github.com/zephyrproject-rtos/gcc.git
