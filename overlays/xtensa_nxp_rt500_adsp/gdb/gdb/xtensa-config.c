@@ -117,7 +117,7 @@ const xtensa_mask_t xtensa_mask41 = { 1, xtensa_submask41 };
 
 
 /* Register map.  */
-xtensa_register_t rmap[] = 
+xtensa_register_t xtensa_rmap[] =
 {
   /*    idx ofs bi sz al targno  flags cp typ group name  */
   XTREG_END
@@ -126,7 +126,7 @@ xtensa_register_t rmap[] =
 
 
 #ifdef XTENSA_CONFIG_INSTANTIATE
-XTENSA_CONFIG_INSTANTIATE(rmap,16)
+XTENSA_CONFIG_INSTANTIATE(xtensa_rmap,16)
 #endif
 
-xtensa_gdbarch_tdep xtensa_tdep (rmap);
+xtensa_gdbarch_tdep xtensa_tdep (xtensa_rmap);
