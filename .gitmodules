@@ -28,3 +28,6 @@
 [submodule "gcc_arc"]
 	path = gcc_arc
 	url = https://github.com/zephyrproject-rtos/gcc.git
+[submodule "binutils_arc"]
+	path = binutils_arc
+	url = https://github.com/zephyrproject-rtos/binutils-gdb.git
