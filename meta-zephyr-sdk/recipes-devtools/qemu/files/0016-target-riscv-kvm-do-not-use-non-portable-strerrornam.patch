@@ -1,7 +1,8 @@
-From 9de5de85fa917af58e7bc9cdd88f8f7ef8da2ca9 Mon Sep 17 00:00:00 2001
+From 6e1c3ecc759caac8cc1a48e42780e80c09b4ca16 Mon Sep 17 00:00:00 2001
 From: Natanael Copa <ncopa@alpinelinux.org>
 Date: Wed, 18 Sep 2024 16:19:37 -0700
-Subject: [PATCH] target/riscv/kvm: do not use non-portable strerrorname_np()
+Subject: [PATCH 16/16] target/riscv/kvm: do not use non-portable
+ strerrorname_np()
 
 strerrorname_np is non-portable and breaks building with musl libc.
 
@@ -20,10 +21,10 @@ Signed-off-by: Natanael Copa <ncopa@alpinelinux.org>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/target/riscv/kvm/kvm-cpu.c b/target/riscv/kvm/kvm-cpu.c
-index f6e3156b8..fad9eb21c 100644
+index 0f4997a918..4559d0fac2 100644
 --- a/target/riscv/kvm/kvm-cpu.c
 +++ b/target/riscv/kvm/kvm-cpu.c
-@@ -1859,8 +1859,7 @@ static bool kvm_cpu_realize(CPUState *cs, Error **errp)
+@@ -1885,8 +1885,7 @@ static bool kvm_cpu_realize(CPUState *cs, Error **errp)
      if (riscv_has_ext(&cpu->env, RVV)) {
          ret = prctl(PR_RISCV_V_SET_CONTROL, PR_RISCV_V_VSTATE_CTRL_ON);
          if (ret) {
@@ -33,3 +34,6 @@ index f6e3156b8..fad9eb21c 100644
              return false;
          }
      }
+-- 
+2.43.0
+

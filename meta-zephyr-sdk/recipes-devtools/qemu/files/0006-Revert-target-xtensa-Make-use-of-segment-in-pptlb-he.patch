@@ -1,0 +1,36 @@
+From ab661500c3afa2ba48d8635089bc9985a149b5a0 Mon Sep 17 00:00:00 2001
+From: Anas Nashif <anas.nashif@intel.com>
+Date: Fri, 16 May 2025 17:58:04 -0400
+Subject: [PATCH 06/16] Revert "target/xtensa: Make use of 'segment' in pptlb
+ helper less confusing"
+
+This reverts commit b42ba4ea4322357fcbfcb0e6e613d79ede84de64.
+---
+ target/xtensa/mmu_helper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/target/xtensa/mmu_helper.c b/target/xtensa/mmu_helper.c
+index 63be741a42..d05226c788 100644
+--- a/target/xtensa/mmu_helper.c
++++ b/target/xtensa/mmu_helper.c
+@@ -992,7 +992,7 @@ uint32_t HELPER(rptlb1)(CPUXtensaState *env, uint32_t s)
+ uint32_t HELPER(pptlb)(CPUXtensaState *env, uint32_t v)
+ {
+     unsigned nhits;
+-    unsigned segment;
++    unsigned segment = XTENSA_MPU_PROBE_B;
+     unsigned bg_segment;
+ 
+     nhits = xtensa_mpu_lookup(env->mpu_fg, env->config->n_mpu_fg_segments,
+@@ -1006,7 +1006,7 @@ uint32_t HELPER(pptlb)(CPUXtensaState *env, uint32_t v)
+         xtensa_mpu_lookup(env->config->mpu_bg,
+                           env->config->n_mpu_bg_segments,
+                           v, &bg_segment);
+-        return env->config->mpu_bg[bg_segment].attr | XTENSA_MPU_PROBE_B;
++        return env->config->mpu_bg[bg_segment].attr | segment;
+     }
+ }
+ 
+-- 
+2.43.0
+

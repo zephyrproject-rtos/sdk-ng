@@ -1,7 +1,7 @@
-From c700aa6373e4cee40cba849f3bbb4927165d7243 Mon Sep 17 00:00:00 2001
+From ad202784183a635c281749f67ed2411e879facb3 Mon Sep 17 00:00:00 2001
 From: Max Filippov <jcmvbkbc@gmail.com>
 Date: Thu, 14 Dec 2023 16:46:08 -0800
-Subject: [PATCH 3/4] tests/tcg/xtensa: tidy test linker script
+Subject: [PATCH 03/16] tests/tcg/xtensa: tidy test linker script
 
 Drop MEMORY clause and related size definitions and output section
 region specifications. Drop .rodata output section as the tests don't
