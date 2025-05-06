@@ -1,7 +1,7 @@
-From 1ba58dbd2dce4e6ccaf3be3ad5c9ecc22565313f Mon Sep 17 00:00:00 2001
+From d98f52b978273b4ee394f7ee3c00fdf966a0c2ec Mon Sep 17 00:00:00 2001
 From: Mark Asselstine <mark.asselstine@windriver.com>
 Date: Tue, 26 Feb 2013 11:43:28 -0500
-Subject: [PATCH] apic: fixup fallthrough to PIC
+Subject: [PATCH 08/16] apic: fixup fallthrough to PIC
 
 Commit 0e21e12bb311c4c1095d0269dc2ef81196ccb60a [Don't route PIC
 interrupts through the local APIC if the local APIC config says so.]
@@ -29,10 +29,10 @@ Signed-off-by: He Zhe <zhe.he@windriver.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/hw/intc/apic.c b/hw/intc/apic.c
-index 4186c57b3..43cd805a9 100644
+index d18c1dbf2c..45dde1fc51 100644
 --- a/hw/intc/apic.c
 +++ b/hw/intc/apic.c
-@@ -759,7 +759,7 @@ int apic_accept_pic_intr(DeviceState *dev)
+@@ -758,7 +758,7 @@ int apic_accept_pic_intr(DeviceState *dev)
      APICCommonState *s = APIC(dev);
      uint32_t lvt0;
  
@@ -41,3 +41,6 @@ index 4186c57b3..43cd805a9 100644
          return -1;
  
      lvt0 = s->lvt[APIC_LVT_LINT0];
+-- 
+2.43.0
+
