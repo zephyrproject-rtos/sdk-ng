@@ -4,9 +4,6 @@
 [submodule "binutils"]
 	path = binutils
 	url = https://github.com/zephyrproject-rtos/binutils-gdb.git
-[submodule "newlib"]
-	path = newlib
-	url = https://github.com/zephyrproject-rtos/newlib-cygwin.git
 [submodule "gcc"]
 	path = gcc
 	url = https://github.com/zephyrproject-rtos/gcc.git
