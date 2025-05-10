@@ -16,3 +16,9 @@ config PICOLIBC_SUPPORTED
 	depends on "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr"
 	help
 	  Zephyr SDK >=0.16 always supports Picolibc for C and C++ development.
+
+config PICOLIBC_DEFAULT
+	def_bool y
+	depends on "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr"
+	help
+	  Zephyr SDK >=0.17.1 always uses Picolibc
