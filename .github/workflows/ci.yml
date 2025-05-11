@@ -1568,10 +1568,9 @@ jobs:
               PLATFORM_ARGS+="-p qemu_riscv32e "
               PLATFORM_ARGS+="-p qemu_riscv64 "
               ;;
-            # TODO: new architecutre, still work in progress in many areas.
-            #rx-zephyr-elf)
-            #  PLATFORM_ARGS+="-p qemu_rx "
-            #  ;;
+            rx-zephyr-elf)
+              PLATFORM_ARGS+="-p qemu_rx "
+              ;;
             sparc-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_leon3 "
               ;;
