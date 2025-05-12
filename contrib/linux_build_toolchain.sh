@@ -64,6 +64,7 @@ export CT_NG="${WORKSPACE}"/crosstool-ng/bin/ct-ng
 TOOLCHAIN_OUTPUT_DIR="${WORKSPACE}"/output/${CONFIG_FILE_NAME}
 
 echo "SDK directory: ${GITHUB_WORKSPACE}"
+mkdir -p ${WORKSPACE}
 echo "Build directory: ${WORKSPACE}"
 
 SDK_CONFIG_FILE="${GITHUB_WORKSPACE}/configs/${CONFIG_FILE_NAME}.config"
@@ -119,15 +120,17 @@ CT_LOG_EXTRA=y
 CT_LOG_LEVEL_MAX="EXTRA"
 CT_GDB_CROSS_PYTHON=y
 CT_GDB_CROSS_PYTHON_VARIANT=y
-CT_GDB_CROSS_PYTHON_BINARY="python3.10"
+CT_GDB_CROSS_PYTHON_BINARY="python3"
 CT_EXPERIMENTAL=y
 CT_ALLOW_BUILD_AS_ROOT=y
 CT_ALLOW_BUILD_AS_ROOT_SURE=y
+CT_DEBUG_CT_SAVE_STEPS=y
 EOF
 
 "${CT_NG}" savedefconfig DEFCONFIG=build.config
 "${CT_NG}" distclean
 "${CT_NG}" defconfig DEFCONFIG=build.config
+"${CT_NG}" upgradeconfig DEFCONFIG=build.config
 
 "${CT_NG}" build || exit 1
 
