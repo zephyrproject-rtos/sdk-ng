@@ -1587,7 +1587,7 @@ jobs:
               PLATFORM_ARGS+="-p qemu_xtensa/dc233c/mmu "
               ;;
             xtensa-espressif_esp32_zephyr-elf)
-              PLATFORM_ARGS+="-p esp32_devkitc_wroom/esp32/procpu "
+              PLATFORM_ARGS+="-p esp32_devkitc/esp32/procpu "
               ;;
             xtensa-espressif_esp32s2_zephyr-elf)
               PLATFORM_ARGS+="-p esp32s2_saola "
