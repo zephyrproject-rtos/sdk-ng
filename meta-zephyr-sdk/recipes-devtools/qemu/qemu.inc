@@ -171,7 +171,6 @@ do_install:append() {
     ln -sf ../synopsys/bin/qemu-system-arc64 ${D}${bindir}/qemu-system-arc64
 
     # Link other legacy QEMU executables
-    ln -sf ../legacy/bin/qemu-system-nios2 ${D}${bindir}/qemu-system-nios2
     ln -sf ../legacy/bin/qemu-system-sparc ${D}${bindir}/qemu-system-sparc
 }
 
