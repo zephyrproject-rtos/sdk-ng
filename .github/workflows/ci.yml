@@ -781,7 +781,6 @@ jobs:
 
         # Remove unneeded files from output directory
         pushd ${OUTPUT_BASE}/${OUTPUT_DIR}/${{ matrix.target }}
-        rm -rf newlib-nano
         rm -f build.log.bz2
         popd
 
@@ -1655,7 +1654,6 @@ jobs:
             -T ${ZEPHYR_ROOT}/samples/cpp/hello_world
             -T ${ZEPHYR_ROOT}/tests/lib/c_lib
             -T ${ZEPHYR_ROOT}/tests/lib/cpp
-            -T ${ZEPHYR_ROOT}/tests/lib/newlib
             "
 
         # Run tests with twister
