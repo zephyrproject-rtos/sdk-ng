@@ -1,7 +1,7 @@
-From f45b7fe1a7a5cbb2445f4bfd36a6a929fa22bef6 Mon Sep 17 00:00:00 2001
+From 73b26889b8e68efee58d3a3bef4e3672c7b166fc Mon Sep 17 00:00:00 2001
 From: Max Filippov <jcmvbkbc@gmail.com>
 Date: Thu, 14 Dec 2023 16:47:09 -0800
-Subject: [PATCH 2/4] target/xtensa: import sample_controller32 core
+Subject: [PATCH 2/5] target/xtensa: import sample_controller32 core
 
 This is an LX core with MPU and exclusive access options.
 
