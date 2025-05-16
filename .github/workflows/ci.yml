@@ -1560,9 +1560,6 @@ jobs:
             mips-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_malta "
               ;;
-            nios2-zephyr-elf)
-              PLATFORM_ARGS+="-p qemu_nios2 "
-              ;;
             riscv64-zephyr-elf)
               PLATFORM_ARGS+="-p qemu_riscv32 "
               PLATFORM_ARGS+="-p qemu_riscv32e "
