@@ -1157,13 +1157,17 @@ jobs:
         path: repository
         persist-credentials: false
 
+    - name: Download Version
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        pattern: version
+
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        # NOTE: This downloads all build artifacts, including the toolchains and host tools for
-        #       the irrelevant hosts, because the download-artifact action does not support
-        #       specifying wildcards in the artifact name.
         path: artifacts
+        pattern: "*_${{ matrix.host.name }}*"
 
     - name: Create distribution bundle
       run: |
