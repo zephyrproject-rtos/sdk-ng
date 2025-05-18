@@ -101,6 +101,7 @@ jobs:
     outputs:
       hosts: ${{ steps.generate-matrix.outputs.hosts }}
       targets: ${{ steps.generate-matrix.outputs.targets }}
+      bundle_targets: ${{ steps.generate-matrix.outputs.bundle_targets }}
       testenvs: ${{ steps.generate-matrix.outputs.testenvs }}
       debug: ${{ steps.generate-matrix.outputs.debug }}
 
@@ -334,6 +335,24 @@ jobs:
         [ "${build_target_xtensa_sample_controller32_zephyr_elf}" == "y" ] && MATRIX_TARGETS+='"xtensa-sample_controller32_zephyr-elf",'
         MATRIX_TARGETS+=']'
 
+        # FIXME remove duplicaion
+        # Generate bundle list
+        BUNDLE_TARGETS='['
+        [ "${build_target_aarch64_zephyr_elf}" == "y" ]                   && BUNDLE_TARGETS+='"aarch64-zephyr-elf",'
+        [ "${build_target_arc64_zephyr_elf}" == "y" ]                     && BUNDLE_TARGETS+='"arc64-zephyr-elf",'
+        [ "${build_target_arc_zephyr_elf}" == "y" ]                       && BUNDLE_TARGETS+='"arc-zephyr-elf",'
+        [ "${build_target_arm_zephyr_eabi}" == "y" ]                      && BUNDLE_TARGETS+='"arm-zephyr-eabi",'
+        [ "${build_target_microblazeel_zephyr_elf}" == "y" ]              && BUNDLE_TARGETS+='"microblazeel-zephyr-elf",'
+        [ "${build_target_mips_zephyr_elf}" == "y" ]                      && BUNDLE_TARGETS+='"mips-zephyr-elf",'
+        [ "${build_target_riscv64_zephyr_elf}" == "y" ]                   && BUNDLE_TARGETS+='"riscv64-zephyr-elf",'
+        [ "${build_target_rx_zephyr_elf}" == "y" ]                        && BUNDLE_TARGETS+='"rx-zephyr-elf",'
+        [ "${build_target_sparc_zephyr_elf}" == "y" ]                     && BUNDLE_TARGETS+='"sparc-zephyr-elf",'
+        [ "${build_target_x86_64_zephyr_elf}" == "y" ]                    && BUNDLE_TARGETS+='"x86_64-zephyr-elf",'
+        [ "${build_target_xtensa_dc233c_zephyr_elf}" == "y" ]             && BUNDLE_TARGETS+='"xtensa-dc233c_zephyr-elf",'
+        [ "${build_target_xtensa_sample_controller_zephyr_elf}" == "y" ]  && BUNDLE_TARGETS+='"xtensa-sample_controller_zephyr-elf",'
+        [ "${build_target_xtensa_sample_controller32_zephyr_elf}" == "y" ] && BUNDLE_TARGETS+='"xtensa-sample_controller32_zephyr-elf",'
+        BUNDLE_TARGETS+=']'
+
         # Generate test environment list
         MATRIX_TESTENVS='['
 
@@ -393,9 +412,15 @@ jobs:
         MATRIX_HOSTS="${MATRIX_HOSTS//'%'/''}"
         MATRIX_HOSTS="${MATRIX_HOSTS//$'\n'/''}"
         MATRIX_HOSTS="${MATRIX_HOSTS//$'\r'/''}"
+
         MATRIX_TARGETS="${MATRIX_TARGETS//'%'/''}"
         MATRIX_TARGETS="${MATRIX_TARGETS//$'\n'/''}"
         MATRIX_TARGETS="${MATRIX_TARGETS//$'\r'/''}"
+
+        BUNDLE_TARGETS="${BUNDLE_TARGETS//'%'/''}"
+        BUNDLE_TARGETS="${BUNDLE_TARGETS//$'\n'/''}"
+        BUNDLE_TARGETS="${BUNDLE_TARGETS//$'\r'/''}"
+
         MATRIX_TESTENVS="${MATRIX_TESTENVS//'%'/''}"
         MATRIX_TESTENVS="${MATRIX_TESTENVS//$'\n'/''}"
         MATRIX_TESTENVS="${MATRIX_TESTENVS//$'\r'/''}"
@@ -403,11 +428,13 @@ jobs:
         # Remove trailing comma
         MATRIX_HOSTS=$(echo "${MATRIX_HOSTS}" | sed -zr 's/,([^,]*$)/\1/')
         MATRIX_TARGETS=$(echo "${MATRIX_TARGETS}" | sed -zr 's/,([^,]*$)/\1/')
+        BUNDLE_TARGETS=$(echo "${BUNDLE_TARGETS}" | sed -zr 's/,([^,]*$)/\1/')
         MATRIX_TESTENVS=$(echo "${MATRIX_TESTENVS}" | sed -zr 's/,([^,]*$)/\1/')
 
         # Output matrix variables
         echo "hosts=${MATRIX_HOSTS}" >> $GITHUB_OUTPUT
         echo "targets=${MATRIX_TARGETS}" >> $GITHUB_OUTPUT
+        echo "bundle_targets=${BUNDLE_TARGETS}" >> $GITHUB_OUTPUT
         echo "testenvs=${MATRIX_TESTENVS}" >> $GITHUB_OUTPUT
         echo "debug=${MATRIX_DEBUG}" >> $GITHUB_OUTPUT
 
@@ -1239,9 +1266,10 @@ jobs:
 
         ## Generate target list from the workflow matrix
         TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]')
+        BUNDLE_TARGETS=$(echo '${{ needs.setup.outputs.bundle_targets }}' | jq -cr '.[]')
 
         ## Extract all toolchains
-        for TARGET in ${TARGETS}; do
+        for TARGET in ${BUNDLE_TARGETS}; do
           TOOLCHAIN_ARTIFACT=toolchain_${HOST}_${TARGET}
 
           # Verify toolchain archive checksum
