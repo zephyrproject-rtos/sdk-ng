@@ -1195,7 +1195,7 @@ jobs:
         #       the irrelevant hosts, because the download-artifact action does not support
         #       specifying wildcards in the artifact name.
         path: artifacts
-        pattern: "*_${{ matrix.host.name }}_*"
+        pattern: "*_${{ matrix.host.name }}*"
 
     - name: Create distribution bundle
       run: |
