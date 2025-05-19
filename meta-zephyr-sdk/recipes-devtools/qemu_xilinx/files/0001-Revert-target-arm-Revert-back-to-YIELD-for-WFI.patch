@@ -1,0 +1,40 @@
+From ab42d46c10d4e24cd19fb3339fc2738ba7b4a45e Mon Sep 17 00:00:00 2001
+Message-ID: <ab42d46c10d4e24cd19fb3339fc2738ba7b4a45e.1747662482.git.michal.simek@amd.com>
+From: Stephanos Ioannidis <root@stephanos.io>
+Date: Wed, 8 Jan 2020 17:47:05 +0900
+Subject: [PATCH] Revert "target/arm: Revert back to YIELD for WFI"
+
+This reverts commit 5f38ea92fb697b94ad43f01fe162f3ed6e6b0e16.
+
+The commit 5f38ea92fb697b94ad43f01fe162f3ed6e6b0e16 was probably
+introduced in order to improve emulation performance, as well as to
+address the stability issue when running co-simulations (refer to the
+commit 708639f72be2a9425992ae9dc4b9a098dc804c94).
+
+This, unfortunately, breaks the WFI instruction; i.e. CPU is not halted
+and keeps running regardless of whether an interrupt occurs, and this
+is a problem for the Zephyr CI tests that expect the WFI instruction to
+do its job (in particular, tests/kernel/context is broken because of
+this change).
+
+Signed-off-by: Stephanos Ioannidis <root@stephanos.io>
+---
+ target/arm/tcg/op_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/target/arm/tcg/op_helper.c b/target/arm/tcg/op_helper.c
+index 1e9ff35f0c30..67add5c6973c 100644
+--- a/target/arm/tcg/op_helper.c
++++ b/target/arm/tcg/op_helper.c
+@@ -353,7 +353,7 @@ void HELPER(wfi)(CPUARMState *env, uint32_t insn_len)
+     }
+ 
+     qemu_mutex_lock_iothread();
+-    if (use_icount || 1) {
++    if (use_icount) {
+         cs->exception_index = EXCP_YIELD;
+     } else {
+         cs->halted = 1;
+-- 
+2.43.0
+
