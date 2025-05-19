@@ -1,0 +1,50 @@
+From 0d89d9811f25f757952ce098dcdf14c9465d2b65 Mon Sep 17 00:00:00 2001
+Message-ID: <0d89d9811f25f757952ce098dcdf14c9465d2b65.1747663373.git.michal.simek@amd.com>
+From: Michal Simek <michal.simek@amd.com>
+Date: Mon, 19 May 2025 15:17:52 +0200
+Subject: [PATCH] Revert "target/arm: Enforce alignment for LDM/STM"
+
+This reverts commit 9d7eb4183a17f129478adbdc314468d84573d83c.
+
+An alignment fault is generated if a data access is performed to an address
+that is not aligned for the size of the access, and strict alignment is
+required for the access.
+https://developer.arm.com/documentation/ddi0460/d/Memory-Protection-Unit/MPU-faults/Alignment-fault?lang=en
+
+The Qemu patch is likely correct and Zephyr test should be fixed but in the
+meantime revert this patch to pass tests in CI to give a time to find out
+what's wrong with Zephyr test.
+
+When this patch is revert issue is visible by this test:
+west twister -v -p qemu_cortex_r5 -O /tmp/twister -T tests/misc/llext-edk/
+
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+---
+ target/arm/tcg/translate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/target/arm/tcg/translate.c b/target/arm/tcg/translate.c
+index e555e885a13e..2b3ac25c71cd 100644
+--- a/target/arm/tcg/translate.c
++++ b/target/arm/tcg/translate.c
+@@ -7927,7 +7927,7 @@ static bool op_stm(DisasContext *s, arg_ldst_block *a)
+         } else {
+             tmp = load_reg(s, i);
+         }
+-        gen_aa32_st_i32(s, tmp, addr, mem_idx, MO_UL | MO_ALIGN);
++        gen_aa32_st32(s, tmp, addr, mem_idx);
+ 
+         /* No need to add after the last transfer.  */
+         if (++j != n) {
+@@ -8009,7 +8009,7 @@ static bool do_ldm(DisasContext *s, arg_ldst_block *a)
+         }
+ 
+         tmp = tcg_temp_new_i32();
+-        gen_aa32_ld_i32(s, tmp, addr, mem_idx, MO_UL | MO_ALIGN);
++        gen_aa32_ld32u(s, tmp, addr, mem_idx);
+         if (user) {
+             gen_helper_set_user_reg(tcg_env, tcg_constant_i32(i), tmp);
+         } else if (i == a->rn) {
+-- 
+2.43.0
+
