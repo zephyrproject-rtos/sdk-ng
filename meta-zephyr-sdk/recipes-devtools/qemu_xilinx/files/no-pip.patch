@@ -1,4 +1,8 @@
-qemu: Ensure pip and the python venv aren't used for meson
+From 757ff30fe336a1304355eefa3fc93e0b8cc86986 Mon Sep 17 00:00:00 2001
+Message-ID: <757ff30fe336a1304355eefa3fc93e0b8cc86986.1747667700.git.michal.simek@amd.com>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+Date: Mon, 19 May 2025 17:14:55 +0200
+Subject: [PATCH] qemu: Ensure pip and the python venv aren't used for meson
 
 Qemu wants to use a supported python version and a specific meson version
 to "help" users and uses pip and creates a venv to do this. This is a nightmare
@@ -21,25 +25,31 @@ as it stands is a workaround.
 
 Upstream-Status: Inappropriate [oe specific]
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ configure | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Index: qemu-8.1.2/configure
-===================================================================
---- qemu-8.1.2.orig/configure
-+++ qemu-8.1.2/configure
-@@ -1009,7 +1009,7 @@ python="$(command -v "$python")"
+diff --git a/configure b/configure
+index d462e56417f2..3aa817827525 100755
+--- a/configure
++++ b/configure
+@@ -946,7 +946,7 @@ python="$(command -v "$python")"
  echo "python determined to be '$python'"
  echo "python version: $($python --version)"
-
+ 
 -python="$($python -B "${source_path}/python/scripts/mkvenv.py" create pyvenv)"
 +python=python3
  if test "$?" -ne 0 ; then
      error_exit "python venv creation failed"
  fi
-@@ -1017,6 +1017,7 @@ fi
+@@ -954,6 +954,7 @@ fi
  # Suppress writing compiled files
  python="$python -B"
  mkvenv="$python ${source_path}/python/scripts/mkvenv.py"
 +mkvenv=true
+ 
+ # Finish preparing the virtual environment using vendored .whl files
+ 
+-- 
+2.43.0
 
- mkvenv_flags=""
- if test "$download" = "enabled" ; then
