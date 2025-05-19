@@ -1,0 +1,39 @@
+From 393c4e5f40fb4592b3cf8247feee73538f541437 Mon Sep 17 00:00:00 2001
+Message-ID: <393c4e5f40fb4592b3cf8247feee73538f541437.1747662482.git.michal.simek@amd.com>
+From: Stephanos Ioannidis <root@stephanos.io>
+Date: Wed, 26 Feb 2020 12:30:55 +0900
+Subject: [PATCH] Enable WFI CPU halting in icount mode
+
+This commit enables CPU halting via the WFI instruction in the
+icount mode.
+
+The PetaLinux patch initially disabled WFI CPU halting, possibly for
+performance reasons.
+
+Signed-off-by: Stephanos Ioannidis <root@stephanos.io>
+---
+ target/arm/tcg/op_helper.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/target/arm/tcg/op_helper.c b/target/arm/tcg/op_helper.c
+index 67add5c6973c..f76c6eb5484e 100644
+--- a/target/arm/tcg/op_helper.c
++++ b/target/arm/tcg/op_helper.c
+@@ -353,12 +353,8 @@ void HELPER(wfi)(CPUARMState *env, uint32_t insn_len)
+     }
+ 
+     qemu_mutex_lock_iothread();
+-    if (use_icount) {
+-        cs->exception_index = EXCP_YIELD;
+-    } else {
+-        cs->halted = 1;
+-        cs->exception_index = EXCP_HLT;
+-    }
++    cs->halted = 1;
++    cs->exception_index = EXCP_HLT;
+ 
+     /* Drive STANDBYWFI only if cpu reset-pin is inactive */
+     if (cs->reset_pin == false) {
+-- 
+2.43.0
+
