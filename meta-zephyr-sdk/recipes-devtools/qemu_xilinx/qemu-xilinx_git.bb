@@ -12,6 +12,8 @@ SRCREV_FORMAT = "qemu"
 SRC_URI += "gitsm://github.com/Xilinx/qemu.git;protocol=https;nobranch=1;name=qemu \
            file://cross.patch \
            file://0004-configure-Add-pkg-config-handling-for-libgcrypt.patch \
+           file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
+           file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
            file://0008-tests-meson.build-use-relative-path-to-refer-to-file.patch \
            file://fixedmeson.patch \
            file://no-pip.patch \
