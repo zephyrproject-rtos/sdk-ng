@@ -16,6 +16,7 @@ SRC_URI += "gitsm://github.com/Xilinx/qemu.git;protocol=https;nobranch=1;name=qe
            file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
            file://0003-riscvXX-softmmu-Enable-emaclite-driver-for-MB-V.patch \
            file://0004-riscv-Wire-CPU-timers.patch \
+           file://0001-Revert-target-arm-Enforce-alignment-for-LDM-STM.patch \
            file://0008-tests-meson.build-use-relative-path-to-refer-to-file.patch \
            file://fixedmeson.patch \
            file://no-pip.patch \
