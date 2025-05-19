@@ -50,7 +50,7 @@ EXTRA_OECONF = " \
   --disable-strip --disable-libvduse --disable-vhost-user --disable-vnc \
   --enable-gcrypt --enable-plugins --disable-capstone --skip-meson \
   --disable-docs  --disable-sdl --disable-debug-info  --disable-cap-ng \
-  --disable-capstone --skip-meson --disable-download --disable-libnfs \
+  --disable-capstone --disable-download --disable-libnfs \
   --disable-libusb --disable-libiscsi --disable-usb-redir --disable-linux-aio \
   --disable-guest-agent --disable-libssh --disable-seccomp --disable-tpm \
   --disable-numa --disable-glusterfs --disable-virtfs --disable-xen \
