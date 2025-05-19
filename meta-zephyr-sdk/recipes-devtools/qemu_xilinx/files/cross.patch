@@ -11,28 +11,26 @@ Upstream-Status: Inappropriate [may be rewritten in a way upstream may accept?]
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 
 ---
- configure | 4 ----
- 1 file changed, 4 deletions(-)
+ configure | 2 --
+ 1 file changed, 2 deletions(-)
 
-Index: qemu-8.0.0/configure
-===================================================================
---- qemu-8.0.0.orig/configure
-+++ qemu-8.0.0/configure
-@@ -2590,7 +2590,6 @@ if test "$skip_meson" = no; then
+diff --git a/configure b/configure
+index c1e03801f14d..bd81dcb98df8 100755
+--- a/configure
++++ b/configure
+@@ -1795,7 +1795,6 @@ if test "$skip_meson" = no; then
    echo "widl = [$(meson_quote $widl)]" >> $cross
    echo "windres = [$(meson_quote $windres)]" >> $cross
    echo "windmc = [$(meson_quote $windmc)]" >> $cross
 -  if test "$cross_compile" = "yes"; then
-     cross_arg="--cross-file config-meson.cross"
      echo "[host_machine]" >> $cross
      echo "system = '$targetos'" >> $cross
-@@ -2608,9 +2607,6 @@ if test "$skip_meson" = no; then
-     else
-         echo "endian = 'little'" >> $cross
-     fi
--  else
--    cross_arg="--native-file config-meson.cross"
+     case "$cpu" in
+@@ -1820,7 +1819,6 @@ if test "$skip_meson" = no; then
+     mv $native config-meson.native
+     meson_option_add --native-file
+     meson_option_add config-meson.native
 -  fi
    mv $cross config-meson.cross
-
-   rm -rf meson-private meson-info meson-logs
+   meson_add_machine_file config-meson.cross
+   if test -f "$source_path/configs/meson/$targetos.txt"; then

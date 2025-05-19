@@ -1,13 +1,22 @@
-Upstream-Status: Inappropriate [workaround, would need a real fix for upstream]
+From 72002fcd5673d0144d3fe756521348e9381061e1 Mon Sep 17 00:00:00 2001
+Message-ID: <72002fcd5673d0144d3fe756521348e9381061e1.1747667452.git.michal.simek@amd.com>
+From: Michal Simek <michal.simek@amd.com>
+Date: Mon, 19 May 2025 17:10:43 +0200
+Subject: [PATCH] Upstream-Status: Inappropriate [workaround, would need a real
+ fix for upstream]
 
-Index: qemu-8.1.0/configure
-===================================================================
---- qemu-8.1.0.orig/configure
-+++ qemu-8.1.0/configure
-@@ -1032,12 +1032,7 @@ then
-     exit 1
- fi
+---
+ configure | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
+diff --git a/configure b/configure
+index bd81dcb98df8..d462e56417f2 100755
+--- a/configure
++++ b/configure
+@@ -964,12 +964,7 @@ fi
+ $mkvenv ensuregroup --dir "${source_path}/python/wheels" \
+      ${source_path}/pythondeps.toml meson || exit 1
+ 
 -# At this point, we expect Meson to be installed and available.
 -# We expect mkvenv or pip to have created pyvenv/bin/meson for us.
 -# We ignore PATH completely here: we want to use the venv's Meson
@@ -15,5 +24,9 @@ Index: qemu-8.1.0/configure
 -
 -meson="$(cd pyvenv/bin; pwd)/meson"
 +meson=`which meson`
-
+ 
  # Conditionally ensure Sphinx is installed.
+ 
+-- 
+2.43.0
+
