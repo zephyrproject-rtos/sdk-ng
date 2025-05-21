@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.17.1-rc1
+## Zephyr SDK 0.17.1
 
 - general:
 
@@ -10,13 +10,17 @@
   * Added MediaTek MT8196 toolchain (`xtensa-mtk_mt8196_adsp_zephyr-elf`).
   * Added MediaTek MT8365 toolchain (`xtensa-mtk_mt8365_adsp_zephyr-elf`).
 
+- architectures:
+
+  * Added support for the RX architecture
+
 - picolibc:
 
-  * Updated to Picolibc 1.8.9 release.
+  * Updated to Picolibc 1.8.10 release.
 
 - qemu:
 
-  * Updated QEMU to 9.2.1 release.
+  * Updated QEMU to 9.2.3 release.
   * Updated Xilinx QEMU to 8.1.0 release (part of Xilinx tools v2024.2 release).
   * Added "legacy QEMU" that is equivalent to the "QEMU 7.0.0 with Zephyr
     patches" in the SDK 0.17.0 release. This is to allow testing of the legacy
