@@ -492,8 +492,11 @@ jobs:
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
           # Make MinGW-w64 win32 cross toolchain available in PATH
-          echo "/opt/mingw-w64-win32/bin" >> $GITHUB_PATH
-          export PATH="/opt/mingw-w64-win32/bin:$PATH"
+          #echo "/opt/mingw-w64-win32/bin" >> $GITHUB_PATH
+          #export PATH="/opt/mingw-w64-win32/bin:$PATH"
+          # Install MinGW-w64 cross toolchain
+          sudo apt-get install -y binutils-mingw-w64 gcc-mingw-w64 \
+                                  g++-mingw-w64
 
           # Build and install libboost-regex for MinGW-w64 host
           ## Check out Boost library source code
