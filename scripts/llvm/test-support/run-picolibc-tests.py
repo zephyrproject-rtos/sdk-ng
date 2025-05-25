@@ -67,7 +67,7 @@ def run_tests(meson_command, source_dir, build_dir, variant):
     )
 
     returncode = subprocess.run(
-        [meson_command, "test"],
+        [meson_command, "test", "-t", "20"],
         cwd=build_dir,
     ).returncode
 
