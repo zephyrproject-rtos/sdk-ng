@@ -66,6 +66,18 @@ def run_tests(meson_command, source_dir, build_dir, variant):
         check=True,
     )
 
+    # Newer meson doesn't apply new configuration with the above
+    # operation, so *also* run a regular configure step
+    subprocess.run(
+        [
+            meson_command,
+            "configure",
+            "-Dtests=true",
+        ],
+        cwd=build_dir,
+        check=True,
+    )
+
     returncode = subprocess.run(
         [meson_command, "test", "-t", "20"],
         cwd=build_dir,
