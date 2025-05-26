@@ -25,5 +25,5 @@ config PICOLIBC_DEFAULT
 	  Zephyr SDK >=0.17.1 always uses Picolibc
 
 choice COMPILER_OPTIMIZATIONS
-	default SPEED_OPTIMIZATIONS if "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr" && CPP_EXCEPTIONS
+	default SPEED_OPTIMIZATIONS if ("$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr" || "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr-gnu") && CPP_EXCEPTIONS
 endchoice
