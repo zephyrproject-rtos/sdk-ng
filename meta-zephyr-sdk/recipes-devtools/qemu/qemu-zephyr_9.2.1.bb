@@ -38,7 +38,6 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
 SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
-           file://powerpc_rom.bin \
            file://run-ptest \
            file://fix-strerrorname_np.patch \
            file://0001-qemu-Add-addition-environment-space-to-boot-loader-q.patch \
@@ -50,19 +49,17 @@ SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
            file://0008-Define-MAP_SYNC-and-MAP_SHARED_VALIDATE-on-needed-li.patch \
            file://0010-configure-lookup-meson-exutable-from-PATH.patch \
            file://0011-qemu-Ensure-pip-and-the-python-venv-aren-t-used-for-.patch \
+           file://0001-sched_attr-Do-not-define-for-glibc-2.41.patch \
+           file://qemu-guest-agent.init \
+           file://qemu-guest-agent.udev \
            file://0001-target-xtensa-add-translation-for-wsr.mpucfg.patch \
            file://0002-target-xtensa-import-sample_controller32-core.patch \
            file://0003-tests-tcg-xtensa-tidy-test-linker-script.patch \
            file://0004-tests-tcg-xtensa-fix-SR-test-for-configs-with-MPU.patch \
-           file://0005-target-xtensa-fix-sample_controller32-build-for-QEMU.patch \
-           file://qemu-guest-agent.init \
-           file://qemu-guest-agent.udev \
            "
-# file index at download.qemu.org isn't reliable: https://gitlab.com/qemu-project/qemu-web/-/issues/9
-UPSTREAM_CHECK_URI = "https://www.qemu.org"
 UPSTREAM_CHECK_REGEX = "qemu-(?P<pver>\d+(\.\d+)+)\.tar"
 
-SRC_URI[sha256sum] = "baed494270c361bf69816acc84512e3efed71c7a23f76691642b80bc3de7693e"
+SRC_URI[sha256sum] = "b7b0782ead63a5373fdfe08e084d3949a9395ec196180286b841f78a464d169c"
 
 CVE_STATUS[CVE-2007-0998] = "not-applicable-config: The VNC server can expose host files uder some circumstances. We don't enable it by default."
 
