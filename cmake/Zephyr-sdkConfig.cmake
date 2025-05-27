@@ -13,7 +13,7 @@ get_filename_component(ZEPHYR_SDK_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR}/.. ABSOL
 set(ZEPHYR_SDK_INSTALL_DIR ${ZEPHYR_SDK_INSTALL_DIR})
 
 if(NOT DEFINED ZEPHYR_TOOLCHAIN_VARIANT)
-  set(ZEPHYR_TOOLCHAIN_VARIANT zephyr-gnu)
+  set(ZEPHYR_TOOLCHAIN_VARIANT "zephyr/gnu")
 endif()
 
 # Those are CMake package parameters.
