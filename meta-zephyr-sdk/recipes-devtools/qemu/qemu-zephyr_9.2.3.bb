@@ -55,7 +55,6 @@ SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
            file://0003-tests-tcg-xtensa-tidy-test-linker-script.patch \
            file://0004-tests-tcg-xtensa-fix-SR-test-for-configs-with-MPU.patch \
            file://0005-target-xtensa-fix-sample_controller32-build-for-QEMU.patch \
-           file://0001-Revert-target-xtensa-Make-use-of-segment-in-pptlb-he.patch \
            file://qemu-guest-agent.init \
            file://qemu-guest-agent.udev \
            "
