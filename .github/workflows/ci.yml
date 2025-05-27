@@ -1843,7 +1843,7 @@ jobs:
         fi
 
         # Set toolchain variant
-        export ZEPHYR_TOOLCHAIN_VARIANT=zephyr-${{ matrix.toolchain }}
+        export ZEPHYR_TOOLCHAIN_VARIANT=zephyr/${{ matrix.toolchain }}
 
         # Run tests with twister
         TWISTER="${ZEPHYR_ROOT}/scripts/twister"
