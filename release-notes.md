@@ -4,7 +4,7 @@
 
 - general:
 
-  * Added Clang/LLVM 19.1.1 toolchain with Arm and RISC-V architecture support.
+  * Added Clang/LLVM 19.1.7 toolchain with Arm and RISC-V architecture support.
   * Update to GCC 14.2
   * Picolibc is configured as the main and default C library.
   * Dropped support for newlib and newlib-nano
@@ -21,6 +21,10 @@
     This requires Zephyr 4.2.0 or above (or the latest `collab-sdk-dev`).
   * Zephyr SDK GNU toolchain now declares `TOOLCHAIN_HAS_GLIBCXX`.
   * Zephyr SDK LLVM toolchain now declares `TOOLCHAIN_HAS_LIBCXX`.
+
+- hosttools:
+
+  * Update qemu to 10.0.2
 
 ## Zephyr SDK 0.18.0-alpha2
 
