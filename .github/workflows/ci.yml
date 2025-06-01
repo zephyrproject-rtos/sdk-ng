@@ -1849,6 +1849,7 @@ jobs:
         TWISTER="${ZEPHYR_ROOT}/scripts/twister"
         ${TWISTER} -v -N --force-color --inline-logs --retry-failed 3 \
                    --force-toolchain \
+                   --no-detailed-test-id \
                    --subset ${{ matrix.subset }}/${{ env.SUBSET_COUNT }} \
                    ${HOST_ARGS} \
                    ${TEST_ARGS} \
