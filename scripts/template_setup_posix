@@ -52,7 +52,7 @@ check_command()
 check_full_gnu_sdk()
 {
   for toolchain in ${gnu_toolchains[@]}; do
-    if [ ! -d "gnu/${toolchain}" ]; then
+    if [ ! -d "${toolchain}" ]; then
       return 1
     fi
   done
@@ -100,7 +100,7 @@ user_prompt()
         inst_gnu_toolchains=(${gnu_toolchains[*]})
       else
         for toolchain in ${gnu_toolchains[@]}; do
-          if [ ! -d "gnu/${toolchain}" ]; then
+          if [ ! -d "${toolchain}" ]; then
             ask_yn "Install '${toolchain}' GNU toolchain" && inst_gnu_toolchains+=("${toolchain}")
           fi
         done
@@ -217,9 +217,6 @@ fi
 
 # Install GNU toolchains
 if [ "${do_gnu_toolchain}" = "y" ]; then
-  mkdir -p gnu
-  pushd gnu
-
   for toolchain in ${inst_gnu_toolchains[@]}; do
     eval toolchain_filename="${dl_gnu_toolchain_filename}"
     toolchain_uri="${dl_rel_base}/${toolchain_filename}"
@@ -248,7 +245,6 @@ if [ "${do_gnu_toolchain}" = "y" ]; then
 
     echo
   done
-  popd
 fi
 
 # Install LLVM toolchain
