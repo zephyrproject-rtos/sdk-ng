@@ -5,7 +5,7 @@
 - general:
 
   * Added Clang/LLVM 19.1.7 toolchain with Arm and RISC-V architecture support.
-  * Update to GCC 14.2
+  * Update to GCC 14.3
   * Picolibc is configured as the main and default C library.
   * Dropped support for newlib and newlib-nano
   * Dropped support NIOS II architecture
