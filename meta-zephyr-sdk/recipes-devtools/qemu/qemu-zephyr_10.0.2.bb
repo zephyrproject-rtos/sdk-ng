@@ -40,22 +40,22 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
            file://powerpc_rom.bin \
            file://run-ptest \
-           file://fix-strerrorname_np.patch \
-           file://0001-qemu-Add-addition-environment-space-to-boot-loader-q.patch \
-           file://0002-apic-fixup-fallthrough-to-PIC.patch \
-           file://0004-qemu-Do-not-include-file-if-not-exists.patch \
-           file://0005-qemu-Add-some-user-space-mmap-tweaks-to-address-musl.patch \
-           file://0006-qemu-Determinism-fixes.patch \
-           file://0007-tests-meson.build-use-relative-path-to-refer-to-file.patch \
-           file://0008-Define-MAP_SYNC-and-MAP_SHARED_VALIDATE-on-needed-li.patch \
-           file://0010-configure-lookup-meson-exutable-from-PATH.patch \
-           file://0011-qemu-Ensure-pip-and-the-python-venv-aren-t-used-for-.patch \
-           file://0001-target-xtensa-add-translation-for-wsr.mpucfg.patch \
-           file://0002-target-xtensa-import-sample_controller32-core.patch \
-           file://0003-tests-tcg-xtensa-tidy-test-linker-script.patch \
-           file://0004-tests-tcg-xtensa-fix-SR-test-for-configs-with-MPU.patch \
-           file://0005-target-xtensa-fix-sample_controller32-build-for-QEMU.patch \
-           file://0001-Revert-target-xtensa-Make-use-of-segment-in-pptlb-he.patch \
+	   file://0001-target-xtensa-add-translation-for-wsr.mpucfg.patch \
+	   file://0002-target-xtensa-import-sample_controller32-core.patch        \
+	   file://0003-tests-tcg-xtensa-tidy-test-linker-script.patch             \
+	   file://0004-tests-tcg-xtensa-fix-SR-test-for-configs-with-MPU.patch    \
+	   file://0005-target-xtensa-fix-sample_controller32-build-for-QEMU.patch \
+	   file://0006-Revert-target-xtensa-Make-use-of-segment-in-pptlb-he.patch \
+	   file://0007-qemu-Add-addition-environment-space-to-boot-loader-q.patch \
+	   file://0008-apic-fixup-fallthrough-to-PIC.patch                        \
+	   file://0009-qemu-Do-not-include-file-if-not-exists.patch               \
+	   file://0010-qemu-Add-some-user-space-mmap-tweaks-to-address-musl.patch \
+	   file://0011-qemu-Determinism-fixes.patch 				   \
+	   file://0012-tests-meson.build-use-relative-path-to-refer-to-file.patch \
+	   file://0013-Define-MAP_SYNC-and-MAP_SHARED_VALIDATE-on-needed-li.patch \
+	   file://0014-configure-lookup-meson-exutable-from-PATH.patch            \
+	   file://0015-qemu-Ensure-pip-and-the-python-venv-aren-t-used-for-.patch \
+	   file://0016-target-riscv-kvm-do-not-use-non-portable-strerrornam.patch \
            file://qemu-guest-agent.init \
            file://qemu-guest-agent.udev \
            "
@@ -63,8 +63,7 @@ SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
 UPSTREAM_CHECK_URI = "https://www.qemu.org"
 UPSTREAM_CHECK_REGEX = "qemu-(?P<pver>\d+(\.\d+)+)\.tar"
 
-SRC_URI[sha256sum] = "baed494270c361bf69816acc84512e3efed71c7a23f76691642b80bc3de7693e"
-
+SRC_URI[sha256sum] = "ef786f2398cb5184600f69aef4d5d691efd44576a3cff4126d38d4c6fec87759"
 CVE_STATUS[CVE-2007-0998] = "not-applicable-config: The VNC server can expose host files uder some circumstances. We don't enable it by default."
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1609015#c11
