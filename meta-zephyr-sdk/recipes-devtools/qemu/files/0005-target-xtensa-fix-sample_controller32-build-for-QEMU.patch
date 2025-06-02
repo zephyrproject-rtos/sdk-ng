@@ -1,7 +1,7 @@
-From 1b83e396296f32f7fdd4cf430494e813e5573949 Mon Sep 17 00:00:00 2001
+From f427b780bb1241b675d7a710d224d233031b709d Mon Sep 17 00:00:00 2001
 From: Daniel Leung <daniel.leung@intel.com>
 Date: Tue, 14 May 2024 09:52:26 -0700
-Subject: [PATCH 5/5] target/xtensa: fix sample_controller32 build for QEMU 7
+Subject: [PATCH 05/16] target/xtensa: fix sample_controller32 build for QEMU 7
 
 The original patches for adding sample_controller32 are based on
 QEMU 9. The GDB stub header file is not in the same place between
