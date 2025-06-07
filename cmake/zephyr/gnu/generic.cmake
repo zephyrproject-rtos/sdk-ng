@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-set(TOOLCHAIN_HOME ${ZEPHYR_SDK_INSTALL_DIR}/gnu)
+set(TOOLCHAIN_HOME ${ZEPHYR_SDK_INSTALL_DIR})
 
 set(COMPILER gcc)
 set(LINKER ld)
