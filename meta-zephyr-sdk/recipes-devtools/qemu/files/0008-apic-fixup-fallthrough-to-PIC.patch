@@ -1,7 +1,7 @@
-From d98f52b978273b4ee394f7ee3c00fdf966a0c2ec Mon Sep 17 00:00:00 2001
+From 0a062a8df964073d0a5261dea7c62530fa3a89a8 Mon Sep 17 00:00:00 2001
 From: Mark Asselstine <mark.asselstine@windriver.com>
 Date: Tue, 26 Feb 2013 11:43:28 -0500
-Subject: [PATCH 08/16] apic: fixup fallthrough to PIC
+Subject: [PATCH 08/19] apic: fixup fallthrough to PIC
 
 Commit 0e21e12bb311c4c1095d0269dc2ef81196ccb60a [Don't route PIC
 interrupts through the local APIC if the local APIC config says so.]

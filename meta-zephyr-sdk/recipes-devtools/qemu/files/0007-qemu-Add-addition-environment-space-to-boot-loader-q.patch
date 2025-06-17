@@ -1,7 +1,7 @@
-From 42a7273b1d4fd681a432d40bc4092c3487b3a556 Mon Sep 17 00:00:00 2001
+From 5d6dccdcdb757eb7577b1f0ee0403c9307276f2d Mon Sep 17 00:00:00 2001
 From: Jason Wessel <jason.wessel@windriver.com>
 Date: Fri, 28 Mar 2014 17:42:43 +0800
-Subject: [PATCH 07/16] qemu: Add addition environment space to boot loader
+Subject: [PATCH 07/19] qemu: Add addition environment space to boot loader
  qemu-system-mips
 
 Upstream-Status: Inappropriate - OE uses deep paths
