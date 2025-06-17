@@ -56,6 +56,8 @@ SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
 	   file://0014-configure-lookup-meson-exutable-from-PATH.patch            \
 	   file://0015-qemu-Ensure-pip-and-the-python-venv-aren-t-used-for-.patch \
 	   file://0016-target-riscv-kvm-do-not-use-non-portable-strerrornam.patch \
+       file://0017-hw-timer-renesas_cmt-Update-renesas_cmt-timer.patch \
+       file://0018-target-rx-Update-flow-of-interrupt-execution-for-tar.patch \
            file://qemu-guest-agent.init \
            file://qemu-guest-agent.udev \
            "

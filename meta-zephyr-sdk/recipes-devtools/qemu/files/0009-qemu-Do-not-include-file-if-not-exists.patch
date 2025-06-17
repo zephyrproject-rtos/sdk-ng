@@ -1,7 +1,7 @@
-From 19b994a2d608eabfa52e8f327ae6dc0ea3653181 Mon Sep 17 00:00:00 2001
+From 82fcf7fca2378036c4638a213d905f34e8a783a4 Mon Sep 17 00:00:00 2001
 From: Oleksiy Obitotskyy <oobitots@cisco.com>
 Date: Wed, 25 Mar 2020 21:21:35 +0200
-Subject: [PATCH 09/16] qemu: Do not include file if not exists
+Subject: [PATCH 09/19] qemu: Do not include file if not exists
 
 Script configure checks for if_alg.h and check failed but
 if_alg.h still included.
