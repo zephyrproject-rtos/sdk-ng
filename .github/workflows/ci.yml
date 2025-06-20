@@ -343,9 +343,9 @@ jobs:
 
         if [ "${build_host_linux_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
-              "name": "ubuntu-20.04-x86_64",
+              "name": "ubuntu-24.04-x86_64",
               "runner": "zephyr-runner-v2-linux-x64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/ci:master",
+              "container": "ghcr.io/zephyrproject-rtos/ci:main",
               "bundle-host": "linux-x86_64",
               "bundle-archive": "tar.xz"
             },'
@@ -353,9 +353,9 @@ jobs:
 
         if [ "${build_host_linux_aarch64}" == "y" ]; then
           MATRIX_TESTENVS+='{
-              "name": "ubuntu-20.04-aarch64",
+              "name": "ubuntu-24.04-aarch64",
               "runner": "zephyr-runner-v2-linux-arm64-4xlarge",
-              "container": "ghcr.io/zephyrproject-rtos/ci:master",
+              "container": "ghcr.io/zephyrproject-rtos/ci:main",
               "bundle-host": "linux-aarch64",
               "bundle-archive": "tar.xz"
             },'
@@ -1310,12 +1310,11 @@ jobs:
 
     steps:
     - name: Set up Python
-      if: ${{ runner.os == 'Windows' }}
       uses: actions/setup-python@v5
       with:
-        # Force Python 3.10 because the twister is not compatible with a Python
-        # version lower than 3.8 on Windows.
-        python-version: '3.10'
+        # Force Python 3.12, which is the minimum Python version supported by
+        # Zephyr and intended to be used with Zephyr SDK.
+        python-version: '3.12'
 
     - name: Set up test environment (Linux)
       if: ${{ runner.os == 'Linux' }}
@@ -1511,6 +1510,8 @@ jobs:
           # if running inside a virtual environment; otherwise, it is assumed
           # that the host already provides all the required dependencies.
           pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
+        else
+          pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements-actions.txt --require-hashes
         fi
 
     - name: Run test suites
