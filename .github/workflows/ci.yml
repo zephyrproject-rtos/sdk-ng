@@ -1510,6 +1510,8 @@ jobs:
           # if running inside a virtual environment; otherwise, it is assumed
           # that the host already provides all the required dependencies.
           pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
+        else
+          pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements-actions.txt --require-hashes
         fi
 
     - name: Run test suites
