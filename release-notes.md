@@ -1,5 +1,11 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.17.2
+
+- picolibc: allow use of crt0 when building modules
+- qemu: update to version 10.0.2 with additional RX patches
+- hosttools: update poky environment with latest fixes
+
 ## Zephyr SDK 0.17.1
 
 - general:
