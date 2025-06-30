@@ -1,7 +1,7 @@
-From 923be76163f1e7a178431ee65c4867cb8e1a2fef Mon Sep 17 00:00:00 2001
+From 31ca39ae7a780467eff7622f297b4a529944ee11 Mon Sep 17 00:00:00 2001
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 Date: Fri, 8 Jan 2021 17:27:06 +0000
-Subject: [PATCH 10/16] qemu: Add some user space mmap tweaks to address musl
+Subject: [PATCH 10/19] qemu: Add some user space mmap tweaks to address musl
  32 bit
 
 When using qemu-i386 to build qemux86 webkitgtk on musl, it sits in an
