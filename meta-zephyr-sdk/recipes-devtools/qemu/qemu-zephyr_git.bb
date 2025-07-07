@@ -114,6 +114,7 @@ do_configure() {
     ${S}/configure ${EXTRA_OECONF}  --target-list="${QEMU_TARGETS}"
 }
 do_configure[cleandirs] += "${B}"
+do_configure[network] = "1"
 
 do_install () {
 	export STRIP=""
