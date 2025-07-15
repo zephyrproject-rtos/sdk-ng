@@ -92,7 +92,7 @@ EXTRA_OECONF = " \
     --disable-af-xdp \
     ${PACKAGECONFIG_CONFARGS} \
     "
-QEMU_TARGETS = "aarch64-softmmu arm-softmmu i386-softmmu or1k-softmmu mips-softmmu mipsel-softmmu xtensa-softmmu riscv32-softmmu riscv64-softmmu x86_64-softmmu rx-softmmu"
+QEMU_TARGETS = "aarch64-softmmu arm-softmmu i386-softmmu or1k-softmmu mips-softmmu mipsel-softmmu riscv32-softmmu riscv64-softmmu rx-softmmu sparc-softmmu x86_64-softmmu xtensa-softmmu"
 
 EXTRA_OECONF:append:class-target = " --cross-prefix=${HOST_PREFIX}"
 EXTRA_OECONF:append:class-nativesdk = " --cross-prefix=${HOST_PREFIX}"
@@ -157,9 +157,6 @@ do_install:append() {
     # Link ARC (Synopsys) QEMU executables
     ln -sf ../synopsys/bin/qemu-system-arc ${D}${bindir}/qemu-system-arc
     ln -sf ../synopsys/bin/qemu-system-arc64 ${D}${bindir}/qemu-system-arc64
-
-    # Link other legacy QEMU executables
-    ln -sf ../legacy/bin/qemu-system-sparc ${D}${bindir}/qemu-system-sparc
 }
 
 # Disable kvm/virgl/mesa on targets that do not support it
