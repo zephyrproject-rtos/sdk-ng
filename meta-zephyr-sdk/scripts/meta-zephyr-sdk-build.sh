@@ -49,6 +49,9 @@ if [ ! -d $TOOLCHAINS ] ; then
 fi
 rm -rf $TOOLCHAINS/*
 
+export ZEPHYR_SDK_QEMU_SRCREV=$(cd qemu; git rev-parse HEAD)
+export BB_ENV_PASSTHROUGH_ADDITIONS="${BB_ENV_PASSTHROUGH_ADDITIONS} ZEPHYR_SDK_QEMU_SRCREV"
+
 # setconf_var, i.e. "MACHINE","qemuarm",$localconf
 setconf_var()
 {
