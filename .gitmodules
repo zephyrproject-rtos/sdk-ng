@@ -34,3 +34,6 @@
 [submodule "qemu"]
 	path = qemu
 	url = https://github.com/zephyrproject-rtos/qemu.git
+[submodule "qemu_arc"]
+	path = qemu_arc
+	url = https://github.com/foss-for-synopsys-dwc-arc-processors/qemu.git
