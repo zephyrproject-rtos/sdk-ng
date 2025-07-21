@@ -37,7 +37,7 @@ inherit pkgconfig systemd python3native
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV = "37b8667bf62f568167b0ef28aa7e6a0878218ae7"
+SRCREV = "fe132ed0c9ae14a56bbf94b1d0d16b029b671c62"
 SRC_URI = "gitsm://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
            file://powerpc_rom.bin \
            file://run-ptest \
