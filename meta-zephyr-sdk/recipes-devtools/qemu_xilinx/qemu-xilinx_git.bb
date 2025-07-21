@@ -6,20 +6,10 @@ RDEPENDS:${PN}-common:class-target += "bash"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
-SRCREV_qemu = "b05c9752662eb4b8120a57454a323445d78d1463"
+SRCREV_qemu = "{ZEPHYR_SDK_QEMU_XILINX_SRCREV}"
 SRCREV_FORMAT = "qemu"
 
 SRC_URI += "gitsm://github.com/Xilinx/qemu.git;protocol=https;nobranch=1;name=qemu \
-           file://cross.patch \
-           file://0004-configure-Add-pkg-config-handling-for-libgcrypt.patch \
-           file://0001-Revert-target-arm-Revert-back-to-YIELD-for-WFI.patch \
-           file://0002-Enable-WFI-CPU-halting-in-icount-mode.patch \
-           file://0003-riscvXX-softmmu-Enable-emaclite-driver-for-MB-V.patch \
-           file://0004-riscv-Wire-CPU-timers.patch \
-           file://0001-Revert-target-arm-Enforce-alignment-for-LDM-STM.patch \
-           file://0008-tests-meson.build-use-relative-path-to-refer-to-file.patch \
-           file://fixedmeson.patch \
-           file://no-pip.patch \
 "
 
 # Deal with the broken --disable-download
