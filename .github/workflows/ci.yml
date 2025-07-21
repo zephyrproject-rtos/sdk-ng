@@ -567,7 +567,6 @@ jobs:
       if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        submodules: recursive
         persist-credentials: false
 
     - name: Check out source code (pull request)
@@ -575,8 +574,22 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-        submodules: recursive
         persist-credentials: false
+
+    - name: Check out submodules
+      run: |
+        git config --global --add safe.directory '*'
+        git submodule init
+        git submodule update --depth=1 --recursive crosskit/crosskit-x86_64-apple-darwin
+        git submodule update --depth=1 --recursive crosskit/crosskit-x86_64-darwin-libpython
+        git submodule update --depth=1 --recursive crosskit/crosskit-mingw-w64-libpython
+        git submodule update --depth=1 --recursive crosstool-ng
+        git submodule update --depth=1 --recursive binutils
+        git submodule update --depth=1 --recursive binutils_arc
+        git submodule update --depth=1 --recursive gdb
+        git submodule update --depth=1 --recursive gcc
+        git submodule update --depth=1 --recursive gcc_arc
+        git submodule update --depth=1 --recursive picolibc
 
     - name: Build crosstool-ng
       run: |
@@ -885,7 +898,6 @@ jobs:
       if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        submodules: recursive
         persist-credentials: false
 
     - name: Check out source code (pull request)
@@ -893,8 +905,14 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-        submodules: recursive
         persist-credentials: false
+
+    - name: Check out submodules
+      run: |
+        git config --global --add safe.directory '*'
+        git submodule init
+        git submodule update --depth=1 --recursive llvm
+        git submodule update --depth=1 --recursive picolibc
 
     - name: Setup debug session (pre)
       if: always() && needs.setup.outputs.debug == 'toolchain-pre'
@@ -1021,7 +1039,6 @@ jobs:
       if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        submodules: recursive
         persist-credentials: false
 
     - name: Check out source code (pull request)
@@ -1029,8 +1046,15 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-        submodules: recursive
         persist-credentials: false
+
+    - name: Check out submodules
+      run: |
+        git config --global --add safe.directory '*'
+        git submodule init
+        git submodule update --depth=1 --recursive qemu
+        git submodule update --depth=1 --recursive qemu_arc
+        git submodule update --depth=1 --recursive qemu_xilinx
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
