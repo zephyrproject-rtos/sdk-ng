@@ -39,11 +39,16 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 
 SRCREV = "fe132ed0c9ae14a56bbf94b1d0d16b029b671c62"
 SRC_URI = "gitsm://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
+           https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.16.3-2/bios-128k.bin;name=bios-128k \
+           https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.16.3-2/bios-256k.bin;name=bios-256k \
            file://powerpc_rom.bin \
            file://run-ptest \
            file://qemu-guest-agent.init \
            file://qemu-guest-agent.udev \
            "
+
+SRC_URI[bios-128k.sha256sum] = "961fa79b3c9de10ae798c8e43290081ee3e0547b410d4d603e7195f1319a3a33"
+SRC_URI[bios-256k.sha256sum] = "383fc5eeb532536d12a2c70b4d20f0ac8a01fb06f77f310b7f31764efc8b70e4"
 
 S = "${WORKDIR}/git"
 
@@ -65,6 +70,15 @@ COMPATIBLE_HOST:riscv32 = "null"
 # Per https://lists.nongnu.org/archive/html/qemu-devel/2020-09/msg03873.html
 # upstream states qemu doesn't work without optimization
 DEBUG_BUILD = "0"
+
+copy_seabios() {
+    cp ${WORKDIR}/bios-128k.bin ${S}/pc-bios/bios.bin
+    cp ${WORKDIR}/bios-256k.bin ${S}/pc-bios/bios-256k.bin
+}
+
+do_unpack:append() {
+    bb.build.exec_func('copy_seabios', d)
+}
 
 do_install:append() {
     # Prevent QA warnings about installed ${localstatedir}/run
