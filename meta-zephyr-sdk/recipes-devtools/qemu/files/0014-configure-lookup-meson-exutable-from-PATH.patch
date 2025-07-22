@@ -1,7 +1,7 @@
-From e69ee0ff86f7dbe7ac2d165b9dab3457a069a998 Mon Sep 17 00:00:00 2001
+From 320d68aae92aa53ec79e99fb2fae6dcb0598e225 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
 Date: Wed, 22 May 2024 14:02:55 +0200
-Subject: [PATCH 14/19] configure: lookup meson exutable from PATH
+Subject: [PATCH 14/16] configure: lookup meson exutable from PATH
 
 Upstream-Status: Inappropriate [workaround, would need a real fix for upstream]
 ---

@@ -1,7 +1,7 @@
-From b26560c924c15d138ce6fa96f8271c2803b27ca6 Mon Sep 17 00:00:00 2001
+From dd5194b56b7a6ca2faedccfd96137c0304abe394 Mon Sep 17 00:00:00 2001
 From: Max Filippov <jcmvbkbc@gmail.com>
 Date: Thu, 14 Dec 2023 18:14:00 -0800
-Subject: [PATCH 04/19] tests/tcg/xtensa: fix SR test for configs with MPU
+Subject: [PATCH 04/16] tests/tcg/xtensa: fix SR test for configs with MPU
 
 - atomctl is available not only in the presence of s32c1i, but also with
   the exclusive access option
