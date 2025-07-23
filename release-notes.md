@@ -1,5 +1,17 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.17.3-rc1
+
+- picolibc:
+
+  * Fixed incorrect crt0 path in `picolibc.specs` causing modules built with
+    picolibc to fail at link time.
+
+- qemu:
+
+  * Updated x86 QEMU to not clear screen on reset, matching the terminal
+    behaviour in the SDK 0.17.0 and older.
+
 ## Zephyr SDK 0.17.2
 
 - picolibc: allow use of crt0 when building modules
