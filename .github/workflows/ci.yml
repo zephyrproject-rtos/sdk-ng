@@ -363,7 +363,7 @@ jobs:
 
         if [ "${build_host_macos_x86_64}" == "y" ]; then
           MATRIX_TESTENVS+='{
-              "name": "macos-11-x86_64",
+              "name": "macos-15-x86_64",
               "runner": "zephyr-runner-v2-macos-arm64-2xlarge",
               "container": "",
               "bundle-host": "macos-x86_64",
@@ -373,7 +373,7 @@ jobs:
 
         if [ "${build_host_macos_aarch64}" == "y" ]; then
           MATRIX_TESTENVS+='{
-              "name": "macos-11-aarch64",
+              "name": "macos-15-aarch64",
               "runner": "zephyr-runner-v2-macos-arm64-2xlarge",
               "container": "",
               "bundle-host": "macos-aarch64",
