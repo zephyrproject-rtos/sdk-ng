@@ -996,14 +996,65 @@ jobs:
     - name: Set up build environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
+        # Create workspace directory
+        WORKSPACE="${RUNNER_TEMP}/workspace"
+        mkdir -p ${WORKSPACE}
+
+        # Install dependencies for cross compilation
+        if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Make MinGW-w64 win32 cross toolchain available in PATH
+          echo "/opt/mingw-w64-win32/bin" >> $GITHUB_PATH
+
+          # Configure pkgconfig discovery path
+          echo "PKG_CONFIG_PATH=/opt/mingw-w64-win32/x86_64-w64-mingw32/lib/pkgconfig" >> $GITHUB_ENV
+        fi
+
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
+        echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
+        # Create case-sensitive workspace volume for macOS
+        WORKSPACE="/Volumes/Workspace"
+        hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
+                       -volname Workspace -type SPARSE -size 150g -fs HFSX
+        hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
+
+        # Set up emulated x86-64 macOS build environment
+        if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
+          # Install x86-64 Homebrew
+          arch -x86_64 \
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          BREW="/usr/local/bin/brew"
+
+          # Install x86-64 build tools
+          ${BREW} install \
+            ccache \
+            cmake \
+            meson \
+            ninja \
+            pkg-config
+        else
+          BREW="/opt/homebrew/bin/brew"
+        fi
+
+        # Install required libraries
+        ${BREW} install \
+          glib \
+          gmp \
+          jpeg-turbo \
+          libffi \
+          libgcrypt \
+          libpng \
+          pcre2 \
+          pixman \
+          zstd
+
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
+        echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
       if: ${{ github.event_name != 'pull_request_target' }}
@@ -1052,7 +1103,7 @@ jobs:
         echo "SRC_CACHE_URI=${SRC_CACHE_URI}" >> $GITHUB_ENV
         echo "POKY_DOWNLOADS=${POKY_DOWNLOADS}" >> $GITHUB_ENV
 
-    - name: Build Linux host tools
+    - name: Build host tools (Linux)
       if: startsWith(matrix.host.name, 'linux-')
       run: |
         POKY_BASE=${GITHUB_WORKSPACE}/meta-zephyr-sdk
@@ -1085,6 +1136,51 @@ jobs:
         md5sum ${ARCHIVE_FILE} > md5.sum
         sha256sum ${ARCHIVE_FILE} > sha256.sum
 
+    - name: Build host tools (non-Linux)
+      if: "!startsWith(matrix.host.name, 'linux-')"
+      run: |
+        if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
+          BUILD_PRECMD="arch -x86_64"
+        fi
+
+        # Create output directory
+        mkdir -p ${WORKSPACE}/hosttools
+        BUILD_OUTPUT="${WORKSPACE}/hosttools"
+
+        # Build QEMU
+        QEMU_BUILD="${WORKSPACE}/build/qemu"
+        QEMU_SOURCE="${GITHUB_WORKSPACE}/qemu"
+
+        mkdir -p ${QEMU_BUILD}
+        pushd ${QEMU_BUILD}
+        ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu.sh \
+          ${{ matrix.host.name }} \
+          ${GITHUB_WORKSPACE}/qemu \
+          ${BUILD_OUTPUT}
+        popd
+
+        # TODO: Build ARC QEMU
+        # TODO: Build Xilinx QEMU
+        # TODO: Build OpenOCD
+
+        # Create archive
+        ARCHIVE_NAME=hosttools_${{ matrix.host.name }}
+        ARCHIVE_FILE=hosttools_${{ matrix.host.name }}.${{ matrix.host.archive }}
+
+        if [ "${{ matrix.host.archive }}" == "tar.xz" ]; then
+          XZ_OPT="-T0" \
+          ${TAR} -Jcvf ${ARCHIVE_FILE} \
+                 --owner=0 --group=0 -C ${WORKSPACE}/hosttools .
+        elif [ "${{ matrix.host.archive }}" == "7z" ]; then
+          pushd ${WORKSPACE}/hosttools
+          7z a -t7z -l ${GITHUB_WORKSPACE}/${ARCHIVE_FILE} .
+          popd
+        fi
+
+        # Compute checksum
+        md5sum ${ARCHIVE_FILE} > md5.sum
+        sha256sum ${ARCHIVE_FILE} > sha256.sum
+
     - name: Setup debug session
       if: always() && needs.setup.outputs.debug == 'hosttools'
       uses: mxschmitt/action-tmate@v3
@@ -1102,7 +1198,6 @@ jobs:
         popd
 
     - name: Upload toolchain build artifact
-      if: startsWith(matrix.host.name, 'linux-') # FIXME: Do for all
       uses: actions/upload-artifact@v4
       with:
         name: hosttools_${{ matrix.host.name }}
@@ -1110,9 +1205,6 @@ jobs:
           hosttools_${{ matrix.host.name }}.${{ matrix.host.archive }}
           md5.sum
           sha256.sum
-
-    # TODO: Add host tool build process for macOS hosts.
-    # TODO: Add host tool build process for Windows hosts.
 
   # Build CMake package
   build-cmake-pkg:
