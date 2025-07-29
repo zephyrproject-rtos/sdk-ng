@@ -12,7 +12,7 @@
 	url = https://github.com/zephyrproject-rtos/binutils-gdb.git
 [submodule "picolibc"]
 	path = picolibc
-	url = https://github.com/zephyrproject-rtos/picolibc.git
+	url = https://github.com/alpsayin/picolibc.git
 [submodule "llvm"]
 	path = llvm
 	url = https://github.com/zephyrproject-rtos/llvm-project.git
