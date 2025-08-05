@@ -1,5 +1,11 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 0.17.4-rc1
+
+- picolibc:
+
+  * Synced Picolibc with the Zephyr 4.2 Picolibc module.
+
 ## Zephyr SDK 0.17.3
 
 - picolibc:
