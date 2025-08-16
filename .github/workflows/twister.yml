@@ -3,8 +3,8 @@ name: Twister
 on:
   workflow_dispatch:
     inputs:
-      sdk-build-job-id:
-        description: 'SDK Build Job ID'
+      sdk-build-run-id:
+        description: 'SDK Build Run ID'
         required: true
       sdk-bundle-basename:
         description: 'SDK Bundle Base Name'
@@ -268,12 +268,12 @@ jobs:
       # with:
       #   name: ${{ env.BUNDLE_NAME }}
       #   path: artifacts
-      #   run-id: ${{ github.event.inputs.sdk-build-job-id }}
+      #   run-id: ${{ github.event.inputs.sdk-build-run-id }}
       #   github-token: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh run download \
           -R ${GITHUB_REPOSITORY} \
-          ${{ github.event.inputs.sdk-build-job-id }} \
+          ${{ github.event.inputs.sdk-build-run-id }} \
           -n ${BUNDLE_NAME} \
           -D artifacts
       env:
