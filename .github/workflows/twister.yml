@@ -48,7 +48,7 @@ on:
       twister-extra-args:
         description: 'Twister Extra Arguments'
         required: true
-        default: '--build-only --show-footprint'
+        default: '--show-footprint'
       subset-count:
         description: 'Subset Count'
         required: false
@@ -386,6 +386,11 @@ jobs:
         fi
 
         # Set mode-specific parameters
+        if [ "${{ github.event.inputs.twister-mode }}" == "integration" ]; then
+          MODE_ARGS+="--integration -j 16"
+        elif [ "${{ github.event.inputs.twister-mode }}" == "all" ]; then
+          MODE_ARGS+="--all --build-only -j 32"
+        fi
 
         # Set toolchain variant
         export ZEPHYR_TOOLCHAIN_VARIANT="zephyr/${{ github.event.inputs.sdk-toolchain }}"
@@ -397,7 +402,6 @@ jobs:
           -v \
           -N \
           -M \
-          -j 16 \
           --force-color \
           --inline-logs \
           --retry-failed 3 \
@@ -407,6 +411,7 @@ jobs:
           -P native_sim/native \
           -P native_sim/native/64 \
           ${HOST_ARGS} \
+          ${MODE_ARGS} \
           ${{ github.event.inputs.twister-extra-args }}
 
     - name: Print ccache stats
