@@ -29,6 +29,10 @@ on:
         - macos-aarch64
         - windows-x86_64
         default: linux-x86_64
+      zephyr-remote:
+        description: 'Zephyr Remote'
+        required: true
+        default: 'https://github.com/zephyrproject-rtos/zephyr.git'
       zephyr-ref:
         description: 'Zephyr Ref (branch, tag, SHA ...)'
         required: true
@@ -342,7 +346,7 @@ jobs:
 
         # Check out specified Zephyr ref
         pushd zephyr
-        git fetch origin ${{ github.event.inputs.zephyr-ref }}
+        git fetch ${{ github.event.inputs.zephyr-remote }} ${{ github.event.inputs.zephyr-ref }}
         git checkout FETCH_HEAD
         popd
 
