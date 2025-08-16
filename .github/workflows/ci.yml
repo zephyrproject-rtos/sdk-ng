@@ -1460,9 +1460,17 @@ jobs:
     - name: Set up test environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
+        # Add GitHub CLI source
+        sudo mkdir -p -m 755 /etc/apt/keyrings
+        sudo curl -L -o /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+                  https://cli.github.com/packages/githubcli-archive-keyring.gpg
+        sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+        sudo mkdir -p -m 755 /etc/apt/sources.list.d
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
         # Install required system packages
         sudo apt-get update
-        sudo apt-get install -y dos2unix jq
+        sudo apt-get install -y dos2unix gh jq
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
@@ -1471,6 +1479,9 @@ jobs:
     - name: Set up test environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
+        # Install required system packages
+        brew install gh
+
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
         echo "ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts" >> $GITHUB_ENV
@@ -1479,7 +1490,7 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: |
         # Install required system packages
-        choco install ccache dtc-msys2 gperf jq ninja wget 7zip
+        choco install ccache dtc-msys2 gh gperf jq ninja wget 7zip
 
         # Enable long paths support for Git
         git config --system core.longpaths true
