@@ -1532,10 +1532,21 @@ jobs:
         echo "BUNDLE_DIR=${BUNDLE_DIR}" >> $GITHUB_ENV
 
     - name: Download distribution bundle
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ env.BUNDLE_NAME }}
-        path: artifacts
+      # FIXME: download-artifact is buggy and may fail to download some files
+      #        without any errors. For more details, refer to the GitHub issue
+      #        actions/download-artifact#396.
+      # uses: actions/download-artifact@v4
+      # with:
+      #   name: ${{ env.BUNDLE_NAME }}
+      #   path: artifacts
+      run: |
+        gh run download \
+          -R ${GITHUB_REPOSITORY} \
+          ${GITHUB_RUN_ID} \
+          -n ${BUNDLE_NAME} \
+          -D artifacts
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Install distribution bundle
       run: |
