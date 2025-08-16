@@ -64,6 +64,7 @@ jobs:
 
     outputs:
       runner: ${{ steps.plan.outputs.runner }}
+      container: ${{ steps.plan.outputs.container }}
       subset: ${{ steps.plan.outputs.subset }}
       size: ${{ steps.plan.outputs.size }}
 
@@ -73,11 +74,23 @@ jobs:
       run: |
         # Resolve runner type
         case "${{ github.event.inputs.host }}" in
-          linux-x86_64)   runner="zephyr-runner-v2-linux-x64-4xlarge";;
-          linux-aarch64)  runner="zephyr-runner-v2-linux-arm64-4xlarge";;
-          macos-x86_64)   runner="zephyr-runner-v2-macos-arm64-2xlarge";;
-          macos-aarch64)  runner="zephyr-runner-v2-macos-arm64-2xlarge";;
-          windows-x86_64) runner="zephyr-runner-v2-windows-x64-2xlarge";;
+          linux-x86_64)
+            runner="zephyr-runner-v2-linux-x64-4xlarge"
+            container="ghcr.io/zephyrproject-rtos/ci:v0.28.3"
+            ;;
+          linux-aarch64)
+            runner="zephyr-runner-v2-linux-arm64-4xlarge"
+            container="ghcr.io/zephyrproject-rtos/ci:v0.28.3"
+            ;;
+          macos-x86_64)
+            runner="zephyr-runner-v2-macos-arm64-2xlarge"
+            ;;
+          macos-aarch64)
+            runner="zephyr-runner-v2-macos-arm64-2xlarge"
+            ;;
+          windows-x86_64)
+            runner="zephyr-runner-v2-windows-x64-2xlarge"
+            ;;
         esac
 
         # Resolve subset count
@@ -94,6 +107,7 @@ jobs:
 
         # Export output variables
         echo "runner=${runner}" >> $GITHUB_OUTPUT
+        echo "container=${container}" >> $GITHUB_OUTPUT
         echo "subset=${subset}" >> $GITHUB_OUTPUT
         echo "size=${size}" >> $GITHUB_OUTPUT
 
@@ -102,6 +116,11 @@ jobs:
     needs: [ prep ]
     runs-on:
       group: ${{ needs.prep.outputs.runner }}
+    container: ${{ needs.prep.outputs.container }}
+
+    defaults:
+      run:
+        shell: bash
 
     strategy:
       fail-fast: false
@@ -131,68 +150,18 @@ jobs:
     - name: Set up test environment (Linux)
       if: ${{ runner.os == 'Linux' }}
       run: |
-        # Add ccache PPA to install up-to-date ccache
-        sudo add-apt-repository -y -n ppa:stephanosio/ccache
-
         # Add GitHub CLI source
-        sudo mkdir -p -m 755 /etc/apt/keyrings
-        sudo curl -L -o /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-                  https://cli.github.com/packages/githubcli-archive-keyring.gpg
-        sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-        sudo mkdir -p -m 755 /etc/apt/sources.list.d
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        mkdir -p -m 755 /etc/apt/keyrings
+        wget -O /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+             https://cli.github.com/packages/githubcli-archive-keyring.gpg
+        chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+        mkdir -p -m 755 /etc/apt/sources.list.d
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 
         # Install required system packages
-        sudo apt-get update
-        sudo apt-get install -y \
-          ccache \
-          cmake \
-          device-tree-compiler \
-          dfu-util \
-          dos2unix \
-          file \
-          g++ \
-          gcc \
-          gh \
-          git \
-          gperf \
-          jq \
-          libmagic1 \
-          make \
-          ninja-build \
-          protobuf-compiler \
-          python3-dev \
-          python3-tk \
-          python3-venv \
-          wget \
-          xz-utils
-
-        if [ "${HOSTTYPE}" = "x86_64" ]; then
-          sudo apt install -y \
-            g++-multilib \
-            gcc-multilib
-        fi
-
-        # Set up Rust
-        ## Install Cargo package manager
-        wget -q -O- "https://sh.rustup.rs" | sh -s -- -y --default-toolchain 1.86
-
-        ## Make Cargo globally available
-        PATH=~/.cargo/bin:$PATH
-        echo "~/.cargo/bin" >> $GITHUB_PATH
-
-        ## Install uefi-run utility
-        sudo -E cargo install uefi-run --root /usr
-        echo "OVMF_FD_PATH=/usr/share/ovmf/OVMF.fd" >> $GITHUB_ENV
-
-        ## Install Rust target support required by Zephyr
-        rustup target install riscv32i-unknown-none-elf
-        rustup target install riscv64imac-unknown-none-elf
-        rustup target install thumbv6m-none-eabi
-        rustup target install thumbv7em-none-eabi
-        rustup target install thumbv7m-none-eabi
-        rustup target install thumbv8m.main-none-eabi
-        rustup target install x86_64-unknown-none
+        apt-get update
+        apt-get install -y \
+          gh
 
         # Set environment variables
         echo "TAR=tar" >> $GITHUB_ENV
