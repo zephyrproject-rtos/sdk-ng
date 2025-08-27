@@ -61,6 +61,7 @@ on:
         - xtensa-espressif_esp32s3_zephyr-elf
         - xtensa-intel_ace15_mtpm_zephyr-elf
         - xtensa-intel_ace30_ptl_zephyr-elf
+        - xtensa-intel_ace40_zephyr-elf
         - xtensa-intel_tgl_adsp_zephyr-elf
         - xtensa-mtk_mt8195_adsp_zephyr-elf
         - xtensa-mtk_mt818x_adsp_zephyr-elf
@@ -188,6 +189,7 @@ jobs:
             xtensa-espressif_esp32s3_zephyr-elf)  build_target_xtensa_espressif_esp32s3_zephyr_elf="y";;
             xtensa-intel_ace15_mtpm_zephyr-elf)   build_target_xtensa_intel_ace15_mtpm_zephyr_elf="y";;
             xtensa-intel_ace30_ptl_zephyr-elf)   build_target_xtensa_intel_ace30_ptl_zephyr_elf="y";;
+            xtensa-intel_ace40_zephyr-elf)        build_target_xtensa_intel_ace40_zephyr_elf="y";;
             xtensa-intel_tgl_adsp_zephyr-elf)     build_target_xtensa_intel_tgl_adsp_zephyr_elf="y";;
             xtensa-mtk_mt8195_adsp_zephyr-elf)    build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y";;
             xtensa-mtk_mt818x_adsp_zephyr-elf)    build_target_xtensa_mtk_mt818x_adsp_zephyr_elf="y";;
@@ -239,6 +241,7 @@ jobs:
           build_target_xtensa_espressif_esp32s3_zephyr_elf="y"
           build_target_xtensa_intel_ace15_mtpm_zephyr_elf="y"
           build_target_xtensa_intel_ace30_ptl_zephyr_elf="y"
+          build_target_xtensa_intel_ace40_zephyr_elf="y"
           build_target_xtensa_intel_tgl_adsp_zephyr_elf="y"
           build_target_xtensa_mtk_mt8195_adsp_zephyr_elf="y"
           build_target_xtensa_mtk_mt818x_adsp_zephyr_elf="y"
@@ -330,6 +333,7 @@ jobs:
         [ "${build_target_xtensa_espressif_esp32s3_zephyr_elf}" == "y" ]  && MATRIX_TARGETS+='"xtensa-espressif_esp32s3_zephyr-elf",'
         [ "${build_target_xtensa_intel_ace15_mtpm_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-intel_ace15_mtpm_zephyr-elf",'
         [ "${build_target_xtensa_intel_ace30_ptl_zephyr_elf}" == "y" ]   && MATRIX_TARGETS+='"xtensa-intel_ace30_ptl_zephyr-elf",'
+        [ "${build_target_xtensa_intel_ace40_zephyr_elf}" == "y" ]        && MATRIX_TARGETS+='"xtensa-intel_ace40_zephyr-elf",'
         [ "${build_target_xtensa_intel_tgl_adsp_zephyr_elf}" == "y" ]     && MATRIX_TARGETS+='"xtensa-intel_tgl_adsp_zephyr-elf",'
         [ "${build_target_xtensa_mtk_mt8195_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt8195_adsp_zephyr-elf",'
         [ "${build_target_xtensa_mtk_mt818x_adsp_zephyr_elf}" == "y" ]    && MATRIX_TARGETS+='"xtensa-mtk_mt818x_adsp_zephyr-elf",'
@@ -1760,6 +1764,12 @@ jobs:
                 # there are known issues causing build failures on this
                 # platform.
                 # PLATFORM_ARGS+="-p intel_adsp/ace30/ptl "
+                ;;
+              xtensa-intel_ace40_zephyr-elf)
+                # xtensa-intel_ace40_zephyr-elf testing is disabled because
+                # there are known issues causing build failures on this
+                # platform.
+                # PLATFORM_ARGS+="-p intel_adsp/ace40/nvl "
                 ;;
               xtensa-intel_tgl_adsp_zephyr-elf)
                 PLATFORM_ARGS+="-p intel_adsp/cavs25 "
