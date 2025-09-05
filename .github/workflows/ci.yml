@@ -46,7 +46,6 @@ on:
         - arc64-zephyr-elf
         - arc-zephyr-elf
         - arm-zephyr-eabi
-        - microblazeel-zephyr-elf
         - mips-zephyr-elf
         - riscv64-zephyr-elf
         - rx-zephyr-elf
@@ -174,7 +173,6 @@ jobs:
             arc64-zephyr-elf)                     build_target_arc64_zephyr_elf="y";;
             arc-zephyr-elf)                       build_target_arc_zephyr_elf="y";;
             arm-zephyr-eabi)                      build_target_arm_zephyr_eabi="y";;
-            microblazeel-zephyr-elf)              build_target_microblazeel_zephyr_elf="y";;
             mips-zephyr-elf)                      build_target_mips_zephyr_elf="y";;
             riscv64-zephyr-elf)                   build_target_riscv64_zephyr_elf="y";;
             rx-zephyr-elf)                        build_target_rx_zephyr_elf="y";;
@@ -226,7 +224,6 @@ jobs:
           build_target_arc64_zephyr_elf="y"
           build_target_arc_zephyr_elf="y"
           build_target_arm_zephyr_eabi="y"
-          build_target_microblazeel_zephyr_elf="y"
           build_target_mips_zephyr_elf="y"
           build_target_riscv64_zephyr_elf="y"
           build_target_rx_zephyr_elf="y"
@@ -318,7 +315,6 @@ jobs:
         [ "${build_target_arc64_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"arc64-zephyr-elf",'
         [ "${build_target_arc_zephyr_elf}" == "y" ]                       && MATRIX_TARGETS+='"arc-zephyr-elf",'
         [ "${build_target_arm_zephyr_eabi}" == "y" ]                      && MATRIX_TARGETS+='"arm-zephyr-eabi",'
-        [ "${build_target_microblazeel_zephyr_elf}" == "y" ]              && MATRIX_TARGETS+='"microblazeel-zephyr-elf",'
         [ "${build_target_mips_zephyr_elf}" == "y" ]                      && MATRIX_TARGETS+='"mips-zephyr-elf",'
         [ "${build_target_riscv64_zephyr_elf}" == "y" ]                   && MATRIX_TARGETS+='"riscv64-zephyr-elf",'
         [ "${build_target_rx_zephyr_elf}" == "y" ]                        && MATRIX_TARGETS+='"rx-zephyr-elf",'
@@ -1707,10 +1703,6 @@ jobs:
                 PLATFORM_ARGS+="-p mps2/an521/cpu0 "
                 PLATFORM_ARGS+="-p mps3/corstone300/an547 "
                 ;;
-              # TODO: Release the microblaze arch source in a public repo
-              # microblazeel-zephyr-elf)
-              #  PLATFORM_ARGS+="-p qemu_microblaze "
-              #  ;;
               mips-zephyr-elf)
                 PLATFORM_ARGS+="-p qemu_malta "
                 ;;
