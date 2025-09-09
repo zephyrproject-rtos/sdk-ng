@@ -1651,7 +1651,14 @@ jobs:
         source ${VENV_ACTIVATE}
 
         # Install Python dependencies from the checked out Zephyr repository.
-        pip3 install -r ${ZEPHYR_ROOT}/scripts/requirements.txt
+        pip3 install \
+          -r ${ZEPHYR_ROOT}/scripts/requirements.txt \
+          -r ${ZEPHYR_WORKSPACE}/bootloader/mcuboot/scripts/requirements.txt \
+          -r ${ZEPHYR_WORKSPACE}/modules/tee/tf-m/trusted-firmware-m/tools/requirements.txt \
+          'esptool>=5.0.2' \
+          nrf-regtool~=9.0.1 \
+          protobuf \
+          grpcio-tools
 
     - name: Setup debug session (pre)
       if: always() && needs.setup.outputs.debug == 'test-pre'
