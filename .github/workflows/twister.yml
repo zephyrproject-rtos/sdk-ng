@@ -335,8 +335,12 @@ jobs:
         # Install Python dependencies from the checked out Zephyr repository.
         pip install \
           -r ${ZEPHYR_ROOT}/scripts/requirements.txt \
-          grpcio-tools \
-          protobuf
+          -r ${ZEPHYR_WORKSPACE}/bootloader/mcuboot/scripts/requirements.txt \
+          -r ${ZEPHYR_WORKSPACE}/modules/tee/tf-m/trusted-firmware-m/tools/requirements.txt \
+          'esptool>=5.0.2' \
+          nrf-regtool~=9.0.1 \
+          protobuf \
+          grpcio-tools
 
     - name: Run test suites
       run: |
