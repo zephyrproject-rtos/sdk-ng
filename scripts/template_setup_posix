@@ -48,6 +48,13 @@ check_command()
   fi
 }
 
+# Silently check if command is available (for fallback logic)
+check_command_silent()
+{
+  which $1 &> /dev/null
+  return $?
+}
+
 # Check if the current installation is a full SDK with all GNU toolchains
 check_full_gnu_sdk()
 {
@@ -58,6 +65,31 @@ check_full_gnu_sdk()
   done
 
   return 0
+}
+
+# Download helper function
+# Usage: download URL OUTFILE
+download()
+{
+  local url="$1"
+  local outfile="$2"
+  
+  if [ "${dl_tool}" = "wget" ]; then
+    # Emulate quiet+progress+timestamping
+    wget -q --show-progress -N -O "${outfile}" "${url}"
+    return $?
+  else
+    # curl: -f fail on HTTP errors; -L follow redirects
+    # --remote-time preserves Last-Modified on the file
+    # -z OUTFILE does conditional GET (only download if newer)
+    # --progress-bar shows progress
+    if [ -f "${outfile}" ]; then
+      curl -fL --retry 5 --retry-delay 2 --progress-bar --remote-time -z "${outfile}" -o "${outfile}" "${url}"
+    else
+      curl -fL --retry 5 --retry-delay 2 --progress-bar --remote-time -o "${outfile}" "${url}"
+    fi
+    return $?
+  fi
 }
 
 # Display script usage
@@ -71,6 +103,7 @@ usage()
   echo "  -h                   Install host tools"
   echo "  -o                   Create symbolic links matching the old SDK layout for old Zephyr (< 4.3) bisectability"
   echo "  -c                   Register Zephyr SDK CMake package"
+  echo "  -dl <curl|wget>      Force downloader (default: wget, fallback to curl)"
   echo
   echo "Supported GNU Toolchains:"
   echo
@@ -162,9 +195,20 @@ else
       -c)
         do_cmake_pkg="y"
         ;;
+      -dl)
+        shift
+        if [[ "$1" = "curl" ]]; then
+          dl_force="curl"
+        elif [[ "$1" = "wget" ]]; then
+          dl_force="wget"
+        else
+          echo "ERROR: -dl expects <curl|wget>"
+          exit 3
+        fi
+        ;;
       -o)
-	do_old_zephyr="y"
-	;;
+        do_old_zephyr="y"
+        ;;
       '-?')
         usage
         exit 0
@@ -213,7 +257,43 @@ echo
 
 # Check dependencies
 check_command cmake 90
-check_command wget 91
+
+# Choose downloader (default: wget; fallback to curl). Allow -dl override.
+dl_tool=""
+
+if [ "${dl_force}" = "curl" ]; then
+  check_command_silent curl
+  if [ $? -eq 0 ]; then
+    dl_tool="curl"
+  else
+    echo "ERROR: -dl curl requested but 'curl' not found in PATH."
+    exit 91
+  fi
+elif [ "${dl_force}" = "wget" ]; then
+  check_command_silent wget
+  if [ $? -eq 0 ]; then
+    dl_tool="wget"
+  else
+    echo "ERROR: -dl wget requested but 'wget' not found in PATH."
+    exit 91
+  fi
+else
+  # Default behavior: prefer wget, else curl
+  check_command_silent wget
+  if [ $? -eq 0 ]; then
+    dl_tool="wget"
+  else
+    check_command_silent curl
+    if [ $? -eq 0 ]; then
+      dl_tool="curl"
+    fi
+  fi
+fi
+
+if [ -z "${dl_tool}" ]; then
+  echo "Zephyr SDK setup requires either 'wget' or 'curl' in PATH."
+  exit 91
+fi
 
 # Ask for user inputs if no argument is specified
 if [ "${interactive}" = "y" ]; then
@@ -238,7 +318,7 @@ if [ "${do_gnu_toolchain}" = "y" ]; then
     echo "Installing '${toolchain}' GNU toolchain ..."
 
     # Download toolchain archive
-    wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
+    download "${toolchain_uri}" "${toolchain_filename}"
     if [ $? != 0 ]; then
       rm -f "${toolchain_filename}"
       echo "ERROR: GNU toolchain download failed"
@@ -265,7 +345,7 @@ if [ "${do_llvm_toolchain}" = "y" ] && [ ! -d "llvm" ]; then
   toolchain_uri="${dl_rel_base}/${toolchain_filename}"
 
   # Download toolchain archive
-  wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
+  download "${toolchain_uri}" "${toolchain_filename}"
   if [ $? != 0 ]; then
     rm -f "${toolchain_filename}"
     echo "ERROR: LLVM toolchain download failed"
