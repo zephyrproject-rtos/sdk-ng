@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
                     file://COPYING.LIB;endline=24;md5=8c5efda6cf1e1b03dcfd0e6c0d271c7f"
 
 SRCREV = "${ZEPHYR_SDK_QEMU_ARC_SRCREV}"
-SRC_URI = "gitsm://github.com/foss-for-synopsys-dwc-arc-processors/qemu.git;protocol=https;nobranch=1 \
+SRC_URI = "gitsm://github.com/zephyrproject-rtos/arc-qemu.git;protocol=https;nobranch=1 \
 	   file://cross.patch \
 "
 
