@@ -156,6 +156,7 @@ endif()
 
 set(BUG_REPORT_URL "https://github.com/zephyrproject-rtos/sdk-ng/issues" CACHE STRING "")
 set(LLVM_DISTRIBUTION_COMPONENTS
+    clang-extdef-mapping
     clang-resource-headers
     clang
     dsymutil
@@ -194,6 +195,7 @@ set(LLVM_DEFAULT_TARGET_TRIPLE aarch64-linux-gnu CACHE STRING "")
 set(LLVM_APPEND_VC_REV OFF CACHE BOOL "")
 set(LLVM_ENABLE_TERMINFO OFF CACHE BOOL "")
 set(CLANG_DEFAULT_LINKER lld CACHE STRING "")
+set(CLANG_ENABLE_STATIC_ANALYZER ON CACHE BOOL "")
 
 # Default to a release build
 # (CMAKE_BUILD_TYPE is a special CMake variable so if you want to set
