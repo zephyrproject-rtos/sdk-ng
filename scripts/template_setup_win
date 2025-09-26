@@ -186,7 +186,7 @@ if [%DO_LLVM_TOOLCHAIN%] neq [] (
   if not exist llvm\ (
     echo Installing LLVM toolchain ...
 
-    set TOOLCHAIN_FILENAME=%DL_GNU_TOOLCHAIN_FILENAME%
+    set TOOLCHAIN_FILENAME=%DL_LLVM_TOOLCHAIN_FILENAME%
     set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
 
     REM # Download toolchain archive
