@@ -1,19 +1,20 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 0.18.0-alpha4
+## Zephyr SDK 1.0.0-beta1
 
 - general:
 
   * Added Clang/LLVM 19.1.7 toolchain with Arm and RISC-V architecture support.
-  * Update to GCC 14.3
-  * Picolibc is configured as the main and default C library.
-  * Dropped support for newlib and newlib-nano
-  * Dropped support NIOS II architecture
+  * GNU toolchain is now based on GCC 14.3 and Binutils 2.43.
+  * Picolibc is now the default and only C library provided by the SDK.
+  * Removed newlib and newlib-nano C libraries in the GNU toolchain.
+  * Dropped NIOS II architecture support.
   * Introduced Clang/LLVM toolchain distribution bundle
     (`zephyr-sdk-VER_HOST_llvm`).
   * Renamed existing "full" GNU toolchain distribution bundle to
     `zephyr-sdk-VER_HOST_gnu`.
   * Windows executables now link against UCRT, which supports Unicode.
+  * Added Intel ACE40 toolchain (`xtensa-intel_ace40_zephyr-elf`).
 
 - cmake:
 
@@ -22,27 +23,27 @@
   * Zephyr SDK GNU toolchain now declares `TOOLCHAIN_HAS_GLIBCXX`.
   * Zephyr SDK LLVM toolchain now declares `TOOLCHAIN_HAS_LIBCXX`.
 
-- hosttools:
+- binutils:
 
-  * Update qemu to 10.0.2
+  * Updated Binutils to 2.43.1 release.
 
-## Zephyr SDK 0.18.0-alpha2
+- gcc:
 
-- general:
+  * Updated GCC to 14.3 release.
+  * `-mstrict-align` is now set by default when compiling for RISC-V targets.
+  * Added multi-libs for RV32E Zcb targets.
+  * Added multi-libs for RV64GC Bitmanip targets.
+  * Added multi-libs for RV64GC large code model targets.
+  * Added multi-libs for RV64GCV targets.
 
-  * Added Clang/LLVM 19.1.1 toolchain with Arm and RISC-V architecture support.
-  * Introduced Clang/LLVM toolchain distribution bundle
-    (`zephyr-sdk-VER_HOST_llvm`).
-  * Renamed existing "full" GNU toolchain distribution bundle to
-    `zephyr-sdk-VER_HOST_gnu`.
-  * Windows executables now link against UCRT, which supports Unicode.
+- gdb:
 
-- cmake:
+  * Updated GDB to 16.2 release.
 
-  * Restructured toolchain CMake script to support GNU and LLVM toolchains.
-    This requires Zephyr 4.1.0 or above (or the latest `collab-sdk-0.18-dev`).
-  * Zephyr SDK GNU toolchain now declares `TOOLCHAIN_HAS_GLIBCXX`.
-  * Zephyr SDK LLVM toolchain now declares `TOOLCHAIN_HAS_LIBCXX`.
+- qemu:
+
+  * Updated QEMU to 10.0.2 release.
+  * Fixed ARC64 emulation bugs for double load/store operations.
 
 ## Zephyr SDK 0.17.1
 
