@@ -69,6 +69,7 @@ usage()
   echo "     all               Install all GNU toolchains"
   echo "  -l                   Install LLVM toolchain"
   echo "  -h                   Install host tools"
+  echo "  -o                   Old zephyr version compatibility"
   echo "  -c                   Register Zephyr SDK CMake package"
   echo
   echo "Supported GNU Toolchains:"
@@ -117,6 +118,8 @@ user_prompt()
   # Environment Configurations
   ask_yn "Register Zephyr SDK CMake package" && do_cmake_pkg="y"
 
+  ask_yn "Old zephyr version compatibility" && do_old_zephyr="y"
+
   echo
 }
 
@@ -159,6 +162,9 @@ else
       -c)
         do_cmake_pkg="y"
         ;;
+      -o)
+	do_old_zephyr="y"
+	;;
       '-?')
         usage
         exit 0
@@ -298,6 +304,14 @@ if [ "${do_cmake_pkg}" = "y" ]; then
   echo "Registering Zephyr SDK CMake package ..."
   cmake -P cmake/zephyr_sdk_export.cmake
   assert_rc "ERROR: CMake package registration failed" 40
+  echo
+fi
+
+# Create compatibility links for old Zephyr versions
+if [ "${do_old_zephyr}" = "y" ]; then
+  echo "Creating links for old Zephyr compatibility ..."
+  ln -sr gnu/* . || assert_rc "ERROR: Creating toolchain links" 50
+  ln -sr cmake/zephyr/gnu/* cmake/zephyr || assert_rc "ERROR: Creating cmake links" 50
   echo
 fi
 
