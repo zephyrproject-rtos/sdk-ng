@@ -24,7 +24,6 @@ config PICOLIBC_DEFAULT
 	  Zephyr SDK >=0.17.1 always uses Picolibc
 
 # libstdc++ is built without exception support in -Os mode
-# gcc 14.3 has bugs compiling with -Os on riscv
 choice COMPILER_OPTIMIZATIONS
 	default SPEED_OPTIMIZATIONS if ("$(TOOLCHAIN_VARIANT_COMPILER)" = "gnu") && CPP_EXCEPTIONS
 endchoice
