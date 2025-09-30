@@ -25,5 +25,5 @@ config PICOLIBC_DEFAULT
 
 # libstdc++ is built without exception support in -Os mode
 choice COMPILER_OPTIMIZATIONS
-	default SPEED_OPTIMIZATIONS if ("$(TOOLCHAIN_VARIANT_COMPILER)" = "gnu") && CPP_EXCEPTIONS
+	default SPEED_OPTIMIZATIONS if ("$(TOOLCHAIN_VARIANT_COMPILER)" != "llvm") && CPP_EXCEPTIONS
 endchoice
