@@ -1931,9 +1931,202 @@ jobs:
         path: test/twister-out/twister.xml
 
   # Post test result check
+  test-downloader-fallback:
+    name: Test Downloader Fallback (${{ matrix.os }}, ${{ matrix.scenario }})
+    needs: [ setup, build-dist-bundle ]
+    runs-on: ${{ matrix.runner }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Test curl fallback on Windows (remove wget)
+          - os: windows
+            runner: windows-2022
+            scenario: curl-only
+            bundle-host: windows-x86_64
+            bundle-archive: 7z
+            toolchain: arm-zephyr-eabi
+            
+          # Test wget on Windows (explicit /dl wget flag)
+          - os: windows
+            runner: windows-2022
+            scenario: wget-explicit
+            bundle-host: windows-x86_64
+            bundle-archive: 7z
+            toolchain: arm-zephyr-eabi
+            
+          # Test curl explicit on Windows
+          - os: windows
+            runner: windows-2022
+            scenario: curl-explicit
+            bundle-host: windows-x86_64
+            bundle-archive: 7z
+            toolchain: arm-zephyr-eabi
+            
+          # Test curl fallback on macOS (no wget by default)
+          - os: macos
+            runner: macos-13
+            scenario: curl-fallback
+            bundle-host: macos-x86_64
+            bundle-archive: tar.xz
+            toolchain: arm-zephyr-eabi
+            
+          # Test curl fallback on Linux (remove wget)
+          - os: linux
+            runner: ubuntu-24.04
+            scenario: curl-only
+            bundle-host: linux-x86_64
+            bundle-archive: tar.xz
+            toolchain: arm-zephyr-eabi
+    
+    defaults:
+      run:
+        shell: bash
+    
+    steps:
+    - name: Check out source code
+      if: ${{ github.event_name != 'pull_request_target' }}
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    
+    - name: Check out source code (pull request)
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+        persist-credentials: false
+    
+    - name: Set up test environment (Windows)
+      if: ${{ matrix.os == 'windows' }}
+      run: |
+        # Install required packages (excluding wget for curl-only test)
+        if [ "${{ matrix.scenario }}" == "curl-only" ]; then
+          choco install cmake 7zip
+          echo "Testing curl-only fallback (wget not installed)"
+        elif [ "${{ matrix.scenario }}" == "wget-explicit" ]; then
+          choco install cmake 7zip wget
+          echo "Testing explicit wget flag"
+        elif [ "${{ matrix.scenario }}" == "curl-explicit" ]; then
+          choco install cmake 7zip
+          echo "Testing explicit curl flag"
+        fi
+        
+        # Verify which tools are available
+        echo "=== Available download tools ==="
+        which wget && echo "wget: $(which wget)" || echo "wget: NOT FOUND"
+        which curl && echo "curl: $(which curl)" || echo "curl: NOT FOUND"
+        echo "================================"
+    
+    - name: Set up test environment (macOS)
+      if: ${{ matrix.os == 'macos' }}
+      run: |
+        # macOS has curl by default but not wget
+        echo "Testing curl fallback on macOS (wget not installed by default)"
+        
+        # Verify which tools are available
+        echo "=== Available download tools ==="
+        which wget && echo "wget: $(which wget)" || echo "wget: NOT FOUND"
+        which curl && echo "curl: $(which curl)" || echo "curl: NOT FOUND"
+        echo "================================"
+    
+    - name: Set up test environment (Linux)
+      if: ${{ matrix.os == 'linux' }}
+      run: |
+        # Remove wget to force curl fallback
+        if [ "${{ matrix.scenario }}" == "curl-only" ]; then
+          sudo apt-get remove -y wget
+          echo "Testing curl-only fallback (wget removed)"
+        fi
+        
+        # Verify which tools are available
+        echo "=== Available download tools ==="
+        which wget && echo "wget: $(which wget)" || echo "wget: NOT FOUND"
+        which curl && echo "curl: $(which curl)" || echo "curl: NOT FOUND"
+        echo "================================"
+    
+    - name: Download version information
+      uses: actions/download-artifact@v4
+      with:
+        name: version
+        path: artifacts
+    
+    - name: Resolve distribution bundle name
+      run: |
+        VERSION=$(<artifacts/version)
+        BUNDLE_NAME=${{ env.BUNDLE_PREFIX }}-${VERSION}_${{ matrix.bundle-host }}
+        BUNDLE_DIR=${{ env.BUNDLE_PREFIX }}-${VERSION}
+        echo "BUNDLE_NAME=${BUNDLE_NAME}" >> $GITHUB_ENV
+        echo "BUNDLE_DIR=${BUNDLE_DIR}" >> $GITHUB_ENV
+        echo "Testing with bundle: ${BUNDLE_NAME}"
+    
+    - name: Download minimal distribution bundle
+      run: |
+        # Download minimal bundle for testing (just one toolchain)
+        gh run download \
+          -R ${GITHUB_REPOSITORY} \
+          ${GITHUB_RUN_ID} \
+          -n ${BUNDLE_NAME} \
+          -D artifacts
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract distribution bundle
+      run: |
+        mkdir -p tools
+        BUNDLE_FILE=${BUNDLE_NAME}_minimal.${{ matrix.bundle-archive }}
+        
+        if [ "${{ matrix.bundle-archive }}" == "tar.xz" ]; then
+          tar -Jxf artifacts/${BUNDLE_FILE} -C tools || true
+        elif [ "${{ matrix.bundle-archive }}" == "7z" ]; then
+          7z x -otools artifacts/${BUNDLE_FILE} || true
+        fi
+    
+    - name: Test setup script with scenario (${{ matrix.scenario }})
+      run: |
+        cd tools/${BUNDLE_DIR}
+        
+        if [ "${{ matrix.os }}" == "windows" ]; then
+          # Windows batch script
+          if [ "${{ matrix.scenario }}" == "curl-only" ]; then
+            echo "Testing automatic fallback to curl..."
+            ./setup.cmd /t ${{ matrix.toolchain }} /c || exit 1
+          elif [ "${{ matrix.scenario }}" == "wget-explicit" ]; then
+            echo "Testing explicit wget..."
+            ./setup.cmd /t ${{ matrix.toolchain }} /c /dl wget || exit 1
+          elif [ "${{ matrix.scenario }}" == "curl-explicit" ]; then
+            echo "Testing explicit curl..."
+            ./setup.cmd /t ${{ matrix.toolchain }} /c /dl curl || exit 1
+          fi
+        else
+          # POSIX shell script
+          if [ "${{ matrix.scenario }}" == "curl-fallback" ] || [ "${{ matrix.scenario }}" == "curl-only" ]; then
+            echo "Testing automatic fallback to curl..."
+            ./setup.sh -t ${{ matrix.toolchain }} -c || exit 1
+          fi
+        fi
+        
+        echo "✅ Setup script completed successfully with ${{ matrix.scenario }}"
+    
+    - name: Verify toolchain installation
+      run: |
+        cd tools/${BUNDLE_DIR}
+        
+        # Check that the toolchain was actually installed
+        if [ -d "gnu/${{ matrix.toolchain }}" ]; then
+          echo "✅ Toolchain ${{ matrix.toolchain }} installed successfully"
+          ls -la gnu/${{ matrix.toolchain }}
+        else
+          echo "❌ ERROR: Toolchain directory not found!"
+          exit 1
+        fi
+
   test-result:
     name: Test Result
-    needs: [ test-dist-bundle ]
+    needs: [ test-dist-bundle, test-downloader-fallback ]
     runs-on: ubuntu-24.04
 
     # NOTE: The 'test-result' job depends on the 'test-dist-bundle' job and
