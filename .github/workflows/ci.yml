@@ -505,36 +505,6 @@ jobs:
         if [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
           # Make MinGW-w64 win32 cross toolchain available in PATH
           echo "/opt/mingw-w64-win32/bin" >> $GITHUB_PATH
-          export PATH="/opt/mingw-w64-win32/bin:$PATH"
-
-          # Build and install libboost-regex for MinGW-w64 host
-          ## Check out Boost library source code
-          mkdir -p ${WORKSPACE}/boost
-          pushd ${WORKSPACE}/boost
-
-          git clone \
-            --branch boost-1.73.0 --depth 1 \
-            https://github.com/boostorg/boost.git \
-            src
-
-          cd src
-          git submodule update --init --depth 1
-
-          ## Bootstrap boost library build system with MinGW-w64 compiler
-          ./bootstrap.sh --with-toolset=gcc --with-libraries=regex --without-icu
-
-          sed -i \
-            's/using gcc ;/using gcc : mingw : x86_64-w64-mingw32-g++ ;/g' \
-            project-config.jam
-
-          ## Build and install boost-regex library
-          ./b2 install \
-            toolset=gcc-mingw link=static threading=multi variant=release \
-            --prefix=/usr/x86_64-w64-mingw32
-
-          ## Clean up to reduce disk usage
-          popd
-          rm -rf ${WORKSPACE}/boost
         fi
 
         # Set environment variables
