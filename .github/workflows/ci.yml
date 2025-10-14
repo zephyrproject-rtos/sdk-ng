@@ -1766,11 +1766,6 @@ jobs:
         cd test
 
         # Set host-specific twister parameters
-        if [ "${{ runner.os }}" != "Linux" ]; then
-          # TODO: Remove `--build-only` when QEMU is available on non-Linux hosts
-          HOST_ARGS+="--build-only "
-        fi
-
         if [ "${{ runner.os }}" == "Windows" ]; then
           # Shorten twister output paths on Windows in order to work around the
           # long path issues
