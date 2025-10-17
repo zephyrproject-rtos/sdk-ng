@@ -21,6 +21,11 @@ if [%ERRORLEVEL%] neq [0] (
 )
 exit /b 0
 
+REM # Silently check if command is available (for fallback logic)
+:check_command_silent
+where %1 >nul 2>&1
+exit /b %ERRORLEVEL%
+
 :entry
 
 REM # Initialise GNU toolchain list
@@ -53,8 +58,7 @@ REM # Check dependencies
 
 call :check_command cmake 90
 if [%ERRORLEVEL%] neq [0] goto end
-call :check_command wget 91
-if [%ERRORLEVEL%] neq [0] goto end
+
 call :check_command 7z 92
 if [%ERRORLEVEL%] neq [0] goto end
 
@@ -80,6 +84,17 @@ if /i [%1] equ [/t] (
     )
   )
   set DO_GNU_TOOLCHAIN=y
+  shift
+) else if /i [%1] equ [/dl] (
+  if /i [%2] equ [curl] (
+    set DL_FORCE=curl
+  ) else if /i [%2] equ [wget] (
+    set DL_FORCE=wget
+  ) else (
+    echo ERROR: /dl expects ^<curl^|wget^>
+    set EXITCODE=3
+    goto end
+  )
   shift
 ) else if /i [%1] equ [/l] (
   set DO_LLVM_TOOLCHAIN=y
@@ -144,7 +159,71 @@ if [%ERRORLEVEL%] equ [1] set DO_CMAKE_PKG=y
 
 echo.
 
+REM # Download helper
+REM # usage: call :download URL OUTFILE
+:download
+setlocal ENABLEDELAYEDEXPANSION
+set _URL=%~1
+set _OUT=%~2
+
+if /i [%DL_TOOL%] equ [wget] (
+  REM Emulate quiet+progress+timestamping:
+  wget -q --show-progress -N -O "!_OUT!" "!_URL!"
+  endlocal & exit /b %ERRORLEVEL%
+) else (
+  REM curl: -f fail on HTTP errors; -L follow redirects
+  REM --remote-time preserves Last-Modified on the file
+  REM -z OUTFILE does conditional GET (only download if newer)
+  REM Replace the --progress-bar with an -sS to make it quiet if needed
+  if exist "!_OUT!" (
+    curl.exe -fL --retry 5 --retry-delay 2 --progress-bar --remote-time -z "!_OUT!" -o "!_OUT!" "!_URL!"
+  ) else (
+    curl.exe -fL --retry 5 --retry-delay 2 --progress-bar --remote-time -o "!_OUT!" "!_URL!"
+  )
+  endlocal & exit /b %ERRORLEVEL%
+)
+
 :process
+REM # Choose downloader (default: wget; fallback to curl). Allow /dl override.
+set DL_TOOL=
+
+if /i [%DL_FORCE%] equ [curl] (
+  call :check_command curl 91
+  if [!ERRORLEVEL!] equ [0] (
+    set DL_TOOL=curl
+  ) else (
+    echo ERROR: /dl curl requested but 'curl' not found in PATH.
+    set EXITCODE=91
+    goto end
+  )
+) else if /i [%DL_FORCE%] equ [wget] (
+  call :check_command wget 91
+  if [!ERRORLEVEL!] equ [0] (
+    set DL_TOOL=wget
+  ) else (
+    echo ERROR: /dl wget requested but 'wget' not found in PATH.
+    set EXITCODE=91
+    goto end
+  )
+) else (
+  REM Default behavior: prefer wget, else curl
+  call :check_command_silent wget
+  if [!ERRORLEVEL!] equ [0] (
+    set DL_TOOL=wget
+  ) else (
+    call :check_command_silent curl
+    if [!ERRORLEVEL!] equ [0] (
+      set DL_TOOL=curl
+    )
+  )
+)
+
+if [%DL_TOOL%] equ [] (
+  echo Zephyr SDK setup requires either 'wget' or 'curl' in PATH.
+  set EXITCODE=91
+  goto end
+)
+
 REM # Install GNU toolchains
 if [%DO_GNU_TOOLCHAIN%] neq [] (
   if not exist gnu\ mkdir gnu
@@ -158,7 +237,7 @@ if [%DO_GNU_TOOLCHAIN%] neq [] (
       echo Installing '%%t' GNU toolchain ...
 
       REM # Download toolchain archive
-      wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
+      call :download !TOOLCHAIN_URI! !TOOLCHAIN_FILENAME!
       if [!ERRORLEVEL!] neq [0] (
         del /q !TOOLCHAIN_FILENAME!
         echo ERROR: GNU toolchain download failed
@@ -190,7 +269,7 @@ if [%DO_LLVM_TOOLCHAIN%] neq [] (
     set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
 
     REM # Download toolchain archive
-    wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
+    call :download !TOOLCHAIN_URI! !TOOLCHAIN_FILENAME!
     if [!ERRORLEVEL!] neq [0] (
       del /q !TOOLCHAIN_FILENAME!
       echo ERROR: LLVM toolchain download failed
@@ -243,6 +322,7 @@ echo      all               Install all GNU toolchains
 echo   /l                   Install LLVM toolchain
 echo   /h                   Install host tools
 echo   /c                   Register Zephyr SDK CMake package
+echo   /dl ^<curl^|wget^>     Force downloader (default: wget, fallback to curl)
 echo.
 echo Supported GNU Toolchains:
 echo.
