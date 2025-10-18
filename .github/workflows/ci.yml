@@ -1156,7 +1156,7 @@ jobs:
         pushd ${QEMU_BUILD}
         ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu.sh \
           ${{ matrix.host.name }} \
-          ${GITHUB_WORKSPACE}/qemu \
+          ${QEMU_SOURCE} \
           ${BUILD_OUTPUT}
         popd
 
