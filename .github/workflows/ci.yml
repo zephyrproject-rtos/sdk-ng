@@ -1076,6 +1076,7 @@ jobs:
         git submodule update --depth=1 --recursive qemu
         git submodule update --depth=1 --recursive qemu_arc
         git submodule update --depth=1 --recursive qemu_xilinx
+        git submodule update --depth=1 --recursive openocd
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
