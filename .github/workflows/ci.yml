@@ -1033,6 +1033,7 @@ jobs:
           ${BREW} install \
             ccache \
             cmake \
+            gcc \
             meson \
             ninja \
             pkg-config
@@ -1162,7 +1163,18 @@ jobs:
 
         # TODO: Build ARC QEMU
         # TODO: Build Xilinx QEMU
-        # TODO: Build OpenOCD
+
+        # Build OpenOCD
+        OPENOCD_BUILD="${WORKSPACE}/build/openocd"
+        OPENOCD_SOURCE="${GITHUB_WORKSPACE}/openocd"
+
+        mkdir -p ${OPENOCD_BUILD}
+        pushd ${OPENOCD_BUILD}
+        ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_openocd.sh \
+          ${{ matrix.host.name }} \
+          ${OPENOCD_SOURCE} \
+          ${BUILD_OUTPUT}
+        popd
 
         # Create archive
         ARCHIVE_NAME=hosttools_${{ matrix.host.name }}
