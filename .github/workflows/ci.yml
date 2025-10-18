@@ -1149,16 +1149,16 @@ jobs:
         BUILD_OUTPUT="${WORKSPACE}/hosttools"
 
         # Build QEMU
-        QEMU_BUILD="${WORKSPACE}/build/qemu"
-        QEMU_SOURCE="${GITHUB_WORKSPACE}/qemu"
+        # QEMU_BUILD="${WORKSPACE}/build/qemu"
+        # QEMU_SOURCE="${GITHUB_WORKSPACE}/qemu"
 
-        mkdir -p ${QEMU_BUILD}
-        pushd ${QEMU_BUILD}
-        ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu.sh \
-          ${{ matrix.host.name }} \
-          ${QEMU_SOURCE} \
-          ${BUILD_OUTPUT}
-        popd
+        # mkdir -p ${QEMU_BUILD}
+        # pushd ${QEMU_BUILD}
+        # ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu.sh \
+        #   ${{ matrix.host.name }} \
+        #   ${QEMU_SOURCE} \
+        #   ${BUILD_OUTPUT}
+        # popd
 
         # TODO: Build ARC QEMU
         # TODO: Build Xilinx QEMU
