@@ -26,7 +26,7 @@ elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
   list(APPEND CMAKE_PREFIX_PATH ${HOST_TOOLS_HOME}/usr)
 
   set_ifndef(QEMU_BIOS            ${HOST_TOOLS_HOME}/opt/qemu/share/qemu)
-  set_ifndef(OPENOCD_DEFAULT_PATH ${HOST_TOOLS_HOME}/opt/openocd/scripts)
+  set_ifndef(OPENOCD_DEFAULT_PATH ${HOST_TOOLS_HOME}/opt/openocd/share/openocd/scripts)
 elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
   # For Windows SDK, each host tool component is placed in its own directory
   # under the host tools home directory.
