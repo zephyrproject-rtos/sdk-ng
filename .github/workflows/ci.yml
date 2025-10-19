@@ -1149,6 +1149,18 @@ jobs:
         mkdir -p ${WORKSPACE}/hosttools
         BUILD_OUTPUT="${WORKSPACE}/hosttools"
 
+        # Build wget
+        WGET_BUILD="${WORKSPACE}/build/wget"
+        WGET_SOURCE="${GITHUB_WORKSPACE}/wget"
+
+        mkdir -p ${WGET_BUILD}
+        pushd ${WGET_BUILD}
+        ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_wget.sh \
+          ${{ matrix.host.name }} \
+          ${WGET_SOURCE} \
+          ${BUILD_OUTPUT}
+        popd
+
         # Build QEMU
         QEMU_BUILD="${WORKSPACE}/build/qemu"
         QEMU_SOURCE="${GITHUB_WORKSPACE}/qemu"
