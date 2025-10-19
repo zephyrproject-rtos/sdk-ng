@@ -213,7 +213,19 @@ echo
 
 # Check dependencies
 check_command cmake 90
-check_command wget 91
+[[ "${host}" =~ ^linux-.* ]] && check_command wget 91
+
+# Resolve wget binary path
+if [[ "${host}" =~ ^macos-.* ]]; then
+  # Use wget from the SDK host tools on macOS
+  wget=" \
+    ${PWD}/hosttools/opt/wget/bin/wget \
+     --ca-certificate ${PWD}/hosttools/opt/wget/etc/ssl/cert.pem \
+    "
+else
+  # Use the system wget on Linux
+  wget="wget"
+fi
 
 # Ask for user inputs if no argument is specified
 if [ "${interactive}" = "y" ]; then
@@ -238,7 +250,7 @@ if [ "${do_gnu_toolchain}" = "y" ]; then
     echo "Installing '${toolchain}' GNU toolchain ..."
 
     # Download toolchain archive
-    wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
+    ${wget} -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
     if [ $? != 0 ]; then
       rm -f "${toolchain_filename}"
       echo "ERROR: GNU toolchain download failed"
@@ -265,7 +277,7 @@ if [ "${do_llvm_toolchain}" = "y" ] && [ ! -d "llvm" ]; then
   toolchain_uri="${dl_rel_base}/${toolchain_filename}"
 
   # Download toolchain archive
-  wget -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
+  ${wget} -q --show-progress -N -O "${toolchain_filename}" "${toolchain_uri}"
   if [ $? != 0 ]; then
     rm -f "${toolchain_filename}"
     echo "ERROR: LLVM toolchain download failed"
