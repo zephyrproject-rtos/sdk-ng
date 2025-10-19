@@ -35,7 +35,8 @@ elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
   # Add host tool component binary directories to the prefix paths for
   # discovery by the find_program() function.
   list(APPEND CMAKE_PREFIX_PATH ${HOST_TOOLS_HOME}/qemu)
+  list(APPEND CMAKE_PREFIX_PATH ${HOST_TOOLS_HOME}/openocd)
 
   set_ifndef(QEMU_BIOS            ${HOST_TOOLS_HOME}/qemu/share)
-  set_ifndef(OPENOCD_DEFAULT_PATH ${HOST_TOOLS_HOME}/openocd/scripts)
+  set_ifndef(OPENOCD_DEFAULT_PATH ${HOST_TOOLS_HOME}/openocd/share/openocd/scripts)
 endif()
