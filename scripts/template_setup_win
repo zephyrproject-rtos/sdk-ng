@@ -53,10 +53,12 @@ REM # Check dependencies
 
 call :check_command cmake 90
 if [%ERRORLEVEL%] neq [0] goto end
-call :check_command wget 91
-if [%ERRORLEVEL%] neq [0] goto end
 call :check_command 7z 92
 if [%ERRORLEVEL%] neq [0] goto end
+
+REM # Set host tools wget binary path
+set WGET_CA_CERT=%~dp0hosttools\wget\etc\ssl\cert.pem
+set WGET=%~dp0hosttools\wget\bin\wget.exe --ca-certificate %WGET_CA_CERT%
 
 REM # Enter interactive mode if enabled
 if [%INTERACTIVE%] neq [] (
@@ -158,7 +160,7 @@ if [%DO_GNU_TOOLCHAIN%] neq [] (
       echo Installing '%%t' GNU toolchain ...
 
       REM # Download toolchain archive
-      wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
+      %WGET% -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
       if [!ERRORLEVEL!] neq [0] (
         del /q !TOOLCHAIN_FILENAME!
         echo ERROR: GNU toolchain download failed
@@ -190,7 +192,7 @@ if [%DO_LLVM_TOOLCHAIN%] neq [] (
     set TOOLCHAIN_URI=%DL_REL_BASE%/!TOOLCHAIN_FILENAME!
 
     REM # Download toolchain archive
-    wget -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
+    %WGET% -q --show-progress -N -O !TOOLCHAIN_FILENAME! !TOOLCHAIN_URI!
     if [!ERRORLEVEL!] neq [0] (
       del /q !TOOLCHAIN_FILENAME!
       echo ERROR: LLVM toolchain download failed
