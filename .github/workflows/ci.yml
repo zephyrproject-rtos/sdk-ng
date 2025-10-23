@@ -48,6 +48,7 @@ on:
         - arm-zephyr-eabi
         - microblazeel-zephyr-elf
         - mips-zephyr-elf
+        - or1k-zephyr-elf
         - riscv64-zephyr-elf
         - rx-zephyr-elf
         - sparc-zephyr-elf
@@ -176,6 +177,7 @@ jobs:
             arm-zephyr-eabi)                      build_target_arm_zephyr_eabi="y";;
             microblazeel-zephyr-elf)              build_target_microblazeel_zephyr_elf="y";;
             mips-zephyr-elf)                      build_target_mips_zephyr_elf="y";;
+            or1k-zephyr-elf)                      build_target_or1k_zephyr_elf="y";;
             riscv64-zephyr-elf)                   build_target_riscv64_zephyr_elf="y";;
             rx-zephyr-elf)                        build_target_rx_zephyr_elf="y";;
             sparc-zephyr-elf)                     build_target_sparc_zephyr_elf="y";;
@@ -228,6 +230,7 @@ jobs:
           build_target_arm_zephyr_eabi="y"
           build_target_microblazeel_zephyr_elf="y"
           build_target_mips_zephyr_elf="y"
+          build_target_or1k_zephyr_elf="y"
           build_target_riscv64_zephyr_elf="y"
           build_target_rx_zephyr_elf="y"
           build_target_sparc_zephyr_elf="y"
@@ -320,6 +323,7 @@ jobs:
         [ "${build_target_arm_zephyr_eabi}" == "y" ]                      && MATRIX_TARGETS+='"arm-zephyr-eabi",'
         [ "${build_target_microblazeel_zephyr_elf}" == "y" ]              && MATRIX_TARGETS+='"microblazeel-zephyr-elf",'
         [ "${build_target_mips_zephyr_elf}" == "y" ]                      && MATRIX_TARGETS+='"mips-zephyr-elf",'
+        [ "${build_target_or1k_zephyr_elf}" == "y" ]                      && MATRIX_TARGETS+='"or1k-zephyr-elf",'
         [ "${build_target_riscv64_zephyr_elf}" == "y" ]                   && MATRIX_TARGETS+='"riscv64-zephyr-elf",'
         [ "${build_target_rx_zephyr_elf}" == "y" ]                        && MATRIX_TARGETS+='"rx-zephyr-elf",'
         [ "${build_target_sparc_zephyr_elf}" == "y" ]                     && MATRIX_TARGETS+='"sparc-zephyr-elf",'
@@ -1826,6 +1830,10 @@ jobs:
               #  ;;
               mips-zephyr-elf)
                 PLATFORM_ARGS+="-p qemu_malta "
+                ;;
+              or1k-zephyr-elf)
+                # TODO: Enable qemu_or1k when zephyrproject-rtos/zephyr#98160 is merged
+                # PLATFORM_ARGS+="-p qemu_or1k "
                 ;;
               riscv64-zephyr-elf)
                 PLATFORM_ARGS+="-p qemu_riscv32 "

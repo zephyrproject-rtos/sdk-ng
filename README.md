@@ -11,6 +11,7 @@ The toolchains for the following target architectures are supported:
 - Microblaze (32-bit)
 - MIPS (32-bit and 64-bit)
 - Nios II
+- OpenRISC 1000
 - RISC-V (32-bit and 64-bit; RV32I, RV32E, RV64I)
 - RX
 - SPARC (32-bit and 64-bit; SPARC V8, SPARC V9)
