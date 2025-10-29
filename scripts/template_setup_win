@@ -109,7 +109,7 @@ echo.
 
 REM # Check installation type
 for %%t in (%GNU_TOOLCHAINS%) do (
-  if not exist gnu\%%t\ (
+  if not exist %%t\ (
     set IS_PARTIAL_GNU_SDK=y
   )
 )
@@ -124,7 +124,7 @@ if [!ERRORLEVEL!] equ [1] (
       set INST_GNU_TOOLCHAINS=%GNU_TOOLCHAINS%
     ) else (
       for %%t in (%GNU_TOOLCHAINS%) do (
-        if not exist gnu\%%t\ (
+        if not exist %%t\ (
           choice /c:yn /m:"Install '%%t' GNU toolchain"
           if [!ERRORLEVEL!] equ [1] (
             set INST_GNU_TOOLCHAINS=!INST_GNU_TOOLCHAINS! %%t
@@ -149,8 +149,6 @@ echo.
 :process
 REM # Install GNU toolchains
 if [%DO_GNU_TOOLCHAIN%] neq [] (
-  if not exist gnu\ mkdir gnu
-  pushd gnu
 
   for %%t in (%INST_GNU_TOOLCHAINS%) do (
     set TOOLCHAIN_FILENAME=%DL_GNU_TOOLCHAIN_FILENAME%
@@ -180,7 +178,6 @@ if [%DO_GNU_TOOLCHAIN%] neq [] (
       del /q !TOOLCHAIN_FILENAME!
     )
   )
-  popd
 )
 
 REM # Install LLVM toolchain
