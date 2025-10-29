@@ -52,7 +52,7 @@ check_command()
 check_full_gnu_sdk()
 {
   for toolchain in ${gnu_toolchains[@]}; do
-    if [ ! -d "gnu/${toolchain}" ]; then
+    if [ ! -d "${toolchain}" ]; then
       return 1
     fi
   done
@@ -101,7 +101,7 @@ user_prompt()
         inst_gnu_toolchains=(${gnu_toolchains[*]})
       else
         for toolchain in ${gnu_toolchains[@]}; do
-          if [ ! -d "gnu/${toolchain}" ]; then
+          if [ ! -d "${toolchain}" ]; then
             ask_yn "Install '${toolchain}' GNU toolchain" && inst_gnu_toolchains+=("${toolchain}")
           fi
         done
@@ -117,8 +117,6 @@ user_prompt()
 
   # Environment Configurations
   ask_yn "Register Zephyr SDK CMake package" && do_cmake_pkg="y"
-
-  ask_yn "Create symbolic links for old Zephyr bisectability" && do_old_zephyr="y"
 
   echo
 }
@@ -211,6 +209,13 @@ dl_llvm_toolchain_filename='toolchain_llvm_${host}.tar.xz'
 echo "Zephyr SDK ${version} Setup"
 echo
 
+# Move anything left in gnu/ to here. This won't be
+# needed once the CI script is updated
+if [ -d gnu ]; then
+  mv gnu/* .
+  rmdir gnu
+fi
+
 # Check dependencies
 check_command cmake 90
 [[ "${host}" =~ ^linux-.* ]] && check_command wget 91
@@ -235,8 +240,6 @@ fi
 
 # Install GNU toolchains
 if [ "${do_gnu_toolchain}" = "y" ]; then
-  mkdir -p gnu
-  pushd gnu
 
   for toolchain in ${inst_gnu_toolchains[@]}; do
     eval toolchain_filename="${dl_gnu_toolchain_filename}"
@@ -266,7 +269,6 @@ if [ "${do_gnu_toolchain}" = "y" ]; then
 
     echo
   done
-  popd
 fi
 
 # Install LLVM toolchain
@@ -299,10 +301,8 @@ if [ "${do_hosttools}" = "y" ]; then
   echo "Installing host tools ..."
   case ${host} in
     linux-*)
-      pushd hosttools
-      ./zephyr-sdk-${HOSTTYPE}-hosttools-standalone-0.10.sh -y -d . &> /dev/null
+      ./hosttools/zephyr-sdk-${HOSTTYPE}-hosttools-standalone-0.10.sh -y -d . &> /dev/null
       assert_rc "ERROR: Host tools installation failed" 30
-      popd
       ;;
     macos-*)
       echo "SKIPPED: macOS host tools are not available yet."
@@ -316,15 +316,6 @@ if [ "${do_cmake_pkg}" = "y" ]; then
   echo "Registering Zephyr SDK CMake package ..."
   cmake -P cmake/zephyr_sdk_export.cmake
   assert_rc "ERROR: CMake package registration failed" 40
-  echo
-fi
-
-# Create links for old Zephyr versions
-if [ "${do_old_zephyr}" = "y" ]; then
-  echo "Creating links for old Zephyr bisectability ..."
-  ln -sr gnu/* . || assert_rc "ERROR: Creating toolchain links" 50
-  ln -sr cmake/zephyr/gnu/* cmake/zephyr || assert_rc "ERROR: Creating cmake links" 50
-  ln -sr hosttools/* . || assert_rc "ERROR: Creating hosttools links" 50
   echo
 fi
 

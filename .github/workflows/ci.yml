@@ -1478,8 +1478,7 @@ jobs:
         fi
 
         # Stage GNU toolchains
-        mkdir ${ARCHIVE_DIR}/gnu
-        pushd ${ARCHIVE_DIR}/gnu
+        pushd ${ARCHIVE_DIR}
 
         ## Generate target list from the workflow matrix
         TARGETS=$(echo '${{ needs.setup.outputs.targets }}' | jq -cr '.[]')
@@ -1508,8 +1507,10 @@ jobs:
           7z a -t7z -l ${ARCHIVE_NAME}_gnu.${EXT} ${ARCHIVE_DIR}
         fi
 
-        # Unstage GNU toolchain directory
-        rm -rf ${ARCHIVE_DIR}/gnu
+        # Unstage GNU toolchain directories
+        for TARGET in ${TARGETS}; do
+          rm -rf ${ARCHIVE_DIR}/${TARGET}
+        done
 
         # Stage LLVM toolchains
         pushd ${ARCHIVE_DIR}
