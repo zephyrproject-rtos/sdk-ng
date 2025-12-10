@@ -1177,7 +1177,18 @@ jobs:
           ${BUILD_OUTPUT}
         popd
 
-        # TODO: Build ARC QEMU
+        # Build ARC QEMU
+        QEMU_ARC_BUILD="${WORKSPACE}/build/qemu_arc"
+        QEMU_ARC_SOURCE="${GITHUB_WORKSPACE}/qemu_arc"
+
+        mkdir -p ${QEMU_ARC_BUILD}
+        pushd ${QEMU_ARC_BUILD}
+        ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu_arc.sh \
+          ${{ matrix.host.name }} \
+          ${QEMU_ARC_SOURCE} \
+          ${BUILD_OUTPUT}
+        popd
+
         # TODO: Build Xilinx QEMU
 
         # Build OpenOCD
