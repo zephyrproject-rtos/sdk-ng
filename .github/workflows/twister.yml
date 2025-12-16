@@ -36,7 +36,7 @@ on:
       zephyr-ref:
         description: 'Zephyr Ref (branch, tag, SHA ...)'
         required: true
-        default: collab-sdk-dev
+        default: main
       twister-mode:
         description: 'Twister Mode'
         type: choice
@@ -284,7 +284,7 @@ jobs:
           popd
         else
           if [ "${{ github.event.inputs.sdk-toolchain }}" == "gnu" ]; then
-            ./setup.sh -t all -h -c
+            ./setup.sh -t all -h -c -o
           elif [ "${{ github.event.inputs.sdk-toolchain }}" == "llvm" ]; then
             ./setup.sh -l -h -c
           fi
