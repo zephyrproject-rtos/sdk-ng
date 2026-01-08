@@ -524,11 +524,17 @@ jobs:
                        -volname Workspace -type SPARSE -size 150g -fs HFSX
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
 
+        # Install dependencies
+        brew install bison
+
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
           # Make crosskit available in PATH
           echo "${GITHUB_WORKSPACE}/crosskit/crosskit-x86_64-apple-darwin/scripts" >> $GITHUB_PATH
         fi
+
+        # Make Homebrew Bison available in PATH
+        echo "${HOMEBREW_PREFIX}/opt/bison/bin" >> $GITHUB_PATH
 
         # Make Python 3.10 available in PATH
         echo "${HOMEBREW_PREFIX}/opt/python@3.10/bin" >> $GITHUB_PATH
