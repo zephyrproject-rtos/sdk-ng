@@ -42,4 +42,4 @@
 	url = https://github.com/zephyrproject-rtos/xilinx-qemu.git
 [submodule "openocd"]
 	path = openocd
-	url = https://github.com/zephyrproject-rtos/openocd.git
+	url = https://github.com/pillo79/openocd
