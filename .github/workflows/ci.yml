@@ -518,6 +518,11 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
+        # Increase system resource limits
+        sudo serverinfo --perfmode
+        sudo sysctl -w kern.maxproc=2500
+        sudo sysctl -w kern.maxprocperuid=2500
+
         # Create case-sensitive workspace volume for macOS
         WORKSPACE="/Volumes/Workspace"
         hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
@@ -1026,6 +1031,11 @@ jobs:
     - name: Set up build environment (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
+        # Increase system resource limits
+        sudo serverinfo --perfmode
+        sudo sysctl -w kern.maxproc=2500
+        sudo sysctl -w kern.maxprocperuid=2500
+
         # Create case-sensitive workspace volume for macOS
         WORKSPACE="/Volumes/Workspace"
         hdiutil create ${RUNNER_TEMP}/Workspace.sparseimage \
