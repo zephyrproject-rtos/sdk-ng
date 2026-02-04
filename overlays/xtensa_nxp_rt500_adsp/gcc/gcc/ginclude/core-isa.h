@@ -7,7 +7,7 @@
 
 /* Xtensa processor core configuration information.
 
-   Copyright (c) 1999-2022 Tensilica Inc.
+   Copyright (c) 1999-2023 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -123,6 +123,7 @@
 #define XCHAL_HAVE_HIFI3Z_VFPU	0	/* HiFi3Z Audio Engine VFPU option */
 #define XCHAL_HAVE_HIFI1		0	/* HiFi1 */
 #define XCHAL_HAVE_HIFI1_VFPU		0	/* HiFi1 VFPU option */
+#define XCHAL_HAVE_HIFI1_LOW_LATENCY_MAC_FMA		0	/* HiFi1 Low-latency MAC/FMA option */
 #define XCHAL_HAVE_HIFI2		0	/* HiFi2 Audio Engine pkg */
 #define XCHAL_HAVE_HIFI2EP		0	/* HiFi2EP */
 #define XCHAL_HAVE_HIFI_MINI		0	
@@ -217,6 +218,7 @@
 
 #define XCHAL_HAVE_XNNE			0		/* XNNE */
 
+
 /*----------------------------------------------------------------------
 				MISC
   ----------------------------------------------------------------------*/
@@ -237,18 +239,18 @@
 
 #define XCHAL_UNIFIED_LOADSTORE         0
 
-#define XCHAL_SW_VERSION		1408000	/* sw version of this header */
+#define XCHAL_SW_VERSION		1411000	/* sw version of this header */
 #define XCHAL_SW_VERSION_MAJOR		14000	/* major ver# of sw          */
-#define XCHAL_SW_VERSION_MINOR		8	/* minor ver# of sw          */
+#define XCHAL_SW_VERSION_MINOR		11	/* minor ver# of sw          */
 #define XCHAL_SW_VERSION_MICRO		0	/* micro ver# of sw          */
-#define XCHAL_SW_MINOR_VERSION		1408000	/* with zeroed micro */
-#define XCHAL_SW_MICRO_VERSION		1408000
+#define XCHAL_SW_MINOR_VERSION		1411000	/* with zeroed micro */
+#define XCHAL_SW_MICRO_VERSION		1411000
 
-#define XCHAL_CORE_ID			"nxp_rt500_RI2021_8_newlib"	/* alphanum core name
+#define XCHAL_CORE_ID			"nxp_rt500_RI23_11_newlib"	/* alphanum core name
 						   (CoreID) set in the Xtensa
 						   Processor Generator */
 
-#define XCHAL_BUILD_UNIQUE_ID		0x0009B383	/* 22-bit sw build ID */
+#define XCHAL_BUILD_UNIQUE_ID		0x000A98E2	/* 22-bit sw build ID */
 
 /*
  *  These definitions describe the hardware targeted by this software.
@@ -463,6 +465,7 @@
 #define XCHAL_NUM_EXTINTERRUPTS		28	/* num of external interrupts */
 #define XCHAL_NUM_INTLEVELS		4	/* number of interrupt levels
 						   (not including level zero) */
+#define XCHAL_INTERRUPT_RANGE		32	/* range of interrupt numbers */
 
 
 #define XCHAL_HAVE_HIGHPRI_INTERRUPTS	1   /* med/high-pri. interrupts */
@@ -678,14 +681,13 @@
 
 #define XCHAL_XEA_VERSION		2	/* Xtensa Exception Architecture
 						   number: 1 == XEA1 (until T1050)
-							   2 == XEA2 (T1040 onwards)
-							   3 == XEA3 (LX8/NX/SX onwards)
-							   0 == XEAX (extern) or TX */
+							   2 == XEA2 (LX)
+							   3 == XEA3 (NX)
+							   0 == XEA5 (RNX) */
 #define XCHAL_HAVE_XEA1			0	/* Exception Architecture 1 */
 #define XCHAL_HAVE_XEA2			1	/* Exception Architecture 2 */
 #define XCHAL_HAVE_XEA3			0	/* Exception Architecture 3 */
-#define XCHAL_HAVE_XEA5			0  /* Exception Architecture 5 (RNX) */
-#define XCHAL_HAVE_XEAX			0	/* External Exception Arch. */
+#define XCHAL_HAVE_XEA5			0	/* Exception Architecture 5 */
 #define XCHAL_HAVE_EXCEPTIONS		1	/* exception option */
 #define XCHAL_HAVE_IMPRECISE_EXCEPTIONS	0	/* imprecise exception option */
 #define	XCHAL_EXCCAUSE_NUM		64	/* Number of exceptions */
