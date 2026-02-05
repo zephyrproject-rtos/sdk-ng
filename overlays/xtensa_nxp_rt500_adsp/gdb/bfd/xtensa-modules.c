@@ -1,6 +1,6 @@
 /* Xtensa configuration-specific ISA information.
 
-   Copyright (c) 2003-2023 Cadence Design Systems, Inc.
+   Copyright (c) 2003-2025 Cadence Design Systems, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
