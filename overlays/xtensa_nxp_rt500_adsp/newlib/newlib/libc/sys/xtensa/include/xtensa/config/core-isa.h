@@ -7,7 +7,7 @@
 
 /* Xtensa processor core configuration information.
 
-   Copyright (c) 1999-2023 Tensilica Inc.
+   Copyright (c) 1999-2025 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -70,7 +70,6 @@
 #define XCHAL_HAVE_ADDX			1	/* ADDX#/SUBX# instructions */
 #define XCHAL_HAVE_EXCLUSIVE            0	/* L32EX/S32EX instructions */
 #define XCHAL_HAVE_WIDE_BRANCHES	0	/* B*.W18 or B*.W15 instr's */
-#define XCHAL_HAVE_PREDICTED_BRANCHES	0	/* B[EQ/EQZ/NE/NEZ]T instr's */
 #define XCHAL_HAVE_CALL4AND12		1	/* (obsolete option) */
 #define XCHAL_HAVE_ABS			1	/* ABS instruction */
 #define XCHAL_HAVE_RELEASE_SYNC		1	/* L32AI/S32RI instructions */
@@ -111,6 +110,11 @@
 #define XCHAL_HAVE_FUSION_VITERBI	0	/* Fusion Viterbi option */
 #define XCHAL_HAVE_FUSION_SOFTDEMAP	0	/* Fusion Soft Bit Demap option */
 #define XCHAL_HAVE_HIFIPRO		0	/* HiFiPro Audio Engine pkg */
+#define XCHAL_HAVE_HIFI5S		0	/* HiFi5s Audio Engine pkg */
+#define XCHAL_HAVE_HIFI5S_NN_MAC	0	/* HiFi5s Audio Engine NN-MAC option */
+#define XCHAL_HAVE_HIFI5S_VFPU		0	/* HiFi5s Audio Engine Single-Precision VFPU option */
+#define XCHAL_HAVE_HIFI5S_HP_VFPU	0	/* HiFi5s Audio Engine Half-Precision VFPU option */
+#define XCHAL_HAVE_HIFI5S_DP_FPU	0	/* HiFi5s Audio Engine Double-Precision FPU option */
 #define XCHAL_HAVE_HIFI5		0	/* HiFi5 Audio Engine pkg */
 #define XCHAL_HAVE_HIFI5_NN_MAC		0	/* HiFi5 Audio Engine NN-MAC option */
 #define XCHAL_HAVE_HIFI5_VFPU		0	/* HiFi5 Audio Engine Single-Precision VFPU option */
@@ -121,12 +125,23 @@
 #define XCHAL_HAVE_HIFI3_VFPU		0	/* HiFi3 Audio Engine VFPU option */
 #define XCHAL_HAVE_HIFI3Z		0	/* HiFi3Z Audio Engine pkg */
 #define XCHAL_HAVE_HIFI3Z_VFPU	0	/* HiFi3Z Audio Engine VFPU option */
+#define XCHAL_HAVE_HIFI1S		0	/* HiFi1s */
+#define XCHAL_HAVE_HIFI1S_VFPU		0	/* HiFi1s SP-VFPU option */
+#define XCHAL_HAVE_HIFI1S_DP_FPU	0	/* HiFi1s DP-FPU option */
+#define XCHAL_HAVE_HIFI1S_LOW_LATENCY_MAC_FMA		0	/* HiFi1s Low-latency MAC/FMA option */
+#define XCHAL_HAVE_HIFIN		0	/* HiFiN */
+#define XCHAL_HAVE_HIFI6		0 /* HiFi6 Audio Engine pkg */
+#define XCHAL_HAVE_HIFIN_VFPU		0	/* HiFiN SP-VFPU option */
+#define XCHAL_HAVE_HIFIN_DP_VFPU	0	/* HiFiN DP-VFPU option */
+#define XCHAL_HAVE_HIFIN_HP_VFPU	0	/* HiFiN HP-VFPU option */
 #define XCHAL_HAVE_HIFI1		0	/* HiFi1 */
 #define XCHAL_HAVE_HIFI1_VFPU		0	/* HiFi1 VFPU option */
 #define XCHAL_HAVE_HIFI1_LOW_LATENCY_MAC_FMA		0	/* HiFi1 Low-latency MAC/FMA option */
 #define XCHAL_HAVE_HIFI2		0	/* HiFi2 Audio Engine pkg */
 #define XCHAL_HAVE_HIFI2EP		0	/* HiFi2EP */
-#define XCHAL_HAVE_HIFI_MINI		0	
+#define XCHAL_HAVE_HIFI_MINI		0
+#define XCHAL_HIFIN_SIMD16	0   /* simd16 for HiFi6 */
+#define XCHAL_HIFIN_TYPE		0    /* HIFIN ISA TYPE  */
 
 
 
@@ -205,7 +220,7 @@
 
 #define XCHAL_HAVE_VISION	        0     /* Vision P5/P6 */
 #define XCHAL_VISION_SIMD16             0     /* simd16 for Vision P5/P6 */
-#define XCHAL_VISION_TYPE               0     /* Vision P5, P6, Q6, Q7 or Q8 */
+#define XCHAL_VISION_TYPE               0     /* Vision P5, P6, Q6, Q7, Q8 or v331/v341 */
 #define XCHAL_VISION_QUAD_MAC_TYPE      0     /* quad_mac option on Vision P6 */
 #define XCHAL_HAVE_VISION_HISTOGRAM     0     /* histogram option on Vision P5/P6 */
 #define XCHAL_HAVE_VISION_DP_VFPU       0     /* dp_vfpu option on Vision Q7/Q8 */
@@ -216,7 +231,12 @@
 
 #define XCHAL_HAVE_VISIONC	        0     /* Vision C */
 
+#define XCHAL_HAVE_NEUROEDGE	        0     /* NeuroEdge AICP */
+
 #define XCHAL_HAVE_XNNE			0		/* XNNE */
+
+/* Radar FFT */
+#define XCHAL_HAVE_RADAR_FFT          0     /* Radar FFT eTIE module */
 
 
 /*----------------------------------------------------------------------
@@ -239,18 +259,18 @@
 
 #define XCHAL_UNIFIED_LOADSTORE         0
 
-#define XCHAL_SW_VERSION		1411000	/* sw version of this header */
-#define XCHAL_SW_VERSION_MAJOR		14000	/* major ver# of sw          */
-#define XCHAL_SW_VERSION_MINOR		11	/* minor ver# of sw          */
+#define XCHAL_SW_VERSION		1505000	/* sw version of this header */
+#define XCHAL_SW_VERSION_MAJOR		15000	/* major ver# of sw          */
+#define XCHAL_SW_VERSION_MINOR		5	/* minor ver# of sw          */
 #define XCHAL_SW_VERSION_MICRO		0	/* micro ver# of sw          */
-#define XCHAL_SW_MINOR_VERSION		1411000	/* with zeroed micro */
-#define XCHAL_SW_MICRO_VERSION		1411000
+#define XCHAL_SW_MINOR_VERSION		1505000	/* with zeroed micro */
+#define XCHAL_SW_MICRO_VERSION		1505000
 
-#define XCHAL_CORE_ID			"nxp_rt500_RI23_11_newlib"	/* alphanum core name
+#define XCHAL_CORE_ID			"nxp_rt500_RJ25_5_newlib"	/* alphanum core name
 						   (CoreID) set in the Xtensa
 						   Processor Generator */
 
-#define XCHAL_BUILD_UNIQUE_ID		0x000A98E2	/* 22-bit sw build ID */
+#define XCHAL_BUILD_UNIQUE_ID		0x000BE11A	/* 22-bit sw build ID */
 
 /*
  *  These definitions describe the hardware targeted by this software.
@@ -301,10 +321,22 @@
 #define XCHAL_DCACHE_IS_WRITEBACK	0	/* writeback feature */
 #define XCHAL_DCACHE_IS_COHERENT	0	/* MP coherence feature */
 
+
 #define XCHAL_HAVE_PREFETCH		0	/* PREFCTL register */
+
 #define XCHAL_HAVE_PREFETCH_L1		0	/* prefetch to L1 cache */
 #define XCHAL_PREFETCH_CASTOUT_LINES	0	/* dcache pref. castout bufsz */
 #define XCHAL_PREFETCH_ENTRIES		0	/* cache prefetch entries */
+
+
+#define XCHAL_HAVE_DCACHE_PREFETCH	0
+#define XCHAL_HAVE_DCACHE_PREFETCH_L1	0	/* prefetch to L1 cache */
+#define XCHAL_DCACHE_PREFETCH_ENTRIES	0	/* cache prefetch entries */
+
+#define XCHAL_HAVE_ICACHE_PREFETCH	0
+#define XCHAL_HAVE_ICACHE_PREFETCH_L1	0	/* prefetch to L1 cache */
+#define XCHAL_ICACHE_PREFETCH_ENTRIES	0	/* cache prefetch entries */
+
 #define XCHAL_PREFETCH_BLOCK_ENTRIES	0	/* prefetch block streams */
 #define XCHAL_HAVE_CACHE_BLOCKOPS	0	/* block prefetch for caches */
 #define XCHAL_HAVE_CME_DOWNGRADES	0
@@ -324,14 +356,17 @@
 
 #define XCHAL_L1VCACHE_SIZE		0
 
-#define XCHAL_HAVE_L2			0	/* NX L2 cache controller */
-#define XCHAL_HAVE_L2_CACHE		0
-#define XCHAL_NUM_CORES_IN_CLUSTER	0
+#define XCHAL_HAVE_L2			0	/* L2 memory controller */
+#define XCHAL_HAVE_L2_CACHE		0	/* L2 cache configured */
+#define XCHAL_HAVE_L2_RAM		0	/* L2 cache configured */
 
-/* PRID_ID macros are for internal use only ... subject to removal */
-#define PRID_ID_SHIFT           0
-#define PRID_ID_BITS            4
-#define PRID_ID_MASK            0x0000000F
+/* XtSubsystem definitions might vary from L2 definitions */
+#define XCHAL_SUBSYS_NUM_CORES		1		/* Number of cores in Xtsubsystem */
+#define XCHAL_SUBSYS_CORE_ID_SHIFT	0
+#define XCHAL_SUBSYS_CORE_ID_BITS	16		/* PRID bits for CORE_ID */
+#define XCHAL_SUBSYS_CORE_ID_MASK	0x0000FFFF	/* PRID mask for CORE_ID */
+#define XCHAL_SUBSYS_HAVE_CCTIMER	0		/* Multicore timer */
+#define XCHAL_SUBSYS_IPI_NUM_SETS	0		/* Inter-processor interrupt sets */
 
 /*  This one is a form of caching, though not architecturally visible:  */
 #define XCHAL_HAVE_BRANCH_PREDICTION	0	/* branch [target] prediction */
@@ -583,13 +618,14 @@
 #define XCHAL_INTTYPE_MASK_COR_ECC_ERR	0x00000000
 #define XCHAL_INTTYPE_MASK_WWDT		0x00000000
 #define XCHAL_INTTYPE_MASK_FXLK		0x00000000
+#define XCHAL_INTTYPE_MASK_CCTIMER	0x00000000
 
 /*  Interrupt numbers assigned to specific interrupt sources:  */
 #define XCHAL_TIMER0_INTERRUPT		2	/* CCOMPARE0 */
 #define XCHAL_TIMER1_INTERRUPT		3	/* CCOMPARE1 */
 #define XCHAL_TIMER2_INTERRUPT		XTHAL_TIMER_UNCONFIGURED
 #define XCHAL_TIMER3_INTERRUPT		XTHAL_TIMER_UNCONFIGURED
-#define XCHAL_NMI_INTERRUPT		0	/* non-maskable interrupt */
+#define XCHAL_NMI_INTERRUPT		0
 #define XCHAL_PROFILING_INTERRUPT	4
 
 /*  Interrupt numbers for levels at which only one interrupt is configured:  */
@@ -776,6 +812,7 @@
 
 /*  See core-matmap.h header file for more details.  */
 
+#define XCHAL_HAVE_MMU_V3		
 #define XCHAL_HAVE_TLBS			1	/* inverse of HAVE_CACHEATTR */
 #define XCHAL_HAVE_SPANNING_WAY		1	/* one way maps I+D 4GB vaddr */
 #define XCHAL_SPANNING_WAY		0	/* TLB spanning way number */
@@ -800,7 +837,7 @@
 #define XCHAL_MPU_ENTRIES		0
 #define XCHAL_MPU_LOCK			0
 
-#define XCHAL_MPU_ALIGN_REQ		1	/* MPU requires alignment of entries to background map */
+#define XCHAL_MPU_ALIGN_REQ		0	/* MPU requires alignment of entries to background map */
 #define XCHAL_MPU_BACKGROUND_ENTRIES	0	/* number of entries in bg map*/
 #define XCHAL_MPU_BG_CACHEADRDIS	0	/* default CACHEADRDIS for bg */
  
@@ -823,6 +860,7 @@
 				WWDT (Windowed Watchdog Timer)
 ------------------------------------------------------------------------*/
 #define XCHAL_HAVE_WWDT			0
+
 #endif /* !XTENSA_HAL_NON_PRIVILEGED_ONLY */
 
 
