@@ -587,12 +587,6 @@ function(
         set(enable_long_double_test true)
     endif()
 
-    if(build_type MATCHES "minsize")
-        set(newlib_nano_malloc "true")
-    else()
-        set(newlib_nano_malloc "false")
-    endif()
-
     ExternalProject_Add(
         picolibc_${variant}
         SOURCE_DIR ${PICOLIBC_SOURCE_DIR}
@@ -608,7 +602,6 @@ function(
             -Dmultilib=false
             -Dtests-enable-stack-protector=false
             -Dtest-long-double=${enable_long_double_test}
-            -Dnewlib-nano-malloc=${newlib_nano_malloc}
             --prefix <INSTALL_DIR>
             --cross-file <BINARY_DIR>/meson-cross-build.txt
             --buildtype=${build_type}
