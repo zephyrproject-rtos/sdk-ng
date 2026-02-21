@@ -24,7 +24,7 @@ on:
       zephyr-ref:
         description: 'Zephyr Ref (branch, tag, SHA, ...)'
         required: true
-        default: collab-sdk-dev
+        default: main
       host:
         description: 'Host'
         type: choice
@@ -97,7 +97,7 @@ env:
   BUG_URL: 'https://github.com/zephyrproject-rtos/sdk-ng/issues'
   BUNDLE_NAME: Zephyr SDK
   BUNDLE_PREFIX: zephyr-sdk
-  ZEPHYR_REF: collab-sdk-dev
+  ZEPHYR_REF: main
 
 jobs:
   # Setup
@@ -1580,7 +1580,7 @@ jobs:
       fail-fast: false
       matrix:
         testenv: ${{ fromJSON(needs.setup.outputs.testenvs) }}
-        toolchain: [ gnu, llvm ]
+        toolchain: [ gnu ]
         subset: [ 1, 2, 3 ]
 
     env:
@@ -1733,7 +1733,7 @@ jobs:
           popd
         else
           if [ "${{ matrix.toolchain }}" == "gnu" ]; then
-            ./setup.sh -t all -h -c
+            ./setup.sh -t all -h -c -o
           elif [ "${{ matrix.toolchain }}" == "llvm" ]; then
             ./setup.sh -l -h -c
           fi
@@ -2011,7 +2011,11 @@ jobs:
         fi
 
         # Set toolchain variant
-        export ZEPHYR_TOOLCHAIN_VARIANT=zephyr/${{ matrix.toolchain }}
+        if [ "${{ matrix.toolchain }}" == "gnu" ]; then
+          export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
+        else
+          export ZEPHYR_TOOLCHAIN_VARIANT=zephyr/${{ matrix.toolchain }}
+        fi
 
         # Run tests with twister
         TWISTER="${ZEPHYR_ROOT}/scripts/twister"
