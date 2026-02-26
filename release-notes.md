@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 1.0.0-beta1
+## Zephyr SDK 1.0.0-rc1
 
 - general:
 
@@ -13,7 +13,10 @@
     (`zephyr-sdk-VER_HOST_llvm`).
   * Renamed existing "full" GNU toolchain distribution bundle to
     `zephyr-sdk-VER_HOST_gnu`.
+  * Added initial macOS and Windows host tools support consisting of OpenOCD,
+    QEMU, and ARC QEMU.
   * Windows executables now link against UCRT, which supports Unicode.
+  * Added OpenRISC 1000 (or1k) architecture support in the GNU toolchain.
   * Added Intel ACE40 toolchain (`xtensa-intel_ace40_zephyr-elf`).
 
 - cmake:
@@ -26,11 +29,13 @@
 - binutils:
 
   * Updated Binutils to 2.43.1 release.
+  * Added RX v2 and v3 architecture support.
 
 - gcc:
 
   * Updated GCC to 14.3 release.
   * `-mstrict-align` is now set by default when compiling for RISC-V targets.
+  * Added new RX v2 and v3 architecture-based CPU support.
   * Added multi-libs for RV32E Zcb targets.
   * Added multi-libs for RV64GC Bitmanip targets.
   * Added multi-libs for RV64GC large code model targets.
@@ -39,11 +44,19 @@
 - gdb:
 
   * Updated GDB to 16.2 release.
+  * Added RX v2 and v3 architecture support.
 
 - qemu:
 
   * Updated QEMU to 10.0.2 release.
   * Fixed ARC64 emulation bugs for double load/store operations.
+  * Fixed Xilinx CANFD interrupt handling.
+
+- openocd:
+
+  * Added preliminary Bouffalo Lab chip support.
+  * Added Silicon Labs Series-2 support.
+  * Improved MAX32 device flashing support.
 
 ## Zephyr SDK 0.17.1
 
