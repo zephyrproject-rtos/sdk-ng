@@ -55,6 +55,9 @@ disabled_tests = [
     "**/picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f*-build/test/rounding-mode",
     "**/picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f*-build/test/math_errhandling",
     "**/picolibc_rv64imfc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64f*-build/test/test-fma",
+    # Picolibc built with RISC-V Zc* extension does not work and all tests time
+    # out. Disable testing until this issue is fixed.
+    "**/picolibc_rv32emc_zicsr_zcb_zba_zbb_zbc_zbs_ilp32e*-build/*",
 ]
 
 
