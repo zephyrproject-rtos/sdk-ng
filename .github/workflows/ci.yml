@@ -527,6 +527,7 @@ jobs:
 
         # Install dependencies
         brew install bison
+        brew install python@3.12
 
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
@@ -537,8 +538,8 @@ jobs:
         # Make Homebrew Bison available in PATH
         echo "${HOMEBREW_PREFIX}/opt/bison/bin" >> $GITHUB_PATH
 
-        # Make Python 3.10 available in PATH
-        echo "${HOMEBREW_PREFIX}/opt/python@3.10/bin" >> $GITHUB_PATH
+        # Make Python 3.12 available in PATH
+        echo "${HOMEBREW_PREFIX}/opt/python@3.12/bin" >> $GITHUB_PATH
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
