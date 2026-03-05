@@ -706,8 +706,8 @@ jobs:
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
-          # Use Python 3.10.11
-          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.10.11
+          # Use Python 3.12.10
+          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.12.10
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
