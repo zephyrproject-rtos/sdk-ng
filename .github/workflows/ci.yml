@@ -1939,8 +1939,7 @@ jobs:
                 PLATFORM_ARGS+="-p mimxrt595_evk/mimxrt595s/f1 "
                 ;;
               xtensa-nxp_rt600_adsp_zephyr-elf)
-                # xtensa-nxp_rt600_adsp_zephyr-elf is untested because no
-                # upstream user platform is currently available.
+                PLATFORM_ARGS+="-p mimxrt685_evk/mimxrt685s/hifi4 "
                 ;;
               xtensa-nxp_rt700_hifi1_zephyr-elf)
                 # xtensa-nxp_rt700_hifi1_zephyr-elf is untested because no
