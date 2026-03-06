@@ -1921,8 +1921,7 @@ jobs:
                 PLATFORM_ARGS+="-p mt8188/mt8188/adsp "
                 ;;
               xtensa-mtk_mt8196_adsp_zephyr-elf)
-                # Not merged yet, see Zephyr #81154
-                #PLATFORM_ARGS+="-p mt8196/mt8196/adsp"
+                PLATFORM_ARGS+="-p mt8196/mt8196/adsp "
                 ;;
               xtensa-mtk_mt8365_adsp_zephyr-elf)
                 # xtensa-mtk_mt8365_adsp_zephyr-elf is untested because no
