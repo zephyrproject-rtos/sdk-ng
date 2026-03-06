@@ -359,6 +359,7 @@ jobs:
           -r ${ZEPHYR_ROOT}/scripts/requirements.txt \
           -r ${ZEPHYR_WORKSPACE}/bootloader/mcuboot/scripts/requirements.txt \
           -r ${ZEPHYR_WORKSPACE}/modules/tee/tf-m/trusted-firmware-m/tools/requirements.txt \
+          -r https://raw.githubusercontent.com/renode/renode/refs/tags/v1.16.1/tests/requirements.txt \
           'esptool>=5.0.2' \
           nrf-regtool~=9.0.1 \
           protobuf \
