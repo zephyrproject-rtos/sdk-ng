@@ -1924,9 +1924,7 @@ jobs:
                 PLATFORM_ARGS+="-p mt8196/mt8196/adsp "
                 ;;
               xtensa-mtk_mt8365_adsp_zephyr-elf)
-                # xtensa-mtk_mt8365_adsp_zephyr-elf is untested because no
-                # upstream user platform is currently available.
-                #PLATFORM_ARGS+="-p mt8365/mt8365/adsp"
+                PLATFORM_ARGS+="-p mt8365/mt8365/adsp "
                 ;;
               xtensa-nxp_imx_adsp_zephyr-elf)
                 PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
