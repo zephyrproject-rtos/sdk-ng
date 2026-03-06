@@ -1945,8 +1945,7 @@ jobs:
                 PLATFORM_ARGS+="-p mimxrt700_evk/mimxrt798s/hifi1 "
                 ;;
               xtensa-nxp_rt700_hifi4_zephyr-elf)
-                # xtensa-nxp_rt700_hifi4_zephyr-elf is untested because no
-                # upstream user platform is currently available.
+                PLATFORM_ARGS+="-p mimxrt700_evk/mimxrt798s/hifi4 "
                 ;;
               xtensa-sample_controller_zephyr-elf)
                 PLATFORM_ARGS+="-p qemu_xtensa/dc233c "
