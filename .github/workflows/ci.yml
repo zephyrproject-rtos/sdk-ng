@@ -1951,9 +1951,7 @@ jobs:
                 PLATFORM_ARGS+="-p qemu_xtensa/dc233c "
                 ;;
               xtensa-sample_controller32_zephyr-elf)
-                # xtensa-sample_controller32_zephyr-elf is untested because no
-                # upstream user platform is currently available.
-                # PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
+                PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
                 ;;
             esac
           done
