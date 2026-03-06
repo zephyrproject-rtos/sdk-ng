@@ -1894,7 +1894,7 @@ jobs:
                 PLATFORM_ARGS+="-p esp32s2_saola "
                 ;;
               xtensa-espressif_esp32s3_zephyr-elf)
-                PLATFORM_ARGS+="-p esp32s3_devkitm/esp32s3/procpu "
+                PLATFORM_ARGS+="-p esp32s3_devkitc/esp32s3/procpu "
                 ;;
               xtensa-intel_ace15_mtpm_zephyr-elf)
                 PLATFORM_ARGS+="-p intel_adsp/ace15_mtpm "
