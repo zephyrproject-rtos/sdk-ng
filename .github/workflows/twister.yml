@@ -29,6 +29,10 @@ on:
         - macos-aarch64
         - windows-x86_64
         default: linux-x86_64
+      linux-image-version:
+        description: 'Linux Image Version'
+        required: true
+        default: main
       zephyr-remote:
         description: 'Zephyr Remote'
         required: true
@@ -71,15 +75,16 @@ jobs:
     steps:
     - name: Record run parameters
       run: |
-        cat >> $GITHUB_STEP_SUMMARY <<EOF
+        cat >> $GITHUB_STEP_SUMMARY <<'EOF'
         ### Run Parameters
 
         | Parameter | Value |
         | :--- | :--- |
         | SDK Build Run ID | ${{ github.event.inputs.sdk-build-run-id }} |
-        | SDK Bundle Base Name | ${{ github.event.inputs.zephyr-remote }} |
+        | SDK Bundle Base Name | ${{ github.event.inputs.sdk-bundle-basename }} |
         | SDK Toolchain | ${{ github.event.inputs.sdk-toolchain }} |
         | Host | ${{ github.event.inputs.host }} |
+        | Linux Image Version | ${{ github.event.inputs.linux-image-version }} |
         | Zephyr Remote | ${{ github.event.inputs.zephyr-remote }} |
         | Zephyr Ref | ${{ github.event.inputs.zephyr-ref }} |
         | Twister Mode | ${{ github.event.inputs.twister-mode }} |
@@ -93,11 +98,11 @@ jobs:
         case "${{ github.event.inputs.host }}" in
           linux-x86_64)
             runner="zephyr-runner-v2-linux-x64-4xlarge"
-            container="ghcr.io/zephyrproject-rtos/ci:v0.28.3"
+            container="ghcr.io/zephyrproject-rtos/ci:${{ github.event.inputs.linux-image-version }}"
             ;;
           linux-aarch64)
             runner="zephyr-runner-v2-linux-arm64-4xlarge"
-            container="ghcr.io/zephyrproject-rtos/ci:v0.28.3"
+            container="ghcr.io/zephyrproject-rtos/ci:${{ github.event.inputs.linux-image-version }}"
             ;;
           macos-x86_64)
             runner="zephyr-runner-v2-macos-arm64-2xlarge"
