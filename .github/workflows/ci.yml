@@ -527,6 +527,7 @@ jobs:
 
         # Install dependencies
         brew install bison
+        brew install python@3.12
 
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
@@ -537,8 +538,8 @@ jobs:
         # Make Homebrew Bison available in PATH
         echo "${HOMEBREW_PREFIX}/opt/bison/bin" >> $GITHUB_PATH
 
-        # Make Python 3.10 available in PATH
-        echo "${HOMEBREW_PREFIX}/opt/python@3.10/bin" >> $GITHUB_PATH
+        # Make Python 3.12 available in PATH
+        echo "${HOMEBREW_PREFIX}/opt/python@3.12/bin" >> $GITHUB_PATH
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
@@ -705,8 +706,8 @@ jobs:
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
         EOF
         elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
-          # Use Python 3.10.11
-          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.10.11
+          # Use Python 3.12.10
+          export LIBPYTHON_KIT_ROOT=${GITHUB_WORKSPACE}/crosskit/crosskit-mingw-w64-libpython/python-3.12.10
           # Set Python configuration resolver for GDB
           cat <<EOF >> .config
         CT_GDB_CROSS_PYTHON_BINARY="${LIBPYTHON_KIT_ROOT}/bin/python"
@@ -1590,9 +1591,9 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        # Force Python 3.10, which is the minimum Python version supported by
+        # Force Python 3.12, which is the minimum Python version supported by
         # Zephyr and intended to be used with Zephyr SDK.
-        python-version: '3.10'
+        python-version: '3.12'
 
     - name: Set up test environment (Linux)
       if: ${{ runner.os == 'Linux' }}
@@ -1893,7 +1894,7 @@ jobs:
                 PLATFORM_ARGS+="-p esp32s2_saola "
                 ;;
               xtensa-espressif_esp32s3_zephyr-elf)
-                PLATFORM_ARGS+="-p esp32s3_devkitm/esp32s3/procpu "
+                PLATFORM_ARGS+="-p esp32s3_devkitc/esp32s3/procpu "
                 ;;
               xtensa-intel_ace15_mtpm_zephyr-elf)
                 PLATFORM_ARGS+="-p intel_adsp/ace15_mtpm "
@@ -1914,21 +1915,16 @@ jobs:
                 PLATFORM_ARGS+="-p intel_adsp/cavs25 "
                 ;;
               xtensa-mtk_mt8195_adsp_zephyr-elf)
-                # Not merged yet, see Zephyr #81154
-                #PLATFORM_ARGS+="-p mt8195/mt8195/adsp"
+                PLATFORM_ARGS+="-p mt8195/mt8195/adsp "
                 ;;
               xtensa-mtk_mt818x_adsp_zephyr-elf)
-                # Not merged yet, see Zephyr #81154
-                #PLATFORM_ARGS+="-p mt818x/mt818x/adsp"
+                PLATFORM_ARGS+="-p mt8188/mt8188/adsp "
                 ;;
               xtensa-mtk_mt8196_adsp_zephyr-elf)
-                # Not merged yet, see Zephyr #81154
-                #PLATFORM_ARGS+="-p mt8196/mt8196/adsp"
+                PLATFORM_ARGS+="-p mt8196/mt8196/adsp "
                 ;;
               xtensa-mtk_mt8365_adsp_zephyr-elf)
-                # xtensa-mtk_mt8365_adsp_zephyr-elf is untested because no
-                # upstream user platform is currently available.
-                #PLATFORM_ARGS+="-p mt8365/mt8365/adsp"
+                PLATFORM_ARGS+="-p mt8365/mt8365/adsp "
                 ;;
               xtensa-nxp_imx_adsp_zephyr-elf)
                 PLATFORM_ARGS+="-p imx8qm_mek/mimx8qm6/adsp "
@@ -1943,24 +1939,19 @@ jobs:
                 PLATFORM_ARGS+="-p mimxrt595_evk/mimxrt595s/f1 "
                 ;;
               xtensa-nxp_rt600_adsp_zephyr-elf)
-                # xtensa-nxp_rt600_adsp_zephyr-elf is untested because no
-                # upstream user platform is currently available.
+                PLATFORM_ARGS+="-p mimxrt685_evk/mimxrt685s/hifi4 "
                 ;;
               xtensa-nxp_rt700_hifi1_zephyr-elf)
-                # xtensa-nxp_rt700_hifi1_zephyr-elf is untested because no
-                # upstream user platform is currently available.
+                PLATFORM_ARGS+="-p mimxrt700_evk/mimxrt798s/hifi1 "
                 ;;
               xtensa-nxp_rt700_hifi4_zephyr-elf)
-                # xtensa-nxp_rt700_hifi4_zephyr-elf is untested because no
-                # upstream user platform is currently available.
+                PLATFORM_ARGS+="-p mimxrt700_evk/mimxrt798s/hifi4 "
                 ;;
               xtensa-sample_controller_zephyr-elf)
                 PLATFORM_ARGS+="-p qemu_xtensa/dc233c "
                 ;;
               xtensa-sample_controller32_zephyr-elf)
-                # xtensa-sample_controller32_zephyr-elf is untested because no
-                # upstream user platform is currently available.
-                # PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
+                PLATFORM_ARGS+="-p qemu_xtensa/sample_controller32/mpu "
                 ;;
             esac
           done
