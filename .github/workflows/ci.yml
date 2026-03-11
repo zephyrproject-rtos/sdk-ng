@@ -1628,7 +1628,7 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: |
         # Install required system packages
-        choco install ccache dtc-msys2 gh gperf jq ninja wget 7zip
+        choco install ccache dtc-msys2 gperf jq ninja wget 7zip
 
         # Enable long paths support for Git
         git config --system core.longpaths true
