@@ -1,6 +1,6 @@
 # Notes / Changes in various releases
 
-## Zephyr SDK 1.0.0-rc1
+## Zephyr SDK 1.0.0
 
 - general:
 
@@ -40,11 +40,15 @@
   * Added multi-libs for RV64GC Bitmanip targets.
   * Added multi-libs for RV64GC large code model targets.
   * Added multi-libs for RV64GCV targets.
+  * Fixed ARC64 incorrect "round" intrinsic.
+  * Fixed ARC shifting issue for devices without without barrel shifter.
 
 - gdb:
 
   * Updated GDB to 16.2 release.
   * Added RX v2 and v3 architecture support.
+  * Python scripting-enabled GDB (`gdb-py`) now links against Python 3.12, which
+    is the minimum Python version supported by Zephyr.
 
 - qemu:
 
