@@ -117,7 +117,7 @@ jobs:
 
         # Resolve subset count
         if [ "${{ github.event.inputs.subset-count }}" != "" ]; then
-          size="${{ github.event.inputs.subset_count }}"
+          size="${{ github.event.inputs.subset-count }}"
         else
           case "${{ github.event.inputs.twister-mode }}" in
             integration) size="20";;
