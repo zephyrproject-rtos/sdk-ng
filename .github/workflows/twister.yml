@@ -139,6 +139,7 @@ jobs:
     runs-on:
       group: ${{ needs.prep.outputs.runner }}
     container: ${{ needs.prep.outputs.container }}
+    timeout-minutes: 1440
 
     defaults:
       run:
