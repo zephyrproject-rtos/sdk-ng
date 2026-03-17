@@ -106,6 +106,8 @@ BUILD_DIR="${WORKSPACE}"/build-${CONFIG_FILE_NAME}
 
 pushd "${WORKSPACE}" || exit 1
 
+mkdir -p "${WORKSPACE}/sources"
+
 mkdir -p "${BUILD_DIR}"
 pushd "${BUILD_DIR}" || exit 1
 
