@@ -30,7 +30,7 @@ The following host tools are available as part of the Zephyr SDK:
 The Zephyr SDK bundle releases are available for the following host platforms:
 
 - Linux (AArch64, x86-64)
-- macOS (AArch64, x86-64)
+- macOS (AArch64)
 - Windows (x86-64)
 
 These binaries can be downloaded from
