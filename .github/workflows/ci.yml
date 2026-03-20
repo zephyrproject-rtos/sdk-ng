@@ -1125,6 +1125,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y lz4 zstd
 
+        # Create and activate Python 3.12 virtual environment
+        #
+        # NOTE: This is necessary because BitBake requires Python 3.8 or above,
+        #       and the sdk-build image is based on Debian 10, which ships with
+        #       Python 3.7.
+        python3.12 -m venv venv
+        source venv/bin/activate
+
         # Check out Poky
         ${POKY_BASE}/scripts/meta-zephyr-sdk-clone.sh
 
