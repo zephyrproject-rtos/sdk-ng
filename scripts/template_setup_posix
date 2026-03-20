@@ -322,9 +322,11 @@ fi
 # Create links for old Zephyr versions
 if [ "${do_old_zephyr}" = "y" ]; then
   echo "Creating links for old Zephyr bisectability ..."
-  ln -sr gnu/* . || assert_rc "ERROR: Creating toolchain links" 50
-  ln -sr cmake/zephyr/gnu/* cmake/zephyr || assert_rc "ERROR: Creating cmake links" 50
-  ln -sr hosttools/* . || assert_rc "ERROR: Creating hosttools links" 50
+  ln -s gnu/* . || assert_rc "ERROR: Creating toolchain links" 50
+  pushd cmake/zephyr
+  ln -s gnu/* . || assert_rc "ERROR: Creating cmake links" 50
+  popd
+  ln -s hosttools/* . || assert_rc "ERROR: Creating hosttools links" 50
   echo
 fi
 
