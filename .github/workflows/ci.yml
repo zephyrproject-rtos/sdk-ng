@@ -1163,6 +1163,14 @@ jobs:
       run: |
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
           BUILD_PRECMD="arch -x86_64"
+        elif [ "${{ matrix.host.name }}" == "windows-x86_64" ]; then
+          # Create and activate Python 3.12 virtual environment
+          #
+          # NOTE: This is necessary because QEMU build requires Python 3.8 or
+          #       above, and the sdk-build image is based on Debian 10, which
+          #       ships with Python 3.7.
+          python3.12 -m venv venv
+          source venv/bin/activate
         fi
 
         # Create output directory
