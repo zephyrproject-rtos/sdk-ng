@@ -1171,6 +1171,14 @@ jobs:
           #       ships with Python 3.7.
           python3.12 -m venv venv
           source venv/bin/activate
+
+          # Install required Python packages
+          pip install packaging
+
+          # Install meson inside virtual environment to ensure that QEMU build
+          # picks up the correct Python installation.
+          pip install meson
+          hash -r
         fi
 
         # Create output directory
