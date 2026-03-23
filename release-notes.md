@@ -1,5 +1,28 @@
 # Notes / Changes in various releases
 
+## Zephyr SDK 1.0.1
+
+- general:
+
+  * Linux Python-enabled GDB (`gdb-py`) now correctly links against Python
+    3.12.
+  * Fixed `ln: illegal option -- r` error when creating links for old Zephyr
+    bisectability on macOS.
+
+- binutils:
+
+  * Fixed OpenRISC TLS relocation symbol handling. Refer to the
+    [Binutils PR #26] for more details.
+
+- gcc:
+
+  * Fixed Xtensa code generation for the SoCs with split instruction and data
+    buses (e.g. ESP32 and ESP32-S3). Refer to the [SDK PR #1102] for more
+    details.
+
+[Binutils PR #26]: https://github.com/zephyrproject-rtos/binutils-gdb/pull/26
+[SDK PR #1102]: https://github.com/zephyrproject-rtos/sdk-ng/pull/1102
+
 ## Zephyr SDK 1.0.0
 
 - general:
