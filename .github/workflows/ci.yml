@@ -1566,7 +1566,7 @@ jobs:
 
     steps:
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         # Force Python 3.12, which is the minimum Python version supported by
         # Zephyr and intended to be used with Zephyr SDK.
