@@ -112,7 +112,7 @@ jobs:
 
     steps:
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
         persist-credentials: false
@@ -537,7 +537,7 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -862,7 +862,7 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -1047,7 +1047,7 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -1283,7 +1283,7 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -1349,7 +1349,7 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: repository
         persist-credentials: false
