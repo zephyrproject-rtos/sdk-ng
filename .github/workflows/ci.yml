@@ -517,8 +517,8 @@ jobs:
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
 
         # Install dependencies
-        brew install bison
-        brew install python@3.12
+        brew install -q bison
+        brew install -q python@3.12
 
         # Install dependencies for cross compilation
         if [ "${{ matrix.host.name }}" == "macos-x86_64" ]; then
@@ -855,7 +855,7 @@ jobs:
         hdiutil mount ${RUNNER_TEMP}/Workspace.sparseimage -mountpoint ${WORKSPACE}
 
         # Install dependencies
-        brew install qemu
+        brew install -q qemu
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
@@ -1019,7 +1019,7 @@ jobs:
           BREW="/usr/local/bin/brew"
 
           # Install x86-64 build tools
-          ${BREW} install \
+          ${BREW} install -q \
             ccache \
             cmake \
             gcc \
@@ -1031,7 +1031,7 @@ jobs:
         fi
 
         # Install required libraries
-        ${BREW} install \
+        ${BREW} install -q \
           glib \
           gmp \
           jpeg-turbo \
@@ -1595,7 +1595,7 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         # Install required system packages
-        brew install gh
+        brew install -q gh
 
         # Set environment variables
         echo "TAR=gtar" >> $GITHUB_ENV
