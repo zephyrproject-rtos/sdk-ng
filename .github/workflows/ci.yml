@@ -592,7 +592,7 @@ jobs:
         ${CT_NG} version
 
     - name: Download version information
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: version
         path: ${{ runner.temp }}
@@ -1355,31 +1355,31 @@ jobs:
         persist-credentials: false
 
     - name: Download version file
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: version
         path: artifacts
 
     - name: Download CMake artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: cmake_${{ matrix.host.name }}
         path: artifacts
 
     - name: Download host tools artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: hosttools_${{ matrix.host.name }}
         path: artifacts
 
     - name: Download GNU toolchain artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: toolchain_gnu_${{ matrix.host.name }}_*
         path: artifacts
 
     - name: Download LLVM toolchain artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: toolchain_llvm_${{ matrix.host.name }}
         path: artifacts
@@ -1639,7 +1639,7 @@ jobs:
         echo "VENV_ACTIVATE=${VENV_ACTIVATE}" >> $GITHUB_ENV
 
     - name: Download version information
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: version
         path: artifacts
