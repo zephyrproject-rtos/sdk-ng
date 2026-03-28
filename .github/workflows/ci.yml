@@ -127,6 +127,7 @@ jobs:
       with:
         name: version
         path: version
+        archive: false
 
     - name: Generate matrix
       id: generate-matrix
@@ -1391,7 +1392,7 @@ jobs:
         EXT=${{ matrix.host.archive }}
         REPO_ROOT=${GITHUB_WORKSPACE}/repository
         ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts
-        VERSION=$(<${ARTIFACT_ROOT}/version/version)
+        VERSION=$(<${ARTIFACT_ROOT}/version)
         ARCHIVE_DIR=${{ env.BUNDLE_PREFIX }}-${VERSION}
         ARCHIVE_NAME=${{ env.BUNDLE_PREFIX }}-${VERSION}_${HOST}
 
