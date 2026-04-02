@@ -305,7 +305,7 @@ if [ "${do_hosttools}" = "y" ]; then
       popd
       ;;
     macos-*)
-      echo "SKIPPED: macOS host tools are not available yet."
+      # Nothing to do for macOS
       ;;
   esac
   echo
