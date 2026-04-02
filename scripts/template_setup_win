@@ -218,7 +218,7 @@ if [%DO_LLVM_TOOLCHAIN%] neq [] (
 REM # Install host tools
 if [%DO_HOSTTOOLS%] neq [] (
   echo Installing host tools ...
-  echo SKIPPED: Windows host tools are not available yet.
+  REM # Nothing to do for now
   echo.
 )
 
