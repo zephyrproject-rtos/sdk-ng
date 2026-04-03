@@ -164,7 +164,7 @@ jobs:
         echo "ZEPHYR_RUNNER_CLOUD_POD = ${ZEPHYR_RUNNER_CLOUD_POD}"
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         # Force Python 3.12, which is the minimum Python version supported by
         # Zephyr and intended to be used with Zephyr SDK.
@@ -253,23 +253,12 @@ jobs:
         echo "BUNDLE_EXT=${BUNDLE_EXT}" >> $GITHUB_ENV
 
     - name: Download distribution bundle
-      # FIXME: download-artifact is buggy and may fail to download some files
-      #        without any errors. For more details, refer to the GitHub issue
-      #        actions/download-artifact#396.
-      # uses: actions/download-artifact@v4
-      # with:
-      #   name: ${{ env.BUNDLE_NAME }}
-      #   path: artifacts
-      #   run-id: ${{ github.event.inputs.sdk-build-run-id }}
-      #   github-token: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh run download \
-          -R ${GITHUB_REPOSITORY} \
-          ${{ github.event.inputs.sdk-build-run-id }} \
-          -n ${BUNDLE_NAME} \
-          -D artifacts
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ env.BUNDLE_NAME }}
+        path: artifacts
+        run-id: ${{ github.event.inputs.sdk-build-run-id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Install distribution bundle
       run: |
@@ -418,7 +407,7 @@ jobs:
 
     - name: Publish test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: twister_result_subset_${{ matrix.subset }}
         if-no-files-found: ignore
