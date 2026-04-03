@@ -1995,6 +1995,22 @@ add_library_variants_for_cpu(
     RAM_SIZE 0x1000000
     STACK_SIZE 4K
 )
+add_library_variants_for_cpu(
+    rv32emc_zicsr_zcb_zba_zbb_zbc_zbs_ilp32e
+    COMPILE_FLAGS "-march=rv32emc_zicsr_zcb_zba_zbb_zbc_zbs -mabi=ilp32e"
+    MULTILIB_FLAGS "--target=riscv32-unknown-none-elf -march=rv32e2p0_m2p0_c2p0_zicsr2p0_zmmul1p0_zca1p0_zcb1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0 -mabi=ilp32e"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv32"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
 ## RV64I
 add_library_variants_for_cpu(
     rv64i_zicsr_zifencei_lp64
@@ -2080,6 +2096,22 @@ add_library_variants_for_cpu(
     rv64imafdc_zicsr_zifencei_lp64d
     COMPILE_FLAGS "-march=rv64imafdc_zicsr_zifencei -mabi=lp64d -mcmodel=medany"
     MULTILIB_FLAGS "--target=riscv64-unknown-none-elf -march=rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zmmul1p0 -mabi=lp64d"
+    PICOLIBC_BUILD_TYPE "release"
+    QEMU_MACHINE "none"
+    QEMU_CPU "rv64"
+    QEMU_PARAMS "-m 1G"
+    BOOT_FLASH_ADDRESS 0x00000000
+    BOOT_FLASH_SIZE 0x1000
+    FLASH_ADDRESS 0x20000000
+    FLASH_SIZE 0x1000000
+    RAM_ADDRESS 0x21000000
+    RAM_SIZE 0x1000000
+    STACK_SIZE 4K
+)
+add_library_variants_for_cpu(
+    rv64imafdc_zicsr_zifencei_zba_zbb_zbc_zbs_lp64d
+    COMPILE_FLAGS "-march=rv64imafdc_zicsr_zifencei_zba_zbb_zbc_zbs -mabi=lp64d -mcmodel=medany"
+    MULTILIB_FLAGS "--target=riscv64-unknown-none-elf -march=rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zmmul1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0 -mabi=lp64d"
     PICOLIBC_BUILD_TYPE "release"
     QEMU_MACHINE "none"
     QEMU_CPU "rv64"
