@@ -8,7 +8,7 @@ on:
     - main
     - topic-*
     - v*-branch
-  pull_request_target:
+  pull_request:
     branches:
     - main
     - topic-*
@@ -90,7 +90,7 @@ on:
         - test-post
 
 concurrency:
-  group: ${{ github.event_name == 'workflow_dispatch' && github.run_id || github.head_ref || github.ref }}
+  group: ${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 env:
@@ -112,17 +112,8 @@ jobs:
 
     steps:
     - name: Check out source code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
-        persist-credentials: false
-
-    - name: Check out source code (pull request)
-      if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
         persist-credentials: false
 
@@ -141,7 +132,7 @@ jobs:
       id: generate-matrix
       run: |
         # Set build configurations
-        if [ "${{ github.event_name }}" == "pull_request_target" ]; then
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
           # Set configurations based on the pull request labels
           ${{ contains(github.event.pull_request.labels.*.name, 'ci-linux-x86_64') }}   && build_host_linux_x86_64="y"
           ${{ contains(github.event.pull_request.labels.*.name, 'ci-linux-aarch64') }}  && build_host_linux_aarch64="y"
@@ -546,16 +537,8 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        persist-credentials: false
-
-    - name: Check out source code (pull request)
-      if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
 
     - name: Check out submodules
@@ -877,16 +860,8 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        persist-credentials: false
-
-    - name: Check out source code (pull request)
-      if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
 
     - name: Check out submodules
@@ -1070,16 +1045,8 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        persist-credentials: false
-
-    - name: Check out source code (pull request)
-      if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
 
     - name: Check out submodules
@@ -1313,16 +1280,8 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        persist-credentials: false
-
-    - name: Check out source code (pull request)
-      if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
 
     - name: Build CMake package
@@ -1387,17 +1346,8 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v4
       with:
-        path: repository
-        persist-credentials: false
-
-    - name: Check out source code (pull request)
-      if: ${{ github.event_name == 'pull_request_target' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
         path: repository
         persist-credentials: false
 
