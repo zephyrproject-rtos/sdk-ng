@@ -598,6 +598,7 @@ jobs:
         path: ${{ runner.temp }}
 
     - name: Configure AWS Credentials
+      if: ${{ github.event_name != 'pull_request' }}
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
@@ -614,7 +615,7 @@ jobs:
         # Download cached source files
         mkdir -p ${WORKSPACE}/sources
         pushd ${WORKSPACE}/sources
-        aws s3 sync ${SRC_CACHE_URI} .
+        aws s3 sync --no-sign-request ${SRC_CACHE_URI} .
         popd
 
         # Export environment variables
@@ -773,6 +774,7 @@ jobs:
         limit-access-to-actor: true
 
     - name: Sync downloaded source files to cache
+      if: ${{ github.event_name != 'pull_request' }}
       continue-on-error: true
       run: |
         pushd ${WORKSPACE}/sources
@@ -1059,6 +1061,7 @@ jobs:
         git submodule update --depth=1 --recursive openocd
 
     - name: Configure AWS Credentials
+      if: ${{ github.event_name != 'pull_request' }}
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
@@ -1077,7 +1080,7 @@ jobs:
         # Download cached source files
         mkdir -p ${POKY_DOWNLOADS}
         pushd ${POKY_DOWNLOADS}
-        aws s3 sync ${SRC_CACHE_URI} .
+        aws s3 sync --no-sign-request ${SRC_CACHE_URI} .
         popd
 
         # Export environment variables
@@ -1227,7 +1230,7 @@ jobs:
         limit-access-to-actor: true
 
     - name: Sync downloaded source files to cache (Linux)
-      if: startsWith(matrix.host.name, 'linux-')
+      if: ${{ github.event_name != 'pull_request' }} && startsWith(matrix.host.name, 'linux-')
       continue-on-error: true
       run: |
         pushd ${POKY_DOWNLOADS}
