@@ -10,7 +10,6 @@ The toolchains for the following target architectures are supported:
 - ARM (32-bit and 64-bit; ARMv6, ARMv7, ARMv8; A/R/M Profiles)
 - Microblaze (32-bit)
 - MIPS (32-bit and 64-bit)
-- Nios II
 - OpenRISC 1000
 - RISC-V (32-bit and 64-bit; RV32I, RV32E, RV64I)
 - RX
