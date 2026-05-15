@@ -556,6 +556,16 @@ jobs:
         git submodule update --depth=1 --recursive gcc_arc
         git submodule update --depth=1 --recursive picolibc
 
+    - name: Install pthread stub headers for POSIX threading support
+      run: |
+        # gthr-posix.h requires <pthread.h> in the sysroot. Install a
+        # declarations-only stub into picolibc's include directory so it
+        # gets installed to the sysroot before the final GCC build.
+        # Real implementations are provided by the target OS (e.g.
+        # Zephyr's CONFIG_POSIX_API).
+        cp ${GITHUB_WORKSPACE}/stubs/pthread.h \
+           ${GITHUB_WORKSPACE}/picolibc/newlib/libc/include/pthread.h
+
     - name: Build crosstool-ng
       run: |
         # Configure macOS build environment
