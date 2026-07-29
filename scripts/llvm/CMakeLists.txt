@@ -608,7 +608,6 @@ function(
             -Dmultilib=false
             -Dtests-enable-stack-protector=false
             -Dtest-long-double=${enable_long_double_test}
-            -Dnewlib-nano-malloc=${newlib_nano_malloc}
             --prefix <INSTALL_DIR>
             --cross-file <BINARY_DIR>/meson-cross-build.txt
             --buildtype=${build_type}
