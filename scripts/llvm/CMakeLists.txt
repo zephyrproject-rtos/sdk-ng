@@ -483,7 +483,12 @@ if(LIBS_DEPEND_ON_TOOLS)
     )
 endif()
 
+# libc++ used to work out that it was being built against picolibc or newlib
+# by looking for <picolibc.h> and _NEWLIB_VERSION. That detection was removed
+# in LLVM 22; the C library now has to be named at configure time, which is
+# what defines _LIBCPP_LIBC_NEWLIB and so selects the newlib ctype table.
 set(picolibc_specific_runtimes_options
+    -DRUNTIMES_USE_LIBC=picolibc
     -DLIBCXXABI_ENABLE_THREADS=OFF
     -DLIBCXX_TEST_CONFIG=${CMAKE_CURRENT_SOURCE_DIR}/test-support/llvm-libc++-picolibc.cfg.in
     -DLIBCXXABI_TEST_CONFIG=${CMAKE_CURRENT_SOURCE_DIR}/test-support/llvm-libc++abi-picolibc.cfg.in
@@ -496,6 +501,7 @@ set(picolibc_specific_runtimes_options
 )
 
 set(newlib_specific_runtimes_options
+    -DRUNTIMES_USE_LIBC=newlib
     -DLIBCXXABI_ENABLE_THREADS=OFF
     -DLIBCXX_ENABLE_THREADS=OFF
     -DLIBCXX_ENABLE_MONOTONIC_CLOCK=OFF
