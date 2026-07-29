@@ -41,6 +41,7 @@ SRCREV = "${ZEPHYR_SDK_QEMU_SRCREV}"
 SRC_URI = "gitsm://github.com/zephyrproject-rtos/qemu.git;protocol=https;nobranch=1 \
            https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.16.3-2/bios-128k.bin;name=bios-128k \
            https://github.com/zephyrproject-rtos/seabios/releases/download/zephyr-v1.16.3-2/bios-256k.bin;name=bios-256k \
+           file://fixedmeson.patch \
            file://powerpc_rom.bin \
            file://run-ptest \
            file://qemu-guest-agent.init \

@@ -1,0 +1,42 @@
+Fall back to the meson on PATH when the build venv has none
+
+OpenEmbedded's python3-native patches Lib/sysconfig.py so that 'base' and
+'platbase' always come from the build configuration prefix rather than
+sys.prefix (see poky's
+meta/recipes-devtools/python/python3/0001-Lib-sysconfig.py-use-prefix-value-from-build-configu.patch).
+As a result sysconfig.get_path('purelib'/'scripts') inside QEMU's pyvenv
+resolves to recipe-sysroot-native rather than to the venv, so:
+
+  - mkvenv considers the sysroot's meson-native to live "inside" the venv,
+    so _is_system_package() returns False and it reinstalls meson,
+  - pip and generate_console_scripts() then write the package and the
+    'meson' console script into recipe-sysroot-native/usr/{lib,bin},
+
+and pyvenv/bin/meson is never created, making configure fail with
+"meson setup failed" / "pyvenv/bin/meson: not found".
+
+Meson is perfectly usable from the recipe sysroot, so fall back to the one
+on PATH when the venv did not get its own copy. Poky works around the same
+issue in meta/recipes-devtools/qemu/qemu/fixedmeson.patch.
+
+Upstream-Status: Inappropriate [workaround, needs a real fix in oe-core's python3-native]
+
+--- a/configure
++++ b/configure
+@@ -986,6 +986,16 @@
+   meson="$meson$EXESUF"
+ fi
+
++# OpenEmbedded/Yocto: python3-native reports the *sysroot* paths from
++# sysconfig even when running inside a virtual environment (see
++# meta/recipes-devtools/python/python3/0001-Lib-sysconfig.py-use-prefix-value-from-build-configu.patch),
++# so pip and mkvenv install packages and console scripts into the recipe
++# sysroot instead of pyvenv/. Meson is perfectly usable from there, so fall
++# back to the one on PATH when the venv did not get its own copy.
++if ! test -e "$meson" && has meson; then
++    meson=$(command -v meson)
++fi
++
+ # On Haiku, meson might show up in a "non-packaged" subfolder instead, see
+ # https://github.com/haiku/haiku/blob/r1beta5/docs/user/storage/storageintro.dox
+ if test "$host_os" = "haiku" && test ! -e "$meson" ; then
