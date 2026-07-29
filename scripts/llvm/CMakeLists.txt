@@ -1096,11 +1096,20 @@ function(
         -DCMAKE_SYSTEM_NAME=Generic
         -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
         -DLIBC_LINKER_SCRIPT=picolibcpp.ld
+        # The runtimes always declare their shared library targets, and only
+        # mark them EXCLUDE_FROM_ALL when *_ENABLE_SHARED is off. Because this
+        # is a CMAKE_SYSTEM_NAME=Generic build, CMake quietly turns those
+        # targets into static libraries, which then collide with the real
+        # static libraries. Give them distinct output names so that the two
+        # rules don't both generate e.g. lib/libunwind.a.
+        # See https://gitlab.kitware.com/cmake/cmake/-/issues/25759.
+        -DLIBCXX_SHARED_OUTPUT_NAME=c++-shared
+        -DLIBCXXABI_SHARED_OUTPUT_NAME=c++abi-shared
+        -DLIBUNWIND_SHARED_OUTPUT_NAME=unwind-shared
         -DLIBCXXABI_BAREMETAL=ON
         -DLIBCXXABI_ENABLE_ASSERTIONS=OFF
         -DLIBCXXABI_ENABLE_SHARED=OFF
         -DLIBCXXABI_ENABLE_STATIC=ON
-        -DLIBCXXABI_LIBCXX_INCLUDES="${LLVM_BINARY_DIR}/${directory}/include/c++/v1"
         -DLIBCXXABI_USE_COMPILER_RT=ON
         -DLIBCXXABI_USE_LLVM_UNWINDER=ON
         -DLIBCXXABI_TEST_PARAMS=executor=${test_executor}
