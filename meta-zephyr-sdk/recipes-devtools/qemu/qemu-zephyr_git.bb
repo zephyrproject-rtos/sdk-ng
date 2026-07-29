@@ -107,7 +107,7 @@ EXTRA_OECONF = " \
     --disable-af-xdp \
     ${PACKAGECONFIG_CONFARGS} \
     "
-QEMU_TARGETS = "aarch64-softmmu arm-softmmu i386-softmmu or1k-softmmu mips-softmmu mipsel-softmmu riscv32-softmmu riscv64-softmmu rx-softmmu sparc-softmmu x86_64-softmmu xtensa-softmmu"
+QEMU_TARGETS = "aarch64-softmmu arm-softmmu i386-softmmu m68k-softmmu or1k-softmmu mips-softmmu mipsel-softmmu riscv32-softmmu riscv64-softmmu rx-softmmu sparc-softmmu x86_64-softmmu xtensa-softmmu"
 
 EXTRA_OECONF:append:class-target = " --cross-prefix=${HOST_PREFIX}"
 EXTRA_OECONF:append:class-nativesdk = " --cross-prefix=${HOST_PREFIX}"
