@@ -985,7 +985,13 @@ Hard-float library with target triple \"${target_triple}\" must end \"-eabihf\""
 
     get_runtimes_flags("${directory}" "${flags}")
 
-    set(compiler_rt_test_flags "${runtimes_flags} -fno-exceptions -fno-rtti -lcrt0-semihost -lsemihost -T picolibcpp.ld")
+    # -nostartfiles: since LLVM 22 the baremetal driver links the sysroot's
+    # crt0.o itself, and that one wins over the -lcrt0-semihost we ask for.
+    # picolibc's default crt0 spins after main() instead of exiting through
+    # semihosting, so without this every test hangs until the lit timeout.
+    # The libc++/libc++abi/libunwind test configs already pass -nostdlib,
+    # which suppresses the same thing.
+    set(compiler_rt_test_flags "${runtimes_flags} -fno-exceptions -fno-rtti -nostartfiles -lcrt0-semihost -lsemihost -T picolibcpp.ld")
     if(variant STREQUAL "armv6m_soft_nofp")
         set(compiler_rt_test_flags "${compiler_rt_test_flags} -fomit-frame-pointer")
     endif()
