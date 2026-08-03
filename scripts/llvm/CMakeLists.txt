@@ -2217,7 +2217,6 @@ set(third_party_license_files
 )
 if(LLVM_TOOLCHAIN_C_LIBRARY STREQUAL picolibc)
     list(APPEND third_party_license_files
-        ${PICOLIBC_SOURCE_DIR}/COPYING.NEWLIB           COPYING.NEWLIB
         ${PICOLIBC_SOURCE_DIR}/COPYING.picolibc         COPYING.picolibc
     )
 endif()
