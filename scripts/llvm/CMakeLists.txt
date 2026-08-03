@@ -1246,11 +1246,15 @@ function(add_library_variant target_arch)
         set(variant "${target_arch}")
     endif()
 
-    if(NOT VARIANT_ENABLE_EXCEPTIONS)
+    if(VARIANT_ENABLE_EXCEPTIONS)
+        set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -fexceptions")
+    else()
         set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -fno-exceptions")
     endif()
 
-    if(NOT VARIANT_ENABLE_RTTI)
+    if(VARIANT_ENABLE_RTTI)
+        set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -frtti")
+    else()
         set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -fno-rtti")
     endif()
 
