@@ -23,6 +23,13 @@ config PICOLIBC_DEFAULT
 	help
 	  Zephyr SDK >=0.17.1 always uses Picolibc
 
+config LLVM_USE_LLD
+	def_bool y
+	depends on "$(ZEPHYR_TOOLCHAIN_VARIANT)" = "zephyr"
+	depends on "$(TOOLCHAIN_VARIANT_COMPILER)" = "llvm"
+	help
+	  Zephyr SDK always uses lld with llvm
+
 # libstdc++ is built without exception support in -Os mode
 choice COMPILER_OPTIMIZATIONS
 	default SPEED_OPTIMIZATIONS if ("$(TOOLCHAIN_VARIANT_COMPILER)" != "llvm") && CPP_EXCEPTIONS
