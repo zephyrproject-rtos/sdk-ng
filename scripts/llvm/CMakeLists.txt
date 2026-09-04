@@ -944,7 +944,7 @@ macro(
 endmacro()
 
 function(get_runtimes_flags directory flags)
-    set(runtimes_flags "${flags} -ffunction-sections -fdata-sections -fno-ident --sysroot ${LLVM_BINARY_DIR}/${directory}" PARENT_SCOPE)
+    set(runtimes_flags "${flags} -ffunction-sections -fdata-sections -fno-ident -ftls-model=local-exec --sysroot ${LLVM_BINARY_DIR}/${directory}" PARENT_SCOPE)
 endfunction()
 
 function(
