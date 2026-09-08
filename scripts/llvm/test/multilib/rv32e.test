@@ -27,3 +27,8 @@
 # RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emc_zicsr_zba_zbb_zbc_zbs -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZBA_ZBB_ZBC_ZBS_ILP32E
 # RV32EMC_ZICSR_ZBA_ZBB_ZBC_ZBS_ILP32E: riscv32-none-elf/rv32emc_zicsr_zba_zbb_zbc_zbs_ilp32e_exn_rtti{{$}}
 # RV32EMC_ZICSR_ZBA_ZBB_ZBC_ZBS_ILP32E-EMPTY:
+
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emc_zicsr_zcb_zba_zbb_zbc_zbs -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZCB_ZBA_ZBB_ZBC_ZBS_ILP32E
+# RUN: %clang -print-multi-directory --target=riscv32-none-elf -march=rv32emc_zicntr_zicsr_zcb_zba_zbb_zbc_zbs -mabi=ilp32e | FileCheck %s --check-prefix=RV32EMC_ZICSR_ZCB_ZBA_ZBB_ZBC_ZBS_ILP32E
+# RV32EMC_ZICSR_ZCB_ZBA_ZBB_ZBC_ZBS_ILP32E: riscv32-none-elf/rv32emc_zicsr_zcb_zba_zbb_zbc_zbs_ilp32e_exn_rtti{{$}}
+# RV32EMC_ZICSR_ZCB_ZBA_ZBB_ZBC_ZBS_ILP32E-EMPTY:

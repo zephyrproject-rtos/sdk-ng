@@ -245,6 +245,10 @@ Mappings:
 - Match: -march=rv32e([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_a([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zifencei([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)_zba([0-9]+p[0-9]+)_zbb([0-9]+p[0-9]+)_zbc([0-9]+p[0-9]+)_zbs([0-9]+p[0-9]+)
   Flags:
   - -march=rv32e2p0_m2p0_c2p0_zicsr2p0_zifencei2p0_zmmul1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0
+## march.rv32emc_zicsr_zcb_zba_zbb_zbc_zbs/mabi.ilp32e=march.rv32emc_zicntr_zicsr_zcb_zba_zbb_zbc_zbs/mabi.ilp32e
+- Match: -march=rv32e([0-9]+p[0-9]+)_m([0-9]+p[0-9]+)_c([0-9]+p[0-9]+)_zicntr([0-9]+p[0-9]+)_zicsr([0-9]+p[0-9]+)_zmmul([0-9]+p[0-9]+)_zca([0-9]+p[0-9]+)_zcb([0-9]+p[0-9]+)_zba([0-9]+p[0-9]+)_zbb([0-9]+p[0-9]+)_zbc([0-9]+p[0-9]+)_zbs([0-9]+p[0-9]+)
+  Flags:
+  - -march=rv32e2p0_m2p0_c2p0_zicsr2p0_zmmul1p0_zca1p0_zcb1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0
 
 # RV64I alternate mappings
 ## march.rv64i_zicsr_zifencei/mabi.lp64/mcmodel.medany=march.rv64ia_zicsr_zifencei/mabi.lp64/mcmodel.medany
