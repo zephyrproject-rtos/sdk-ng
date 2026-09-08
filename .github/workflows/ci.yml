@@ -112,7 +112,7 @@ jobs:
 
     steps:
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
         persist-credentials: false
@@ -123,10 +123,11 @@ jobs:
         echo "${VERSION:1}" > version
 
     - name: Upload version file
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: version
         path: version
+        archive: false
 
     - name: Generate matrix
       id: generate-matrix
@@ -537,7 +538,7 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -592,14 +593,14 @@ jobs:
         ${CT_NG} version
 
     - name: Download version information
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: version
         path: ${{ runner.temp }}
 
     - name: Configure AWS Credentials
       if: ${{ github.event_name != 'pull_request' }}
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
@@ -789,13 +790,13 @@ jobs:
 
     - name: Upload toolchain build log
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: log_toolchain_gnu_${{ matrix.host.name }}_${{ matrix.target }}
         path: ${{ matrix.target }}.log
 
     - name: Upload toolchain build artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: toolchain_gnu_${{ matrix.host.name }}_${{ matrix.target }}
         path: |
@@ -862,7 +863,7 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -940,13 +941,13 @@ jobs:
 
     - name: Upload toolchain build log
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: log_toolchain_llvm_${{ matrix.host.name }}
         path: '*.log'
 
     - name: Upload toolchain build artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: toolchain_llvm_${{ matrix.host.name }}
         path: |
@@ -1047,7 +1048,7 @@ jobs:
         echo "WORKSPACE=${WORKSPACE}" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -1062,7 +1063,7 @@ jobs:
 
     - name: Configure AWS Credentials
       if: ${{ github.event_name != 'pull_request' }}
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-access-key-id: ${{ secrets.AWS_CACHE_SDK_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_CACHE_SDK_SECRET_ACCESS_KEY }}
@@ -1240,7 +1241,7 @@ jobs:
         popd
 
     - name: Upload toolchain build artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: hosttools_${{ matrix.host.name }}
         path: |
@@ -1283,7 +1284,7 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         persist-credentials: false
 
@@ -1306,7 +1307,7 @@ jobs:
         sha256sum ${ARCHIVE_FILE} > sha256.sum
 
     - name: Upload CMake package build artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: cmake_${{ matrix.host.name }}
         path: |
@@ -1349,37 +1350,37 @@ jobs:
         echo "TAR=gtar" >> $GITHUB_ENV
 
     - name: Check out source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: repository
         persist-credentials: false
 
     - name: Download version file
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: version
         path: artifacts
 
     - name: Download CMake artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: cmake_${{ matrix.host.name }}
         path: artifacts
 
     - name: Download host tools artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: hosttools_${{ matrix.host.name }}
         path: artifacts
 
     - name: Download GNU toolchain artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: toolchain_gnu_${{ matrix.host.name }}_*
         path: artifacts
 
     - name: Download LLVM toolchain artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: toolchain_llvm_${{ matrix.host.name }}
         path: artifacts
@@ -1391,7 +1392,7 @@ jobs:
         EXT=${{ matrix.host.archive }}
         REPO_ROOT=${GITHUB_WORKSPACE}/repository
         ARTIFACT_ROOT=${GITHUB_WORKSPACE}/artifacts
-        VERSION=$(<${ARTIFACT_ROOT}/version/version)
+        VERSION=$(<${ARTIFACT_ROOT}/version)
         ARCHIVE_DIR=${{ env.BUNDLE_PREFIX }}-${VERSION}
         ARCHIVE_NAME=${{ env.BUNDLE_PREFIX }}-${VERSION}_${HOST}
 
@@ -1532,7 +1533,7 @@ jobs:
           > sha256.sum
 
     - name: Upload distribution bundle
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.BUNDLE_ARCHIVE_NAME }}
         path: |
@@ -1566,7 +1567,7 @@ jobs:
 
     steps:
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         # Force Python 3.12, which is the minimum Python version supported by
         # Zephyr and intended to be used with Zephyr SDK.
@@ -1639,7 +1640,7 @@ jobs:
         echo "VENV_ACTIVATE=${VENV_ACTIVATE}" >> $GITHUB_ENV
 
     - name: Download version information
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: version
         path: artifacts
@@ -1658,21 +1659,10 @@ jobs:
         echo "BUNDLE_DIR=${BUNDLE_DIR}" >> $GITHUB_ENV
 
     - name: Download distribution bundle
-      # FIXME: download-artifact is buggy and may fail to download some files
-      #        without any errors. For more details, refer to the GitHub issue
-      #        actions/download-artifact#396.
-      # uses: actions/download-artifact@v4
-      # with:
-      #   name: ${{ env.BUNDLE_NAME }}
-      #   path: artifacts
-      run: |
-        gh run download \
-          -R ${GITHUB_REPOSITORY} \
-          ${GITHUB_RUN_ID} \
-          -n ${BUNDLE_NAME} \
-          -D artifacts
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ env.BUNDLE_NAME }}
+        path: artifacts
 
     - name: Install distribution bundle
       run: |
@@ -2000,7 +1990,7 @@ jobs:
 
     - name: Publish test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test_${{ matrix.testenv.name }}_${{ matrix.toolchain }}_${{ matrix.subset }}
         if-no-files-found: ignore
