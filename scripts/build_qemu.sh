@@ -34,6 +34,7 @@ QEMU_TARGETS=" \
   aarch64-softmmu \
   arm-softmmu \
   i386-softmmu \
+  m68k-softmmu \
   mips-softmmu \
   mipsel-softmmu \
   or1k-softmmu \
@@ -177,6 +178,7 @@ if [[ "${BUILD_HOST}" =~ ^macos-.* ]]; then
   ln -sf ../../opt/qemu/bin/qemu-system-aarch64 qemu-system-aarch64
   ln -sf ../../opt/qemu/bin/qemu-system-arm qemu-system-arm
   ln -sf ../../opt/qemu/bin/qemu-system-i386 qemu-system-i386
+  ln -sf ../../opt/qemu/bin/qemu-system-m68k qemu-system-m68k
   ln -sf ../../opt/qemu/bin/qemu-system-mips qemu-system-mips
   ln -sf ../../opt/qemu/bin/qemu-system-mipsel qemu-system-mipsel
   ln -sf ../../opt/qemu/bin/qemu-system-or1k qemu-system-or1k

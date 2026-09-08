@@ -8,6 +8,7 @@ The toolchains for the following target architectures are supported:
 
 - ARC (32-bit and 64-bit; ARCv1, ARCv2, ARCv3)
 - ARM (32-bit and 64-bit; ARMv6, ARMv7, ARMv8; A/R/M Profiles)
+- M68K (Motorola 68000 family)
 - Microblaze (32-bit)
 - MIPS (32-bit and 64-bit)
 - OpenRISC 1000
