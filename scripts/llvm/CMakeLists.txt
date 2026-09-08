@@ -608,7 +608,6 @@ function(
             -Dmultilib=false
             -Dtests-enable-stack-protector=false
             -Dtest-long-double=${enable_long_double_test}
-            -Dnewlib-nano-malloc=${newlib_nano_malloc}
             --prefix <INSTALL_DIR>
             --cross-file <BINARY_DIR>/meson-cross-build.txt
             --buildtype=${build_type}
@@ -1246,11 +1245,15 @@ function(add_library_variant target_arch)
         set(variant "${target_arch}")
     endif()
 
-    if(NOT VARIANT_ENABLE_EXCEPTIONS)
+    if(VARIANT_ENABLE_EXCEPTIONS)
+        set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -fexceptions")
+    else()
         set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -fno-exceptions")
     endif()
 
-    if(NOT VARIANT_ENABLE_RTTI)
+    if(VARIANT_ENABLE_RTTI)
+        set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -frtti")
+    else()
         set(VARIANT_MULTILIB_FLAGS "${VARIANT_MULTILIB_FLAGS} -fno-rtti")
     endif()
 
@@ -2214,7 +2217,6 @@ set(third_party_license_files
 )
 if(LLVM_TOOLCHAIN_C_LIBRARY STREQUAL picolibc)
     list(APPEND third_party_license_files
-        ${PICOLIBC_SOURCE_DIR}/COPYING.NEWLIB           COPYING.NEWLIB
         ${PICOLIBC_SOURCE_DIR}/COPYING.picolibc         COPYING.picolibc
     )
 endif()
