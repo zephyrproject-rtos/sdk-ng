@@ -1,5 +1,15 @@
 # Notes / Changes in various releases
 
+## Unreleased
+
+- host tools:
+
+  * Added Espressif QEMU (`qemu-system-espressif-xtensa` /
+    `qemu-system-espressif-riscv32`) from a pinned
+    [espressif/qemu](https://github.com/espressif/qemu) `esp-develop` snapshot
+    (ESP32, ESP32-S3, ESP32-C3, ESP32-C6). Does not replace the existing
+    `qemu-system-xtensa` / `qemu-system-riscv32` binaries.
+
 ## Zephyr SDK 1.0.1
 
 - general:

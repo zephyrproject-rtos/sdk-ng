@@ -10,6 +10,7 @@ TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-openocd \
     nativesdk-dtc \
     nativesdk-qemu-arc \
+    nativesdk-qemu-espressif \
     nativesdk-qemu-xilinx \
     nativesdk-qemu-zephyr \
     "
@@ -34,6 +35,15 @@ create_sdk_files:append () {
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/ppc_rom.bin
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/slof.bin
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/qemu/hppa-firmware.img
+
+	# Espressif QEMU uses --prefix usr/espressif and empty --with-suffix=,
+	# so pc-bios is in usr/espressif/share (not share/qemu). Keep esp32*-rom.bin.
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/espressif/share/edk2*
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/espressif/share/skiboot.lid
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/espressif/share/openbios-*
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/espressif/share/ppc_rom.bin
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/espressif/share/slof.bin
+	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/espressif/share/hppa-firmware.img
 
 	# Remove mime
 	rm -rfv ${SDK_OUTPUT}/${SDKPATH}/sysroots/${SDK_SYS}/usr/share/mime

@@ -23,6 +23,9 @@ The following host tools are available as part of the Zephyr SDK:
 - OpenOCD
 - QEMU
 - Xilinx QEMU
+- Espressif QEMU (pinned `esp-develop` snapshot of
+  [espressif/qemu](https://github.com/espressif/qemu); machines include
+  `esp32`, `esp32s3`, `esp32c3`, and `esp32c6`)
 
 ## Releases
 

@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tiago Medicci <tiago.medicci@espressif.com>
+Date: Fri, 11 Sep 2026 19:30:00 -0300
+Subject: [PATCH 1/2] configure: look up meson from PATH
+
+OpenEmbedded provides a compatible meson-native and a wrapper that adds
+the correct nativesdk cross and native files. Use it instead of requiring
+QEMU's private virtual environment.
+
+This follows the equivalent OpenEmbedded-Core QEMU workaround.
+
+Upstream-Status: Inappropriate [OpenEmbedded-specific]
+Signed-off-by: Tiago Medicci <tiago.medicci@espressif.com>
+---
+ configure | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/configure b/configure
+index b12ee2133b..3ea8cce38b 100755
+--- a/configure
++++ b/configure
+@@ -1002,10 +1002,8 @@ $mkvenv ensuregroup --dir "${source_path}/python/wheels" \
+      ${source_path}/pythondeps.toml meson || exit 1
+ 
+-# At this point, we expect Meson to be installed and available.
+-# We expect mkvenv or pip to have created pyvenv/bin/meson for us.
+-# We ignore PATH completely here: we want to use the venv's Meson
+-# *exclusively*.
+-
+-meson="$(cd pyvenv/bin; pwd)/meson"
++meson="$(command -v meson)"
++if test -z "$meson"; then
++    error_exit "meson not found in PATH"
++fi
+ 
+ # Conditionally ensure Sphinx is installed.
