@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tiago Medicci <tiago.medicci@espressif.com>
+Date: Fri, 11 Sep 2026 19:30:00 -0300
+Subject: [PATCH 2/2] configure: disable Python venv for meson
+
+QEMU's private virtual environment tries to install Meson and pycotap,
+which is incompatible with OpenEmbedded's offline --disable-download
+build. OpenEmbedded already provides supported Python and Meson versions,
+so use those directly and disable the package bootstrap.
+
+This follows the equivalent OpenEmbedded-Core QEMU workaround.
+
+Upstream-Status: Inappropriate [OpenEmbedded-specific]
+Signed-off-by: Tiago Medicci <tiago.medicci@espressif.com>
+---
+ configure | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/configure b/configure
+index 3ea8cce38b..d75ee7e8c7 100755
+--- a/configure
++++ b/configure
+@@ -988,12 +988,9 @@ echo "python determined to be '$python'"
+ echo "python version: $($python --version)"
+ 
+-python="$($python -B "${source_path}/python/scripts/mkvenv.py" create pyvenv)"
+-if test "$?" -ne 0 ; then
+-    error_exit "python venv creation failed"
+-fi
++# Keep $python as resolved by configure; skip venv creation (meson-native).
+ 
+ # Suppress writing compiled files
+ python="$python -B"
+-mkvenv="$python ${source_path}/python/scripts/mkvenv.py"
++mkvenv=true
+ 
+ # Finish preparing the virtual environment using vendored .whl files

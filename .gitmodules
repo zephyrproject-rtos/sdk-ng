@@ -43,3 +43,6 @@
 [submodule "openocd"]
 	path = openocd
 	url = https://github.com/zephyrproject-rtos/openocd.git
+[submodule "qemu_espressif"]
+	path = qemu_espressif
+	url = https://github.com/espressif/qemu.git

@@ -1038,6 +1038,7 @@ jobs:
           libffi \
           libgcrypt \
           libpng \
+          libslirp \
           pcre2 \
           pixman \
           zstd
@@ -1058,6 +1059,7 @@ jobs:
         git submodule update --depth=1 --recursive qemu
         git submodule update --depth=1 --recursive qemu_arc
         git submodule update --depth=1 --recursive qemu_xilinx
+        git submodule update --depth=1 --recursive qemu_espressif
         git submodule update --depth=1 --recursive openocd
 
     - name: Configure AWS Credentials
@@ -1188,6 +1190,18 @@ jobs:
         ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu_arc.sh \
           ${{ matrix.host.name }} \
           ${QEMU_ARC_SOURCE} \
+          ${BUILD_OUTPUT}
+        popd
+
+        # Build Espressif QEMU
+        QEMU_ESPRESSIF_BUILD="${WORKSPACE}/build/qemu_espressif"
+        QEMU_ESPRESSIF_SOURCE="${GITHUB_WORKSPACE}/qemu_espressif"
+
+        mkdir -p ${QEMU_ESPRESSIF_BUILD}
+        pushd ${QEMU_ESPRESSIF_BUILD}
+        ${BUILD_PRECMD} ${GITHUB_WORKSPACE}/scripts/build_qemu_espressif.sh \
+          ${{ matrix.host.name }} \
+          ${QEMU_ESPRESSIF_SOURCE} \
           ${BUILD_OUTPUT}
         popd
 
@@ -1721,6 +1735,39 @@ jobs:
         rm -f ${ARTIFACT_ROOT}/${BUNDLE_FILE}
 
         popd
+
+    - name: Smoke test Espressif QEMU host tools
+      if: matrix.toolchain == 'gnu' && matrix.subset == 1
+      run: |
+        SDK_DIR=${GITHUB_WORKSPACE}/tools/${BUNDLE_DIR}
+        case "${{ runner.os }}" in
+          Linux)
+            QEMU_DIR=(${SDK_DIR}/hosttools/sysroots/*/usr/bin)
+            ;;
+          macOS)
+            QEMU_DIR=(${SDK_DIR}/hosttools/usr/bin)
+            ;;
+          Windows)
+            QEMU_DIR=(${SDK_DIR}/hosttools/qemu-espressif)
+            ;;
+        esac
+
+        QEMU_XTENSA=${QEMU_DIR[0]}/qemu-system-espressif-xtensa
+        QEMU_RISCV32=${QEMU_DIR[0]}/qemu-system-espressif-riscv32
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          QEMU_XTENSA+=.exe
+          QEMU_RISCV32+=.exe
+        fi
+
+        test -x "${QEMU_XTENSA}"
+        test -x "${QEMU_RISCV32}"
+
+        XTENSA_MACHINES=$("${QEMU_XTENSA}" -machine help)
+        RISCV32_MACHINES=$("${QEMU_RISCV32}" -machine help)
+        grep -Eq '^esp32[[:space:]]' <<< "${XTENSA_MACHINES}"
+        grep -Eq '^esp32s3[[:space:]]' <<< "${XTENSA_MACHINES}"
+        grep -Eq '^esp32c3[[:space:]]' <<< "${RISCV32_MACHINES}"
+        grep -Eq '^esp32c6[[:space:]]' <<< "${RISCV32_MACHINES}"
 
     - name: Install west
       run: |
