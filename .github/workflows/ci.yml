@@ -1748,7 +1748,7 @@ jobs:
             QEMU_DIR=(${SDK_DIR}/hosttools/usr/bin)
             ;;
           Windows)
-            QEMU_DIR=(${SDK_DIR}/hosttools/qemu-espressif/bin)
+            QEMU_DIR=(${SDK_DIR}/hosttools/qemu-espressif)
             ;;
         esac
 

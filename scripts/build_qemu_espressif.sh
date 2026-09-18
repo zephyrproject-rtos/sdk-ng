@@ -42,7 +42,6 @@ QEMU_TARGETS=" \
 # deterministic baseline used by Espressif's own CI and enable only what the
 # Espressif machines need.
 QEMU_FLAGS=" \
-  --bindir=bin \
   --disable-debug-info \
   --disable-docs \
   --disable-strip \
@@ -155,12 +154,12 @@ if [ "${BUILD_HOST}" == "windows-x86_64" ]; then
     "
 
   for l in ${QEMU_WIN_LIBS}; do
-    cp -f "${l}" ${BUILD_PREFIX}/bin
+    cp -f "${l}" ${BUILD_PREFIX}
   done
 
   # Wrap-built slirp is installed as libslirp-0.dll next to the emulators.
   slirp_dll=""
-  for f in "${BUILD_PREFIX}/bin"/libslirp*.dll; do
+  for f in "${BUILD_PREFIX}"/libslirp*.dll; do
     if [ -f "${f}" ]; then
       slirp_dll="${f}"
       break
@@ -172,16 +171,16 @@ if [ "${BUILD_HOST}" == "windows-x86_64" ]; then
       echo "ERROR: libslirp DLL was not produced" >&2
       exit 1
     fi
-    cp -f "${slirp_dll}" ${BUILD_PREFIX}/bin
+    cp -f "${slirp_dll}" ${BUILD_PREFIX}
   fi
 
   # Namespaced copies so find_program() does not collide with stock QEMU
-  cp -f ${BUILD_PREFIX}/bin/qemu-system-xtensa.exe \
-        ${BUILD_PREFIX}/bin/qemu-system-espressif-xtensa.exe
-  cp -f ${BUILD_PREFIX}/bin/qemu-system-riscv32.exe \
-        ${BUILD_PREFIX}/bin/qemu-system-espressif-riscv32.exe
-  rm -f ${BUILD_PREFIX}/bin/qemu-system-xtensa.exe
-  rm -f ${BUILD_PREFIX}/bin/qemu-system-riscv32.exe
+  cp -f ${BUILD_PREFIX}/qemu-system-xtensa.exe \
+        ${BUILD_PREFIX}/qemu-system-espressif-xtensa.exe
+  cp -f ${BUILD_PREFIX}/qemu-system-riscv32.exe \
+        ${BUILD_PREFIX}/qemu-system-espressif-riscv32.exe
+  rm -f ${BUILD_PREFIX}/qemu-system-xtensa.exe
+  rm -f ${BUILD_PREFIX}/qemu-system-riscv32.exe
 fi
 
 # Symlink namespaced QEMU executables for macOS (do not overwrite usr/bin
