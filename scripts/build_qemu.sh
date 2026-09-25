@@ -95,6 +95,10 @@ if [ "${BUILD_HOST}" == "windows-x86_64" ]; then
 elif [[ "${BUILD_HOST}" =~ ^macos-.* ]]; then
   BUILD_PREFIX="${BUILD_OUTPUT}/opt/qemu"
 
+  # Enable vhost-user, which QEMU only enables by default on Linux. vhost-net
+  # does not build on macOS.
+  QEMU_FLAGS+=" --enable-vhost-user --disable-vhost-net"
+
   case ${BUILD_HOST} in
     macos-aarch64)
       HOMEBREW_PREFIX="/opt/homebrew"
