@@ -53,7 +53,6 @@ QEMU_FLAGS=" \
   --disable-debug-info \
   --disable-dmg
   --disable-docs \
-  --disable-glusterfs \
   --disable-gnutls \
   --disable-gtk \
   --disable-guest-agent \
