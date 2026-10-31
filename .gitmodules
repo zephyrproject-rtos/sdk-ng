@@ -40,6 +40,9 @@
 [submodule "qemu_xilinx"]
 	path = qemu_xilinx
 	url = https://github.com/zephyrproject-rtos/xilinx-qemu.git
+[submodule "qemu_rh850"]
+	path = qemu_rh850
+	url = https://github.com/linumiz/qemu-rh850.git
 [submodule "openocd"]
 	path = openocd
 	url = https://github.com/zephyrproject-rtos/openocd.git
