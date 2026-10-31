@@ -171,6 +171,9 @@ do_install:append() {
     # Link ARC (Synopsys) QEMU executables
     ln -sf ../synopsys/bin/qemu-system-arc ${D}${bindir}/qemu-system-arc
     ln -sf ../synopsys/bin/qemu-system-arc64 ${D}${bindir}/qemu-system-arc64
+
+    # Link RH850 QEMU executable
+    ln -sf ../rh850/bin/qemu-system-rh850 ${D}${bindir}/qemu-system-rh850
 }
 
 # Disable kvm/virgl/mesa on targets that do not support it
