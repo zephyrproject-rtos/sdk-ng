@@ -10,6 +10,7 @@ TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-openocd \
     nativesdk-dtc \
     nativesdk-qemu-arc \
+    nativesdk-qemu-rh850 \
     nativesdk-qemu-xilinx \
     nativesdk-qemu-zephyr \
     "
