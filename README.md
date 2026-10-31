@@ -23,6 +23,7 @@ The following host tools are available as part of the Zephyr SDK:
 - OpenOCD
 - QEMU
 - Xilinx QEMU
+- RH850 QEMU (Linux only)
 
 ## Releases
 
