@@ -1,6 +1,6 @@
 /* Xtensa configuration-specific ISA information.
 
-   Copyright (c) 2003-2023 Cadence Design Systems, Inc.
+   Copyright (c) 2003-2026 Cadence Design Systems, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -9092,6 +9092,19 @@ static const unsigned CONST_TBL_ae_ltr4_table_0[] = {
   0
 };
 
+/* constant table ae_ltr8_table */
+static const unsigned CONST_TBL_ae_ltr8_table_0[] = {
+  0 & 0xff,
+  0x80 & 0xff,
+  0xc0 & 0xff,
+  0xe0 & 0xff,
+  0xf0 & 0xff,
+  0xf8 & 0xff,
+  0xfc & 0xff,
+  0xfe & 0xff,
+  0
+};
+
 /* constant table ae_seliencode */
 static const unsigned CONST_TBL_ae_seliencode_0[] = {
   0x4e5 & 0xfff,
@@ -9110,272 +9123,6 @@ static const unsigned CONST_TBL_ae_seliencode_0[] = {
   0x18f & 0xfff,
   0x51d & 0xfff,
   0x116 & 0xfff,
-  0
-};
-
-/* constant table RECIP_Data8 */
-static const unsigned CONST_TBL_RECIP_Data8_0[] = {
-  0xff & 0xff,
-  0xfd & 0xff,
-  0xfb & 0xff,
-  0xf9 & 0xff,
-  0xf7 & 0xff,
-  0xf5 & 0xff,
-  0xf4 & 0xff,
-  0xf2 & 0xff,
-  0xf0 & 0xff,
-  0xee & 0xff,
-  0xed & 0xff,
-  0xeb & 0xff,
-  0xe9 & 0xff,
-  0xe8 & 0xff,
-  0xe6 & 0xff,
-  0xe4 & 0xff,
-  0xe3 & 0xff,
-  0xe1 & 0xff,
-  0xe0 & 0xff,
-  0xde & 0xff,
-  0xdd & 0xff,
-  0xdb & 0xff,
-  0xda & 0xff,
-  0xd8 & 0xff,
-  0xd7 & 0xff,
-  0xd5 & 0xff,
-  0xd4 & 0xff,
-  0xd3 & 0xff,
-  0xd1 & 0xff,
-  0xd0 & 0xff,
-  0xcf & 0xff,
-  0xcd & 0xff,
-  0xcc & 0xff,
-  0xcb & 0xff,
-  0xca & 0xff,
-  0xc8 & 0xff,
-  0xc7 & 0xff,
-  0xc6 & 0xff,
-  0xc5 & 0xff,
-  0xc4 & 0xff,
-  0xc2 & 0xff,
-  0xc1 & 0xff,
-  0xc0 & 0xff,
-  0xbf & 0xff,
-  0xbe & 0xff,
-  0xbd & 0xff,
-  0xbc & 0xff,
-  0xbb & 0xff,
-  0xba & 0xff,
-  0xb9 & 0xff,
-  0xb8 & 0xff,
-  0xb7 & 0xff,
-  0xb6 & 0xff,
-  0xb5 & 0xff,
-  0xb4 & 0xff,
-  0xb3 & 0xff,
-  0xb2 & 0xff,
-  0xb1 & 0xff,
-  0xb0 & 0xff,
-  0xaf & 0xff,
-  0xae & 0xff,
-  0xad & 0xff,
-  0xac & 0xff,
-  0xab & 0xff,
-  0xaa & 0xff,
-  0xa9 & 0xff,
-  0xa8 & 0xff,
-  0xa8 & 0xff,
-  0xa7 & 0xff,
-  0xa6 & 0xff,
-  0xa5 & 0xff,
-  0xa4 & 0xff,
-  0xa3 & 0xff,
-  0xa3 & 0xff,
-  0xa2 & 0xff,
-  0xa1 & 0xff,
-  0xa0 & 0xff,
-  0x9f & 0xff,
-  0x9f & 0xff,
-  0x9e & 0xff,
-  0x9d & 0xff,
-  0x9c & 0xff,
-  0x9c & 0xff,
-  0x9b & 0xff,
-  0x9a & 0xff,
-  0x99 & 0xff,
-  0x99 & 0xff,
-  0x98 & 0xff,
-  0x97 & 0xff,
-  0x97 & 0xff,
-  0x96 & 0xff,
-  0x95 & 0xff,
-  0x95 & 0xff,
-  0x94 & 0xff,
-  0x93 & 0xff,
-  0x93 & 0xff,
-  0x92 & 0xff,
-  0x91 & 0xff,
-  0x91 & 0xff,
-  0x90 & 0xff,
-  0x8f & 0xff,
-  0x8f & 0xff,
-  0x8e & 0xff,
-  0x8e & 0xff,
-  0x8d & 0xff,
-  0x8c & 0xff,
-  0x8c & 0xff,
-  0x8b & 0xff,
-  0x8b & 0xff,
-  0x8a & 0xff,
-  0x89 & 0xff,
-  0x89 & 0xff,
-  0x88 & 0xff,
-  0x88 & 0xff,
-  0x87 & 0xff,
-  0x87 & 0xff,
-  0x86 & 0xff,
-  0x85 & 0xff,
-  0x85 & 0xff,
-  0x84 & 0xff,
-  0x84 & 0xff,
-  0x83 & 0xff,
-  0x83 & 0xff,
-  0x82 & 0xff,
-  0x82 & 0xff,
-  0x81 & 0xff,
-  0x81 & 0xff,
-  0x81 & 0xff,
-  0
-};
-
-/* constant table RSQRT_Data8 */
-static const unsigned CONST_TBL_RSQRT_Data8_0[] = {
-  0xb4 & 0xff,
-  0xb3 & 0xff,
-  0xb2 & 0xff,
-  0xb0 & 0xff,
-  0xaf & 0xff,
-  0xae & 0xff,
-  0xac & 0xff,
-  0xab & 0xff,
-  0xaa & 0xff,
-  0xa9 & 0xff,
-  0xa8 & 0xff,
-  0xa7 & 0xff,
-  0xa6 & 0xff,
-  0xa5 & 0xff,
-  0xa3 & 0xff,
-  0xa2 & 0xff,
-  0xa1 & 0xff,
-  0xa0 & 0xff,
-  0x9f & 0xff,
-  0x9e & 0xff,
-  0x9e & 0xff,
-  0x9d & 0xff,
-  0x9c & 0xff,
-  0x9b & 0xff,
-  0x9a & 0xff,
-  0x99 & 0xff,
-  0x98 & 0xff,
-  0x97 & 0xff,
-  0x97 & 0xff,
-  0x96 & 0xff,
-  0x95 & 0xff,
-  0x94 & 0xff,
-  0x93 & 0xff,
-  0x93 & 0xff,
-  0x92 & 0xff,
-  0x91 & 0xff,
-  0x90 & 0xff,
-  0x90 & 0xff,
-  0x8f & 0xff,
-  0x8e & 0xff,
-  0x8e & 0xff,
-  0x8d & 0xff,
-  0x8c & 0xff,
-  0x8c & 0xff,
-  0x8b & 0xff,
-  0x8a & 0xff,
-  0x8a & 0xff,
-  0x89 & 0xff,
-  0x89 & 0xff,
-  0x88 & 0xff,
-  0x87 & 0xff,
-  0x87 & 0xff,
-  0x86 & 0xff,
-  0x86 & 0xff,
-  0x85 & 0xff,
-  0x84 & 0xff,
-  0x84 & 0xff,
-  0x83 & 0xff,
-  0x83 & 0xff,
-  0x82 & 0xff,
-  0x82 & 0xff,
-  0x81 & 0xff,
-  0x81 & 0xff,
-  0x80 & 0xff,
-  0xff & 0xff,
-  0xfd & 0xff,
-  0xfb & 0xff,
-  0xf9 & 0xff,
-  0xf7 & 0xff,
-  0xf6 & 0xff,
-  0xf4 & 0xff,
-  0xf2 & 0xff,
-  0xf1 & 0xff,
-  0xef & 0xff,
-  0xed & 0xff,
-  0xec & 0xff,
-  0xea & 0xff,
-  0xe9 & 0xff,
-  0xe7 & 0xff,
-  0xe6 & 0xff,
-  0xe4 & 0xff,
-  0xe3 & 0xff,
-  0xe1 & 0xff,
-  0xe0 & 0xff,
-  0xdf & 0xff,
-  0xdd & 0xff,
-  0xdc & 0xff,
-  0xdb & 0xff,
-  0xda & 0xff,
-  0xd8 & 0xff,
-  0xd7 & 0xff,
-  0xd6 & 0xff,
-  0xd5 & 0xff,
-  0xd4 & 0xff,
-  0xd3 & 0xff,
-  0xd2 & 0xff,
-  0xd0 & 0xff,
-  0xcf & 0xff,
-  0xce & 0xff,
-  0xcd & 0xff,
-  0xcc & 0xff,
-  0xcb & 0xff,
-  0xca & 0xff,
-  0xc9 & 0xff,
-  0xc8 & 0xff,
-  0xc7 & 0xff,
-  0xc6 & 0xff,
-  0xc6 & 0xff,
-  0xc5 & 0xff,
-  0xc4 & 0xff,
-  0xc3 & 0xff,
-  0xc2 & 0xff,
-  0xc1 & 0xff,
-  0xc0 & 0xff,
-  0xbf & 0xff,
-  0xbf & 0xff,
-  0xbe & 0xff,
-  0xbd & 0xff,
-  0xbc & 0xff,
-  0xbb & 0xff,
-  0xbb & 0xff,
-  0xba & 0xff,
-  0xb9 & 0xff,
-  0xb8 & 0xff,
-  0xb8 & 0xff,
-  0xb7 & 0xff,
-  0xb6 & 0xff,
-  0xb5 & 0xff,
   0
 };
 
@@ -10290,7 +10037,7 @@ static const unsigned CONST_TBL_xdsem_tab_compr32mto16_m32_0[] = {
   0
 };
 
-
+
 /* Instruction operands.  */
 
 static int
@@ -15858,15 +15605,6 @@ static xtensa_arg_internal Iclass_AE_L16X4_IP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_AE_L16X4_RIP_args[] = {
-  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'o' },
-  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
-};
-
-static xtensa_arg_internal Iclass_AE_L16X4_RIP_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
 static xtensa_arg_internal Iclass_AE_L16X4_RIC_args[] = {
   { { OPERAND_opnd_ae_sem_loads_stores_v }, 'o' },
   { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
@@ -15895,6 +15633,15 @@ static xtensa_arg_internal Iclass_AE_L16X4_XP_args[] = {
 };
 
 static xtensa_arg_internal Iclass_AE_L16X4_XP_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_L16X4_RIP_args[] = {
+  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'o' },
+  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
+};
+
+static xtensa_arg_internal Iclass_AE_L16X4_RIP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -16034,15 +15781,6 @@ static xtensa_arg_internal Iclass_AE_L32X2_IP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_AE_L32X2_RIP_args[] = {
-  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'o' },
-  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
-};
-
-static xtensa_arg_internal Iclass_AE_L32X2_RIP_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
 static xtensa_arg_internal Iclass_AE_L32X2_RIC_args[] = {
   { { OPERAND_opnd_ae_sem_loads_stores_v }, 'o' },
   { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
@@ -16071,6 +15809,15 @@ static xtensa_arg_internal Iclass_AE_L32X2_XP_args[] = {
 };
 
 static xtensa_arg_internal Iclass_AE_L32X2_XP_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_L32X2_RIP_args[] = {
+  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'o' },
+  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
+};
+
+static xtensa_arg_internal Iclass_AE_L32X2_RIP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -16434,15 +16181,6 @@ static xtensa_arg_internal Iclass_AE_S16X4_IP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_AE_S16X4_RIP_args[] = {
-  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'i' },
-  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
-};
-
-static xtensa_arg_internal Iclass_AE_S16X4_RIP_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
 static xtensa_arg_internal Iclass_AE_S16X4_RIC_args[] = {
   { { OPERAND_opnd_ae_sem_loads_stores_v }, 'i' },
   { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
@@ -16471,6 +16209,15 @@ static xtensa_arg_internal Iclass_AE_S16X4_XP_args[] = {
 };
 
 static xtensa_arg_internal Iclass_AE_S16X4_XP_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_S16X4_RIP_args[] = {
+  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'i' },
+  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
+};
+
+static xtensa_arg_internal Iclass_AE_S16X4_RIP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -16694,15 +16441,6 @@ static xtensa_arg_internal Iclass_AE_S32X2_IP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_AE_S32X2_RIP_args[] = {
-  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'i' },
-  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
-};
-
-static xtensa_arg_internal Iclass_AE_S32X2_RIP_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
 static xtensa_arg_internal Iclass_AE_S32X2_RIC_args[] = {
   { { OPERAND_opnd_ae_sem_loads_stores_v }, 'i' },
   { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
@@ -16731,6 +16469,15 @@ static xtensa_arg_internal Iclass_AE_S32X2_XP_args[] = {
 };
 
 static xtensa_arg_internal Iclass_AE_S32X2_XP_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_S32X2_RIP_args[] = {
+  { { OPERAND_opnd_ae_sem_loads_stores_v }, 'i' },
+  { { OPERAND_opnd_ae_sem_loads_stores_a }, 'm' }
+};
+
+static xtensa_arg_internal Iclass_AE_S32X2_RIP_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -17046,6 +16793,26 @@ static xtensa_arg_internal Iclass_AE_MOVF32X2_args[] = {
 };
 
 static xtensa_arg_internal Iclass_AE_MOVF32X2_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_MOVT64_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_MOVT64_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_MOVF64_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_AE_MOVF64_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -17437,26 +17204,6 @@ static xtensa_arg_internal Iclass_AE_MOV_args[] = {
 };
 
 static xtensa_arg_internal Iclass_AE_MOV_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_AE_MOVT64_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_AE_MOVT64_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_AE_MOVF64_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_AE_MOVF64_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -22484,66 +22231,6 @@ static xtensa_arg_internal Iclass_WFR_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_MOVT_S_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVT_S_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVF_S_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVF_S_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVEQZ_S_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVEQZ_S_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVNEZ_S_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVNEZ_S_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVGEZ_S_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVGEZ_S_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVLTZ_S_args[] = {
-  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
-  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
-  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_MOVLTZ_S_stateArgs[] = {
-  { { STATE_CPENABLE }, 'i' }
-};
-
 static xtensa_arg_internal Iclass_ADD_S_args[] = {
   { { OPERAND_opnd_ae_sem_spfma_v }, 'o' },
   { { OPERAND_opnd_ae_sem_spfma_v1 }, 'i' },
@@ -23039,27 +22726,6 @@ static xtensa_arg_internal Iclass_CLSFY_S_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_CVTSF16_L_args[] = {
-  { { OPERAND_opnd_ae_sem_spcvtlookup_v }, 'o' },
-  { { OPERAND_opnd_ae_sem_spcvtlookup_v0 }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_CVTSF16_L_stateArgs[] = {
-  { { STATE_StickyFlags }, 'm' },
-  { { STATE_CPENABLE }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_CVTF16S_L_args[] = {
-  { { OPERAND_opnd_ae_sem_spcvtlookup_v }, 'o' },
-  { { OPERAND_opnd_ae_sem_spcvtlookup_v0 }, 'i' }
-};
-
-static xtensa_arg_internal Iclass_CVTF16S_L_stateArgs[] = {
-  { { STATE_StickyFlags }, 'm' },
-  { { STATE_RoundMode }, 'i' },
-  { { STATE_CPENABLE }, 'i' }
-};
-
 static xtensa_arg_internal Iclass_MULMUX_S_args[] = {
   { { OPERAND_opnd_ae_sem_spfma_v }, 'o' },
   { { OPERAND_opnd_ae_sem_spfma_v1 }, 'i' },
@@ -23083,6 +22749,87 @@ static xtensa_arg_internal Iclass_MADDMUX_S_args[] = {
 static xtensa_arg_internal Iclass_MADDMUX_S_stateArgs[] = {
   { { STATE_StickyFlags }, 'm' },
   { { STATE_RoundMode }, 'i' },
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_CVTSF16_L_args[] = {
+  { { OPERAND_opnd_ae_sem_spcvtlookup_v }, 'o' },
+  { { OPERAND_opnd_ae_sem_spcvtlookup_v0 }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_CVTSF16_L_stateArgs[] = {
+  { { STATE_StickyFlags }, 'm' },
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_CVTF16S_L_args[] = {
+  { { OPERAND_opnd_ae_sem_spcvtlookup_v }, 'o' },
+  { { OPERAND_opnd_ae_sem_spcvtlookup_v0 }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_CVTF16S_L_stateArgs[] = {
+  { { STATE_StickyFlags }, 'm' },
+  { { STATE_RoundMode }, 'i' },
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVT_S_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVT_S_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVF_S_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_vbr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVF_S_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVEQZ_S_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVEQZ_S_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVNEZ_S_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVNEZ_S_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVGEZ_S_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVGEZ_S_stateArgs[] = {
+  { { STATE_CPENABLE }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVLTZ_S_args[] = {
+  { { OPERAND_opnd_ae_sem_cmov_v }, 'm' },
+  { { OPERAND_opnd_ae_sem_cmov_v0 }, 'i' },
+  { { OPERAND_opnd_ae_sem_cmov_arr }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_MOVLTZ_S_stateArgs[] = {
   { { STATE_CPENABLE }, 'i' }
 };
 
@@ -23785,14 +23532,14 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_AE_L16X4_I_stateArgs, 0, 0 },
   { 3, Iclass_AE_L16X4_IP_args,
     1, Iclass_AE_L16X4_IP_stateArgs, 0, 0 },
-  { 2, Iclass_AE_L16X4_RIP_args,
-    1, Iclass_AE_L16X4_RIP_stateArgs, 0, 0 },
   { 2, Iclass_AE_L16X4_RIC_args,
     3, Iclass_AE_L16X4_RIC_stateArgs, 0, 0 },
   { 3, Iclass_AE_L16X4_X_args,
     1, Iclass_AE_L16X4_X_stateArgs, 0, 0 },
   { 3, Iclass_AE_L16X4_XP_args,
     1, Iclass_AE_L16X4_XP_stateArgs, 0, 0 },
+  { 2, Iclass_AE_L16X4_RIP_args,
+    1, Iclass_AE_L16X4_RIP_stateArgs, 0, 0 },
   { 3, Iclass_AE_L32_XC_args,
     3, Iclass_AE_L32_XC_stateArgs, 0, 0 },
   { 3, Iclass_AE_L32_I_args,
@@ -23819,14 +23566,14 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_AE_L32X2_I_stateArgs, 0, 0 },
   { 3, Iclass_AE_L32X2_IP_args,
     1, Iclass_AE_L32X2_IP_stateArgs, 0, 0 },
-  { 2, Iclass_AE_L32X2_RIP_args,
-    1, Iclass_AE_L32X2_RIP_stateArgs, 0, 0 },
   { 2, Iclass_AE_L32X2_RIC_args,
     3, Iclass_AE_L32X2_RIC_stateArgs, 0, 0 },
   { 3, Iclass_AE_L32X2_X_args,
     1, Iclass_AE_L32X2_X_stateArgs, 0, 0 },
   { 3, Iclass_AE_L32X2_XP_args,
     1, Iclass_AE_L32X2_XP_stateArgs, 0, 0 },
+  { 2, Iclass_AE_L32X2_RIP_args,
+    1, Iclass_AE_L32X2_RIP_stateArgs, 0, 0 },
   { 3, Iclass_AE_L64_XC_args,
     3, Iclass_AE_L64_XC_stateArgs, 0, 0 },
   { 3, Iclass_AE_L64_I_args,
@@ -23897,14 +23644,14 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_AE_S16X4_I_stateArgs, 0, 0 },
   { 3, Iclass_AE_S16X4_IP_args,
     1, Iclass_AE_S16X4_IP_stateArgs, 0, 0 },
-  { 2, Iclass_AE_S16X4_RIP_args,
-    1, Iclass_AE_S16X4_RIP_stateArgs, 0, 0 },
   { 2, Iclass_AE_S16X4_RIC_args,
     3, Iclass_AE_S16X4_RIC_stateArgs, 0, 0 },
   { 3, Iclass_AE_S16X4_X_args,
     1, Iclass_AE_S16X4_X_stateArgs, 0, 0 },
   { 3, Iclass_AE_S16X4_XP_args,
     1, Iclass_AE_S16X4_XP_stateArgs, 0, 0 },
+  { 2, Iclass_AE_S16X4_RIP_args,
+    1, Iclass_AE_S16X4_RIP_stateArgs, 0, 0 },
   { 3, Iclass_AE_S16X4RNG_I_args,
     2, Iclass_AE_S16X4RNG_I_stateArgs, 0, 0 },
   { 3, Iclass_AE_S16X4RNG_IP_args,
@@ -23947,14 +23694,14 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_AE_S32X2_I_stateArgs, 0, 0 },
   { 3, Iclass_AE_S32X2_IP_args,
     1, Iclass_AE_S32X2_IP_stateArgs, 0, 0 },
-  { 2, Iclass_AE_S32X2_RIP_args,
-    1, Iclass_AE_S32X2_RIP_stateArgs, 0, 0 },
   { 2, Iclass_AE_S32X2_RIC_args,
     3, Iclass_AE_S32X2_RIC_stateArgs, 0, 0 },
   { 3, Iclass_AE_S32X2_X_args,
     1, Iclass_AE_S32X2_X_stateArgs, 0, 0 },
   { 3, Iclass_AE_S32X2_XP_args,
     1, Iclass_AE_S32X2_XP_stateArgs, 0, 0 },
+  { 2, Iclass_AE_S32X2_RIP_args,
+    1, Iclass_AE_S32X2_RIP_stateArgs, 0, 0 },
   { 3, Iclass_AE_S64_XC_args,
     3, Iclass_AE_S64_XC_stateArgs, 0, 0 },
   { 3, Iclass_AE_S64_I_args,
@@ -24017,6 +23764,10 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_AE_MOVT32X2_stateArgs, 0, 0 },
   { 3, Iclass_AE_MOVF32X2_args,
     1, Iclass_AE_MOVF32X2_stateArgs, 0, 0 },
+  { 3, Iclass_AE_MOVT64_args,
+    1, Iclass_AE_MOVT64_stateArgs, 0, 0 },
+  { 3, Iclass_AE_MOVF64_args,
+    1, Iclass_AE_MOVF64_stateArgs, 0, 0 },
   { 3, Iclass_AE_MOVDA32X2_args,
     1, Iclass_AE_MOVDA32X2_stateArgs, 0, 0 },
   { 2, Iclass_AE_MOVDA32_args,
@@ -24093,10 +23844,6 @@ static xtensa_iclass_internal iclasses[] = {
     2, Iclass_AE_ROUNDSP16Q48X2ASYM_stateArgs, 0, 0 },
   { 2, Iclass_AE_MOV_args,
     1, Iclass_AE_MOV_stateArgs, 0, 0 },
-  { 3, Iclass_AE_MOVT64_args,
-    1, Iclass_AE_MOVT64_stateArgs, 0, 0 },
-  { 3, Iclass_AE_MOVF64_args,
-    1, Iclass_AE_MOVF64_stateArgs, 0, 0 },
   { 2, Iclass_AE_CVT48A32_args,
     1, Iclass_AE_CVT48A32_stateArgs, 0, 0 },
   { 2, Iclass_AE_CVT64A32_args,
@@ -25089,18 +24836,6 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_RFR_stateArgs, 0, 0 },
   { 2, Iclass_WFR_args,
     1, Iclass_WFR_stateArgs, 0, 0 },
-  { 3, Iclass_MOVT_S_args,
-    1, Iclass_MOVT_S_stateArgs, 0, 0 },
-  { 3, Iclass_MOVF_S_args,
-    1, Iclass_MOVF_S_stateArgs, 0, 0 },
-  { 3, Iclass_MOVEQZ_S_args,
-    1, Iclass_MOVEQZ_S_stateArgs, 0, 0 },
-  { 3, Iclass_MOVNEZ_S_args,
-    1, Iclass_MOVNEZ_S_stateArgs, 0, 0 },
-  { 3, Iclass_MOVGEZ_S_args,
-    1, Iclass_MOVGEZ_S_stateArgs, 0, 0 },
-  { 3, Iclass_MOVLTZ_S_args,
-    1, Iclass_MOVLTZ_S_stateArgs, 0, 0 },
   { 3, Iclass_ADD_S_args,
     3, Iclass_ADD_S_stateArgs, 0, 0 },
   { 3, Iclass_SUB_S_args,
@@ -25195,14 +24930,26 @@ static xtensa_iclass_internal iclasses[] = {
     1, Iclass_MULJC_S_stateArgs, 0, 0 },
   { 2, Iclass_CLSFY_S_args,
     1, Iclass_CLSFY_S_stateArgs, 0, 0 },
-  { 2, Iclass_CVTSF16_L_args,
-    2, Iclass_CVTSF16_L_stateArgs, 0, 0 },
-  { 2, Iclass_CVTF16S_L_args,
-    3, Iclass_CVTF16S_L_stateArgs, 0, 0 },
   { 4, Iclass_MULMUX_S_args,
     3, Iclass_MULMUX_S_stateArgs, 0, 0 },
   { 4, Iclass_MADDMUX_S_args,
     3, Iclass_MADDMUX_S_stateArgs, 0, 0 },
+  { 2, Iclass_CVTSF16_L_args,
+    2, Iclass_CVTSF16_L_stateArgs, 0, 0 },
+  { 2, Iclass_CVTF16S_L_args,
+    3, Iclass_CVTF16S_L_stateArgs, 0, 0 },
+  { 3, Iclass_MOVT_S_args,
+    1, Iclass_MOVT_S_stateArgs, 0, 0 },
+  { 3, Iclass_MOVF_S_args,
+    1, Iclass_MOVF_S_stateArgs, 0, 0 },
+  { 3, Iclass_MOVEQZ_S_args,
+    1, Iclass_MOVEQZ_S_stateArgs, 0, 0 },
+  { 3, Iclass_MOVNEZ_S_args,
+    1, Iclass_MOVNEZ_S_stateArgs, 0, 0 },
+  { 3, Iclass_MOVGEZ_S_args,
+    1, Iclass_MOVGEZ_S_stateArgs, 0, 0 },
+  { 3, Iclass_MOVLTZ_S_args,
+    1, Iclass_MOVLTZ_S_stateArgs, 0, 0 },
   { 1, Iclass_AE_MOVFCRFSRV_args,
     4, Iclass_AE_MOVFCRFSRV_stateArgs, 0, 0 },
   { 1, Iclass_AE_MOVVFCRFSR_args,
@@ -25548,10 +25295,10 @@ enum xtensa_iclass_id {
   ICLASS_AE_L16X4_XC,
   ICLASS_AE_L16X4_I,
   ICLASS_AE_L16X4_IP,
-  ICLASS_AE_L16X4_RIP,
   ICLASS_AE_L16X4_RIC,
   ICLASS_AE_L16X4_X,
   ICLASS_AE_L16X4_XP,
+  ICLASS_AE_L16X4_RIP,
   ICLASS_AE_L32_XC,
   ICLASS_AE_L32_I,
   ICLASS_AE_L32_IP,
@@ -25565,10 +25312,10 @@ enum xtensa_iclass_id {
   ICLASS_AE_L32X2_XC,
   ICLASS_AE_L32X2_I,
   ICLASS_AE_L32X2_IP,
-  ICLASS_AE_L32X2_RIP,
   ICLASS_AE_L32X2_RIC,
   ICLASS_AE_L32X2_X,
   ICLASS_AE_L32X2_XP,
+  ICLASS_AE_L32X2_RIP,
   ICLASS_AE_L64_XC,
   ICLASS_AE_L64_I,
   ICLASS_AE_L64_IP,
@@ -25604,10 +25351,10 @@ enum xtensa_iclass_id {
   ICLASS_AE_S16X4_XC,
   ICLASS_AE_S16X4_I,
   ICLASS_AE_S16X4_IP,
-  ICLASS_AE_S16X4_RIP,
   ICLASS_AE_S16X4_RIC,
   ICLASS_AE_S16X4_X,
   ICLASS_AE_S16X4_XP,
+  ICLASS_AE_S16X4_RIP,
   ICLASS_AE_S16X4RNG_I,
   ICLASS_AE_S16X4RNG_IP,
   ICLASS_AE_S16X4RNG_X,
@@ -25629,10 +25376,10 @@ enum xtensa_iclass_id {
   ICLASS_AE_S32X2_XC,
   ICLASS_AE_S32X2_I,
   ICLASS_AE_S32X2_IP,
-  ICLASS_AE_S32X2_RIP,
   ICLASS_AE_S32X2_RIC,
   ICLASS_AE_S32X2_X,
   ICLASS_AE_S32X2_XP,
+  ICLASS_AE_S32X2_RIP,
   ICLASS_AE_S64_XC,
   ICLASS_AE_S64_I,
   ICLASS_AE_S64_IP,
@@ -25664,6 +25411,8 @@ enum xtensa_iclass_id {
   ICLASS_AE_MOVF16X4,
   ICLASS_AE_MOVT32X2,
   ICLASS_AE_MOVF32X2,
+  ICLASS_AE_MOVT64,
+  ICLASS_AE_MOVF64,
   ICLASS_AE_MOVDA32X2,
   ICLASS_AE_MOVDA32,
   ICLASS_AE_MOVDA16X2,
@@ -25702,8 +25451,6 @@ enum xtensa_iclass_id {
   ICLASS_AE_ROUNDSP16Q48X2SYM,
   ICLASS_AE_ROUNDSP16Q48X2ASYM,
   ICLASS_AE_MOV,
-  ICLASS_AE_MOVT64,
-  ICLASS_AE_MOVF64,
   ICLASS_AE_CVT48A32,
   ICLASS_AE_CVT64A32,
   ICLASS_AE_CVT64F32_H,
@@ -26200,12 +25947,6 @@ enum xtensa_iclass_id {
   ICLASS_WUR_FSR,
   ICLASS_RFR,
   ICLASS_WFR,
-  ICLASS_MOVT_S,
-  ICLASS_MOVF_S,
-  ICLASS_MOVEQZ_S,
-  ICLASS_MOVNEZ_S,
-  ICLASS_MOVGEZ_S,
-  ICLASS_MOVLTZ_S,
   ICLASS_ADD_S,
   ICLASS_SUB_S,
   ICLASS_MUL_S,
@@ -26253,10 +25994,16 @@ enum xtensa_iclass_id {
   ICLASS_UFLOAT_SX2,
   ICLASS_MULJC_S,
   ICLASS_CLSFY_S,
-  ICLASS_CVTSF16_L,
-  ICLASS_CVTF16S_L,
   ICLASS_MULMUX_S,
   ICLASS_MADDMUX_S,
+  ICLASS_CVTSF16_L,
+  ICLASS_CVTF16S_L,
+  ICLASS_MOVT_S,
+  ICLASS_MOVF_S,
+  ICLASS_MOVEQZ_S,
+  ICLASS_MOVNEZ_S,
+  ICLASS_MOVGEZ_S,
+  ICLASS_MOVLTZ_S,
   ICLASS_AE_MOVFCRFSRV,
   ICLASS_AE_MOVVFCRFSR
 };
@@ -30033,24 +29780,6 @@ Opcode_ae_l16x4_ip_Slot_inst_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
-Opcode_ae_l16x4_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x6a40f0;
-}
-
-static void
-Opcode_ae_l16x4_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2e0005;
-}
-
-static void
-Opcode_ae_l16x4_rip_Slot_inst_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x430503;
-}
-
-static void
 Opcode_ae_l16x4_ric_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x6a40e0;
@@ -30097,6 +29826,24 @@ Opcode_ae_l16x4_xp_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0xb9fa000;
   slotbuf[1] = 0;
+}
+
+static void
+Opcode_ae_l16x4_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x6a40f0;
+}
+
+static void
+Opcode_ae_l16x4_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2e0005;
+}
+
+static void
+Opcode_ae_l16x4_rip_Slot_inst_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x430503;
 }
 
 static void
@@ -30330,24 +30077,6 @@ Opcode_ae_l32x2_ip_Slot_inst_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
-Opcode_ae_l32x2_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x6a10d0;
-}
-
-static void
-Opcode_ae_l32x2_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2e0007;
-}
-
-static void
-Opcode_ae_l32x2_rip_Slot_inst_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x430703;
-}
-
-static void
 Opcode_ae_l32x2_ric_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x6a00d0;
@@ -30399,6 +30128,24 @@ static void
 Opcode_ae_l32x2_xp_Slot_inst_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x3d0003;
+}
+
+static void
+Opcode_ae_l32x2_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x6a10d0;
+}
+
+static void
+Opcode_ae_l32x2_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2e0007;
+}
+
+static void
+Opcode_ae_l32x2_rip_Slot_inst_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x430703;
 }
 
 static void
@@ -30979,18 +30726,6 @@ Opcode_ae_s16x4_ip_Slot_inst_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
-Opcode_ae_s16x4_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x6a30d0;
-}
-
-static void
-Opcode_ae_s16x4_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x245005;
-}
-
-static void
 Opcode_ae_s16x4_ric_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x6a20d0;
@@ -31036,6 +30771,18 @@ static void
 Opcode_ae_s16x4_xp_Slot_f3_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x1a9000;
+}
+
+static void
+Opcode_ae_s16x4_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x6a30d0;
+}
+
+static void
+Opcode_ae_s16x4_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x245005;
 }
 
 static void
@@ -31382,24 +31129,6 @@ Opcode_ae_s32x2_ip_Slot_inst_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
-Opcode_ae_s32x2_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x6a5090;
-}
-
-static void
-Opcode_ae_s32x2_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x247005;
-}
-
-static void
-Opcode_ae_s32x2_rip_Slot_inst_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x40304;
-}
-
-static void
 Opcode_ae_s32x2_ric_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x6a5080;
@@ -31445,6 +31174,24 @@ static void
 Opcode_ae_s32x2_xp_Slot_inst_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x1e0003;
+}
+
+static void
+Opcode_ae_s32x2_rip_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x6a5090;
+}
+
+static void
+Opcode_ae_s32x2_rip_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x247005;
+}
+
+static void
+Opcode_ae_s32x2_rip_Slot_inst_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x40304;
 }
 
 static void
@@ -32020,6 +31767,55 @@ static void
 Opcode_ae_movf32x2_Slot_inst_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x718003;
+}
+
+static void
+Opcode_ae_movt64_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x1f0008;
+}
+
+static void
+Opcode_ae_movt64_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x1e2080;
+}
+
+static void
+Opcode_ae_movt64_Slot_f1_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x128000;
+}
+
+static void
+Opcode_ae_movt64_Slot_inst_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x520003;
+}
+
+static void
+Opcode_ae_movf64_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x1ee008;
+}
+
+static void
+Opcode_ae_movf64_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2df080;
+}
+
+static void
+Opcode_ae_movf64_Slot_f1_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xf00e0;
+}
+
+static void
+Opcode_ae_movf64_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xba2a080;
+  slotbuf[1] = 0;
 }
 
 static void
@@ -32728,55 +32524,6 @@ static void
 Opcode_ae_mov_Slot_inst_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x1c5000;
-}
-
-static void
-Opcode_ae_movt64_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x1f0008;
-}
-
-static void
-Opcode_ae_movt64_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x1e2080;
-}
-
-static void
-Opcode_ae_movt64_Slot_f1_s1_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x128000;
-}
-
-static void
-Opcode_ae_movt64_Slot_inst_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x520003;
-}
-
-static void
-Opcode_ae_movf64_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x1ee008;
-}
-
-static void
-Opcode_ae_movf64_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2df080;
-}
-
-static void
-Opcode_ae_movf64_Slot_f1_s1_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xf00e0;
-}
-
-static void
-Opcode_ae_movf64_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xba2a080;
-  slotbuf[1] = 0;
 }
 
 static void
@@ -38280,119 +38027,6 @@ Opcode_wfr_Slot_inst_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
-Opcode_movt_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x72f008;
-}
-
-static void
-Opcode_movt_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x1e4080;
-}
-
-static void
-Opcode_movt_s_Slot_inst_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x528003;
-}
-
-static void
-Opcode_movf_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x72f000;
-}
-
-static void
-Opcode_movf_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x1e3080;
-}
-
-static void
-Opcode_movf_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xba2b080;
-  slotbuf[1] = 0;
-}
-
-static void
-Opcode_moveqz_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x729000;
-}
-
-static void
-Opcode_moveqz_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2c8000;
-}
-
-static void
-Opcode_moveqz_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xba6a000;
-  slotbuf[1] = 0;
-}
-
-static void
-Opcode_movnez_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x72c000;
-}
-
-static void
-Opcode_movnez_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2cb000;
-}
-
-static void
-Opcode_movnez_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xba6d000;
-  slotbuf[1] = 0;
-}
-
-static void
-Opcode_movgez_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x72a000;
-}
-
-static void
-Opcode_movgez_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2c9000;
-}
-
-static void
-Opcode_movgez_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xba6b000;
-  slotbuf[1] = 0;
-}
-
-static void
-Opcode_movltz_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x72b000;
-}
-
-static void
-Opcode_movltz_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0x2ca000;
-}
-
-static void
-Opcode_movltz_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
-{
-  slotbuf[0] = 0xba6c000;
-  slotbuf[1] = 0;
-}
-
-static void
 Opcode_add_s_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x1dc000;
@@ -39235,6 +38869,24 @@ Opcode_clsfy_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
+Opcode_mulmux_s_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x70000;
+}
+
+static void
+Opcode_mulmux_s_Slot_f1_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x70000;
+}
+
+static void
+Opcode_maddmux_s_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x60000;
+}
+
+static void
 Opcode_cvtsf16_l_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
 {
   slotbuf[0] = 0x6a50c0;
@@ -39273,21 +38925,116 @@ Opcode_cvtf16s_l_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
 }
 
 static void
-Opcode_mulmux_s_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
+Opcode_movt_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
 {
-  slotbuf[0] = 0x70000;
+  slotbuf[0] = 0x72f008;
 }
 
 static void
-Opcode_mulmux_s_Slot_f1_s1_encode (xtensa_insnbuf slotbuf)
+Opcode_movt_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
 {
-  slotbuf[0] = 0x70000;
+  slotbuf[0] = 0x1e4080;
 }
 
 static void
-Opcode_maddmux_s_Slot_f0_s1_encode (xtensa_insnbuf slotbuf)
+Opcode_movt_s_Slot_inst_encode (xtensa_insnbuf slotbuf)
 {
-  slotbuf[0] = 0x60000;
+  slotbuf[0] = 0x528003;
+}
+
+static void
+Opcode_movf_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x72f000;
+}
+
+static void
+Opcode_movf_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x1e3080;
+}
+
+static void
+Opcode_movf_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xba2b080;
+  slotbuf[1] = 0;
+}
+
+static void
+Opcode_moveqz_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x729000;
+}
+
+static void
+Opcode_moveqz_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2c8000;
+}
+
+static void
+Opcode_moveqz_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xba6a000;
+  slotbuf[1] = 0;
+}
+
+static void
+Opcode_movnez_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x72c000;
+}
+
+static void
+Opcode_movnez_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2cb000;
+}
+
+static void
+Opcode_movnez_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xba6d000;
+  slotbuf[1] = 0;
+}
+
+static void
+Opcode_movgez_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x72a000;
+}
+
+static void
+Opcode_movgez_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2c9000;
+}
+
+static void
+Opcode_movgez_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xba6b000;
+  slotbuf[1] = 0;
+}
+
+static void
+Opcode_movltz_s_Slot_f0_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x72b000;
+}
+
+static void
+Opcode_movltz_s_Slot_f1_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0x2ca000;
+}
+
+static void
+Opcode_movltz_s_Slot_f2_s0_encode (xtensa_insnbuf slotbuf)
+{
+  slotbuf[0] = 0xba6c000;
+  slotbuf[1] = 0;
 }
 
 static void
@@ -40952,10 +40699,6 @@ static xtensa_opcode_encode_fn Opcode_ae_l16x4_ip_encode_fns[] = {
   Opcode_ae_l16x4_ip_Slot_inst_encode, 0, 0, Opcode_ae_l16x4_ip_Slot_f0_s0_encode, 0, Opcode_ae_l16x4_ip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_ae_l16x4_rip_encode_fns[] = {
-  Opcode_ae_l16x4_rip_Slot_inst_encode, 0, 0, Opcode_ae_l16x4_rip_Slot_f0_s0_encode, 0, Opcode_ae_l16x4_rip_Slot_f1_s0_encode, 0, 0, 0, 0
-};
-
 static xtensa_opcode_encode_fn Opcode_ae_l16x4_ric_encode_fns[] = {
   0, 0, 0, Opcode_ae_l16x4_ric_Slot_f0_s0_encode, 0, Opcode_ae_l16x4_ric_Slot_f1_s0_encode, 0, 0, 0, 0
 };
@@ -40966,6 +40709,10 @@ static xtensa_opcode_encode_fn Opcode_ae_l16x4_x_encode_fns[] = {
 
 static xtensa_opcode_encode_fn Opcode_ae_l16x4_xp_encode_fns[] = {
   0, 0, 0, Opcode_ae_l16x4_xp_Slot_f0_s0_encode, 0, Opcode_ae_l16x4_xp_Slot_f1_s0_encode, 0, Opcode_ae_l16x4_xp_Slot_f2_s0_encode, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_ae_l16x4_rip_encode_fns[] = {
+  Opcode_ae_l16x4_rip_Slot_inst_encode, 0, 0, Opcode_ae_l16x4_rip_Slot_f0_s0_encode, 0, Opcode_ae_l16x4_rip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_l32_xc_encode_fns[] = {
@@ -41020,10 +40767,6 @@ static xtensa_opcode_encode_fn Opcode_ae_l32x2_ip_encode_fns[] = {
   Opcode_ae_l32x2_ip_Slot_inst_encode, 0, 0, Opcode_ae_l32x2_ip_Slot_f0_s0_encode, 0, Opcode_ae_l32x2_ip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_ae_l32x2_rip_encode_fns[] = {
-  Opcode_ae_l32x2_rip_Slot_inst_encode, 0, 0, Opcode_ae_l32x2_rip_Slot_f0_s0_encode, 0, Opcode_ae_l32x2_rip_Slot_f1_s0_encode, 0, 0, 0, 0
-};
-
 static xtensa_opcode_encode_fn Opcode_ae_l32x2_ric_encode_fns[] = {
   Opcode_ae_l32x2_ric_Slot_inst_encode, 0, 0, Opcode_ae_l32x2_ric_Slot_f0_s0_encode, 0, Opcode_ae_l32x2_ric_Slot_f1_s0_encode, 0, 0, 0, 0
 };
@@ -41034,6 +40777,10 @@ static xtensa_opcode_encode_fn Opcode_ae_l32x2_x_encode_fns[] = {
 
 static xtensa_opcode_encode_fn Opcode_ae_l32x2_xp_encode_fns[] = {
   Opcode_ae_l32x2_xp_Slot_inst_encode, 0, 0, Opcode_ae_l32x2_xp_Slot_f0_s0_encode, 0, Opcode_ae_l32x2_xp_Slot_f1_s0_encode, 0, 0, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_ae_l32x2_rip_encode_fns[] = {
+  Opcode_ae_l32x2_rip_Slot_inst_encode, 0, 0, Opcode_ae_l32x2_rip_Slot_f0_s0_encode, 0, Opcode_ae_l32x2_rip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_l64_xc_encode_fns[] = {
@@ -41176,10 +40923,6 @@ static xtensa_opcode_encode_fn Opcode_ae_s16x4_ip_encode_fns[] = {
   Opcode_ae_s16x4_ip_Slot_inst_encode, 0, 0, Opcode_ae_s16x4_ip_Slot_f0_s0_encode, 0, Opcode_ae_s16x4_ip_Slot_f1_s0_encode, 0, 0, Opcode_ae_s16x4_ip_Slot_f3_s0_encode, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_ae_s16x4_rip_encode_fns[] = {
-  0, 0, 0, Opcode_ae_s16x4_rip_Slot_f0_s0_encode, 0, Opcode_ae_s16x4_rip_Slot_f1_s0_encode, 0, 0, 0, 0
-};
-
 static xtensa_opcode_encode_fn Opcode_ae_s16x4_ric_encode_fns[] = {
   0, 0, 0, Opcode_ae_s16x4_ric_Slot_f0_s0_encode, 0, Opcode_ae_s16x4_ric_Slot_f1_s0_encode, 0, 0, 0, 0
 };
@@ -41190,6 +40933,10 @@ static xtensa_opcode_encode_fn Opcode_ae_s16x4_x_encode_fns[] = {
 
 static xtensa_opcode_encode_fn Opcode_ae_s16x4_xp_encode_fns[] = {
   0, 0, 0, Opcode_ae_s16x4_xp_Slot_f0_s0_encode, 0, Opcode_ae_s16x4_xp_Slot_f1_s0_encode, 0, 0, Opcode_ae_s16x4_xp_Slot_f3_s0_encode, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_ae_s16x4_rip_encode_fns[] = {
+  0, 0, 0, Opcode_ae_s16x4_rip_Slot_f0_s0_encode, 0, Opcode_ae_s16x4_rip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_s16x4rng_i_encode_fns[] = {
@@ -41276,10 +41023,6 @@ static xtensa_opcode_encode_fn Opcode_ae_s32x2_ip_encode_fns[] = {
   Opcode_ae_s32x2_ip_Slot_inst_encode, 0, 0, Opcode_ae_s32x2_ip_Slot_f0_s0_encode, 0, Opcode_ae_s32x2_ip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_ae_s32x2_rip_encode_fns[] = {
-  Opcode_ae_s32x2_rip_Slot_inst_encode, 0, 0, Opcode_ae_s32x2_rip_Slot_f0_s0_encode, 0, Opcode_ae_s32x2_rip_Slot_f1_s0_encode, 0, 0, 0, 0
-};
-
 static xtensa_opcode_encode_fn Opcode_ae_s32x2_ric_encode_fns[] = {
   0, 0, 0, Opcode_ae_s32x2_ric_Slot_f0_s0_encode, 0, Opcode_ae_s32x2_ric_Slot_f1_s0_encode, 0, 0, 0, 0
 };
@@ -41290,6 +41033,10 @@ static xtensa_opcode_encode_fn Opcode_ae_s32x2_x_encode_fns[] = {
 
 static xtensa_opcode_encode_fn Opcode_ae_s32x2_xp_encode_fns[] = {
   Opcode_ae_s32x2_xp_Slot_inst_encode, 0, 0, Opcode_ae_s32x2_xp_Slot_f0_s0_encode, 0, Opcode_ae_s32x2_xp_Slot_f1_s0_encode, 0, 0, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_ae_s32x2_rip_encode_fns[] = {
+  Opcode_ae_s32x2_rip_Slot_inst_encode, 0, 0, Opcode_ae_s32x2_rip_Slot_f0_s0_encode, 0, Opcode_ae_s32x2_rip_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_s64_xc_encode_fns[] = {
@@ -41414,6 +41161,14 @@ static xtensa_opcode_encode_fn Opcode_ae_movt32x2_encode_fns[] = {
 
 static xtensa_opcode_encode_fn Opcode_ae_movf32x2_encode_fns[] = {
   Opcode_ae_movf32x2_Slot_inst_encode, 0, 0, 0, Opcode_ae_movf32x2_Slot_f0_s1_encode, Opcode_ae_movf32x2_Slot_f1_s0_encode, Opcode_ae_movf32x2_Slot_f1_s1_encode, 0, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_ae_movt64_encode_fns[] = {
+  Opcode_ae_movt64_Slot_inst_encode, 0, 0, 0, Opcode_ae_movt64_Slot_f0_s1_encode, Opcode_ae_movt64_Slot_f1_s0_encode, Opcode_ae_movt64_Slot_f1_s1_encode, 0, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_ae_movf64_encode_fns[] = {
+  0, 0, 0, 0, Opcode_ae_movf64_Slot_f0_s1_encode, Opcode_ae_movf64_Slot_f1_s0_encode, Opcode_ae_movf64_Slot_f1_s1_encode, Opcode_ae_movf64_Slot_f2_s0_encode, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_movda32x2_encode_fns[] = {
@@ -41566,14 +41321,6 @@ static xtensa_opcode_encode_fn Opcode_ae_roundsp16q48x2asym_encode_fns[] = {
 
 static xtensa_opcode_encode_fn Opcode_ae_mov_encode_fns[] = {
   Opcode_ae_mov_Slot_inst_encode, 0, 0, Opcode_ae_mov_Slot_f0_s0_encode, Opcode_ae_mov_Slot_f0_s1_encode, Opcode_ae_mov_Slot_f1_s0_encode, Opcode_ae_mov_Slot_f1_s1_encode, 0, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_ae_movt64_encode_fns[] = {
-  Opcode_ae_movt64_Slot_inst_encode, 0, 0, 0, Opcode_ae_movt64_Slot_f0_s1_encode, Opcode_ae_movt64_Slot_f1_s0_encode, Opcode_ae_movt64_Slot_f1_s1_encode, 0, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_ae_movf64_encode_fns[] = {
-  0, 0, 0, 0, Opcode_ae_movf64_Slot_f0_s1_encode, Opcode_ae_movf64_Slot_f1_s0_encode, Opcode_ae_movf64_Slot_f1_s1_encode, Opcode_ae_movf64_Slot_f2_s0_encode, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_cvt48a32_encode_fns[] = {
@@ -43560,30 +43307,6 @@ static xtensa_opcode_encode_fn Opcode_wfr_encode_fns[] = {
   Opcode_wfr_Slot_inst_encode, 0, 0, Opcode_wfr_Slot_f0_s0_encode, 0, Opcode_wfr_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_movt_s_encode_fns[] = {
-  Opcode_movt_s_Slot_inst_encode, 0, 0, Opcode_movt_s_Slot_f0_s0_encode, 0, Opcode_movt_s_Slot_f1_s0_encode, 0, 0, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_movf_s_encode_fns[] = {
-  0, 0, 0, Opcode_movf_s_Slot_f0_s0_encode, 0, Opcode_movf_s_Slot_f1_s0_encode, 0, Opcode_movf_s_Slot_f2_s0_encode, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_moveqz_s_encode_fns[] = {
-  0, 0, 0, Opcode_moveqz_s_Slot_f0_s0_encode, 0, Opcode_moveqz_s_Slot_f1_s0_encode, 0, Opcode_moveqz_s_Slot_f2_s0_encode, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_movnez_s_encode_fns[] = {
-  0, 0, 0, Opcode_movnez_s_Slot_f0_s0_encode, 0, Opcode_movnez_s_Slot_f1_s0_encode, 0, Opcode_movnez_s_Slot_f2_s0_encode, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_movgez_s_encode_fns[] = {
-  0, 0, 0, Opcode_movgez_s_Slot_f0_s0_encode, 0, Opcode_movgez_s_Slot_f1_s0_encode, 0, Opcode_movgez_s_Slot_f2_s0_encode, 0, 0
-};
-
-static xtensa_opcode_encode_fn Opcode_movltz_s_encode_fns[] = {
-  0, 0, 0, Opcode_movltz_s_Slot_f0_s0_encode, 0, Opcode_movltz_s_Slot_f1_s0_encode, 0, Opcode_movltz_s_Slot_f2_s0_encode, 0, 0
-};
-
 static xtensa_opcode_encode_fn Opcode_add_s_encode_fns[] = {
   0, 0, 0, 0, Opcode_add_s_Slot_f0_s1_encode, 0, Opcode_add_s_Slot_f1_s1_encode, 0, 0, 0
 };
@@ -43772,6 +43495,14 @@ static xtensa_opcode_encode_fn Opcode_clsfy_s_encode_fns[] = {
   0, 0, 0, 0, Opcode_clsfy_s_Slot_f0_s1_encode, Opcode_clsfy_s_Slot_f1_s0_encode, 0, Opcode_clsfy_s_Slot_f2_s0_encode, 0, 0
 };
 
+static xtensa_opcode_encode_fn Opcode_mulmux_s_encode_fns[] = {
+  0, 0, 0, 0, Opcode_mulmux_s_Slot_f0_s1_encode, 0, Opcode_mulmux_s_Slot_f1_s1_encode, 0, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_maddmux_s_encode_fns[] = {
+  0, 0, 0, 0, Opcode_maddmux_s_Slot_f0_s1_encode, 0, 0, 0, 0, 0
+};
+
 static xtensa_opcode_encode_fn Opcode_cvtsf16_l_encode_fns[] = {
   0, 0, 0, Opcode_cvtsf16_l_Slot_f0_s0_encode, 0, Opcode_cvtsf16_l_Slot_f1_s0_encode, 0, Opcode_cvtsf16_l_Slot_f2_s0_encode, 0, 0
 };
@@ -43780,12 +43511,28 @@ static xtensa_opcode_encode_fn Opcode_cvtf16s_l_encode_fns[] = {
   0, 0, 0, Opcode_cvtf16s_l_Slot_f0_s0_encode, 0, Opcode_cvtf16s_l_Slot_f1_s0_encode, 0, Opcode_cvtf16s_l_Slot_f2_s0_encode, 0, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_mulmux_s_encode_fns[] = {
-  0, 0, 0, 0, Opcode_mulmux_s_Slot_f0_s1_encode, 0, Opcode_mulmux_s_Slot_f1_s1_encode, 0, 0, 0
+static xtensa_opcode_encode_fn Opcode_movt_s_encode_fns[] = {
+  Opcode_movt_s_Slot_inst_encode, 0, 0, Opcode_movt_s_Slot_f0_s0_encode, 0, Opcode_movt_s_Slot_f1_s0_encode, 0, 0, 0, 0
 };
 
-static xtensa_opcode_encode_fn Opcode_maddmux_s_encode_fns[] = {
-  0, 0, 0, 0, Opcode_maddmux_s_Slot_f0_s1_encode, 0, 0, 0, 0, 0
+static xtensa_opcode_encode_fn Opcode_movf_s_encode_fns[] = {
+  0, 0, 0, Opcode_movf_s_Slot_f0_s0_encode, 0, Opcode_movf_s_Slot_f1_s0_encode, 0, Opcode_movf_s_Slot_f2_s0_encode, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_moveqz_s_encode_fns[] = {
+  0, 0, 0, Opcode_moveqz_s_Slot_f0_s0_encode, 0, Opcode_moveqz_s_Slot_f1_s0_encode, 0, Opcode_moveqz_s_Slot_f2_s0_encode, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_movnez_s_encode_fns[] = {
+  0, 0, 0, Opcode_movnez_s_Slot_f0_s0_encode, 0, Opcode_movnez_s_Slot_f1_s0_encode, 0, Opcode_movnez_s_Slot_f2_s0_encode, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_movgez_s_encode_fns[] = {
+  0, 0, 0, Opcode_movgez_s_Slot_f0_s0_encode, 0, Opcode_movgez_s_Slot_f1_s0_encode, 0, Opcode_movgez_s_Slot_f2_s0_encode, 0, 0
+};
+
+static xtensa_opcode_encode_fn Opcode_movltz_s_encode_fns[] = {
+  0, 0, 0, Opcode_movltz_s_Slot_f0_s0_encode, 0, Opcode_movltz_s_Slot_f1_s0_encode, 0, Opcode_movltz_s_Slot_f2_s0_encode, 0, 0
 };
 
 static xtensa_opcode_encode_fn Opcode_ae_movfcrfsrv_encode_fns[] = {
@@ -44051,10 +43798,6 @@ static xtensa_funcUnit_use Opcode_ae_l16x4_ip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
-static xtensa_funcUnit_use Opcode_ae_l16x4_rip_funcUnit_uses[] = {
-  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
-};
-
 static xtensa_funcUnit_use Opcode_ae_l16x4_ric_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
@@ -44064,6 +43807,10 @@ static xtensa_funcUnit_use Opcode_ae_l16x4_x_funcUnit_uses[] = {
 };
 
 static xtensa_funcUnit_use Opcode_ae_l16x4_xp_funcUnit_uses[] = {
+  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
+};
+
+static xtensa_funcUnit_use Opcode_ae_l16x4_rip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
@@ -44119,10 +43866,6 @@ static xtensa_funcUnit_use Opcode_ae_l32x2_ip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
-static xtensa_funcUnit_use Opcode_ae_l32x2_rip_funcUnit_uses[] = {
-  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
-};
-
 static xtensa_funcUnit_use Opcode_ae_l32x2_ric_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
@@ -44132,6 +43875,10 @@ static xtensa_funcUnit_use Opcode_ae_l32x2_x_funcUnit_uses[] = {
 };
 
 static xtensa_funcUnit_use Opcode_ae_l32x2_xp_funcUnit_uses[] = {
+  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
+};
+
+static xtensa_funcUnit_use Opcode_ae_l32x2_rip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
@@ -44275,10 +44022,6 @@ static xtensa_funcUnit_use Opcode_ae_s16x4_ip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
-static xtensa_funcUnit_use Opcode_ae_s16x4_rip_funcUnit_uses[] = {
-  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
-};
-
 static xtensa_funcUnit_use Opcode_ae_s16x4_ric_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
@@ -44288,6 +44031,10 @@ static xtensa_funcUnit_use Opcode_ae_s16x4_x_funcUnit_uses[] = {
 };
 
 static xtensa_funcUnit_use Opcode_ae_s16x4_xp_funcUnit_uses[] = {
+  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
+};
+
+static xtensa_funcUnit_use Opcode_ae_s16x4_rip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
@@ -44375,10 +44122,6 @@ static xtensa_funcUnit_use Opcode_ae_s32x2_ip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
-static xtensa_funcUnit_use Opcode_ae_s32x2_rip_funcUnit_uses[] = {
-  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
-};
-
 static xtensa_funcUnit_use Opcode_ae_s32x2_ric_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
@@ -44388,6 +44131,10 @@ static xtensa_funcUnit_use Opcode_ae_s32x2_x_funcUnit_uses[] = {
 };
 
 static xtensa_funcUnit_use Opcode_ae_s32x2_xp_funcUnit_uses[] = {
+  { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
+};
+
+static xtensa_funcUnit_use Opcode_ae_s32x2_rip_funcUnit_uses[] = {
   { FUNCUNIT_XT_LOADSTORE_UNIT, 0 }
 };
 
@@ -45908,9 +45655,6 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_l16x4.ip", ICLASS_AE_L16X4_IP,
     0,
     Opcode_ae_l16x4_ip_encode_fns, 1, Opcode_ae_l16x4_ip_funcUnit_uses },
-  { "ae_l16x4.rip", ICLASS_AE_L16X4_RIP,
-    0,
-    Opcode_ae_l16x4_rip_encode_fns, 1, Opcode_ae_l16x4_rip_funcUnit_uses },
   { "ae_l16x4.ric", ICLASS_AE_L16X4_RIC,
     0,
     Opcode_ae_l16x4_ric_encode_fns, 1, Opcode_ae_l16x4_ric_funcUnit_uses },
@@ -45920,6 +45664,9 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_l16x4.xp", ICLASS_AE_L16X4_XP,
     0,
     Opcode_ae_l16x4_xp_encode_fns, 1, Opcode_ae_l16x4_xp_funcUnit_uses },
+  { "ae_l16x4.rip", ICLASS_AE_L16X4_RIP,
+    0,
+    Opcode_ae_l16x4_rip_encode_fns, 1, Opcode_ae_l16x4_rip_funcUnit_uses },
   { "ae_l32.xc", ICLASS_AE_L32_XC,
     0,
     Opcode_ae_l32_xc_encode_fns, 1, Opcode_ae_l32_xc_funcUnit_uses },
@@ -45959,9 +45706,6 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_l32x2.ip", ICLASS_AE_L32X2_IP,
     0,
     Opcode_ae_l32x2_ip_encode_fns, 1, Opcode_ae_l32x2_ip_funcUnit_uses },
-  { "ae_l32x2.rip", ICLASS_AE_L32X2_RIP,
-    0,
-    Opcode_ae_l32x2_rip_encode_fns, 1, Opcode_ae_l32x2_rip_funcUnit_uses },
   { "ae_l32x2.ric", ICLASS_AE_L32X2_RIC,
     0,
     Opcode_ae_l32x2_ric_encode_fns, 1, Opcode_ae_l32x2_ric_funcUnit_uses },
@@ -45971,6 +45715,9 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_l32x2.xp", ICLASS_AE_L32X2_XP,
     0,
     Opcode_ae_l32x2_xp_encode_fns, 1, Opcode_ae_l32x2_xp_funcUnit_uses },
+  { "ae_l32x2.rip", ICLASS_AE_L32X2_RIP,
+    0,
+    Opcode_ae_l32x2_rip_encode_fns, 1, Opcode_ae_l32x2_rip_funcUnit_uses },
   { "ae_l64.xc", ICLASS_AE_L64_XC,
     0,
     Opcode_ae_l64_xc_encode_fns, 1, Opcode_ae_l64_xc_funcUnit_uses },
@@ -46076,9 +45823,6 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_s16x4.ip", ICLASS_AE_S16X4_IP,
     0,
     Opcode_ae_s16x4_ip_encode_fns, 1, Opcode_ae_s16x4_ip_funcUnit_uses },
-  { "ae_s16x4.rip", ICLASS_AE_S16X4_RIP,
-    0,
-    Opcode_ae_s16x4_rip_encode_fns, 1, Opcode_ae_s16x4_rip_funcUnit_uses },
   { "ae_s16x4.ric", ICLASS_AE_S16X4_RIC,
     0,
     Opcode_ae_s16x4_ric_encode_fns, 1, Opcode_ae_s16x4_ric_funcUnit_uses },
@@ -46088,6 +45832,9 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_s16x4.xp", ICLASS_AE_S16X4_XP,
     0,
     Opcode_ae_s16x4_xp_encode_fns, 1, Opcode_ae_s16x4_xp_funcUnit_uses },
+  { "ae_s16x4.rip", ICLASS_AE_S16X4_RIP,
+    0,
+    Opcode_ae_s16x4_rip_encode_fns, 1, Opcode_ae_s16x4_rip_funcUnit_uses },
   { "ae_s16x4rng.i", ICLASS_AE_S16X4RNG_I,
     0,
     Opcode_ae_s16x4rng_i_encode_fns, 1, Opcode_ae_s16x4rng_i_funcUnit_uses },
@@ -46151,9 +45898,6 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_s32x2.ip", ICLASS_AE_S32X2_IP,
     0,
     Opcode_ae_s32x2_ip_encode_fns, 1, Opcode_ae_s32x2_ip_funcUnit_uses },
-  { "ae_s32x2.rip", ICLASS_AE_S32X2_RIP,
-    0,
-    Opcode_ae_s32x2_rip_encode_fns, 1, Opcode_ae_s32x2_rip_funcUnit_uses },
   { "ae_s32x2.ric", ICLASS_AE_S32X2_RIC,
     0,
     Opcode_ae_s32x2_ric_encode_fns, 1, Opcode_ae_s32x2_ric_funcUnit_uses },
@@ -46163,6 +45907,9 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_s32x2.xp", ICLASS_AE_S32X2_XP,
     0,
     Opcode_ae_s32x2_xp_encode_fns, 1, Opcode_ae_s32x2_xp_funcUnit_uses },
+  { "ae_s32x2.rip", ICLASS_AE_S32X2_RIP,
+    0,
+    Opcode_ae_s32x2_rip_encode_fns, 1, Opcode_ae_s32x2_rip_funcUnit_uses },
   { "ae_s64.xc", ICLASS_AE_S64_XC,
     0,
     Opcode_ae_s64_xc_encode_fns, 1, Opcode_ae_s64_xc_funcUnit_uses },
@@ -46256,6 +46003,12 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_movf32x2", ICLASS_AE_MOVF32X2,
     0,
     Opcode_ae_movf32x2_encode_fns, 0, 0 },
+  { "ae_movt64", ICLASS_AE_MOVT64,
+    0,
+    Opcode_ae_movt64_encode_fns, 0, 0 },
+  { "ae_movf64", ICLASS_AE_MOVF64,
+    0,
+    Opcode_ae_movf64_encode_fns, 0, 0 },
   { "ae_movda32x2", ICLASS_AE_MOVDA32X2,
     0,
     Opcode_ae_movda32x2_encode_fns, 0, 0 },
@@ -46370,12 +46123,6 @@ static xtensa_opcode_internal opcodes[] = {
   { "ae_mov", ICLASS_AE_MOV,
     0,
     Opcode_ae_mov_encode_fns, 0, 0 },
-  { "ae_movt64", ICLASS_AE_MOVT64,
-    0,
-    Opcode_ae_movt64_encode_fns, 0, 0 },
-  { "ae_movf64", ICLASS_AE_MOVF64,
-    0,
-    Opcode_ae_movf64_encode_fns, 0, 0 },
   { "ae_cvt48a32", ICLASS_AE_CVT48A32,
     0,
     Opcode_ae_cvt48a32_encode_fns, 0, 0 },
@@ -47864,24 +47611,6 @@ static xtensa_opcode_internal opcodes[] = {
   { "wfr", ICLASS_WFR,
     0,
     Opcode_wfr_encode_fns, 0, 0 },
-  { "movt.s", ICLASS_MOVT_S,
-    0,
-    Opcode_movt_s_encode_fns, 0, 0 },
-  { "movf.s", ICLASS_MOVF_S,
-    0,
-    Opcode_movf_s_encode_fns, 0, 0 },
-  { "moveqz.s", ICLASS_MOVEQZ_S,
-    0,
-    Opcode_moveqz_s_encode_fns, 0, 0 },
-  { "movnez.s", ICLASS_MOVNEZ_S,
-    0,
-    Opcode_movnez_s_encode_fns, 0, 0 },
-  { "movgez.s", ICLASS_MOVGEZ_S,
-    0,
-    Opcode_movgez_s_encode_fns, 0, 0 },
-  { "movltz.s", ICLASS_MOVLTZ_S,
-    0,
-    Opcode_movltz_s_encode_fns, 0, 0 },
   { "add.s", ICLASS_ADD_S,
     0,
     Opcode_add_s_encode_fns, 0, 0 },
@@ -48023,18 +47752,36 @@ static xtensa_opcode_internal opcodes[] = {
   { "clsfy.s", ICLASS_CLSFY_S,
     0,
     Opcode_clsfy_s_encode_fns, 0, 0 },
-  { "cvtsf16.l", ICLASS_CVTSF16_L,
-    0,
-    Opcode_cvtsf16_l_encode_fns, 0, 0 },
-  { "cvtf16s.l", ICLASS_CVTF16S_L,
-    0,
-    Opcode_cvtf16s_l_encode_fns, 0, 0 },
   { "mulmux.s", ICLASS_MULMUX_S,
     0,
     Opcode_mulmux_s_encode_fns, 0, 0 },
   { "maddmux.s", ICLASS_MADDMUX_S,
     0,
     Opcode_maddmux_s_encode_fns, 0, 0 },
+  { "cvtsf16.l", ICLASS_CVTSF16_L,
+    0,
+    Opcode_cvtsf16_l_encode_fns, 0, 0 },
+  { "cvtf16s.l", ICLASS_CVTF16S_L,
+    0,
+    Opcode_cvtf16s_l_encode_fns, 0, 0 },
+  { "movt.s", ICLASS_MOVT_S,
+    0,
+    Opcode_movt_s_encode_fns, 0, 0 },
+  { "movf.s", ICLASS_MOVF_S,
+    0,
+    Opcode_movf_s_encode_fns, 0, 0 },
+  { "moveqz.s", ICLASS_MOVEQZ_S,
+    0,
+    Opcode_moveqz_s_encode_fns, 0, 0 },
+  { "movnez.s", ICLASS_MOVNEZ_S,
+    0,
+    Opcode_movnez_s_encode_fns, 0, 0 },
+  { "movgez.s", ICLASS_MOVGEZ_S,
+    0,
+    Opcode_movgez_s_encode_fns, 0, 0 },
+  { "movltz.s", ICLASS_MOVLTZ_S,
+    0,
+    Opcode_movltz_s_encode_fns, 0, 0 },
   { "ae_movfcrfsrv", ICLASS_AE_MOVFCRFSRV,
     0,
     Opcode_ae_movfcrfsrv_encode_fns, 0, 0 },
@@ -48456,10 +48203,10 @@ enum xtensa_opcode_id {
   OPCODE_AE_L16X4_XC,
   OPCODE_AE_L16X4_I,
   OPCODE_AE_L16X4_IP,
-  OPCODE_AE_L16X4_RIP,
   OPCODE_AE_L16X4_RIC,
   OPCODE_AE_L16X4_X,
   OPCODE_AE_L16X4_XP,
+  OPCODE_AE_L16X4_RIP,
   OPCODE_AE_L32_XC,
   OPCODE_AE_L32_I,
   OPCODE_AE_L32_IP,
@@ -48473,10 +48220,10 @@ enum xtensa_opcode_id {
   OPCODE_AE_L32X2_XC,
   OPCODE_AE_L32X2_I,
   OPCODE_AE_L32X2_IP,
-  OPCODE_AE_L32X2_RIP,
   OPCODE_AE_L32X2_RIC,
   OPCODE_AE_L32X2_X,
   OPCODE_AE_L32X2_XP,
+  OPCODE_AE_L32X2_RIP,
   OPCODE_AE_L64_XC,
   OPCODE_AE_L64_I,
   OPCODE_AE_L64_IP,
@@ -48512,10 +48259,10 @@ enum xtensa_opcode_id {
   OPCODE_AE_S16X4_XC,
   OPCODE_AE_S16X4_I,
   OPCODE_AE_S16X4_IP,
-  OPCODE_AE_S16X4_RIP,
   OPCODE_AE_S16X4_RIC,
   OPCODE_AE_S16X4_X,
   OPCODE_AE_S16X4_XP,
+  OPCODE_AE_S16X4_RIP,
   OPCODE_AE_S16X4RNG_I,
   OPCODE_AE_S16X4RNG_IP,
   OPCODE_AE_S16X4RNG_X,
@@ -48537,10 +48284,10 @@ enum xtensa_opcode_id {
   OPCODE_AE_S32X2_XC,
   OPCODE_AE_S32X2_I,
   OPCODE_AE_S32X2_IP,
-  OPCODE_AE_S32X2_RIP,
   OPCODE_AE_S32X2_RIC,
   OPCODE_AE_S32X2_X,
   OPCODE_AE_S32X2_XP,
+  OPCODE_AE_S32X2_RIP,
   OPCODE_AE_S64_XC,
   OPCODE_AE_S64_I,
   OPCODE_AE_S64_IP,
@@ -48572,6 +48319,8 @@ enum xtensa_opcode_id {
   OPCODE_AE_MOVF16X4,
   OPCODE_AE_MOVT32X2,
   OPCODE_AE_MOVF32X2,
+  OPCODE_AE_MOVT64,
+  OPCODE_AE_MOVF64,
   OPCODE_AE_MOVDA32X2,
   OPCODE_AE_MOVDA32,
   OPCODE_AE_MOVDA16X2,
@@ -48610,8 +48359,6 @@ enum xtensa_opcode_id {
   OPCODE_AE_ROUNDSP16Q48X2SYM,
   OPCODE_AE_ROUNDSP16Q48X2ASYM,
   OPCODE_AE_MOV,
-  OPCODE_AE_MOVT64,
-  OPCODE_AE_MOVF64,
   OPCODE_AE_CVT48A32,
   OPCODE_AE_CVT64A32,
   OPCODE_AE_CVT64F32_H,
@@ -49108,12 +48855,6 @@ enum xtensa_opcode_id {
   OPCODE_WUR_FSR,
   OPCODE_RFR,
   OPCODE_WFR,
-  OPCODE_MOVT_S,
-  OPCODE_MOVF_S,
-  OPCODE_MOVEQZ_S,
-  OPCODE_MOVNEZ_S,
-  OPCODE_MOVGEZ_S,
-  OPCODE_MOVLTZ_S,
   OPCODE_ADD_S,
   OPCODE_SUB_S,
   OPCODE_MUL_S,
@@ -49161,10 +48902,16 @@ enum xtensa_opcode_id {
   OPCODE_UFLOAT_SX2,
   OPCODE_MULJC_S,
   OPCODE_CLSFY_S,
-  OPCODE_CVTSF16_L,
-  OPCODE_CVTF16S_L,
   OPCODE_MULMUX_S,
   OPCODE_MADDMUX_S,
+  OPCODE_CVTSF16_L,
+  OPCODE_CVTF16S_L,
+  OPCODE_MOVT_S,
+  OPCODE_MOVF_S,
+  OPCODE_MOVEQZ_S,
+  OPCODE_MOVNEZ_S,
+  OPCODE_MOVGEZ_S,
+  OPCODE_MOVLTZ_S,
   OPCODE_AE_MOVFCRFSRV,
   OPCODE_AE_MOVVFCRFSR
 };
@@ -49668,13 +49415,13 @@ Slot_inst_decode (const xtensa_insnbuf insn)
       Field_fld_inst_3_0_Slot_inst_get (insn) == 3)
     return OPCODE_AE_L16X4_RIP;
   if (Field_fld_inst_23_16_Slot_inst_get (insn) == 67 &&
-      Field_fld_inst_11_8_Slot_inst_get (insn) == 7 &&
-      Field_fld_inst_3_0_Slot_inst_get (insn) == 3)
-    return OPCODE_AE_L32X2_RIP;
-  if (Field_fld_inst_23_16_Slot_inst_get (insn) == 67 &&
       Field_fld_inst_11_8_Slot_inst_get (insn) == 6 &&
       Field_fld_inst_3_0_Slot_inst_get (insn) == 3)
     return OPCODE_AE_L32X2_RIC;
+  if (Field_fld_inst_23_16_Slot_inst_get (insn) == 67 &&
+      Field_fld_inst_11_8_Slot_inst_get (insn) == 7 &&
+      Field_fld_inst_3_0_Slot_inst_get (insn) == 3)
+    return OPCODE_AE_L32X2_RIP;
   if (Field_fld_inst_23_16_Slot_inst_get (insn) == 67 &&
       Field_fld_inst_11_8_Slot_inst_get (insn) == 4 &&
       Field_fld_inst_3_0_Slot_inst_get (insn) == 3)
@@ -50780,11 +50527,11 @@ Slot_f0_s0_decode (const xtensa_insnbuf insn)
       Field_fld_f0_s0_7_5_Slot_f0_s0_get (insn) == 7)
     return OPCODE_AE_JOINB;
   if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1700 &&
-      Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 15)
-    return OPCODE_AE_L16X4_RIP;
-  if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1700 &&
       Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 14)
     return OPCODE_AE_L16X4_RIC;
+  if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1700 &&
+      Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 15)
+    return OPCODE_AE_L16X4_RIP;
   if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1700 &&
       Field_fld_f0_s0_7_5_Slot_f0_s0_get (insn) == 4)
     return OPCODE_AE_ORB8;
@@ -50798,11 +50545,11 @@ Slot_f0_s0_decode (const xtensa_insnbuf insn)
       Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 10)
     return OPCODE_SLL;
   if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1701 &&
-      Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 9)
-    return OPCODE_AE_S32X2_RIP;
-  if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1701 &&
       Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 8)
     return OPCODE_AE_S32X2_RIC;
+  if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1701 &&
+      Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 9)
+    return OPCODE_AE_S32X2_RIP;
   if (Field_fld_f0_s0_22_12_Slot_f0_s0_get (insn) == 1701 &&
       Field_fld_f0_s0_7_4_Slot_f0_s0_get (insn) == 13)
     return OPCODE_DIV0_S;
@@ -53044,17 +52791,17 @@ Slot_f1_s0_decode (const xtensa_insnbuf insn)
       Field_fld_f1_s0_7_7_Slot_f1_s0_get (insn) == 1)
     return OPCODE_AE_MOVF64;
   if (Field_fld_f1_s0_21_12_Slot_f1_s0_get (insn) == 736 &&
-      Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 5)
-    return OPCODE_AE_L16X4_RIP;
-  if (Field_fld_f1_s0_21_12_Slot_f1_s0_get (insn) == 736 &&
       Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 4)
     return OPCODE_AE_L16X4_RIC;
   if (Field_fld_f1_s0_21_12_Slot_f1_s0_get (insn) == 736 &&
-      Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 7)
-    return OPCODE_AE_L32X2_RIP;
+      Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 5)
+    return OPCODE_AE_L16X4_RIP;
   if (Field_fld_f1_s0_21_12_Slot_f1_s0_get (insn) == 736 &&
       Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 6)
     return OPCODE_AE_L32X2_RIC;
+  if (Field_fld_f1_s0_21_12_Slot_f1_s0_get (insn) == 736 &&
+      Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 7)
+    return OPCODE_AE_L32X2_RIP;
   if (Field_fld_f1_s0_21_12_Slot_f1_s0_get (insn) == 736 &&
       Field_fld_f1_s0_3_0_Slot_f1_s0_get (insn) == 13)
     return OPCODE_AE_MOVDA32;
