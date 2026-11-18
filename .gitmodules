@@ -13,9 +13,11 @@
 [submodule "picolibc"]
 	path = picolibc
 	url = https://github.com/zephyrproject-rtos/picolibc.git
+# Temporary demo source: the Zephyr LLVM fork has no LLVM 23 branch yet.
+# Switch back to the Zephyr fork when its matching branch is available.
 [submodule "llvm"]
 	path = llvm
-	url = https://github.com/zephyrproject-rtos/llvm-project.git
+	url = https://github.com/llvm/llvm-project.git
 [submodule "crosskit-x86_64-apple-darwin"]
 	path = crosskit/crosskit-x86_64-apple-darwin
 	url = https://github.com/zephyrproject-rtos/crosskit-x86_64-apple-darwin.git
@@ -43,3 +45,8 @@
 [submodule "openocd"]
 	path = openocd
 	url = https://github.com/zephyrproject-rtos/openocd.git
+# Temporary demo source: use upstream ELD at the matching 23.1.5 release.
+# Switch to the Zephyr maintained fork when it is available.
+[submodule "eld"]
+	path = eld
+	url = https://github.com/qualcomm/eld.git
