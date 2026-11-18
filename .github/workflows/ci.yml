@@ -871,6 +871,7 @@ jobs:
         git config --global --add safe.directory '*'
         git submodule init
         git submodule update --depth=1 --recursive llvm
+        git submodule update --depth=1 --recursive eld
         git submodule update --depth=1 --recursive picolibc
 
     - name: Setup debug session (pre)
