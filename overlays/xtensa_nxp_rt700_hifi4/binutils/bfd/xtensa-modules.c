@@ -1,6 +1,6 @@
 /* Xtensa configuration-specific ISA information.
 
-   Copyright (c) 2003-2023 Cadence Design Systems, Inc.
+   Copyright (c) 2003-2026 Cadence Design Systems, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -15268,7 +15268,7 @@ static const unsigned CONST_TBL_vfpu2_table_maddmux_0[] = {
   0
 };
 
-
+
 /* Instruction operands.  */
 
 static int
@@ -15284,6 +15284,20 @@ OperandSem_opnd_sem_MR_0_encode (uint32 *valp)
   int error;
   error = ((*valp & ~0x3) != 0) || ((*valp & 0x2) == 0);
   *valp = *valp & 1;
+  return error;
+}
+
+static int
+OperandSem_opnd_sem_MR_decode (uint32 *valp)
+{
+  return 0;
+}
+
+static int
+OperandSem_opnd_sem_MR_encode (uint32 *valp)
+{
+  int error;
+  error = (*valp >= 2);
   return error;
 }
 
@@ -16039,20 +16053,6 @@ OperandSem_opnd_sem_uimm16x4_encode (uint32 *valp)
   uimm16x4_in_0 = (uimm16x4_out_0 >> 2) & 0xffff;
   *valp = uimm16x4_in_0;
   return 0;
-}
-
-static int
-OperandSem_opnd_sem_MR_decode (uint32 *valp ATTRIBUTE_UNUSED)
-{
-  return 0;
-}
-
-static int
-OperandSem_opnd_sem_MR_encode (uint32 *valp)
-{
-  int error = 0;
-  error = (*valp >= 4);
-  return error;
 }
 
 static int
@@ -20796,7 +20796,12 @@ static xtensa_arg_internal Iclass_xt_iclass_dcache_ind_args[] = {
   { { OPERAND_uimm4x16 }, 'i' }
 };
 
-static xtensa_arg_internal Iclass_xt_iclass_dcache_inv_args[] = {
+static xtensa_arg_internal Iclass_xt_iclass_dcache_inv_dhi_args[] = {
+  { { OPERAND_ars }, 'i' },
+  { { OPERAND_uimm8x4 }, 'i' }
+};
+
+static xtensa_arg_internal Iclass_xt_iclass_dcache_inv_dii_args[] = {
   { { OPERAND_ars }, 'i' },
   { { OPERAND_uimm8x4 }, 'i' }
 };
@@ -34541,7 +34546,9 @@ static xtensa_iclass_internal iclasses[] = {
     0, 0, 0, 0 },
   { 2, Iclass_xt_iclass_dcache_ind_args,
     0, 0, 0, 0 },
-  { 2, Iclass_xt_iclass_dcache_inv_args,
+  { 2, Iclass_xt_iclass_dcache_inv_dhi_args,
+    0, 0, 0, 0 },
+  { 2, Iclass_xt_iclass_dcache_inv_dii_args,
     0, 0, 0, 0 },
   { 2, Iclass_xt_iclass_dpf_args,
     0, 0, 0, 0 },
@@ -37381,7 +37388,8 @@ enum xtensa_iclass_id {
   ICLASS_xt_iclass_dcache,
   ICLASS_xt_iclass_dcache_dyn,
   ICLASS_xt_iclass_dcache_ind,
-  ICLASS_xt_iclass_dcache_inv,
+  ICLASS_xt_iclass_dcache_inv_dhi,
+  ICLASS_xt_iclass_dcache_inv_dii,
   ICLASS_xt_iclass_dpf,
   ICLASS_xt_iclass_dpfb,
   ICLASS_xt_iclass_bpfnxt,
@@ -75472,10 +75480,10 @@ static xtensa_opcode_internal opcodes[] = {
   { "diwbi", ICLASS_xt_iclass_dcache_ind,
     0,
     Opcode_diwbi_encode_fns, 0, 0 },
-  { "dhi", ICLASS_xt_iclass_dcache_inv,
+  { "dhi", ICLASS_xt_iclass_dcache_inv_dhi,
     0,
     Opcode_dhi_encode_fns, 0, 0 },
-  { "dii", ICLASS_xt_iclass_dcache_inv,
+  { "dii", ICLASS_xt_iclass_dcache_inv_dii,
     0,
     Opcode_dii_encode_fns, 0, 0 },
   { "dpfr", ICLASS_xt_iclass_dpf,
@@ -113730,7 +113738,7 @@ xtensa_isa_internal xtensa_modules = {
   25, slots,
   407 /* num_fields */,
   556, operands,
-  1554, iclasses,
+  1555, iclasses,
   1720, opcodes, 0,
   10, regfiles,
   NUM_STATES, states, 0,
